@@ -353,18 +353,42 @@ function storyboardApiPlugin() {
         }
       })
 
-      // SAVE a new skill
+      // SAVE a new skill (writes both .json and .md)
       server.middlewares.use('/api/skills/save', async (req, res) => {
         if (req.method !== 'POST') return sendJson(res, { error: 'Method not allowed' }, 405)
         try {
           const body = await collectBody(req)
           const skill = JSON.parse(body.toString() || '{}')
           if (!skill.id) skill.id = `skill-${Date.now()}`
-          const filePath = path.join(skillsDir, `${skill.id}.json`)
-          fs.writeFileSync(filePath, JSON.stringify(skill, null, 2))
+          // Save JSON
+          const jsonPath = path.join(skillsDir, `${skill.id}.json`)
+          fs.writeFileSync(jsonPath, JSON.stringify(skill, null, 2))
+          // Also save .md with the full text if available
+          if (skill.fullText || skill.description) {
+            const mdContent = `# ${skill.name || 'Untitled Skill'}\n\n${skill.fullText || skill.description || ''}`
+            const mdPath = path.join(skillsDir, `${skill.id}.md`)
+            fs.writeFileSync(mdPath, mdContent)
+          }
           sendJson(res, { ok: true, skill })
         } catch (error) {
           sendJson(res, { error: error instanceof Error ? error.message : 'Save skill failed' }, 500)
+        }
+      })
+
+      // DELETE a skill
+      server.middlewares.use('/api/skills/delete', async (req, res) => {
+        if (req.method !== 'POST') return sendJson(res, { error: 'Method not allowed' }, 405)
+        try {
+          const body = await collectBody(req)
+          const { id } = JSON.parse(body.toString() || '{}')
+          if (!id) return sendJson(res, { error: 'No skill id' }, 400)
+          const jsonPath = path.join(skillsDir, `${id}.json`)
+          const mdPath = path.join(skillsDir, `${id}.md`)
+          if (fs.existsSync(jsonPath)) fs.unlinkSync(jsonPath)
+          if (fs.existsSync(mdPath)) fs.unlinkSync(mdPath)
+          sendJson(res, { ok: true })
+        } catch (error) {
+          sendJson(res, { error: error instanceof Error ? error.message : 'Delete failed' }, 500)
         }
       })
 

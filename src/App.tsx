@@ -2935,7 +2935,10 @@ function AgentInbox({
   const [showSkillsStore, setShowSkillsStore] = useState(false)
   const [availableSkills, setAvailableSkills] = useState<any[]>([])
   const [newSkillText, setNewSkillText] = useState('')
+  const [newSkillTitle, setNewSkillTitle] = useState('')
   const [skillRecording, setSkillRecording] = useState(false)
+  const [editingSkillId, setEditingSkillId] = useState<string | null>(null)
+  const [aiImproving, setAiImproving] = useState(false)
   const skillRecognitionRef = useRef<any>(null)
 
   useEffect(() => {
@@ -3326,16 +3329,32 @@ function AgentInbox({
         </div>
       </div>
 
-      {/* ═══════════════════════════════════════════════════════ */}
-      {/* SKILLS STORE MODAL                                     */}
-      {/* ═══════════════════════════════════════════════════════ */}
-      {showSkillsStore && (
+      {/* SKILLS STORE MODAL */}
+      {showSkillsStore && (() => {
+        const SKILL_SVGS = [
+          { color: '#d4af37', d: 'M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5' },
+          { color: '#409cff', d: 'M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83' },
+          { color: '#9c40ff', d: 'M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z' },
+          { color: '#40ff9c', d: 'M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z' },
+          { color: '#ff9c40', d: 'M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14l-5-4.87 6.91-1.01L12 2z' },
+          { color: '#ff4090', d: 'M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z' },
+          { color: '#40ffff', d: 'M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1zM4 22V15' },
+          { color: '#ffc840', d: 'M12 3v18M3 12h18M7.5 7.5l9 9M16.5 7.5l-9 9' },
+          { color: '#a0ff40', d: 'M22 11.08V12a10 10 0 1 1-5.93-9.14M22 4L12 14.01l-3-3' },
+          { color: '#ff6040', d: 'M13 2L3 14h9l-1 8 10-12h-9l1-8' },
+        ]
+        const getIcon = (idx: number) => SKILL_SVGS[idx % SKILL_SVGS.length]
+        const usedIndices = availableSkills.map((_: any, i: number) => i % SKILL_SVGS.length)
+        const getNewIconIdx = () => { for (let i = 0; i < 10; i++) { if (!usedIndices.includes(i)) return i } return Math.floor(Math.random() * 10) }
+        return (
         <div className="skills-store-backdrop" onClick={() => setShowSkillsStore(false)} style={{ position: 'fixed', inset: 0, zIndex: 9999, background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', display: 'flex', alignItems: 'center', justifyContent: 'center', animation: 'fadeIn 0.3s ease' }}>
           <div className="skills-store-modal" onClick={(e) => e.stopPropagation()} style={{ width: 'min(90vw, 900px)', maxHeight: '85vh', background: 'linear-gradient(145deg, rgba(20,20,30,0.95), rgba(10,10,20,0.98))', border: '1px solid rgba(212,175,55,0.15)', borderRadius: '1.5rem', overflow: 'hidden', display: 'flex', flexDirection: 'column', boxShadow: '0 30px 80px rgba(0,0,0,0.6), 0 0 40px rgba(212,175,55,0.08), inset 0 1px 0 rgba(255,255,255,0.05)' }}>
             {/* Header */}
             <div style={{ padding: '1.5rem 2rem', borderBottom: '1px solid rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
-                <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'linear-gradient(135deg, rgba(212,175,55,0.2), rgba(248,192,64,0.1))', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem' }}>🧠</div>
+                <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'linear-gradient(135deg, rgba(212,175,55,0.2), rgba(248,192,64,0.1))', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#d4af37" strokeWidth="1.5" strokeLinecap="round"><path d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7z"/><line x1="9" y1="21" x2="15" y2="21"/><line x1="10" y1="23" x2="14" y2="23"/></svg>
+                </div>
                 <div>
                   <h2 style={{ margin: 0, fontSize: '1.2rem', color: 'white', fontWeight: 700, letterSpacing: '-0.3px' }}>Skills Store</h2>
                   <p style={{ margin: 0, fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)', letterSpacing: '0.5px' }}>{availableSkills.length} skills available · <span style={{ color: 'rgba(212,175,55,0.6)' }}>public/assets/storyboard/skills/</span></p>
@@ -3350,25 +3369,39 @@ function AgentInbox({
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '1rem', marginBottom: '2rem' }}>
                 {availableSkills.map((skill, idx) => {
                   const isSelected = draft.skillHint === skill.name
-                  const icons = ['🎬', '⚡', '🎨', '🔧', '📐', '✨', '🎯', '🌟']
-                  const colors = ['rgba(212,175,55,0.15)', 'rgba(64,156,255,0.15)', 'rgba(156,64,255,0.15)', 'rgba(64,255,156,0.15)', 'rgba(255,156,64,0.15)', 'rgba(255,64,156,0.15)', 'rgba(64,255,255,0.15)', 'rgba(255,200,64,0.15)']
-                  const borderColors = ['rgba(212,175,55,0.4)', 'rgba(64,156,255,0.4)', 'rgba(156,64,255,0.4)', 'rgba(64,255,156,0.4)', 'rgba(255,156,64,0.4)', 'rgba(255,64,156,0.4)', 'rgba(64,255,255,0.4)', 'rgba(255,200,64,0.4)']
-                  const iconMap: Record<string, string> = { film: '🎬', download: '⬇️', sparkle: '✨', grid: '📐', split: '📐' }
-                  const icon = iconMap[skill.icon] || icons[idx % icons.length]
+                  const ic = getIcon(skill.iconIdx ?? idx)
                   return (
-                    <button key={skill.id} type="button" onClick={() => { onDraftChange({ ...draft, skillHint: skill.name }); setShowSkillsStore(false) }} style={{ background: isSelected ? colors[idx % colors.length] : 'rgba(255,255,255,0.02)', border: `1px solid ${isSelected ? borderColors[idx % borderColors.length] : 'rgba(255,255,255,0.06)'}`, borderRadius: '1rem', padding: '1.2rem', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.6rem', transition: 'all 0.3s cubic-bezier(0.4,0,0.2,1)', textAlign: 'center', position: 'relative', overflow: 'hidden', boxShadow: isSelected ? `0 0 20px ${borderColors[idx % borderColors.length]}, 0 8px 24px rgba(0,0,0,0.3)` : '0 2px 8px rgba(0,0,0,0.2)', transform: isSelected ? 'scale(1.05)' : 'scale(1)' }}>
-                      <div style={{ fontSize: isSelected ? '2.2rem' : '1.8rem', transition: 'font-size 0.3s ease', filter: isSelected ? 'drop-shadow(0 0 8px rgba(255,200,64,0.5))' : 'none' }}>{icon}</div>
-                      <div style={{ fontSize: '0.85rem', fontWeight: 600, color: isSelected ? 'white' : 'rgba(255,255,255,0.8)', lineHeight: 1.3 }}>{skill.name}</div>
-                      <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.35)', lineHeight: 1.4, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' as any, overflow: 'hidden' }}>{skill.description?.substring(0, 80) || ''}</div>
-                      {isSelected && <div style={{ position: 'absolute', top: '0.5rem', right: '0.5rem', fontSize: '0.7rem', color: 'var(--gold)' }}>✓</div>}
-                    </button>
+                    <div key={skill.id} className="skill-card-wrap" style={{ position: 'relative' }}
+                      onMouseEnter={(e) => { const el = e.currentTarget; el.querySelector<HTMLElement>('.skill-actions')!.style.opacity = '1' }}
+                      onMouseLeave={(e) => { const el = e.currentTarget; el.querySelector<HTMLElement>('.skill-actions')!.style.opacity = '0' }}>
+                      {/* Delete + Edit overlay */}
+                      <div className="skill-actions" style={{ position: 'absolute', top: '0.4rem', right: '0.4rem', display: 'flex', gap: '0.3rem', zIndex: 2, opacity: 0, transition: 'opacity 0.2s' }}>
+                        <button type="button" title="Edit" onClick={(e) => { e.stopPropagation(); setEditingSkillId(skill.id); setNewSkillTitle(skill.name || ''); setNewSkillText(skill.fullText || skill.description || '') }} style={{ width: '22px', height: '22px', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.15)', background: 'rgba(0,0,0,0.6)', color: 'rgba(255,255,255,0.6)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0, fontSize: '0.65rem' }}>
+                          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                        </button>
+                        <button type="button" title="Delete" onClick={async (e) => { e.stopPropagation(); await fetch('/api/skills/delete', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: skill.id }) }); setAvailableSkills(prev => prev.filter(s => s.id !== skill.id)); if (draft.skillHint === skill.name) onDraftChange({ ...draft, skillHint: '' }) }} style={{ width: '22px', height: '22px', borderRadius: '6px', border: '1px solid rgba(255,80,80,0.3)', background: 'rgba(0,0,0,0.6)', color: 'rgba(255,80,80,0.7)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0, fontSize: '0.75rem' }}>
+                          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                        </button>
+                      </div>
+                      <button type="button" onClick={() => { onDraftChange({ ...draft, skillHint: skill.name }); setShowSkillsStore(false) }} style={{ width: '100%', background: isSelected ? `rgba(${parseInt(ic.color.slice(1,3),16)},${parseInt(ic.color.slice(3,5),16)},${parseInt(ic.color.slice(5,7),16)},0.08)` : 'rgba(255,255,255,0.015)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)', border: `1px solid ${isSelected ? ic.color + '66' : 'rgba(255,255,255,0.06)'}`, borderRadius: '1rem', padding: '1.4rem 1rem', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.7rem', transition: 'all 0.35s cubic-bezier(0.4,0,0.2,1)', textAlign: 'center', position: 'relative', overflow: 'hidden', boxShadow: isSelected ? `0 0 24px ${ic.color}33, 0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08)` : '0 2px 12px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.04)', transform: isSelected ? 'scale(1.04)' : 'scale(1)' }}>
+                        {/* Floating light effect */}
+                        <div style={{ position: 'absolute', bottom: '-30px', left: '50%', transform: 'translateX(-50%)', width: '80%', height: '60px', borderRadius: '50%', background: `radial-gradient(ellipse, ${ic.color}18, transparent 70%)`, pointerEvents: 'none', filter: 'blur(8px)' }} />
+                        {/* SVG Icon */}
+                        <div style={{ width: isSelected ? '44px' : '36px', height: isSelected ? '44px' : '36px', transition: 'all 0.3s ease', filter: isSelected ? `drop-shadow(0 0 10px ${ic.color})` : 'none' }}>
+                          <svg viewBox="0 0 24 24" fill="none" stroke={ic.color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ width: '100%', height: '100%' }}><path d={ic.d} /></svg>
+                        </div>
+                        <div style={{ fontSize: '0.82rem', fontWeight: 600, color: isSelected ? 'white' : 'rgba(255,255,255,0.75)', lineHeight: 1.3, letterSpacing: '-0.2px' }}>{skill.name}</div>
+                        <div style={{ fontSize: '0.68rem', color: 'rgba(255,255,255,0.3)', lineHeight: 1.4, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' as any, overflow: 'hidden' }}>{skill.description?.substring(0, 80) || ''}</div>
+                        {isSelected && <div style={{ position: 'absolute', top: '0.5rem', left: '0.5rem' }}><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={ic.color} strokeWidth="2.5"><polyline points="20 6 9 17 4 12" /></svg></div>}
+                      </button>
+                    </div>
                   )
                 })}
-                {/* Upload from computer card */}
-                <label style={{ background: 'rgba(255,255,255,0.02)', border: '1px dashed rgba(255,255,255,0.15)', borderRadius: '1rem', padding: '1.2rem', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.6rem', transition: 'all 0.3s', textAlign: 'center' }}>
-                  <div style={{ fontSize: '1.8rem', opacity: 0.4 }}>📁</div>
-                  <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'rgba(255,255,255,0.4)' }}>Upload from Computer</div>
-                  <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.25)' }}>.json or .md</div>
+                {/* Upload from computer */}
+                <label style={{ background: 'rgba(255,255,255,0.015)', backdropFilter: 'blur(16px)', border: '1px dashed rgba(255,255,255,0.1)', borderRadius: '1rem', padding: '1.4rem 1rem', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.7rem', transition: 'all 0.3s', textAlign: 'center' }}>
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.3)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                  <div style={{ fontSize: '0.82rem', fontWeight: 600, color: 'rgba(255,255,255,0.35)' }}>Upload Skill</div>
+                  <div style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.2)' }}>.json or .md</div>
                   <input type="file" accept=".json,.md" style={{ display: 'none' }} onChange={(e) => {
                     const file = e.target.files?.[0]
                     if (file) {
@@ -3377,15 +3410,9 @@ function AgentInbox({
                         try {
                           if (file.name.endsWith('.json')) {
                             const skill = JSON.parse(reader.result as string)
-                            fetch('/api/skills/save', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(skill) }).then(() => {
-                              setAvailableSkills(prev => [...prev, skill])
-                              onDraftChange({ ...draft, skillHint: skill.name || file.name })
-                              setShowSkillsStore(false)
-                            })
-                          } else {
-                            onDraftChange({ ...draft, skillHint: file.name })
-                            setShowSkillsStore(false)
-                          }
+                            skill.iconIdx = getNewIconIdx()
+                            fetch('/api/skills/save', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(skill) }).then(() => { setAvailableSkills(prev => [...prev, skill]); onDraftChange({ ...draft, skillHint: skill.name || file.name }); setShowSkillsStore(false) })
+                          } else { onDraftChange({ ...draft, skillHint: file.name }); setShowSkillsStore(false) }
                         } catch { onDraftChange({ ...draft, skillHint: file.name }); setShowSkillsStore(false) }
                       }
                       reader.readAsText(file)
@@ -3394,88 +3421,84 @@ function AgentInbox({
                 </label>
               </div>
 
-              {/* Create New Skill Section */}
+              {/* Create / Edit Skill Section */}
               <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '1.5rem' }}>
-                <p style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.35)', textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: '0.8rem', fontWeight: 600 }}>Create New Skill</p>
-                <div style={{ position: 'relative' }}>
-                  <textarea
-                    value={newSkillText}
-                    onChange={(e) => setNewSkillText(e.target.value)}
-                    placeholder="Describe a new skill... What should the agent know how to do? Include step-by-step instructions."
-                    style={{ width: '100%', minHeight: '100px', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '0.75rem', color: 'white', padding: '1rem', fontSize: '0.85rem', resize: 'vertical', fontFamily: 'inherit', lineHeight: 1.5, outline: 'none' }}
-                  />
-                  <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.8rem', flexWrap: 'wrap' }}>
-                    {/* Microphone button */}
-                    <button type="button" onClick={() => {
-                      if (skillRecording) {
-                        skillRecognitionRef.current?.stop()
-                        setSkillRecording(false)
-                        return
-                      }
-                      const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition
-                      if (!SR) { alert('Speech recognition not available'); return }
-                      const recognition = new SR()
-                      recognition.continuous = true
-                      recognition.interimResults = true
-                      recognition.lang = 'en-US'
-                      recognition.onresult = (event: any) => {
-                        let transcript = ''
-                        for (let i = 0; i < event.results.length; i++) transcript += event.results[i][0].transcript
-                        setNewSkillText(transcript)
-                      }
-                      recognition.onerror = () => setSkillRecording(false)
-                      recognition.onend = () => setSkillRecording(false)
-                      recognition.start()
-                      skillRecognitionRef.current = recognition
-                      setSkillRecording(true)
-                    }} style={{ padding: '0.5rem 1rem', borderRadius: '0.5rem', border: `1px solid ${skillRecording ? 'rgba(255,64,64,0.5)' : 'rgba(255,255,255,0.1)'}`, background: skillRecording ? 'rgba(255,64,64,0.15)' : 'rgba(255,255,255,0.03)', color: skillRecording ? '#ff6464' : 'rgba(255,255,255,0.6)', cursor: 'pointer', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '0.4rem', transition: 'all 0.2s' }}>
-                      {skillRecording ? '⏹ Stop' : '🎤 Dictate'}
+                <p style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.35)', textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: '0.8rem', fontWeight: 600 }}>
+                  {editingSkillId ? 'Edit Skill' : 'Create New Skill'}
+                  {editingSkillId && <button type="button" onClick={() => { setEditingSkillId(null); setNewSkillTitle(''); setNewSkillText('') }} style={{ marginLeft: '0.8rem', background: 'none', border: 'none', color: 'rgba(255,255,255,0.3)', cursor: 'pointer', fontSize: '0.7rem' }}>Cancel</button>}
+                </p>
+                <input value={newSkillTitle} onChange={(e) => setNewSkillTitle(e.target.value)} placeholder="Skill title (required)" style={{ width: '100%', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '0.5rem', color: 'white', padding: '0.6rem 1rem', fontSize: '0.85rem', marginBottom: '0.5rem', outline: 'none', fontFamily: 'inherit' }} />
+                <textarea value={newSkillText} onChange={(e) => setNewSkillText(e.target.value)} placeholder="Step-by-step instructions for the agent..." style={{ width: '100%', minHeight: '90px', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '0.75rem', color: 'white', padding: '0.8rem 1rem', fontSize: '0.82rem', resize: 'vertical', fontFamily: 'inherit', lineHeight: 1.5, outline: 'none' }} />
+                <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.6rem', flexWrap: 'wrap', alignItems: 'center' }}>
+                  {/* Mic */}
+                  <button type="button" onClick={() => {
+                    if (skillRecording) { skillRecognitionRef.current?.stop(); setSkillRecording(false); return }
+                    const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition
+                    if (!SR) return
+                    const r = new SR(); r.continuous = true; r.interimResults = true; r.lang = 'en-US'
+                    r.onresult = (ev: any) => { let t = ''; for (let i = 0; i < ev.results.length; i++) t += ev.results[i][0].transcript; setNewSkillText(t) }
+                    r.onerror = () => setSkillRecording(false); r.onend = () => setSkillRecording(false)
+                    r.start(); skillRecognitionRef.current = r; setSkillRecording(true)
+                  }} style={{ padding: '0.45rem 0.8rem', borderRadius: '0.5rem', border: `1px solid ${skillRecording ? 'rgba(255,64,64,0.5)' : 'rgba(255,255,255,0.1)'}`, background: skillRecording ? 'rgba(255,64,64,0.12)' : 'rgba(255,255,255,0.03)', color: skillRecording ? '#ff6464' : 'rgba(255,255,255,0.55)', cursor: 'pointer', fontSize: '0.78rem', display: 'flex', alignItems: 'center', gap: '0.4rem', transition: 'all 0.2s' }}>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/></svg>
+                    {skillRecording ? 'Stop' : 'Dictate'}
+                  </button>
+                  {/* AI Improve */}
+                  <button type="button" disabled={aiImproving || !newSkillText.trim()} onClick={async () => {
+                    if (!newSkillText.trim()) return
+                    setAiImproving(true)
+                    try {
+                      const { sendToGemini } = await import('./gemini-agent')
+                      const result = await sendToGemini(`Improve this skill description for an AI agent. Make it clear, well-structured with step-by-step instructions, and professional. Keep all technical details. Return ONLY the improved text:\n\n${newSkillText}`)
+                      if (result.text) setNewSkillText(result.text)
+                    } catch {} finally { setAiImproving(false) }
+                  }} style={{ padding: '0.45rem 0.8rem', borderRadius: '0.5rem', border: '1px solid rgba(156,64,255,0.25)', background: 'rgba(156,64,255,0.06)', color: aiImproving ? 'rgba(200,160,255,0.5)' : 'rgba(200,160,255,0.75)', cursor: aiImproving ? 'wait' : 'pointer', fontSize: '0.78rem', display: 'flex', alignItems: 'center', gap: '0.4rem', transition: 'all 0.2s' }}>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg>
+                    {aiImproving ? 'Improving...' : 'Improve with AI'}
+                  </button>
+                  {/* Spacer */}
+                  <div style={{ flex: 1 }} />
+                  {/* Edit mode: Save + Duplicate */}
+                  {editingSkillId ? (<>
+                    <button type="button" disabled={!newSkillTitle.trim()} onClick={async () => {
+                      if (!newSkillTitle.trim()) return
+                      const updated = { ...availableSkills.find(s => s.id === editingSkillId), name: newSkillTitle, description: newSkillText.substring(0, 200), fullText: newSkillText }
+                      await fetch('/api/skills/save', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(updated) })
+                      setAvailableSkills(prev => prev.map(s => s.id === editingSkillId ? updated : s))
+                      setEditingSkillId(null); setNewSkillTitle(''); setNewSkillText('')
+                    }} style={{ padding: '0.45rem 0.8rem', borderRadius: '0.5rem', border: '1px solid rgba(64,156,255,0.3)', background: 'rgba(64,156,255,0.08)', color: !newSkillTitle.trim() ? 'rgba(64,156,255,0.3)' : 'rgba(120,180,255,0.85)', cursor: !newSkillTitle.trim() ? 'not-allowed' : 'pointer', fontSize: '0.78rem', display: 'flex', alignItems: 'center', gap: '0.4rem', transition: 'all 0.2s' }}>
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/></svg>
+                      Save
                     </button>
-
-                    {/* Improve with AI button */}
-                    <button type="button" onClick={async () => {
-                      if (!newSkillText.trim()) return
-                      try {
-                        const resp = await fetch('/api/agent/chat', {
-                          method: 'POST', headers: { 'Content-Type': 'application/json' },
-                          body: JSON.stringify({ messages: [{ role: 'user', content: `Improve this skill description. Make it clear, structured with step-by-step instructions, and professional. Keep all the technical details. Return ONLY the improved text, nothing else:\n\n${newSkillText}` }] })
-                        })
-                        const data = await resp.json()
-                        if (data.reply) setNewSkillText(data.reply)
-                      } catch { /* Agent not available */ }
-                    }} style={{ padding: '0.5rem 1rem', borderRadius: '0.5rem', border: '1px solid rgba(156,64,255,0.3)', background: 'rgba(156,64,255,0.08)', color: 'rgba(200,160,255,0.8)', cursor: 'pointer', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '0.4rem', transition: 'all 0.2s' }}>
-                      ✨ Improve with AI
+                    <button type="button" disabled={!newSkillTitle.trim()} onClick={async () => {
+                      if (!newSkillTitle.trim()) return
+                      const dup = { id: `skill-custom-${Date.now()}`, name: newSkillTitle, description: newSkillText.substring(0, 200), fullText: newSkillText, iconIdx: getNewIconIdx(), createdAt: new Date().toISOString() }
+                      await fetch('/api/skills/save', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(dup) })
+                      setAvailableSkills(prev => [...prev, dup]); onDraftChange({ ...draft, skillHint: newSkillTitle })
+                      setEditingSkillId(null); setNewSkillTitle(''); setNewSkillText('')
+                    }} style={{ padding: '0.45rem 0.8rem', borderRadius: '0.5rem', border: '1px solid rgba(255,200,64,0.3)', background: 'rgba(255,200,64,0.08)', color: !newSkillTitle.trim() ? 'rgba(255,200,64,0.3)' : 'rgba(255,220,100,0.85)', cursor: !newSkillTitle.trim() ? 'not-allowed' : 'pointer', fontSize: '0.78rem', display: 'flex', alignItems: 'center', gap: '0.4rem', transition: 'all 0.2s' }}>
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                      Duplicate
                     </button>
-
-                    {/* Create skill button */}
-                    <button type="button" onClick={async () => {
-                      if (!newSkillText.trim()) return
-                      const skillName = newSkillText.split('\n')[0].substring(0, 50).trim() || 'Custom Skill'
-                      const newSkill = {
-                        id: `skill-custom-${Date.now()}`,
-                        name: skillName,
-                        icon: 'sparkle',
-                        description: newSkillText.substring(0, 200),
-                        fullText: newSkillText,
-                        createdAt: new Date().toISOString()
-                      }
-                      try {
-                        await fetch('/api/skills/save', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(newSkill) })
-                        setAvailableSkills(prev => [...prev, newSkill])
-                        onDraftChange({ ...draft, skillHint: skillName })
-                        setNewSkillText('')
-                        setShowSkillsStore(false)
-                      } catch {}
-                    }} style={{ padding: '0.5rem 1rem', borderRadius: '0.5rem', border: '1px solid rgba(64,255,156,0.3)', background: 'rgba(64,255,156,0.08)', color: 'rgba(100,255,180,0.8)', cursor: 'pointer', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '0.4rem', marginLeft: 'auto', transition: 'all 0.2s' }}>
-                      ➕ Create & Attach
+                  </>) : (
+                    <button type="button" disabled={!newSkillTitle.trim() || !newSkillText.trim()} onClick={async () => {
+                      if (!newSkillTitle.trim() || !newSkillText.trim()) return
+                      const newSkill = { id: `skill-custom-${Date.now()}`, name: newSkillTitle.trim(), description: newSkillText.substring(0, 200), fullText: newSkillText, iconIdx: getNewIconIdx(), createdAt: new Date().toISOString() }
+                      await fetch('/api/skills/save', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(newSkill) })
+                      setAvailableSkills(prev => [...prev, newSkill]); onDraftChange({ ...draft, skillHint: newSkillTitle.trim() })
+                      setNewSkillText(''); setNewSkillTitle(''); setShowSkillsStore(false)
+                    }} style={{ padding: '0.45rem 0.8rem', borderRadius: '0.5rem', border: `1px solid ${(!newSkillTitle.trim() || !newSkillText.trim()) ? 'rgba(64,255,156,0.15)' : 'rgba(64,255,156,0.3)'}`, background: 'rgba(64,255,156,0.06)', color: (!newSkillTitle.trim() || !newSkillText.trim()) ? 'rgba(100,255,180,0.3)' : 'rgba(100,255,180,0.8)', cursor: (!newSkillTitle.trim() || !newSkillText.trim()) ? 'not-allowed' : 'pointer', fontSize: '0.78rem', display: 'flex', alignItems: 'center', gap: '0.4rem', transition: 'all 0.2s' }}>
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                      Create & Attach
                     </button>
-                  </div>
+                  )}
                 </div>
               </div>
             </div>
           </div>
         </div>
-      )}
+      )
+      })()}
     </div>
   )
 }

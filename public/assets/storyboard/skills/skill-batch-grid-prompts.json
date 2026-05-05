@@ -1,0 +1,48 @@
+{
+  "id": "skill-batch-grid-prompts",
+  "name": "Batch 2×2 Grid Prompt Writing & Generation",
+  "icon": "film",
+  "description": "Write cinematic 2×2 grid image prompts for animated movie scenes and generate them in batch via PixVerse CLI. Requires advanced AI for prompt writing — simple agents only handle CLI execution.",
+  "documentationFile": "skill-batch-grid-prompts.md",
+  "defaultModels": [
+    { "model": "nano-banana-2", "quality": "2160p", "label": "Nano Banana 2 — 4K" },
+    { "model": "nano-banana-pro", "quality": "1440p", "label": "Nano Banana Pro — 2K" },
+    { "model": "gpt2-medium", "quality": "1440p", "label": "GPT-2 Medium — 2K" }
+  ],
+  "aspectRatio": "16:9",
+  "gridType": "2x2",
+  "promptStructure": {
+    "openingTag": "premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric [LIGHT_TYPE] light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.",
+    "closingTag": "All panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric [LIGHT_TYPE] light, little tiny dust motes, [light details] soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look."
+  },
+  "characterLocks": {
+    "@image1": "Aisha — 16-year-old human princess, olive skin, large expressive dark brown eyes, long wavy dark hair",
+    "@image2": "Dora — white panther with golden collar, normal panther size (height reaches adult human hip)",
+    "@image3": "Niura — tiny white snake, small cute harmless witty, curls around Aisha's wrist or neck",
+    "@image4": "[Scene-specific character with short description]"
+  },
+  "locationLocks": {
+    "@image5": "[Location] — 4-projection grid showing all angles",
+    "@image6": "[Location] — specific view (front/left/right/back) of main action area"
+  },
+  "propLocks": {
+    "@image8": "[Prop name and description — only if relevant to scene]",
+    "@image9": "[Prop name and description — only if relevant to scene]"
+  },
+  "maxImageAttachments": 9,
+  "panelRequirements": [
+    "Shot type (wide/medium/close-up/extreme close-up/OTS/insert/etc.)",
+    "Which character(s) with emotional state",
+    "Exact position relative to objects and other characters (left/right/foreground/background)",
+    "Action, gesture, expression",
+    "Surface they're on (chair, stone, floor, etc.)",
+    "What's beside and behind them",
+    "How light hits this panel"
+  ],
+  "workflowPhases": {
+    "write": "Advanced AI reads scene → writes detailed prompts → saves as .txt files",
+    "generate": "Batch script feeds .txt files to PixVerse CLI (3 models × N prompts)",
+    "review": "Results loaded into Director's Cut task passes for human review"
+  },
+  "createdAt": "2026-05-06T00:45:00Z"
+}

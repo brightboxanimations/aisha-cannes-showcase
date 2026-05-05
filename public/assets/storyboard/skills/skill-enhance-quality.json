@@ -1,0 +1,17 @@
+{
+  "id": "skill-enhance-quality",
+  "name": "Enhance Quality",
+  "icon": "sparkle",
+  "description": "Improves image quality using PixVerse AI models. Preserves camera angle, composition, architecture, character poses, and all objects. Supports multiple models simultaneously.",
+  "promptBase": "Use exact @img1 image 1 but improve quality of character(s), objects and resolution. Do not change camera angle, composition, architecture or objects. The characters should remain in same poses and all objects in the same places. Camera should remain same angle exact the same as @img1 only improve quality. Style: 3d animated movie, cinematic AAA level 3d animation",
+  "promptWithReferences": "Use exact @img1 image 1 but improve quality of character(s), objects and resolution. Do not change camera angle, composition, architecture or objects. The characters should remain in same poses and all objects in the same places. Camera should remain same angle exact the same as @img1 only improve quality. Style: 3d animated movie, cinematic AAA level 3d animation. Reference images of character(s) and/or location/objects is only for reference of quality and consistency. The image 1 should be preserved the same, only with improved quality.",
+  "models": [
+    { "model": "seedream-4.5", "quality": "2160p", "label": "Seedream 4.5 — 4K", "default": true },
+    { "model": "gpt-image-2.0", "quality": "1440p", "label": "GPT-2 — 2K", "default": false },
+    { "model": "gemini-3.1-flash", "quality": "2160p", "label": "Gemini 3.1 Flash — 4K", "default": true },
+    { "model": "gemini-3.0", "quality": "1440p", "label": "Gemini 3.0 — 2K", "default": false },
+    { "model": "kling-image-v3", "quality": "2160p", "label": "Kling V3 — 4K", "default": false }
+  ],
+  "aspectRatio": "16:9",
+  "createdAt": "2026-05-05T18:50:00Z"
+}

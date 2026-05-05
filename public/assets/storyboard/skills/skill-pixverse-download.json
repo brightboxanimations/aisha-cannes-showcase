@@ -1,0 +1,51 @@
+{
+  "id": "skill-pixverse-download",
+  "name": "Download from PixVerse",
+  "icon": "download",
+  "description": "Downloads images from PixVerse account using the CLI. The user must have PixVerse open in their browser and be logged in. The CLI uses the browser session cookies for authentication.",
+  "prerequisites": [
+    "User has PixVerse (pixverse.ai) open and logged in in their browser",
+    "The `pixverse` CLI is available via `npx pixverse`",
+    "The CLI is authenticated (shares cookies with the browser session)"
+  ],
+  "steps": [
+    {
+      "step": 1,
+      "action": "List saved/favorited images",
+      "command": "npx pixverse saved items --type image --limit 100 --json",
+      "notes": "Returns JSON with all favorited images. Each item has: asset_id, created_at (UTC timestamp), image_url, model, quality. Use --page 2, --page 3 etc. to paginate if more than 100 items."
+    },
+    {
+      "step": 2,
+      "action": "Filter by date and time range",
+      "notes": "Parse the created_at field (format: 2026-05-05T07:03:20Z) to filter images within the requested date and time window. The timestamp is in UTC. Convert to local time if needed (e.g., CEST = UTC+2). Collect all matching asset_ids.",
+      "example_filter": "Filter for May 5th between 07:00-08:20 UTC: keep items where created_at starts with '2026-05-05' and time portion is >= '07:00' and <= '08:20'"
+    },
+    {
+      "step": 3,
+      "action": "Download each image",
+      "command": "npx pixverse asset download <asset_id> --type image --dest <output_directory> --json",
+      "notes": "Downloads the image to the specified directory. The CLI auto-names files as pixverse_image_<id>_<timestamp>.png. Create the output directory first with mkdir -p.",
+      "output_directory_convention": "public/assets/storyboard/uploads/<task-name-slug>/"
+    },
+    {
+      "step": 4,
+      "action": "Register images in the task",
+      "notes": "Build an image list with objects: { id, url, note, selected: false, improve4k: false, splitGrid: false }. The url must be relative to public/, e.g., /assets/storyboard/uploads/task36-pixverse/filename.png. Create a Pass 1 object and update both the task JSON file (tasks/current/<task-id>.json) and storyboard-data.json."
+    },
+    {
+      "step": 5,
+      "action": "Update task status",
+      "notes": "Set task status to 'pass', set activePassId to 'pass-1', set generatedImages to the image list. The UI polls storyboard-data.json and will auto-refresh."
+    }
+  ],
+  "other_useful_commands": {
+    "list_all_assets": "npx pixverse asset list --type image --limit 100 --json",
+    "list_saved_folders": "npx pixverse saved list --json",
+    "list_folder_items": "npx pixverse saved items <folder_id> --type image --limit 100 --json",
+    "get_asset_info": "npx pixverse asset info <asset_id> --json",
+    "check_auth": "npx pixverse account --json",
+    "paginate": "Add --page 2, --page 3 etc. for next pages"
+  },
+  "createdAt": "2026-05-06T00:01:00Z"
+}

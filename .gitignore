@@ -1,0 +1,12 @@
+node_modules/
+dist/
+tmp/
+.DS_Store
+*.log
+
+# Large files that exceed GitHub limits
+public/assets/trailers/*.mp4
+public/assets/documents/*.pdf
+
+# Image uploads — too large for GitHub, keep locally
+public/assets/storyboard/uploads/

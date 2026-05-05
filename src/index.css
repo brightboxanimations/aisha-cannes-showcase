@@ -1,0 +1,15 @@
+@font-face {
+  font-family: Cinzel;
+  src: local('Cinzel Decorative'), local('Cinzel');
+  font-display: swap;
+}
+
+body {
+  min-height: 100svh;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}

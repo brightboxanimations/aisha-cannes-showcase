@@ -1,0 +1,15 @@
+{
+  "id": "skill-split-grid-improve",
+  "name": "Split Grid + Improve Quality",
+  "icon": "grid",
+  "description": "Splits a 2x2 grid image into 4 individual panels, then sends each panel to PixVerse for quality improvement across 3 models (Seedream 4.5 4K, GPT-2 2K, Nano Banana 2 4K), all in 16:9 format.",
+  "prompt": "Use exact @img1 image 1 but improve quality of character(s), objects and resolution. Do not change camera angle, composition, architecture or objects. The characters should remain in same poses and all objects in the same places. Camera should remain same angle exact the same as @img1 only improve quality. Style: 3d animated movie, cinematic AAA level 3d animation",
+  "models": [
+    { "model": "seedream-4.5", "quality": "2160p", "label": "Seedream 4.5 — 4K" },
+    { "model": "gpt-image-2.0", "quality": "1440p", "label": "GPT-2 — 2K" },
+    { "model": "gemini-3.1-flash", "quality": "2160p", "label": "Nano Banana 2 — 4K" }
+  ],
+  "aspectRatio": "16:9",
+  "splitType": "2x2",
+  "createdAt": "2026-05-05T18:30:00Z"
+}

@@ -2919,6 +2919,9 @@ function AgentInbox({
   const [activeTaskIds, setActiveTaskIds] = useState<Record<string, string>>({})
   const [mediaTab, setMediaTab] = useState<'images' | 'videos'>('images')
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [scenePickerTab, setScenePickerTab] = useState<'images' | 'videos' | 'characters' | 'locations' | 'props' | 'styles' | 'upload'>('images')
+  const [expandedActs, setExpandedActs] = useState<Record<string, boolean>>({})
+  const [expandedScenes, setExpandedScenes] = useState<Record<string, boolean>>({})
   const [showBlueprintGallery, setShowBlueprintGallery] = useState(false)
   const [blueprintSaveModal, setBlueprintSaveModal] = useState<AgentTask | null>(null)
   const [savedBlueprints, setSavedBlueprints] = useState<any[]>([
@@ -2961,27 +2964,115 @@ function AgentInbox({
   return (
     <div className="storyboard-stage agent-canvas">
       {isModalOpen && (
-        <div className="mindtree-overlay">
-          <div className="mindtree-modal glass">
-            <button className="close-btn" onClick={() => setIsModalOpen(false)}>×</button>
-            <h2>Director's Visual Assignment</h2>
-            <p className="eyebrow">Select a target node in the Mind Tree</p>
-            <div className="mindtree-acts">
-              {data.acts.map(act => (
-                <div key={act.id} className="mindtree-act">
-                  <h3>{act.title || `Act`}</h3>
-                  <div className="mindtree-scenes">
-                    {act.scenes.map((scene, i) => (
-                      <button key={scene.id} className="mindtree-scene-btn glass" onClick={() => {
-                        onDraftChange({ ...draft, sceneHint: `${act.title || 'Act'} - ${scene.title || `Scene ${i + 1}`}` })
-                        setIsModalOpen(false)
-                      }}>
-                        {scene.title || `Scene ${i + 1}`}
+        <div className="skills-store-backdrop" onClick={() => setIsModalOpen(false)} style={{ position: 'fixed', inset: 0, zIndex: 9999, background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', display: 'flex', alignItems: 'center', justifyContent: 'center', animation: 'fadeIn 0.3s ease' }}>
+          <div onClick={(e) => e.stopPropagation()} style={{ width: 'min(90vw, 900px)', maxHeight: '85vh', background: 'linear-gradient(145deg, rgba(20,20,30,0.95), rgba(10,10,20,0.98))', border: '1px solid rgba(212,175,55,0.15)', borderRadius: '1.5rem', overflow: 'hidden', display: 'flex', flexDirection: 'column', boxShadow: '0 30px 80px rgba(0,0,0,0.6), 0 0 40px rgba(212,175,55,0.08), inset 0 1px 0 rgba(255,255,255,0.05)' }}>
+            {/* Header */}
+            <div style={{ padding: '1.2rem 2rem', borderBottom: '1px solid rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div>
+                <h2 style={{ margin: 0, fontSize: '1.1rem', color: 'white', fontWeight: 700 }}>Director's Visual Assignment</h2>
+                <p style={{ margin: 0, fontSize: '0.72rem', color: 'rgba(255,255,255,0.4)' }}>Browse assets by type · Click to attach to task</p>
+              </div>
+              <button type="button" onClick={() => setIsModalOpen(false)} style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '0.5rem', color: 'rgba(255,255,255,0.5)', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: '1.1rem' }}>✕</button>
+            </div>
+            {/* Asset Type Tabs */}
+            <div style={{ display: 'flex', gap: '0.3rem', padding: '0.8rem 2rem', overflowX: 'auto', borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
+              {([
+                { key: 'images', label: 'Images', d: 'M4 16l4.586-4.586a2 2 0 0 1 2.828 0L16 16m-2-2l1.586-1.586a2 2 0 0 1 2.828 0L20 14m-6-6h.01M6 20h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2z' },
+                { key: 'videos', label: 'Videos', d: 'M15 10l4.553-2.276A1 1 0 0 1 21 8.618v6.764a1 1 0 0 1-1.447.894L15 14M5 18h8a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2z' },
+                { key: 'characters', label: 'Characters', d: 'M16 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0zM12 14a7 7 0 0 0-7 7h14a7 7 0 0 0-7-7z' },
+                { key: 'locations', label: 'Locations', d: 'M17.657 16.657L13.414 20.9a1.998 1.998 0 0 1-2.827 0l-4.244-4.243a8 8 0 1 1 11.314 0zM15 11a3 3 0 1 1-6 0 3 3 0 0 1 6 0z' },
+                { key: 'props', label: 'Props', d: 'M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4' },
+                { key: 'styles', label: 'Styles', d: 'M7 21a4 4 0 0 1-4-4V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v12a4 4 0 0 1-4 4zm0 0h12a2 2 0 0 0 2-2v-4a2 2 0 0 0-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 0 1 2.828 0l2.829 2.829a2 2 0 0 1 0 2.828l-8.486 8.485' },
+                { key: 'upload', label: 'Upload', d: 'M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12' },
+              ] as const).map(tab => (
+                <button key={tab.key} type="button" onClick={() => setScenePickerTab(tab.key)} style={{ padding: '0.4rem 0.8rem', borderRadius: '0.5rem', border: `1px solid ${scenePickerTab === tab.key ? 'rgba(212,175,55,0.4)' : 'rgba(255,255,255,0.06)'}`, background: scenePickerTab === tab.key ? 'rgba(212,175,55,0.08)' : 'transparent', color: scenePickerTab === tab.key ? 'var(--gold)' : 'rgba(255,255,255,0.5)', cursor: 'pointer', fontSize: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.35rem', whiteSpace: 'nowrap', transition: 'all 0.2s' }}>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d={tab.d} /></svg>
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+            {/* Content */}
+            <div style={{ flex: 1, overflowY: 'auto', padding: '1rem 2rem' }}>
+              {/* Images / Videos — Act → Scene → Thumbnails */}
+              {(scenePickerTab === 'images' || scenePickerTab === 'videos') && data.acts.map(act => (
+                <div key={act.id} style={{ marginBottom: '0.5rem' }}>
+                  <button type="button" onClick={() => setExpandedActs(p => ({ ...p, [act.id]: !p[act.id] }))} style={{ width: '100%', background: expandedActs[act.id] ? 'rgba(212,175,55,0.05)' : 'transparent', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '0.5rem', padding: '0.6rem 1rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'rgba(255,255,255,0.7)', fontSize: '0.85rem', fontWeight: 600, transition: 'all 0.2s' }}>
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ transform: expandedActs[act.id] ? 'rotate(90deg)' : 'rotate(0)', transition: 'transform 0.2s' }}><polyline points="9 18 15 12 9 6" /></svg>
+                    {act.title || 'Act'}
+                    <span style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.3)', marginLeft: 'auto' }}>{act.scenes.length} scenes</span>
+                  </button>
+                  {expandedActs[act.id] && act.scenes.map((scene, si) => (
+                    <div key={scene.id} style={{ marginLeft: '1.2rem', marginTop: '0.3rem' }}>
+                      <button type="button" onClick={() => setExpandedScenes(p => ({ ...p, [scene.id]: !p[scene.id] }))} style={{ width: '100%', background: 'transparent', border: '1px solid rgba(255,255,255,0.04)', borderRadius: '0.4rem', padding: '0.45rem 0.8rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.4rem', color: 'rgba(255,255,255,0.6)', fontSize: '0.8rem', transition: 'all 0.2s' }}>
+                        <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ transform: expandedScenes[scene.id] ? 'rotate(90deg)' : 'rotate(0)', transition: 'transform 0.2s' }}><polyline points="9 18 15 12 9 6" /></svg>
+                        {scene.title || `Scene ${si + 1}`}
+                        <span style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.25)', marginLeft: 'auto' }}>{(scenePickerTab === 'images' ? scene.imageShots : scene.videoShots).length} items</span>
+                        {/* Quick select entire scene */}
+                        <button type="button" onClick={(e) => { e.stopPropagation(); onDraftChange({ ...draft, sceneHint: `${act.title} - ${scene.title || `Scene ${si+1}`}` }); setIsModalOpen(false) }} style={{ background: 'rgba(212,175,55,0.1)', border: '1px solid rgba(212,175,55,0.2)', borderRadius: '4px', color: 'var(--gold)', fontSize: '0.6rem', padding: '0.15rem 0.4rem', cursor: 'pointer' }}>Select Scene</button>
                       </button>
-                    ))}
-                  </div>
+                      {expandedScenes[scene.id] && (
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))', gap: '0.5rem', padding: '0.5rem 0 0.5rem 1rem' }}>
+                          {(scenePickerTab === 'images' ? scene.imageShots : scene.videoShots).map(shot => shot.media.map(m => (
+                            <button key={m.id} type="button" onClick={() => { onDraftChange({ ...draft, sceneHint: `${act.title} - ${scene.title || `Scene ${si+1}`} [${m.url.split('/').pop()}]` }); setIsModalOpen(false) }} style={{ background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '0.5rem', padding: '0.3rem', cursor: 'pointer', transition: 'all 0.2s', overflow: 'hidden' }}>
+                              <img src={m.url} alt="" loading="lazy" style={{ width: '100%', height: '65px', objectFit: 'cover', borderRadius: '0.3rem', display: 'block' }} />
+                              <div style={{ fontSize: '0.55rem', color: 'rgba(255,255,255,0.4)', padding: '0.2rem 0.1rem 0', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{m.url.split('/').pop()}</div>
+                            </button>
+                          ))).flat()}
+                        </div>
+                      )}
+                    </div>
+                  ))}
                 </div>
               ))}
+              {/* Characters / Locations / Props / Styles — Resource Cards */}
+              {(['characters', 'locations', 'props', 'styles'].includes(scenePickerTab)) && (() => {
+                const typeMap: Record<string, StoryboardResourceType> = { characters: 'actors', locations: 'locations', props: 'props', styles: 'moodboards' }
+                const resources = data.resources[typeMap[scenePickerTab]] || []
+                return resources.length === 0 ? (
+                  <div style={{ color: 'rgba(255,255,255,0.3)', textAlign: 'center', padding: '3rem 0', fontSize: '0.85rem' }}>No {scenePickerTab} found in the storyboard.</div>
+                ) : (
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '1rem' }}>
+                    {resources.map(res => (
+                      <div key={res.id} style={{ background: 'rgba(255,255,255,0.015)', backdropFilter: 'blur(12px)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '0.8rem', overflow: 'hidden', transition: 'all 0.2s' }}>
+                        {/* Card image */}
+                        {res.media[0] && (
+                          <button type="button" onClick={() => { onDraftChange({ ...draft, sceneHint: `${scenePickerTab}: ${res.name} [card] ${res.media[0].url}` }); setIsModalOpen(false) }} style={{ width: '100%', background: 'none', border: 'none', padding: 0, cursor: 'pointer' }}>
+                            <img src={res.media[0].url} alt={res.name} loading="lazy" style={{ width: '100%', height: '120px', objectFit: 'cover', display: 'block' }} />
+                          </button>
+                        )}
+                        <div style={{ padding: '0.6rem' }}>
+                          <div style={{ fontSize: '0.8rem', fontWeight: 600, color: 'rgba(255,255,255,0.8)', marginBottom: '0.3rem' }}>{res.name}</div>
+                          {res.description && <div style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.3)', lineHeight: 1.3, marginBottom: '0.4rem' }}>{res.description.substring(0, 60)}</div>}
+                          {/* Sheet / projections */}
+                          {res.sheetMedia.length > 0 && (
+                            <div style={{ display: 'flex', gap: '0.3rem', flexWrap: 'wrap' }}>
+                              {res.sheetMedia.map(sm => (
+                                <button key={sm.id} type="button" onClick={() => { onDraftChange({ ...draft, sceneHint: `${scenePickerTab}: ${res.name} [projection] ${sm.url}` }); setIsModalOpen(false) }} style={{ width: '36px', height: '36px', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '4px', padding: '2px', cursor: 'pointer', overflow: 'hidden' }}>
+                                  <img src={sm.url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '3px' }} />
+                                </button>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )
+              })()}
+              {/* Upload from computer */}
+              {scenePickerTab === 'upload' && (
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '3rem 0', gap: '1rem' }}>
+                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="1.5" strokeLinecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                  <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.85rem' }}>Upload any reference file (image, video, audio)</p>
+                  <label style={{ padding: '0.6rem 1.5rem', borderRadius: '2rem', border: '1px solid rgba(212,175,55,0.3)', background: 'rgba(212,175,55,0.08)', color: 'var(--gold)', cursor: 'pointer', fontSize: '0.85rem', transition: 'all 0.2s' }}>
+                    Choose File
+                    <input type="file" accept="image/*,video/*,audio/*" style={{ display: 'none' }} onChange={(e) => {
+                      const file = e.target.files?.[0]
+                      if (file) { onDraftChange({ ...draft, sceneHint: `Upload: ${file.name}` }); setIsModalOpen(false) }
+                    }} />
+                  </label>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -3379,7 +3470,7 @@ function AgentInbox({
                         <button type="button" title="Edit" onClick={(e) => { e.stopPropagation(); setEditingSkillId(skill.id); setNewSkillTitle(skill.name || ''); setNewSkillText(skill.fullText || skill.description || '') }} style={{ width: '22px', height: '22px', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.15)', background: 'rgba(0,0,0,0.6)', color: 'rgba(255,255,255,0.6)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0, fontSize: '0.65rem' }}>
                           <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                         </button>
-                        <button type="button" title="Delete" onClick={async (e) => { e.stopPropagation(); await fetch('/api/skills/delete', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: skill.id }) }); setAvailableSkills(prev => prev.filter(s => s.id !== skill.id)); if (draft.skillHint === skill.name) onDraftChange({ ...draft, skillHint: '' }) }} style={{ width: '22px', height: '22px', borderRadius: '6px', border: '1px solid rgba(255,80,80,0.3)', background: 'rgba(0,0,0,0.6)', color: 'rgba(255,80,80,0.7)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0, fontSize: '0.75rem' }}>
+                        <button type="button" title="Delete" onClick={async (e) => { e.stopPropagation(); if (!window.confirm(`Delete "${skill.name}" permanently from disk?`)) return; await fetch('/api/skills/delete', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: skill.id }) }); setAvailableSkills(prev => prev.filter(s => s.id !== skill.id)); if (draft.skillHint === skill.name) onDraftChange({ ...draft, skillHint: '' }) }} style={{ width: '22px', height: '22px', borderRadius: '6px', border: '1px solid rgba(255,80,80,0.3)', background: 'rgba(0,0,0,0.6)', color: 'rgba(255,80,80,0.7)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0, fontSize: '0.75rem' }}>
                           <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                         </button>
                       </div>

@@ -2920,6 +2920,7 @@ function AgentInbox({
   const [mediaTab, setMediaTab] = useState<'images' | 'videos'>('images')
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [scenePickerTab, setScenePickerTab] = useState<'images' | 'videos' | 'characters' | 'locations' | 'props' | 'styles' | 'upload'>('images')
+  const [sceneSelections, setSceneSelections] = useState<string[]>([])
   const [expandedActs, setExpandedActs] = useState<Record<string, boolean>>({})
   const [expandedScenes, setExpandedScenes] = useState<Record<string, boolean>>({})
   const [showBlueprintGallery, setShowBlueprintGallery] = useState(false)
@@ -2998,6 +2999,11 @@ function AgentInbox({
                   {tab.label}
                 </button>
               ))}
+              {sceneSelections.length > 0 && (
+                <button type="button" onClick={() => { onDraftChange({ ...draft, sceneHint: sceneSelections.join(' | ') }); setSceneSelections([]); setIsModalOpen(false) }} style={{ marginLeft: 'auto', padding: '0.4rem 1rem', borderRadius: '0.5rem', border: '1px solid rgba(64,255,156,0.4)', background: 'rgba(64,255,156,0.1)', color: '#4ade80', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.35rem', whiteSpace: 'nowrap', boxShadow: '0 0 12px rgba(64,255,156,0.2)', transition: 'all 0.2s' }}>
+                  Attach All · {sceneSelections.length}
+                </button>
+              )}
             </div>
             {/* Content */}
             <div style={{ flex: 1, overflowY: 'auto', padding: '1rem 2rem' }}>
@@ -3016,12 +3022,12 @@ function AgentInbox({
                         {scene.title || `Scene ${si + 1}`}
                         <span style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.25)', marginLeft: 'auto' }}>{(scenePickerTab === 'images' ? scene.imageShots : scene.videoShots).length} items</span>
                         {/* Quick select entire scene */}
-                        <button type="button" onClick={(e) => { e.stopPropagation(); onDraftChange({ ...draft, sceneHint: `${act.title} - ${scene.title || `Scene ${si+1}`}` }); setIsModalOpen(false) }} style={{ background: 'rgba(212,175,55,0.1)', border: '1px solid rgba(212,175,55,0.2)', borderRadius: '4px', color: 'var(--gold)', fontSize: '0.6rem', padding: '0.15rem 0.4rem', cursor: 'pointer' }}>Select Scene</button>
+                        <button type="button" onClick={(e) => { e.stopPropagation(); const v = `${act.title} - ${scene.title || `Scene ${si+1}`}`; setSceneSelections(p => p.includes(v) ? p.filter(x => x !== v) : [...p, v]) }} style={{ background: 'rgba(212,175,55,0.1)', border: '1px solid rgba(212,175,55,0.2)', borderRadius: '4px', color: 'var(--gold)', fontSize: '0.6rem', padding: '0.15rem 0.4rem', cursor: 'pointer' }}>Select Scene</button>
                       </button>
                       {expandedScenes[scene.id] && (
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))', gap: '0.5rem', padding: '0.5rem 0 0.5rem 1rem' }}>
                           {(scenePickerTab === 'images' ? scene.imageShots : scene.videoShots).map(shot => shot.media.map(m => (
-                            <button key={m.id} type="button" onClick={() => { onDraftChange({ ...draft, sceneHint: `${act.title} - ${scene.title || `Scene ${si+1}`} [${m.url.split('/').pop()}]` }); setIsModalOpen(false) }} style={{ background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '0.5rem', padding: '0.3rem', cursor: 'pointer', transition: 'all 0.2s', overflow: 'hidden' }}>
+                            <button key={m.id} type="button" onClick={() => { const v = `${act.title} - ${scene.title || `Scene ${si+1}`} [${m.url.split('/').pop()}]`; setSceneSelections(p => p.includes(v) ? p.filter(x => x !== v) : [...p, v]) }} style={{ background: sceneSelections.includes(`${act.title} - ${scene.title || `Scene ${si+1}`} [${m.url.split('/').pop()}]`) ? 'rgba(64,255,156,0.1)' : 'rgba(0,0,0,0.3)', border: sceneSelections.includes(`${act.title} - ${scene.title || `Scene ${si+1}`} [${m.url.split('/').pop()}]`) ? '1px solid rgba(64,255,156,0.4)' : '1px solid rgba(255,255,255,0.06)', borderRadius: '0.5rem', padding: '0.3rem', cursor: 'pointer', transition: 'all 0.2s', overflow: 'hidden', position: 'relative' }}>
                               <img src={m.url} alt="" loading="lazy" style={{ width: '100%', height: '65px', objectFit: 'cover', borderRadius: '0.3rem', display: 'block' }} />
                               <div style={{ fontSize: '0.55rem', color: 'rgba(255,255,255,0.4)', padding: '0.2rem 0.1rem 0', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{m.url.split('/').pop()}</div>
                             </button>
@@ -3044,7 +3050,7 @@ function AgentInbox({
                       <div key={res.id} style={{ background: 'rgba(255,255,255,0.015)', backdropFilter: 'blur(12px)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '0.8rem', overflow: 'hidden', transition: 'all 0.2s' }}>
                         {/* Card image */}
                         {res.media[0] && (
-                          <button type="button" onClick={() => { onDraftChange({ ...draft, sceneHint: `${scenePickerTab}: ${res.name} [card] ${res.media[0].url}` }); setIsModalOpen(false) }} style={{ width: '100%', background: 'none', border: 'none', padding: 0, cursor: 'pointer' }}>
+                          <button type="button" onClick={() => { const v = `${scenePickerTab}: ${res.name} [card] ${res.media[0].url}`; setSceneSelections(p => p.includes(v) ? p.filter(x => x !== v) : [...p, v]) }} style={{ width: '100%', background: 'none', border: 'none', padding: 0, cursor: 'pointer', position: 'relative' }}>
                             <img src={res.media[0].url} alt={res.name} loading="lazy" style={{ width: '100%', height: '120px', objectFit: 'cover', display: 'block' }} />
                           </button>
                         )}
@@ -3055,7 +3061,7 @@ function AgentInbox({
                           {res.sheetMedia.length > 0 && (
                             <div style={{ display: 'flex', gap: '0.3rem', flexWrap: 'wrap' }}>
                               {res.sheetMedia.map(sm => (
-                                <button key={sm.id} type="button" onClick={() => { onDraftChange({ ...draft, sceneHint: `${scenePickerTab}: ${res.name} [projection] ${sm.url}` }); setIsModalOpen(false) }} style={{ width: '36px', height: '36px', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '4px', padding: '2px', cursor: 'pointer', overflow: 'hidden' }}>
+                                <button key={sm.id} type="button" onClick={() => { const v = `${scenePickerTab}: ${res.name} [projection] ${sm.url}`; setSceneSelections(p => p.includes(v) ? p.filter(x => x !== v) : [...p, v]) }} style={{ width: '36px', height: '36px', background: sceneSelections.some(s => s.includes(sm.url)) ? 'rgba(64,255,156,0.15)' : 'rgba(0,0,0,0.3)', border: sceneSelections.some(s => s.includes(sm.url)) ? '1px solid rgba(64,255,156,0.4)' : '1px solid rgba(255,255,255,0.08)', borderRadius: '4px', padding: '2px', cursor: 'pointer', overflow: 'hidden' }}>
                                   <img src={sm.url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '3px' }} />
                                 </button>
                               ))}
@@ -3477,23 +3483,23 @@ function AgentInbox({
             <div style={{ flex: 1, overflowY: 'auto', padding: '1.5rem 2rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.8rem' }}>
                 <p style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.35)', textTransform: 'uppercase', letterSpacing: '1.5px', fontWeight: 600, margin: 0 }}>Available Skills</p>
-                {availableSkills.length > 6 && (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-                    <button type="button" onClick={() => setSkillsPage(Math.max(0, skillsPage - 1))} disabled={skillsPage === 0} style={{ background: 'none', border: 'none', cursor: skillsPage === 0 ? 'default' : 'pointer', padding: 0, opacity: skillsPage === 0 ? 0.15 : 0.4, transition: 'opacity 0.2s' }}>
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round"><polyline points="15 18 9 12 15 6" /></svg>
+                {(() => { const totalPages = availableSkills.length <= 5 ? 1 : 1 + Math.ceil((availableSkills.length - 5) / 6); return totalPages > 1 ? (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.7rem' }}>
+                    <button type="button" onClick={() => setSkillsPage(Math.max(0, skillsPage - 1))} disabled={skillsPage === 0} style={{ background: 'none', border: 'none', cursor: skillsPage === 0 ? 'default' : 'pointer', padding: '2px', opacity: skillsPage === 0 ? 0.15 : 0.5, transition: 'opacity 0.2s' }}>
+                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round"><polyline points="15 18 9 12 15 6" /></svg>
                     </button>
-                    {Array.from({ length: Math.ceil(availableSkills.length / 6) }).map((_, i) => (
-                      <button key={i} type="button" onClick={() => setSkillsPage(i)} style={{ width: '6px', height: '6px', borderRadius: '50%', border: 'none', background: i === skillsPage ? 'var(--gold)' : 'rgba(255,255,255,0.15)', boxShadow: i === skillsPage ? '0 0 6px rgba(212,175,55,0.5)' : 'none', cursor: 'pointer', padding: 0, transition: 'all 0.2s' }} />
+                    {Array.from({ length: totalPages }).map((_, i) => (
+                      <button key={i} type="button" onClick={() => setSkillsPage(i)} style={{ width: '9px', height: '9px', borderRadius: '50%', border: 'none', background: i === skillsPage ? 'var(--gold)' : 'rgba(255,255,255,0.18)', boxShadow: i === skillsPage ? '0 0 8px rgba(212,175,55,0.6)' : 'none', cursor: 'pointer', padding: 0, transition: 'all 0.25s' }} />
                     ))}
-                    <button type="button" onClick={() => setSkillsPage(Math.min(Math.ceil(availableSkills.length / 6) - 1, skillsPage + 1))} disabled={skillsPage >= Math.ceil(availableSkills.length / 6) - 1} style={{ background: 'none', border: 'none', cursor: skillsPage >= Math.ceil(availableSkills.length / 6) - 1 ? 'default' : 'pointer', padding: 0, opacity: skillsPage >= Math.ceil(availableSkills.length / 6) - 1 ? 0.15 : 0.4, transition: 'opacity 0.2s' }}>
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round"><polyline points="9 18 15 12 9 6" /></svg>
+                    <button type="button" onClick={() => setSkillsPage(Math.min(totalPages - 1, skillsPage + 1))} disabled={skillsPage >= totalPages - 1} style={{ background: 'none', border: 'none', cursor: skillsPage >= totalPages - 1 ? 'default' : 'pointer', padding: '2px', opacity: skillsPage >= totalPages - 1 ? 0.15 : 0.5, transition: 'opacity 0.2s' }}>
+                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round"><polyline points="9 18 15 12 9 6" /></svg>
                     </button>
                   </div>
-                )}
+                ) : null })()}
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', marginBottom: '2rem' }}>
-                {availableSkills.slice(skillsPage * 6, skillsPage * 6 + 6).map((skill, sliceIdx) => {
-                  const idx = skillsPage * 6 + sliceIdx
+                {(() => { const p1Count = Math.min(availableSkills.length, 5); const pageSkills = skillsPage === 0 ? availableSkills.slice(0, p1Count) : availableSkills.slice(p1Count + (skillsPage - 1) * 6, p1Count + skillsPage * 6); return pageSkills })().map((skill, sliceIdx) => {
+                  const idx = skillsPage === 0 ? sliceIdx : Math.min(availableSkills.length, 5) + (skillsPage - 1) * 6 + sliceIdx
                   const isSelected = draft.skillHint === skill.name
                   const ic = getIcon(skill.iconIdx ?? idx)
                   return (
@@ -3523,7 +3529,8 @@ function AgentInbox({
                     </div>
                   )
                 })}
-                {/* Upload from computer */}
+                {/* Upload from computer — always visible on page 1 only */}
+                {skillsPage === 0 && (
                 <label style={{ background: 'rgba(255,255,255,0.015)', backdropFilter: 'blur(16px)', border: '1px dashed rgba(255,255,255,0.1)', borderRadius: '1rem', padding: '1.4rem 1rem', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.7rem', transition: 'all 0.3s', textAlign: 'center' }}>
                   <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.3)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
                   <div style={{ fontSize: '0.82rem', fontWeight: 600, color: 'rgba(255,255,255,0.35)' }}>Upload Skill</div>
@@ -3545,6 +3552,7 @@ function AgentInbox({
                     }
                   }} />
                 </label>
+                )}
               </div>
 
               {/* Create / Edit Skill Section */}
@@ -3625,27 +3633,25 @@ function AgentInbox({
         </div>
       )
       })()}
-
       {/* PDF BOOK VIEWER */}
       {showPdfViewer && (
         <div className="skills-store-backdrop" onClick={() => setShowPdfViewer(false)} style={{ position: 'fixed', inset: 0, zIndex: 9999, background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', display: 'flex', alignItems: 'center', justifyContent: 'center', animation: 'fadeIn 0.3s ease' }}>
-          <div onClick={(e) => e.stopPropagation()} style={{ width: 'min(92vw, 960px)', maxHeight: '88vh', background: 'linear-gradient(145deg, rgba(20,20,30,0.96), rgba(10,10,20,0.98))', border: '1px solid rgba(212,175,55,0.12)', borderRadius: '1.5rem', overflow: 'hidden', display: 'flex', flexDirection: 'column', boxShadow: '0 30px 80px rgba(0,0,0,0.6), 0 0 40px rgba(212,175,55,0.06), inset 0 1px 0 rgba(255,255,255,0.05)' }}>
+          <div onClick={(e) => e.stopPropagation()} style={{ width: 'min(92vw, 960px)', height: 'min(88vh, 720px)', background: 'linear-gradient(145deg, rgba(20,20,30,0.96), rgba(10,10,20,0.98))', border: '1px solid rgba(212,175,55,0.12)', borderRadius: '1.5rem', overflow: 'hidden', display: 'flex', flexDirection: 'column', boxShadow: '0 30px 80px rgba(0,0,0,0.6), 0 0 40px rgba(212,175,55,0.06), inset 0 1px 0 rgba(255,255,255,0.05)' }}>
             {/* Header */}
             <div style={{ padding: '1rem 1.5rem', borderBottom: '1px solid rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.8rem' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ff6040" strokeWidth="1.5"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
-                <h2 style={{ margin: 0, fontSize: '1.05rem', color: 'white', fontWeight: 700 }}>PDF Book Viewer</h2>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', minWidth: 'fit-content' }}>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ff6040" strokeWidth="1.5"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+                <h2 style={{ margin: 0, fontSize: '1.1rem', color: 'white', fontWeight: 700 }}>Document Viewer</h2>
               </div>
-              {/* Pinned docs */}
-              <div style={{ display: 'flex', gap: '0.3rem', flex: 1, overflowX: 'auto' }}>
+              <div style={{ display: 'flex', gap: '0.3rem', flex: 1, overflowX: 'auto', padding: '0.2rem 0' }}>
                 {pdfDocs.map(doc => (
                   <button key={doc.name} type="button" onClick={async () => {
-                    setActivePdf(doc.name)
-                    setPdfCurrentPage(0)
+                    setActivePdf(doc.name); setPdfCurrentPage(0); setPdfPages([])
                     try {
                       const pdfjsLib = await import('pdfjs-dist')
                       pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.mjs`
-                      const pdf = await pdfjsLib.getDocument(doc.path).promise
+                      const encodedPath = `/assets/storyboard/docs/${encodeURIComponent(doc.name)}`
+                      const pdf = await pdfjsLib.getDocument(encodedPath).promise
                       const pages: string[] = []
                       for (let i = 1; i <= pdf.numPages; i++) {
                         const page = await pdf.getPage(i)
@@ -3653,126 +3659,74 @@ function AgentInbox({
                         pages.push(content.items.map((item: any) => item.str).join(' '))
                       }
                       setPdfPages(pages)
-                    } catch { setPdfPages(['Error loading PDF']) }
-                  }} style={{ padding: '0.25rem 0.5rem', borderRadius: '0.4rem', border: `1px solid ${activePdf === doc.name ? 'rgba(255,96,64,0.4)' : 'rgba(255,255,255,0.06)'}`, background: activePdf === doc.name ? 'rgba(255,96,64,0.08)' : 'transparent', color: activePdf === doc.name ? '#ff6040' : 'rgba(255,255,255,0.5)', cursor: 'pointer', fontSize: '0.68rem', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: '0.25rem', transition: 'all 0.2s' }}>
-                    <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>
-                    {doc.name.replace('.pdf','').substring(0,15)}
-                    {/* Unpin */}
-                    {doc.pinned && <span onClick={(e) => { e.stopPropagation(); fetch('/api/docs/pin', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: doc.name, pinned: false }) }).then(() => setPdfDocs(prev => prev.map(d => d.name === doc.name ? { ...d, pinned: false } : d))) }} style={{ cursor: 'pointer', opacity: 0.4, fontSize: '0.6rem' }}>📌</span>}
+                    } catch (err) { setPdfPages([`Error: ${err}`]) }
+                  }} style={{ padding: '0.3rem 0.7rem', borderRadius: '0.5rem', border: `1px solid ${activePdf === doc.name ? 'rgba(255,96,64,0.4)' : 'rgba(255,255,255,0.06)'}`, background: activePdf === doc.name ? 'rgba(255,96,64,0.08)' : 'transparent', color: activePdf === doc.name ? '#ff6040' : 'rgba(255,255,255,0.5)', cursor: 'pointer', fontSize: '0.72rem', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: '0.3rem', transition: 'all 0.2s' }}>
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                    {doc.name.replace(/\.(pdf|docx|pages)$/i,'').substring(0,20)}
+                    {doc.pinned && <span onClick={(e) => { e.stopPropagation(); fetch('/api/docs/pin', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: doc.name, pinned: false }) }).then(() => setPdfDocs(prev => prev.map(d => d.name === doc.name ? { ...d, pinned: false } : d))) }} style={{ cursor: 'pointer', opacity: 0.5, fontSize: '0.65rem' }}>📌</span>}
                   </button>
                 ))}
               </div>
-              {/* Upload + Close */}
-              <label style={{ padding: '0.3rem 0.6rem', borderRadius: '0.4rem', border: '1px solid rgba(64,255,156,0.2)', background: 'rgba(64,255,156,0.05)', color: 'rgba(100,255,180,0.7)', cursor: 'pointer', fontSize: '0.7rem', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              <label style={{ padding: '0.4rem 0.8rem', borderRadius: '0.5rem', border: '1px solid rgba(64,255,156,0.25)', background: 'rgba(64,255,156,0.06)', color: 'rgba(100,255,180,0.8)', cursor: 'pointer', fontSize: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.35rem', whiteSpace: 'nowrap' }}>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
                 Upload
-                <input type="file" accept=".pdf" style={{ display: 'none' }} onChange={async (e) => {
-                  const file = e.target.files?.[0]
-                  if (!file) return
+                <input type="file" accept=".pdf,.docx,.pages" style={{ display: 'none' }} onChange={async (e) => {
+                  const file = e.target.files?.[0]; if (!file) return
                   const buf = await file.arrayBuffer()
                   await fetch('/api/docs/upload', { method: 'POST', headers: { 'X-Filename': file.name }, body: buf })
                   const r = await fetch('/api/docs/list'); const d = await r.json(); setPdfDocs(d.docs || [])
                 }} />
               </label>
-              <button type="button" onClick={() => setShowPdfViewer(false)} style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '0.4rem', color: 'rgba(255,255,255,0.5)', width: '28px', height: '28px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: '1rem' }}>✕</button>
+              <button type="button" onClick={() => setShowPdfViewer(false)} style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '0.5rem', color: 'rgba(255,255,255,0.5)', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: '1.1rem' }}>✕</button>
             </div>
-            {/* Marker color bar */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem 1.5rem', borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-              <span style={{ fontSize: '0.68rem', color: 'rgba(255,255,255,0.35)', marginRight: '0.3rem' }}>Marker:</span>
+            {/* Marker bar */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', padding: '0.6rem 1.5rem', borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
+              <span style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.4)' }}>Marker:</span>
               {[{ c: '#ffe14d', l: 'Yellow' }, { c: '#c084fc', l: 'Purple' }, { c: '#60a5fa', l: 'Blue' }].map(mk => (
-                <button key={mk.c} type="button" onClick={() => setActiveMarkerColor(mk.c)} style={{ width: '20px', height: '20px', borderRadius: '4px', border: activeMarkerColor === mk.c ? '2px solid white' : '1px solid rgba(255,255,255,0.15)', background: mk.c + '40', cursor: 'pointer', boxShadow: activeMarkerColor === mk.c ? `0 0 8px ${mk.c}66` : 'none', transition: 'all 0.2s' }} title={mk.l} />
+                <button key={mk.c} type="button" onClick={() => setActiveMarkerColor(mk.c)} style={{ width: '28px', height: '28px', borderRadius: '6px', border: activeMarkerColor === mk.c ? '2px solid white' : '1px solid rgba(255,255,255,0.2)', background: mk.c + '80', cursor: 'pointer', boxShadow: activeMarkerColor === mk.c ? `0 0 12px ${mk.c}` : 'none', transition: 'all 0.2s' }} title={mk.l} />
               ))}
-              {activePdf && pdfPages.length > 0 && (
-                <span style={{ marginLeft: 'auto', fontSize: '0.7rem', color: 'rgba(255,255,255,0.35)' }}>
-                  Page {pdfCurrentPage + 1}–{Math.min(pdfCurrentPage + 2, pdfPages.length)} of {pdfPages.length}
-                </span>
-              )}
+              {activePdf && pdfPages.length > 0 && <span style={{ marginLeft: 'auto', fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)' }}>Page {pdfCurrentPage + 1}–{Math.min(pdfCurrentPage + 2, pdfPages.length)} of {pdfPages.length}</span>}
             </div>
             {/* Book content */}
             <div style={{ flex: 1, overflow: 'hidden', display: 'flex' }}>
               {!activePdf || pdfPages.length === 0 ? (
-                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '1rem', color: 'rgba(255,255,255,0.3)' }}>
-                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
-                  <p style={{ fontSize: '0.85rem' }}>{pdfDocs.length === 0 ? 'Upload a PDF to get started' : 'Select a document above'}</p>
+                <div style={{ flex: 1, display: 'flex' }} onDragOver={(e) => e.preventDefault()} onDrop={async (e) => {
+                  e.preventDefault(); const file = e.dataTransfer.files[0]; if (!file) return
+                  const buf = await file.arrayBuffer()
+                  await fetch('/api/docs/upload', { method: 'POST', headers: { 'X-Filename': file.name }, body: buf })
+                  const r = await fetch('/api/docs/list'); const d = await r.json(); setPdfDocs(d.docs || [])
+                }}>
+                  <div style={{ flex: 1, background: 'rgba(255,255,255,0.008)', borderRight: '1px solid rgba(255,255,255,0.04)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <div style={{ opacity: 0.15 }}>{Array.from({length: 8}).map((_, i) => <div key={i} style={{ width: '70%', maxWidth: '120px', height: '3px', background: 'white', margin: '8px auto', borderRadius: '2px' }} />)}</div>
+                  </div>
+                  <div style={{ flex: 1, background: 'rgba(255,255,255,0.012)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: '1rem' }}>
+                    <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.12)" strokeWidth="1"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+                    <p style={{ color: 'rgba(255,255,255,0.25)', fontSize: '0.88rem', textAlign: 'center', lineHeight: 1.6 }}>{pdfDocs.length === 0 ? 'Drag & drop a document\nor click Upload' : 'Select a document above'}</p>
+                  </div>
                 </div>
               ) : (
-                <div style={{ flex: 1, display: 'flex', gap: '1px' }}>
-                  {/* Left page */}
-                  <div style={{ flex: 1, padding: '1.5rem', overflowY: 'auto', background: 'rgba(255,255,255,0.01)', borderRight: '1px solid rgba(255,255,255,0.04)', fontSize: '0.8rem', lineHeight: 1.7, color: 'rgba(255,255,255,0.7)', fontFamily: 'Georgia, serif', whiteSpace: 'pre-wrap', cursor: 'text', userSelect: 'text' }}
-                    onMouseUp={() => {
-                      const sel = window.getSelection()
-                      if (sel && sel.toString().trim()) {
-                        const text = sel.toString()
-                        const pageText = pdfPages[pdfCurrentPage] || ''
-                        const startIdx = pageText.indexOf(text)
-                        if (startIdx > -1) {
-                          const key = activePdf || ''
-                          setPdfMarkers(prev => ({ ...prev, [key]: [...(prev[key] || []), { page: pdfCurrentPage, color: activeMarkerColor, startIdx, endIdx: startIdx + text.length }] }))
-                        }
-                      }
-                    }}>
-                    <div style={{ fontSize: '0.6rem', color: 'rgba(255,255,255,0.2)', marginBottom: '0.5rem', textTransform: 'uppercase', letterSpacing: '1px' }}>Page {pdfCurrentPage + 1}</div>
-                    {(() => {
-                      const text = pdfPages[pdfCurrentPage] || ''
-                      const marks = (pdfMarkers[activePdf || ''] || []).filter(m => m.page === pdfCurrentPage)
-                      if (marks.length === 0) return text
-                      let parts: any[] = []; let lastEnd = 0
-                      const sorted = [...marks].sort((a, b) => a.startIdx - b.startIdx)
-                      sorted.forEach(m => {
-                        if (m.startIdx > lastEnd) parts.push(<span key={`t${lastEnd}`}>{text.slice(lastEnd, m.startIdx)}</span>)
-                        parts.push(<span key={`m${m.startIdx}`} style={{ background: m.color + '40', borderRadius: '2px', padding: '0 1px' }}>{text.slice(m.startIdx, m.endIdx)}</span>)
-                        lastEnd = m.endIdx
-                      })
-                      if (lastEnd < text.length) parts.push(<span key="end">{text.slice(lastEnd)}</span>)
-                      return parts
-                    })()}
+                <div style={{ flex: 1, display: 'flex' }}>
+                  <div style={{ flex: 1, padding: '2rem 1.8rem', overflowY: 'auto', background: 'rgba(255,255,255,0.008)', borderRight: '1px solid rgba(255,255,255,0.04)', fontSize: '0.88rem', lineHeight: 1.85, color: 'rgba(255,255,255,0.75)', fontFamily: 'Georgia, serif', whiteSpace: 'pre-wrap', cursor: 'text', userSelect: 'text' }}
+                    onMouseUp={() => { const s = window.getSelection(); if (s?.toString().trim()) { const t = s.toString(), pt = pdfPages[pdfCurrentPage] || '', si = pt.indexOf(t); if (si > -1) setPdfMarkers(p => ({ ...p, [activePdf||'']: [...(p[activePdf||'']||[]), { page: pdfCurrentPage, color: activeMarkerColor, startIdx: si, endIdx: si + t.length }] })) } }}>
+                    <div style={{ fontSize: '0.68rem', color: 'rgba(255,255,255,0.25)', marginBottom: '0.8rem', textTransform: 'uppercase', letterSpacing: '1.5px', fontFamily: 'sans-serif' }}>Page {pdfCurrentPage + 1}</div>
+                    {(() => { const text = pdfPages[pdfCurrentPage]||'', marks = (pdfMarkers[activePdf||'']||[]).filter(m => m.page === pdfCurrentPage); if (!marks.length) return text; let parts: any[] = [], le = 0; [...marks].sort((a,b) => a.startIdx-b.startIdx).forEach(m => { if (m.startIdx > le) parts.push(<span key={`t${le}`}>{text.slice(le, m.startIdx)}</span>); parts.push(<span key={`m${m.startIdx}`} style={{ background: m.color, color: '#000', borderRadius: '3px', padding: '0 3px', fontWeight: 600 }}>{text.slice(m.startIdx, m.endIdx)}</span>); le = m.endIdx }); if (le < text.length) parts.push(<span key="e">{text.slice(le)}</span>); return parts })()}
                   </div>
-                  {/* Right page */}
                   {pdfCurrentPage + 1 < pdfPages.length && (
-                    <div style={{ flex: 1, padding: '1.5rem', overflowY: 'auto', background: 'rgba(255,255,255,0.015)', fontSize: '0.8rem', lineHeight: 1.7, color: 'rgba(255,255,255,0.7)', fontFamily: 'Georgia, serif', whiteSpace: 'pre-wrap', cursor: 'text', userSelect: 'text' }}
-                      onMouseUp={() => {
-                        const sel = window.getSelection()
-                        if (sel && sel.toString().trim()) {
-                          const text = sel.toString()
-                          const pageText = pdfPages[pdfCurrentPage + 1] || ''
-                          const startIdx = pageText.indexOf(text)
-                          if (startIdx > -1) {
-                            const key = activePdf || ''
-                            setPdfMarkers(prev => ({ ...prev, [key]: [...(prev[key] || []), { page: pdfCurrentPage + 1, color: activeMarkerColor, startIdx, endIdx: startIdx + text.length }] }))
-                          }
-                        }
-                      }}>
-                      <div style={{ fontSize: '0.6rem', color: 'rgba(255,255,255,0.2)', marginBottom: '0.5rem', textTransform: 'uppercase', letterSpacing: '1px' }}>Page {pdfCurrentPage + 2}</div>
-                      {(() => {
-                        const text = pdfPages[pdfCurrentPage + 1] || ''
-                        const marks = (pdfMarkers[activePdf || ''] || []).filter(m => m.page === pdfCurrentPage + 1)
-                        if (marks.length === 0) return text
-                        let parts: any[] = []; let lastEnd = 0
-                        const sorted = [...marks].sort((a, b) => a.startIdx - b.startIdx)
-                        sorted.forEach(m => {
-                          if (m.startIdx > lastEnd) parts.push(<span key={`t${lastEnd}`}>{text.slice(lastEnd, m.startIdx)}</span>)
-                          parts.push(<span key={`m${m.startIdx}`} style={{ background: m.color + '40', borderRadius: '2px', padding: '0 1px' }}>{text.slice(m.startIdx, m.endIdx)}</span>)
-                          lastEnd = m.endIdx
-                        })
-                        if (lastEnd < text.length) parts.push(<span key="end">{text.slice(lastEnd)}</span>)
-                        return parts
-                      })()}
+                    <div style={{ flex: 1, padding: '2rem 1.8rem', overflowY: 'auto', background: 'rgba(255,255,255,0.015)', fontSize: '0.88rem', lineHeight: 1.85, color: 'rgba(255,255,255,0.75)', fontFamily: 'Georgia, serif', whiteSpace: 'pre-wrap', cursor: 'text', userSelect: 'text' }}
+                      onMouseUp={() => { const s = window.getSelection(); if (s?.toString().trim()) { const t = s.toString(), pt = pdfPages[pdfCurrentPage+1]||'', si = pt.indexOf(t); if (si > -1) setPdfMarkers(p => ({ ...p, [activePdf||'']: [...(p[activePdf||'']||[]), { page: pdfCurrentPage+1, color: activeMarkerColor, startIdx: si, endIdx: si + t.length }] })) } }}>
+                      <div style={{ fontSize: '0.68rem', color: 'rgba(255,255,255,0.25)', marginBottom: '0.8rem', textTransform: 'uppercase', letterSpacing: '1.5px', fontFamily: 'sans-serif' }}>Page {pdfCurrentPage + 2}</div>
+                      {(() => { const text = pdfPages[pdfCurrentPage+1]||'', marks = (pdfMarkers[activePdf||'']||[]).filter(m => m.page === pdfCurrentPage+1); if (!marks.length) return text; let parts: any[] = [], le = 0; [...marks].sort((a,b) => a.startIdx-b.startIdx).forEach(m => { if (m.startIdx > le) parts.push(<span key={`t${le}`}>{text.slice(le, m.startIdx)}</span>); parts.push(<span key={`m${m.startIdx}`} style={{ background: m.color, color: '#000', borderRadius: '3px', padding: '0 3px', fontWeight: 600 }}>{text.slice(m.startIdx, m.endIdx)}</span>); le = m.endIdx }); if (le < text.length) parts.push(<span key="e">{text.slice(le)}</span>); return parts })()}
                     </div>
                   )}
                 </div>
               )}
             </div>
-            {/* Page nav */}
             {pdfPages.length > 0 && (
-              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '1rem', padding: '0.6rem', borderTop: '1px solid rgba(255,255,255,0.04)' }}>
-                <button type="button" disabled={pdfCurrentPage === 0} onClick={() => setPdfCurrentPage(p => Math.max(0, p - 2))} style={{ background: 'none', border: 'none', color: pdfCurrentPage === 0 ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.5)', cursor: pdfCurrentPage === 0 ? 'default' : 'pointer', fontSize: '0.8rem' }}>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><polyline points="15 18 9 12 15 6" /></svg>
-                </button>
-                <input type="number" min={1} max={pdfPages.length} value={pdfCurrentPage + 1} onChange={(e) => setPdfCurrentPage(Math.max(0, Math.min(pdfPages.length - 1, parseInt(e.target.value || '1') - 1)))} style={{ width: '40px', textAlign: 'center', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '4px', color: 'white', fontSize: '0.75rem', padding: '0.2rem' }} />
-                <span style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.3)' }}>/ {pdfPages.length}</span>
-                <button type="button" disabled={pdfCurrentPage + 2 >= pdfPages.length} onClick={() => setPdfCurrentPage(p => Math.min(pdfPages.length - 1, p + 2))} style={{ background: 'none', border: 'none', color: pdfCurrentPage + 2 >= pdfPages.length ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.5)', cursor: pdfCurrentPage + 2 >= pdfPages.length ? 'default' : 'pointer', fontSize: '0.8rem' }}>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><polyline points="9 18 15 12 9 6" /></svg>
-                </button>
+              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '1.2rem', padding: '0.8rem', borderTop: '1px solid rgba(255,255,255,0.04)' }}>
+                <button type="button" disabled={pdfCurrentPage === 0} onClick={() => setPdfCurrentPage(p => Math.max(0, p - 2))} style={{ background: 'none', border: 'none', color: pdfCurrentPage === 0 ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.5)', cursor: pdfCurrentPage === 0 ? 'default' : 'pointer' }}><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><polyline points="15 18 9 12 15 6" /></svg></button>
+                <input type="number" min={1} max={pdfPages.length} value={pdfCurrentPage + 1} onChange={(e) => setPdfCurrentPage(Math.max(0, Math.min(pdfPages.length - 1, parseInt(e.target.value || '1') - 1)))} style={{ width: '45px', textAlign: 'center', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '6px', color: 'white', fontSize: '0.82rem', padding: '0.3rem' }} />
+                <span style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.35)' }}>/ {pdfPages.length}</span>
+                <button type="button" disabled={pdfCurrentPage + 2 >= pdfPages.length} onClick={() => setPdfCurrentPage(p => Math.min(pdfPages.length - 1, p + 2))} style={{ background: 'none', border: 'none', color: pdfCurrentPage + 2 >= pdfPages.length ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.5)', cursor: pdfCurrentPage + 2 >= pdfPages.length ? 'default' : 'pointer' }}><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><polyline points="9 18 15 12 9 6" /></svg></button>
               </div>
             )}
           </div>

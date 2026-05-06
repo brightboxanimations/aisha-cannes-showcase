@@ -441,7 +441,7 @@ function storyboardApiPlugin() {
       server.middlewares.use('/api/docs/list', async (req, res) => {
         if (req.method !== 'GET') return sendJson(res, { error: 'Method not allowed' }, 405)
         try {
-          const files = fs.readdirSync(docsDir).filter(f => f.endsWith('.pdf'))
+          const files = fs.readdirSync(docsDir).filter(f => /\.(pdf|docx|pages)$/i.test(f))
           const pins: string[] = JSON.parse(fs.readFileSync(pinsFile, 'utf8') || '[]')
           const docs = files.map(f => ({
             name: f,

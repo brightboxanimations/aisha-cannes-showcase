@@ -3136,53 +3136,21 @@ function AgentInbox({
 
       <div className="mindmap-composer">
         <div className="mindmap-main-node task-form-glass" style={{ flex: 2, padding: '2rem' }}>
-          <div className="node-header">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-            <input placeholder="Task Title (e.g. Master Shot 01)" value={draft.title} onChange={(event) => onDraftChange({ ...draft, title: event.target.value })} className="node-title-input" />
-          </div>
-
-          {/* Composer Tabs: Agent / Task / Prompt Builder */}
+          {/* Composer Tabs: Agent / Task / Builder — colored */}
           <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem' }}>
             {([
-              { key: 'agent', label: 'Agent', d: 'M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7z' },
-              { key: 'task', label: 'Task', d: 'M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2M9 5h6M9 14l2 2 4-4' },
-              { key: 'promptBuilder', label: 'Builder', d: 'M12 3l1.912 5.813L20 10.5l-4.587 3.979L16.978 21 12 17.5 7.022 21l1.565-6.521L4 10.5l6.088-1.687L12 3' }
-            ] as const).map(tab => (
-              <button key={tab.key} type="button" onClick={() => setComposerTab(tab.key as any)} style={{ padding: '0.5rem 1rem', borderRadius: '0.7rem', border: composerTab === tab.key ? '1px solid rgba(212,175,55,0.4)' : '1px solid rgba(255,255,255,0.06)', background: composerTab === tab.key ? 'rgba(212,175,55,0.08)' : 'rgba(255,255,255,0.015)', backdropFilter: 'blur(8px)', color: composerTab === tab.key ? 'var(--gold)' : 'rgba(255,255,255,0.45)', cursor: 'pointer', fontSize: '0.78rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.4rem', transition: 'all 0.25s', boxShadow: composerTab === tab.key ? '0 0 10px rgba(212,175,55,0.12), inset 0 1px 0 rgba(255,255,255,0.05)' : 'inset 0 1px 0 rgba(255,255,255,0.03)' }}>
+              { key: 'agent', label: 'Agent', color: '#d4af37', d: 'M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7z' },
+              { key: 'task', label: 'Task', color: '#4ade80', d: 'M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2M9 5h6M9 14l2 2 4-4' },
+              { key: 'promptBuilder', label: 'Builder', color: '#60a5fa', d: 'M12 3l1.912 5.813L20 10.5l-4.587 3.979L16.978 21 12 17.5 7.022 21l1.565-6.521L4 10.5l6.088-1.687L12 3' }
+            ] as const).map(tab => {
+              const active = composerTab === tab.key;
+              return (
+              <button key={tab.key} type="button" onClick={() => setComposerTab(tab.key as any)} style={{ padding: '0.5rem 1.1rem', borderRadius: '0.7rem', border: active ? `1px solid ${tab.color}66` : '1px solid rgba(255,255,255,0.06)', background: active ? `${tab.color}14` : 'rgba(255,255,255,0.015)', backdropFilter: 'blur(8px)', color: active ? tab.color : 'rgba(255,255,255,0.45)', cursor: 'pointer', fontSize: '0.8rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.4rem', transition: 'all 0.25s', boxShadow: active ? `0 0 10px ${tab.color}20` : 'none' }}>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d={tab.d} /></svg>
                 {tab.label}
               </button>
-            ))}
-            {/* Dictation Button */}
-            <button type="button" title={isRecording ? "Stop Dictation" : "Start Dictation"} onClick={() => {
-              if (isRecording && recognitionRef.current) {
-                recognitionRef.current.stop();
-                setIsRecording(false);
-              } else {
-                const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-                if (!SpeechRecognition) { alert('Speech recognition is not supported in this browser.'); return; }
-                const recognition = new SpeechRecognition();
-                recognition.continuous = true;
-                recognition.interimResults = true;
-                recognition.lang = 'en-US';
-                recognition.onresult = (event: any) => {
-                  let transcript = '';
-                  for (let i = event.resultIndex; i < event.results.length; i++) {
-                    transcript += event.results[i][0].transcript;
-                  }
-                  if (event.results[event.results.length - 1].isFinal) {
-                    onDraftChange({ ...draft, prompt: draft.prompt + ' ' + transcript });
-                  }
-                };
-                recognition.onerror = () => setIsRecording(false);
-                recognition.onend = () => setIsRecording(false);
-                recognition.start();
-                recognitionRef.current = recognition;
-                setIsRecording(true);
-              }
-            }} style={{ marginLeft: 'auto', padding: '0.5rem', borderRadius: '0.6rem', width: '36px', height: '36px', border: isRecording ? '2px solid #ff2a55' : '1px solid rgba(255,255,255,0.1)', background: isRecording ? 'rgba(255, 42, 85, 0.15)' : 'rgba(255,255,255,0.015)', color: isRecording ? '#ff2a55' : 'rgba(255,255,255,0.4)', cursor: 'pointer', display: 'grid', placeItems: 'center', transition: 'all 0.3s', animation: isRecording ? 'pulse-recording 1.5s infinite' : 'none' }}>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>
-            </button>
+              )
+            })}
           </div>
 
           {composerTab === 'agent' ? (
@@ -3196,15 +3164,14 @@ function AgentInbox({
                 setAgentLoading(true);
                 if (file.type.startsWith('image/')) {
                   const reader = new FileReader(); reader.onload = async () => {
-                    const desc = `[User dropped image: ${file.name}]`;
-                    const result = await chatWithAgent(desc + '\n\nPlease examine this image and describe what you see. How can we use it in our storyboard?', agentHistory);
+                    const result = await chatWithAgent(`I dropped an image "${file.name}". What can you tell me about it?`, agentHistory, `User dropped image file: ${file.name}`);
                     if (!result.error) setAgentHistory(result.updatedHistory);
                     setAgentLoading(false);
                   }; reader.readAsDataURL(file);
                 } else {
                   const text = await file.text();
                   const preview = text.substring(0, 2000);
-                  const result = await chatWithAgent(`[User dropped file: ${file.name}]\n\nContent:\n${preview}\n\nPlease review this document and tell me what you understand from it.`, agentHistory);
+                  const result = await chatWithAgent(`I dropped a file "${file.name}". Please review it.`, agentHistory, `File "${file.name}" content:\n${preview}`);
                   if (!result.error) setAgentHistory(result.updatedHistory);
                   setAgentLoading(false);
                 }
@@ -3219,53 +3186,49 @@ function AgentInbox({
                   </div>
                 ))}
               </div>
-              <div style={{ padding: '0.6rem', borderTop: '1px solid rgba(255,255,255,0.04)', display: 'flex', gap: '0.4rem', alignItems: 'flex-start' }}>
+              <div style={{ padding: '0.5rem', borderTop: '1px solid rgba(255,255,255,0.04)', display: 'flex', gap: '0.4rem', alignItems: 'stretch' }}>
                 <textarea placeholder="Ask Theo anything... (Shift+Enter for newline)" value={agentInput} onChange={e => setAgentInput(e.target.value)} onKeyDown={async (e) => {
                   if (e.key === 'Enter' && !e.shiftKey && agentInput.trim()) {
                     e.preventDefault(); const msg = agentInput; setAgentInput(''); setAgentLoading(true);
-                    const ctxParts: string[] = []; if (draft.sceneHint) ctxParts.push(`[Attached scene assets: ${draft.sceneHint}]`);
-                    if (draft.skillHint) { try { const r = await fetch(`/assets/storyboard/skills/${draft.skillHint}`); const t = await r.text(); ctxParts.push(`[Attached skill "${draft.skillHint}" content:\n${t.substring(0, 3000)}]`); } catch { ctxParts.push(`[Attached skill: ${draft.skillHint}]`); } }
-                    if (activePdf && pdfPages.length > 0) { const marks = pdfMarkers[activePdf] || []; if (marks.length > 0) { const excerpts = marks.map(m => pdfPages[m.page]?.slice(m.startIdx, m.endIdx)).filter(Boolean); ctxParts.push(`[Document "${activePdf}" marked excerpts:\n${excerpts.join('\n---\n')}]`); } else if (pdfPages.join('').length < 3000) { ctxParts.push(`[Document "${activePdf}" full text:\n${pdfPages.join('\n')}]`); } }
-                    const fullMsg = ctxParts.length > 0 ? `${ctxParts.join('\n')}\n\n${msg}` : msg;
-                    const result = await chatWithAgent(fullMsg, agentHistory);
-                    if (!result.error) setAgentHistory(result.updatedHistory);
-                    setAgentLoading(false);
+                    const ctxParts: string[] = []; if (draft.sceneHint) ctxParts.push(`Scene assets: ${draft.sceneHint}`);
+                    if (draft.skillHint) { for (const sn of draft.skillHint.split(' | ')) { try { const r = await fetch(`/assets/storyboard/skills/${sn}`); const t = await r.text(); ctxParts.push(`Skill "${sn}":\n${t.substring(0, 2000)}`); } catch {} } }
+                    if (activePdf && pdfPages.length > 0) { const marks = pdfMarkers[activePdf] || []; if (marks.length > 0) { const excerpts = marks.map(m => pdfPages[m.page]?.slice(m.startIdx, m.endIdx)).filter(Boolean); ctxParts.push(`Doc "${activePdf}" marked:\n${excerpts.join('\n---\n')}`); } else if (pdfPages.join('').length < 3000) { ctxParts.push(`Doc "${activePdf}":\n${pdfPages.join('\n')}`); } }
+                    const result = await chatWithAgent(msg, agentHistory, ctxParts.length > 0 ? ctxParts.join('\n\n') : undefined);
+                    if (!result.error) setAgentHistory(result.updatedHistory); setAgentLoading(false);
                   }
                 }} rows={3} style={{ flex: 1, background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '0.5rem', padding: '0.5rem 0.8rem', color: 'white', fontSize: '0.82rem', outline: 'none', resize: 'none', fontFamily: 'inherit', lineHeight: 1.5 }} />
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', width: '54px', flexShrink: 0 }}>
+                  <div style={{ display: 'flex', gap: '0.25rem' }}>
+                    <button type="button" title="Voice" onClick={() => {
+                      if (isRecording && recognitionRef.current) { recognitionRef.current.stop(); setIsRecording(false); return }
+                      const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition; if (!SR) return;
+                      const r = new SR(); r.continuous = true; r.interimResults = true; r.lang = 'en-US';
+                      r.onresult = (ev: any) => { let t = ''; for (let i = ev.resultIndex; i < ev.results.length; i++) t += ev.results[i][0].transcript; if (ev.results[ev.results.length-1].isFinal) setAgentInput(p => p + ' ' + t) };
+                      r.onerror = () => setIsRecording(false); r.onend = () => setIsRecording(false);
+                      r.start(); recognitionRef.current = r; setIsRecording(true);
+                    }} style={{ flex: 1, padding: '0.3rem', borderRadius: '0.35rem', border: isRecording ? '1px solid #ff2a55' : '1px solid rgba(255,255,255,0.08)', background: isRecording ? 'rgba(255,42,85,0.15)' : 'transparent', color: isRecording ? '#ff2a55' : 'rgba(255,255,255,0.35)', cursor: 'pointer', display: 'grid', placeItems: 'center' }}>
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/></svg>
+                    </button>
+                    <label style={{ flex: 1, padding: '0.3rem', borderRadius: '0.35rem', border: '1px solid rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.35)', cursor: 'pointer', display: 'grid', placeItems: 'center' }} title="Attach">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+                      <input type="file" style={{ display: 'none' }} onChange={async (e) => {
+                        const file = e.target.files?.[0]; if (!file) return; setAgentLoading(true);
+                        const text = await file.text();
+                        const result = await chatWithAgent(`Please review my file "${file.name}".`, agentHistory, `File "${file.name}":\n${text.substring(0, 2000)}`);
+                        if (!result.error) setAgentHistory(result.updatedHistory); setAgentLoading(false);
+                      }} />
+                    </label>
+                  </div>
                   <button type="button" disabled={agentLoading || !agentInput.trim()} onClick={async () => {
                     const msg = agentInput; setAgentInput(''); setAgentLoading(true);
-                    const ctxParts: string[] = []; if (draft.sceneHint) ctxParts.push(`[Attached scene assets: ${draft.sceneHint}]`);
-                    if (draft.skillHint) { try { const r = await fetch(`/assets/storyboard/skills/${draft.skillHint}`); const t = await r.text(); ctxParts.push(`[Attached skill "${draft.skillHint}" content:\n${t.substring(0, 3000)}]`); } catch { ctxParts.push(`[Attached skill: ${draft.skillHint}]`); } }
-                    if (activePdf && pdfPages.length > 0) { const marks = pdfMarkers[activePdf] || []; if (marks.length > 0) { const excerpts = marks.map(m => pdfPages[m.page]?.slice(m.startIdx, m.endIdx)).filter(Boolean); ctxParts.push(`[Document "${activePdf}" marked excerpts:\n${excerpts.join('\n---\n')}]`); } else if (pdfPages.join('').length < 3000) { ctxParts.push(`[Document "${activePdf}" full text:\n${pdfPages.join('\n')}]`); } }
-                    const fullMsg = ctxParts.length > 0 ? `${ctxParts.join('\n')}\n\n${msg}` : msg;
-                    const result = await chatWithAgent(fullMsg, agentHistory);
-                    if (!result.error) setAgentHistory(result.updatedHistory);
-                    setAgentLoading(false);
-                  }} style={{ padding: '0.5rem 1rem', borderRadius: '0.5rem', border: 'none', background: agentLoading ? 'rgba(212,175,55,0.3)' : 'var(--gold)', color: '#000', cursor: agentLoading ? 'wait' : 'pointer', fontSize: '0.78rem', fontWeight: 700, transition: 'all 0.2s' }}>
+                    const ctxParts: string[] = []; if (draft.sceneHint) ctxParts.push(`Scene assets: ${draft.sceneHint}`);
+                    if (draft.skillHint) { for (const sn of draft.skillHint.split(' | ')) { try { const r = await fetch(`/assets/storyboard/skills/${sn}`); const t = await r.text(); ctxParts.push(`Skill "${sn}":\n${t.substring(0, 2000)}`); } catch {} } }
+                    if (activePdf && pdfPages.length > 0) { const marks = pdfMarkers[activePdf] || []; if (marks.length > 0) { const excerpts = marks.map(m => pdfPages[m.page]?.slice(m.startIdx, m.endIdx)).filter(Boolean); ctxParts.push(`Doc "${activePdf}" marked:\n${excerpts.join('\n---\n')}`); } else if (pdfPages.join('').length < 3000) { ctxParts.push(`Doc "${activePdf}":\n${pdfPages.join('\n')}`); } }
+                    const result = await chatWithAgent(msg, agentHistory, ctxParts.length > 0 ? ctxParts.join('\n\n') : undefined);
+                    if (!result.error) setAgentHistory(result.updatedHistory); setAgentLoading(false);
+                  }} style={{ width: '100%', padding: '0.4rem', borderRadius: '0.4rem', border: 'none', background: agentLoading ? 'rgba(212,175,55,0.3)' : 'var(--gold)', color: '#000', cursor: agentLoading ? 'wait' : 'pointer', fontSize: '0.72rem', fontWeight: 700, flex: 1 }}>
                     {agentLoading ? '...' : 'Send'}
                   </button>
-                  {/* Mic */}
-                  <button type="button" title="Voice input" onClick={() => {
-                    if (isRecording && recognitionRef.current) { recognitionRef.current.stop(); setIsRecording(false); return }
-                    const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition; if (!SR) return;
-                    const r = new SR(); r.continuous = true; r.interimResults = true; r.lang = 'en-US';
-                    r.onresult = (ev: any) => { let t = ''; for (let i = ev.resultIndex; i < ev.results.length; i++) t += ev.results[i][0].transcript; if (ev.results[ev.results.length-1].isFinal) setAgentInput(p => p + ' ' + t) };
-                    r.onerror = () => setIsRecording(false); r.onend = () => setIsRecording(false);
-                    r.start(); recognitionRef.current = r; setIsRecording(true);
-                  }} style={{ width: '100%', padding: '0.35rem', borderRadius: '0.4rem', border: isRecording ? '1px solid #ff2a55' : '1px solid rgba(255,255,255,0.08)', background: isRecording ? 'rgba(255,42,85,0.15)' : 'transparent', color: isRecording ? '#ff2a55' : 'rgba(255,255,255,0.35)', cursor: 'pointer', display: 'grid', placeItems: 'center' }}>
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/></svg>
-                  </button>
-                  {/* Attach file */}
-                  <label style={{ width: '100%', padding: '0.35rem', borderRadius: '0.4rem', border: '1px solid rgba(255,255,255,0.08)', background: 'transparent', color: 'rgba(255,255,255,0.35)', cursor: 'pointer', display: 'grid', placeItems: 'center' }} title="Attach file from disk">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
-                    <input type="file" style={{ display: 'none' }} onChange={async (e) => {
-                      const file = e.target.files?.[0]; if (!file) return; setAgentLoading(true);
-                      const text = await file.text(); const preview = text.substring(0, 2000);
-                      const result = await chatWithAgent(`[User attached file: ${file.name}]\n\nContent:\n${preview}\n\nPlease review this and tell me how to use it.`, agentHistory);
-                      if (!result.error) setAgentHistory(result.updatedHistory); setAgentLoading(false);
-                    }} />
-                  </label>
                 </div>
               </div>
             </div>
@@ -3338,13 +3301,13 @@ function AgentInbox({
               </div>
               )
             })}
-            {draft.skillHint && (
-              <div className="att-chip" style={{ width: '40px', height: '40px', borderRadius: '0.5rem', border: '1px solid rgba(212,175,55,0.3)', background: 'rgba(212,175,55,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', position: 'relative' }} title={draft.skillHint}>
+            {draft.skillHint && draft.skillHint.split(' | ').map((sn, si) => (
+              <div key={`sk${si}`} className="att-chip" style={{ width: '40px', height: '40px', borderRadius: '0.5rem', border: '1px solid rgba(212,175,55,0.3)', background: 'rgba(212,175,55,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', position: 'relative' }} title={sn}>
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" strokeWidth="1.5" strokeLinecap="round"><path d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7z"/><line x1="9" y1="21" x2="15" y2="21"/></svg>
-                <button type="button" onClick={() => onDraftChange({ ...draft, skillHint: '' })} className="att-del" style={{ position: 'absolute', top: '-5px', left: '-5px', width: '16px', height: '16px', borderRadius: '50%', background: 'rgba(255,60,60,0.9)', border: 'none', color: 'white', fontSize: '0.6rem', fontWeight: 700, display: 'none', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', padding: 0 }}>×</button>
+                <button type="button" onClick={() => { const remaining = draft.skillHint.split(' | ').filter((_, j) => j !== si).join(' | '); onDraftChange({ ...draft, skillHint: remaining }) }} className="att-del" style={{ position: 'absolute', top: '-5px', left: '-5px', width: '16px', height: '16px', borderRadius: '50%', background: 'rgba(255,60,60,0.9)', border: 'none', color: 'white', fontSize: '0.6rem', fontWeight: 700, display: 'none', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', padding: 0 }}>×</button>
               </div>
-            )}
-            {(draft.sceneHint || draft.skillHint) && <span style={{ fontSize: '0.6rem', color: 'rgba(255,255,255,0.25)' }}>{(draft.sceneHint ? draft.sceneHint.split(' | ').length : 0) + (draft.skillHint ? 1 : 0)} attached</span>}
+            ))}
+            {(draft.sceneHint || draft.skillHint) && <span style={{ fontSize: '0.6rem', color: 'rgba(255,255,255,0.25)' }}>{(draft.sceneHint ? draft.sceneHint.split(' | ').length : 0) + (draft.skillHint ? draft.skillHint.split(' | ').length : 0)} attached</span>}
           </div>
 
           <div className="node-footer" style={{ position: 'relative', right: 0, bottom: 0 }}>
@@ -3565,7 +3528,7 @@ function AgentInbox({
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', marginBottom: '2rem' }}>
                 {(() => { const p1Count = Math.min(availableSkills.length, 5); const pageSkills = skillsPage === 0 ? availableSkills.slice(0, p1Count) : availableSkills.slice(p1Count + (skillsPage - 1) * 6, p1Count + skillsPage * 6); return pageSkills })().map((skill, sliceIdx) => {
                   const idx = skillsPage === 0 ? sliceIdx : Math.min(availableSkills.length, 5) + (skillsPage - 1) * 6 + sliceIdx
-                  const isSelected = draft.skillHint === skill.name
+                  const isSelected = draft.skillHint ? draft.skillHint.split(' | ').includes(skill.name) : false
                   const ic = getIcon(skill.iconIdx ?? idx)
                   return (
                     <div key={skill.id} className="skill-card-wrap" style={{ position: 'relative' }}
@@ -3576,11 +3539,11 @@ function AgentInbox({
                         <button type="button" title="Edit" onClick={async (e) => { e.stopPropagation(); setEditingSkillId(skill.id); setNewSkillTitle(skill.name || ''); try { const r = await fetch('/api/skills/read-md', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: skill.id }) }); const d = await r.json(); setNewSkillText(d.content || skill.fullText || skill.description || '') } catch { setNewSkillText(skill.fullText || skill.description || '') } }} style={{ width: '22px', height: '22px', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.15)', background: 'rgba(0,0,0,0.6)', color: 'rgba(255,255,255,0.6)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0, fontSize: '0.65rem' }}>
                           <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                         </button>
-                        <button type="button" title="Remove" onClick={(e) => { e.stopPropagation(); setAvailableSkills(prev => prev.filter(s => s.id !== skill.id)); if (draft.skillHint === skill.name) onDraftChange({ ...draft, skillHint: '' }) }} style={{ width: '22px', height: '22px', borderRadius: '6px', border: '1px solid rgba(255,80,80,0.3)', background: 'rgba(0,0,0,0.6)', color: 'rgba(255,80,80,0.7)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0, fontSize: '0.75rem' }}>
+                        <button type="button" title="Remove" onClick={(e) => { e.stopPropagation(); setAvailableSkills(prev => prev.filter(s => s.id !== skill.id)); if (draft.skillHint) { const remaining = draft.skillHint.split(' | ').filter(n => n !== skill.name).join(' | '); onDraftChange({ ...draft, skillHint: remaining }) } }} style={{ width: '22px', height: '22px', borderRadius: '6px', border: '1px solid rgba(255,80,80,0.3)', background: 'rgba(0,0,0,0.6)', color: 'rgba(255,80,80,0.7)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0, fontSize: '0.75rem' }}>
                           <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                         </button>
                       </div>
-                      <button type="button" onClick={() => { onDraftChange({ ...draft, skillHint: skill.name }); setShowSkillsStore(false) }} style={{ width: '100%', background: isSelected ? `rgba(${parseInt(ic.color.slice(1,3),16)},${parseInt(ic.color.slice(3,5),16)},${parseInt(ic.color.slice(5,7),16)},0.08)` : 'rgba(255,255,255,0.015)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)', border: `1px solid ${isSelected ? ic.color + '66' : 'rgba(255,255,255,0.06)'}`, borderRadius: '1rem', padding: '1.4rem 1rem', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.7rem', transition: 'all 0.35s cubic-bezier(0.4,0,0.2,1)', textAlign: 'center', position: 'relative', overflow: 'hidden', boxShadow: isSelected ? `0 0 24px ${ic.color}33, 0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08)` : '0 2px 12px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.04)', transform: isSelected ? 'scale(1.04)' : 'scale(1)' }}>
+                      <button type="button" onClick={() => { const current = draft.skillHint ? draft.skillHint.split(' | ') : []; if (current.includes(skill.name)) { onDraftChange({ ...draft, skillHint: current.filter(n => n !== skill.name).join(' | ') }) } else { onDraftChange({ ...draft, skillHint: [...current, skill.name].join(' | ') }) } }} style={{ width: '100%', background: isSelected ? `rgba(${parseInt(ic.color.slice(1,3),16)},${parseInt(ic.color.slice(3,5),16)},${parseInt(ic.color.slice(5,7),16)},0.08)` : 'rgba(255,255,255,0.015)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)', border: `1px solid ${isSelected ? ic.color + '66' : 'rgba(255,255,255,0.06)'}`, borderRadius: '1rem', padding: '1.4rem 1rem', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.7rem', transition: 'all 0.35s cubic-bezier(0.4,0,0.2,1)', textAlign: 'center', position: 'relative', overflow: 'hidden', boxShadow: isSelected ? `0 0 24px ${ic.color}33, 0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08)` : '0 2px 12px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.04)', transform: isSelected ? 'scale(1.04)' : 'scale(1)' }}>
                         {/* Floating light effect */}
                         <div style={{ position: 'absolute', bottom: '-30px', left: '50%', transform: 'translateX(-50%)', width: '80%', height: '60px', borderRadius: '50%', background: `radial-gradient(ellipse, ${ic.color}18, transparent 70%)`, pointerEvents: 'none', filter: 'blur(8px)' }} />
                         {/* SVG Icon */}

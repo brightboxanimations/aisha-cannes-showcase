@@ -179,7 +179,8 @@ Write an improved version of the prompt incorporating the feedback. Output ONLY 
  */
 export async function chatWithAgent(
   message: string,
-  history: AgentMessage[] = []
+  history: AgentMessage[] = [],
+  attachmentContext?: string
 ): Promise<{ text: string; updatedHistory: AgentMessage[]; error?: string }> {
   // Load recent memories (last 3 days)
   let memoryContext = '';
@@ -227,7 +228,10 @@ export async function chatWithAgent(
 - When you recognize context from memories, use it naturally without announcing it.
 - Always maintain awareness of the project timeline and previous decisions.`;
 
-  const enrichedInstruction = SYSTEM_INSTRUCTION + memoryInstruction + memoryContext;
+  // Attachment context goes into system instruction, NOT into user message
+  const attachmentSection = attachmentContext ? `\n\n--- CURRENT ATTACHMENTS ---\n${attachmentContext}\n--- END ATTACHMENTS ---\nYou can see the above attachments. Reference them naturally when relevant. The user has explicitly shared these with you.` : '';
+
+  const enrichedInstruction = SYSTEM_INSTRUCTION + memoryInstruction + memoryContext + attachmentSection;
   const result = await sendToGemini(message, history, enrichedInstruction);
 
   const updatedHistory: AgentMessage[] = [

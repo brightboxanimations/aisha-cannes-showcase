@@ -2957,7 +2957,8 @@ function AgentInbox({
     fetch('/api/skills/list').then(r => r.json()).then(d => {
       const skills = d.skills || [];
       const seen = new Set<string>();
-      const unique = skills.filter((s: any) => { if (seen.has(s.id)) return false; seen.add(s.id); return true });
+      const seenNames = new Set<string>();
+      const unique = skills.filter((s: any) => { if (seen.has(s.id) || seenNames.has(s.name)) return false; seen.add(s.id); seenNames.add(s.name); return true });
       setAvailableSkills(unique);
     }).catch(() => {})
   }, [showSkillsStore])
@@ -3196,13 +3197,13 @@ function AgentInbox({
                   if (e.key === 'Enter' && !e.shiftKey && agentInput.trim()) {
                     e.preventDefault(); const msg = agentInput; setAgentInput(''); setAgentLoading(true);
                     const ctxParts: string[] = []; if (draft.sceneHint) ctxParts.push(`Scene assets: ${draft.sceneHint}`);
-                    if (draft.skillHint) { for (const sn of draft.skillHint.split(' | ')) { try { const r = await fetch(`/assets/storyboard/skills/${sn}`); const t = await r.text(); ctxParts.push(`Skill "${sn}":\n${t.substring(0, 2000)}`); } catch {} } }
+                    if (draft.skillHint) { for (const sn of draft.skillHint.split(' | ')) { try { const sk = availableSkills.find((s: any) => s.name === sn); if (sk) { const r = await fetch('/api/skills/read-md', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: sk.id }) }); const d = await r.json(); ctxParts.push(`Skill "${sn}":\n${(d.content || sk.fullText || sk.description || '').substring(0, 2000)}`); } } catch {} } }
                     if (activePdf && pdfPages.length > 0) { const marks = pdfMarkers[activePdf] || []; if (marks.length > 0) { const excerpts = marks.map(m => pdfPages[m.page]?.slice(m.startIdx, m.endIdx)).filter(Boolean); ctxParts.push(`Doc "${activePdf}" marked:\n${excerpts.join('\n---\n')}`); } else if (pdfPages.join('').length < 3000) { ctxParts.push(`Doc "${activePdf}":\n${pdfPages.join('\n')}`); } }
                     const result = await chatWithAgent(msg, agentHistory, ctxParts.length > 0 ? ctxParts.join('\n\n') : undefined);
                     if (!result.error) setAgentHistory(result.updatedHistory); setAgentLoading(false);
                   }
                 }} rows={3} style={{ flex: 1, background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '0.5rem', padding: '0.5rem 0.8rem', color: 'white', fontSize: '0.82rem', outline: 'none', resize: 'none', fontFamily: 'inherit', lineHeight: 1.5 }} />
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', width: '60px', flexShrink: 0 }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem', width: '80px', flexShrink: 0 }}>
                   <div style={{ display: 'flex', gap: '0.25rem' }}>
                     <button type="button" title="Voice" onClick={() => {
                       if (isRecording && recognitionRef.current) { recognitionRef.current.stop(); setIsRecording(false); return }
@@ -3211,11 +3212,11 @@ function AgentInbox({
                       r.onresult = (ev: any) => { let t = ''; for (let i = ev.resultIndex; i < ev.results.length; i++) t += ev.results[i][0].transcript; if (ev.results[ev.results.length-1].isFinal) setAgentInput(p => p + ' ' + t) };
                       r.onerror = () => setIsRecording(false); r.onend = () => setIsRecording(false);
                       r.start(); recognitionRef.current = r; setIsRecording(true);
-                    }} style={{ flex: 1, padding: '0.45rem', borderRadius: '0.4rem', border: isRecording ? '1px solid #ff2a55' : '1px solid rgba(255,255,255,0.12)', background: isRecording ? 'rgba(255,42,85,0.15)' : 'transparent', color: isRecording ? '#ff2a55' : 'rgba(255,255,255,0.4)', cursor: 'pointer', display: 'grid', placeItems: 'center' }}>
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/></svg>
+                    }} style={{ flex: 1, padding: '0.5rem', borderRadius: '0.4rem', border: isRecording ? '1px solid #ff2a55' : '1px solid rgba(255,255,255,0.12)', background: isRecording ? 'rgba(255,42,85,0.15)' : 'transparent', color: isRecording ? '#ff2a55' : 'rgba(255,255,255,0.4)', cursor: 'pointer', display: 'grid', placeItems: 'center' }}>
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/></svg>
                     </button>
-                    <label style={{ flex: 1, padding: '0.45rem', borderRadius: '0.4rem', border: '1px solid rgba(255,255,255,0.12)', color: 'rgba(255,255,255,0.4)', cursor: 'pointer', display: 'grid', placeItems: 'center' }} title="Attach">
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+                    <label style={{ flex: 1, padding: '0.5rem', borderRadius: '0.4rem', border: '1px solid rgba(255,255,255,0.12)', color: 'rgba(255,255,255,0.4)', cursor: 'pointer', display: 'grid', placeItems: 'center' }} title="Attach">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
                       <input type="file" style={{ display: 'none' }} onChange={async (e) => {
                         const file = e.target.files?.[0]; if (!file) return; setAgentLoading(true);
                         const text = await file.text();
@@ -3227,11 +3228,11 @@ function AgentInbox({
                   <button type="button" disabled={agentLoading || !agentInput.trim()} onClick={async () => {
                     const msg = agentInput; setAgentInput(''); setAgentLoading(true);
                     const ctxParts: string[] = []; if (draft.sceneHint) ctxParts.push(`Scene assets: ${draft.sceneHint}`);
-                    if (draft.skillHint) { for (const sn of draft.skillHint.split(' | ')) { try { const r = await fetch(`/assets/storyboard/skills/${sn}`); const t = await r.text(); ctxParts.push(`Skill "${sn}":\n${t.substring(0, 2000)}`); } catch {} } }
+                    if (draft.skillHint) { for (const sn of draft.skillHint.split(' | ')) { try { const sk = availableSkills.find((s: any) => s.name === sn); if (sk) { const r = await fetch('/api/skills/read-md', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: sk.id }) }); const d = await r.json(); ctxParts.push(`Skill "${sn}":\n${(d.content || sk.fullText || sk.description || '').substring(0, 2000)}`); } } catch {} } }
                     if (activePdf && pdfPages.length > 0) { const marks = pdfMarkers[activePdf] || []; if (marks.length > 0) { const excerpts = marks.map(m => pdfPages[m.page]?.slice(m.startIdx, m.endIdx)).filter(Boolean); ctxParts.push(`Doc "${activePdf}" marked:\n${excerpts.join('\n---\n')}`); } else if (pdfPages.join('').length < 3000) { ctxParts.push(`Doc "${activePdf}":\n${pdfPages.join('\n')}`); } }
                     const result = await chatWithAgent(msg, agentHistory, ctxParts.length > 0 ? ctxParts.join('\n\n') : undefined);
                     if (!result.error) setAgentHistory(result.updatedHistory); setAgentLoading(false);
-                  }} style={{ width: '100%', padding: '0.45rem', borderRadius: '0.4rem', border: '1px solid rgba(96,165,250,0.4)', background: 'transparent', color: agentLoading ? 'rgba(96,165,250,0.4)' : 'rgba(96,165,250,0.9)', cursor: agentLoading ? 'wait' : 'pointer', fontSize: '0.75rem', fontWeight: 600, flex: 1, letterSpacing: '0.03em' }}>
+                  }} style={{ width: '100%', padding: '0.55rem', borderRadius: '0.45rem', border: '1.5px solid rgba(96,165,250,0.5)', background: 'transparent', color: agentLoading ? 'rgba(96,165,250,0.4)' : 'rgba(96,165,250,0.95)', cursor: agentLoading ? 'wait' : 'pointer', fontSize: '0.82rem', fontWeight: 600, flex: 1, letterSpacing: '0.03em' }}>
                     {agentLoading ? '...' : 'Send'}
                   </button>
                 </div>
@@ -3286,7 +3287,7 @@ function AgentInbox({
           )}
 
           {/* Attachment strip */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', padding: '0.15rem 0', marginTop: '0.15rem', borderTop: '1px solid rgba(255,255,255,0.04)', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', padding: '0.1rem 0', borderTop: '1px solid rgba(255,255,255,0.04)', flexWrap: 'wrap' }}>
             {draft.sceneHint && draft.sceneHint.split(' | ').map((s, i) => {
               const cat = s.split(':')[0]?.toLowerCase().trim() || 'images'
               const iconMap: Record<string, { color: string, d: string }> = {
@@ -3298,37 +3299,34 @@ function AgentInbox({
                 styles: { color: '#a78bfa', d: 'M7 21a4 4 0 0 1-4-4V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v12a4 4 0 0 1-4 4zm0 0h12a2 2 0 0 0 2-2v-4a2 2 0 0 0-2-2h-2.343' }
               }
               const ic = iconMap[cat] || iconMap.images
-              return (<div key={`s${i}`} className="att-chip" style={{ width: '46px', height: '46px', borderRadius: '0.5rem', border: `1px solid ${ic.color}44`, background: `${ic.color}12`, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', position: 'relative', transition: 'all 0.2s' }} title={s}>
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={ic.color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d={ic.d} /></svg>
+              return (<div key={`s${i}`} className="att-chip" style={{ width: '52px', height: '52px', borderRadius: '0.5rem', border: `1px solid ${ic.color}44`, background: `${ic.color}12`, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', position: 'relative', transition: 'all 0.2s' }} title={s}>
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke={ic.color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d={ic.d} /></svg>
                 <div style={{ position: 'absolute', top: '-4px', right: '-4px', width: '14px', height: '14px', borderRadius: '50%', background: ic.color, color: '#000', fontSize: '0.55rem', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{i + 1}</div>
                 <button type="button" onClick={(e) => { e.stopPropagation(); const parts = draft.sceneHint.split(' | ').filter((_, j) => j !== i); onDraftChange({ ...draft, sceneHint: parts.join(' | ') }) }} className="att-del" style={{ position: 'absolute', top: '-5px', left: '-5px', width: '16px', height: '16px', borderRadius: '50%', background: 'rgba(255,60,60,0.9)', border: 'none', color: 'white', fontSize: '0.6rem', fontWeight: 700, display: 'none', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', padding: 0 }}>×</button>
               </div>)
             })}
             {draft.skillHint && draft.skillHint.split(' | ').map((sn, si) => (
-              <div key={`sk${si}`} className="att-chip" style={{ width: '46px', height: '46px', borderRadius: '0.5rem', border: '1px solid rgba(212,175,55,0.3)', background: 'rgba(212,175,55,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', position: 'relative' }} title={sn}>
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" strokeWidth="1.5" strokeLinecap="round"><path d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7z"/><line x1="9" y1="21" x2="15" y2="21"/></svg>
+              <div key={`sk${si}`} className="att-chip" style={{ width: '52px', height: '52px', borderRadius: '0.5rem', border: '1px solid rgba(212,175,55,0.3)', background: 'rgba(212,175,55,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', position: 'relative' }} title={sn}>
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" strokeWidth="1.5" strokeLinecap="round"><path d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7z"/><line x1="9" y1="21" x2="15" y2="21"/></svg>
                 <button type="button" onClick={() => { const remaining = draft.skillHint.split(' | ').filter((_, j) => j !== si).join(' | '); onDraftChange({ ...draft, skillHint: remaining }) }} className="att-del" style={{ position: 'absolute', top: '-5px', left: '-5px', width: '16px', height: '16px', borderRadius: '50%', background: 'rgba(255,60,60,0.9)', border: 'none', color: 'white', fontSize: '0.6rem', fontWeight: 700, display: 'none', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', padding: 0 }}>×</button>
               </div>
             ))}
             {activePdf && pdfPages.length > 0 && (
-              <div className="att-chip" style={{ width: '46px', height: '46px', borderRadius: '0.5rem', border: '1px solid rgba(255,96,64,0.3)', background: 'rgba(255,96,64,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', position: 'relative' }} title={activePdf} onClick={() => setShowPdfViewer(true)}>
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ff6040" strokeWidth="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              <div className="att-chip" style={{ width: '52px', height: '52px', borderRadius: '0.5rem', border: '1px solid rgba(255,96,64,0.3)', background: 'rgba(255,96,64,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', position: 'relative' }} title={activePdf} onClick={() => setShowPdfViewer(true)}>
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#ff6040" strokeWidth="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
                 {(pdfMarkers[activePdf]||[]).length > 0 && <div style={{ position: 'absolute', top: '-4px', right: '-4px', width: '14px', height: '14px', borderRadius: '50%', background: '#ff6040', color: '#fff', fontSize: '0.5rem', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{(pdfMarkers[activePdf]||[]).length}</div>}
               </div>
             )}
           </div>
-
-
-
-          <div className="node-footer" style={{ position: 'relative', right: 0, bottom: 0 }}>
+          <div className="node-footer" style={{ padding: '0.3rem 0 0 0' }}>
             <button className="execute-task-btn" onClick={onAdd} type="button">
               Launch Pipeline <span>⚡️</span>
             </button>
           </div>
         </div>
 
-        <div className="mindmap-attachment-nodes" style={{ flex: 1, gap: '0.8rem', display: 'flex', flexDirection: 'column', marginTop: '-0.5rem' }}>
-          <div className="attachment-node glass scene-node" style={{ border: '1px solid rgba(255,255,255,0.05)', background: 'rgba(255,255,255,0.02)', padding: '1.5rem 1.5rem 1.8rem', borderRadius: '1rem', width: '100%' }}>
+        <div className="mindmap-attachment-nodes" style={{ flex: 1, gap: '1rem', display: 'flex', flexDirection: 'column', marginTop: '-0.5rem' }}>
+          <div className="attachment-node glass scene-node" style={{ border: '1px solid rgba(255,255,255,0.05)', background: 'rgba(255,255,255,0.02)', padding: '1.2rem 1.5rem', borderRadius: '1rem', width: '100%', minHeight: '120px' }}>
             <p className="eyebrow">Target Scene</p>
             <input placeholder={draft.sceneHint && draft.sceneHint.includes(' | ') ? `Multiple (${draft.sceneHint.split(' | ').length}) attached` : 'e.g. Act 1 Scene 2'} value={draft.sceneHint && draft.sceneHint.includes(' | ') ? '' : draft.sceneHint} onChange={(event) => onDraftChange({ ...draft, sceneHint: event.target.value })} style={{ color: draft.sceneHint && draft.sceneHint.includes(' | ') ? 'rgba(255,255,255,0.3)' : undefined }} readOnly={!!(draft.sceneHint && draft.sceneHint.includes(' | '))} />
 
@@ -3337,7 +3335,7 @@ function AgentInbox({
               Link Visual Node
             </button>
           </div>
-          <div className="attachment-node glass skill-node" style={{ border: '1px solid rgba(255,255,255,0.05)', background: 'rgba(255,255,255,0.02)', padding: '1.5rem 1.5rem 1.8rem', borderRadius: '1rem', width: '100%' }}>
+          <div className="attachment-node glass skill-node" style={{ border: '1px solid rgba(255,255,255,0.05)', background: 'rgba(255,255,255,0.02)', padding: '1.2rem 1.5rem', borderRadius: '1rem', width: '100%', minHeight: '120px' }}>
             <p className="eyebrow">Agent Skills</p>
             {draft.skillHint && (
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.4rem 0.7rem', background: 'rgba(212,175,55,0.08)', border: '1px solid rgba(212,175,55,0.2)', borderRadius: '0.5rem', marginBottom: '0.5rem', fontSize: '0.82rem', color: 'var(--gold)' }}>
@@ -3352,7 +3350,7 @@ function AgentInbox({
             </button>
           </div>
           {/* References & PDFs — bookstore icons */}
-          <div className="attachment-node glass ref-node" style={{ border: '1px solid rgba(255,255,255,0.05)', background: 'rgba(255,255,255,0.02)', padding: '1.5rem 1.5rem 1.8rem', borderRadius: '1rem', width: '100%' }}>
+          <div className="attachment-node glass ref-node" style={{ border: '1px solid rgba(255,255,255,0.05)', background: 'rgba(255,255,255,0.02)', padding: '1.2rem 1.5rem', borderRadius: '1rem', width: '100%', minHeight: '120px' }}>
             <p className="eyebrow">References & PDFs</p>
             {pdfDocs.filter(d => d.pinned).length > 0 && (
               <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '0.6rem' }}>
@@ -3592,6 +3590,15 @@ function AgentInbox({
                 </label>
                 )}
               </div>
+
+              {/* Attach Selected button — visible when skills are selected */}
+              {draft.skillHint && (
+                <div style={{ display: 'flex', justifyContent: 'center', padding: '0.8rem 0' }}>
+                  <button type="button" onClick={() => setShowSkillsStore(false)} style={{ padding: '0.6rem 2rem', borderRadius: '0.5rem', border: '1.5px solid rgba(96,165,250,0.5)', background: 'transparent', color: 'rgba(96,165,250,0.95)', fontSize: '0.82rem', fontWeight: 600, cursor: 'pointer', letterSpacing: '0.03em' }}>
+                    Attach Selected ({draft.skillHint.split(' | ').length})
+                  </button>
+                </div>
+              )}
 
               {/* Create / Edit Skill Section */}
               <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '1.5rem' }}>

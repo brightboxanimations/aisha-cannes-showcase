@@ -2942,6 +2942,7 @@ function AgentInbox({
   const [skillRecording, setSkillRecording] = useState(false)
   const [editingSkillId, setEditingSkillId] = useState<string | null>(null)
   const [aiImproving, setAiImproving] = useState(false)
+  const [skillsPage, setSkillsPage] = useState(0)
   const skillRecognitionRef = useRef<any>(null)
 
   useEffect(() => {
@@ -3456,9 +3457,25 @@ function AgentInbox({
 
             {/* Skills Grid */}
             <div style={{ flex: 1, overflowY: 'auto', padding: '1.5rem 2rem' }}>
-              <p style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.35)', textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: '1rem', fontWeight: 600 }}>Available Skills</p>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '1rem', marginBottom: '2rem' }}>
-                {availableSkills.map((skill, idx) => {
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.8rem' }}>
+                <p style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.35)', textTransform: 'uppercase', letterSpacing: '1.5px', fontWeight: 600, margin: 0 }}>Available Skills</p>
+                {availableSkills.length > 6 && (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                    <button type="button" onClick={() => setSkillsPage(Math.max(0, skillsPage - 1))} disabled={skillsPage === 0} style={{ background: 'none', border: 'none', cursor: skillsPage === 0 ? 'default' : 'pointer', padding: 0, opacity: skillsPage === 0 ? 0.15 : 0.4, transition: 'opacity 0.2s' }}>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round"><polyline points="15 18 9 12 15 6" /></svg>
+                    </button>
+                    {Array.from({ length: Math.ceil(availableSkills.length / 6) }).map((_, i) => (
+                      <button key={i} type="button" onClick={() => setSkillsPage(i)} style={{ width: '6px', height: '6px', borderRadius: '50%', border: 'none', background: i === skillsPage ? 'var(--gold)' : 'rgba(255,255,255,0.15)', boxShadow: i === skillsPage ? '0 0 6px rgba(212,175,55,0.5)' : 'none', cursor: 'pointer', padding: 0, transition: 'all 0.2s' }} />
+                    ))}
+                    <button type="button" onClick={() => setSkillsPage(Math.min(Math.ceil(availableSkills.length / 6) - 1, skillsPage + 1))} disabled={skillsPage >= Math.ceil(availableSkills.length / 6) - 1} style={{ background: 'none', border: 'none', cursor: skillsPage >= Math.ceil(availableSkills.length / 6) - 1 ? 'default' : 'pointer', padding: 0, opacity: skillsPage >= Math.ceil(availableSkills.length / 6) - 1 ? 0.15 : 0.4, transition: 'opacity 0.2s' }}>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round"><polyline points="9 18 15 12 9 6" /></svg>
+                    </button>
+                  </div>
+                )}
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', marginBottom: '2rem' }}>
+                {availableSkills.slice(skillsPage * 6, skillsPage * 6 + 6).map((skill, sliceIdx) => {
+                  const idx = skillsPage * 6 + sliceIdx
                   const isSelected = draft.skillHint === skill.name
                   const ic = getIcon(skill.iconIdx ?? idx)
                   return (
@@ -3467,10 +3484,10 @@ function AgentInbox({
                       onMouseLeave={(e) => { const el = e.currentTarget; el.querySelector<HTMLElement>('.skill-actions')!.style.opacity = '0' }}>
                       {/* Delete + Edit overlay */}
                       <div className="skill-actions" style={{ position: 'absolute', top: '0.4rem', right: '0.4rem', display: 'flex', gap: '0.3rem', zIndex: 2, opacity: 0, transition: 'opacity 0.2s' }}>
-                        <button type="button" title="Edit" onClick={(e) => { e.stopPropagation(); setEditingSkillId(skill.id); setNewSkillTitle(skill.name || ''); setNewSkillText(skill.fullText || skill.description || '') }} style={{ width: '22px', height: '22px', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.15)', background: 'rgba(0,0,0,0.6)', color: 'rgba(255,255,255,0.6)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0, fontSize: '0.65rem' }}>
+                        <button type="button" title="Edit" onClick={async (e) => { e.stopPropagation(); setEditingSkillId(skill.id); setNewSkillTitle(skill.name || ''); try { const r = await fetch('/api/skills/read-md', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: skill.id }) }); const d = await r.json(); setNewSkillText(d.content || skill.fullText || skill.description || '') } catch { setNewSkillText(skill.fullText || skill.description || '') } }} style={{ width: '22px', height: '22px', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.15)', background: 'rgba(0,0,0,0.6)', color: 'rgba(255,255,255,0.6)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0, fontSize: '0.65rem' }}>
                           <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                         </button>
-                        <button type="button" title="Delete" onClick={async (e) => { e.stopPropagation(); if (!window.confirm(`Delete "${skill.name}" permanently from disk?`)) return; await fetch('/api/skills/delete', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: skill.id }) }); setAvailableSkills(prev => prev.filter(s => s.id !== skill.id)); if (draft.skillHint === skill.name) onDraftChange({ ...draft, skillHint: '' }) }} style={{ width: '22px', height: '22px', borderRadius: '6px', border: '1px solid rgba(255,80,80,0.3)', background: 'rgba(0,0,0,0.6)', color: 'rgba(255,80,80,0.7)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0, fontSize: '0.75rem' }}>
+                        <button type="button" title="Remove" onClick={(e) => { e.stopPropagation(); setAvailableSkills(prev => prev.filter(s => s.id !== skill.id)); if (draft.skillHint === skill.name) onDraftChange({ ...draft, skillHint: '' }) }} style={{ width: '22px', height: '22px', borderRadius: '6px', border: '1px solid rgba(255,80,80,0.3)', background: 'rgba(0,0,0,0.6)', color: 'rgba(255,80,80,0.7)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0, fontSize: '0.75rem' }}>
                           <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                         </button>
                       </div>

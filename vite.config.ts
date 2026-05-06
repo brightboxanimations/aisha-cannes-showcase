@@ -353,6 +353,62 @@ function storyboardApiPlugin() {
         }
       })
 
+      // READ full .md file for a skill
+      server.middlewares.use('/api/skills/read-md', async (req, res) => {
+        if (req.method !== 'POST') return sendJson(res, { error: 'Method not allowed' }, 405)
+        try {
+          const body = await collectBody(req)
+          const { id } = JSON.parse(body.toString() || '{}')
+          const mdPath = path.join(skillsDir, `${id}.md`)
+          if (fs.existsSync(mdPath)) {
+            const content = fs.readFileSync(mdPath, 'utf8')
+            sendJson(res, { content })
+          } else {
+            sendJson(res, { content: '' })
+          }
+        } catch (error) {
+          sendJson(res, { error: error instanceof Error ? error.message : 'Read failed' }, 500)
+        }
+      })
+
+      // ═══════════════════════════════════════════
+      // GEMINI MEMORY SYSTEM
+      // ═══════════════════════════════════════════
+      const memoryDir = path.join(storyboardRoot, 'memory')
+      fs.mkdirSync(memoryDir, { recursive: true })
+
+      // LIST memories (returns last 3 days by default)
+      server.middlewares.use('/api/memory/list', async (req, res) => {
+        if (req.method !== 'GET') return sendJson(res, { error: 'Method not allowed' }, 405)
+        try {
+          const files = fs.readdirSync(memoryDir).filter(f => f.endsWith('.json')).sort().reverse()
+          const threeDaysAgo = Date.now() - 3 * 24 * 60 * 60 * 1000
+          const memories = files.map(f => {
+            const data = JSON.parse(fs.readFileSync(path.join(memoryDir, f), 'utf8'))
+            return data
+          }).filter(m => new Date(m.createdAt).getTime() > threeDaysAgo)
+          sendJson(res, { memories })
+        } catch (error) {
+          sendJson(res, { error: error instanceof Error ? error.message : 'List memories failed' }, 500)
+        }
+      })
+
+      // SAVE a memory
+      server.middlewares.use('/api/memory/save', async (req, res) => {
+        if (req.method !== 'POST') return sendJson(res, { error: 'Method not allowed' }, 405)
+        try {
+          const body = await collectBody(req)
+          const memory = JSON.parse(body.toString() || '{}')
+          if (!memory.id) memory.id = `mem-${Date.now()}`
+          if (!memory.createdAt) memory.createdAt = new Date().toISOString()
+          const filePath = path.join(memoryDir, `${memory.id}.json`)
+          fs.writeFileSync(filePath, JSON.stringify(memory, null, 2))
+          sendJson(res, { ok: true, memory })
+        } catch (error) {
+          sendJson(res, { error: error instanceof Error ? error.message : 'Save memory failed' }, 500)
+        }
+      })
+
       // SAVE a new skill (writes both .json and .md)
       server.middlewares.use('/api/skills/save', async (req, res) => {
         if (req.method !== 'POST') return sendJson(res, { error: 'Method not allowed' }, 405)

@@ -171,13 +171,31 @@ Write an improved version of the prompt incorporating the feedback. Output ONLY 
 }
 
 /**
- * Chat with the agent in a conversational context
+ * Chat with the agent in a conversational context.
+ * Loads recent memories (last 3 days) from /api/memory/list
+ * and injects them as additional context.
+ * After responding, auto-saves a brief summary as a new memory.
  */
 export async function chatWithAgent(
   message: string,
   history: AgentMessage[] = []
 ): Promise<{ text: string; updatedHistory: AgentMessage[]; error?: string }> {
-  const result = await sendToGemini(message, history);
+  // Load recent memories for context
+  let memoryContext = '';
+  try {
+    const memResp = await fetch('/api/memory/list');
+    const memData = await memResp.json();
+    if (memData.memories && memData.memories.length > 0) {
+      const summaries = memData.memories.slice(0, 15).map(
+        (m: any) => `[${new Date(m.createdAt).toLocaleDateString()}] ${m.summary || m.topic || ''}`
+      ).join('\n');
+      memoryContext = `\n\n--- RECENT PROJECT MEMORIES (last 3 days) ---\n${summaries}\n--- END MEMORIES ---\n`;
+    }
+  } catch { /* memory not available */ }
+
+  // Prepend memories to the system instruction
+  const enrichedInstruction = SYSTEM_INSTRUCTION + memoryContext;
+  const result = await sendToGemini(message, history, enrichedInstruction);
 
   const updatedHistory: AgentMessage[] = [
     ...history,
@@ -186,6 +204,27 @@ export async function chatWithAgent(
 
   if (!result.error) {
     updatedHistory.push({ role: 'model', parts: [{ text: result.text }] });
+
+    // Auto-save memory summary (fire and forget)
+    try {
+      const summaryResult = await sendToGemini(
+        `Summarize this conversation exchange in 1-2 short sentences for future memory. Include key decisions, names, and technical details. Be brief.\n\nUser: ${message}\nAssistant: ${result.text.substring(0, 500)}`,
+        [], // no history needed for summary
+        'You are a memory assistant. Write a brief factual summary of the conversation exchange. 1-2 sentences max.'
+      );
+      if (summaryResult.text) {
+        fetch('/api/memory/save', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            id: `mem-${Date.now()}`,
+            topic: message.substring(0, 100),
+            summary: summaryResult.text.substring(0, 300),
+            createdAt: new Date().toISOString(),
+          }),
+        }).catch(() => {});
+      }
+    } catch { /* summary save failed, non-critical */ }
   }
 
   return { text: result.text, updatedHistory, error: result.error };

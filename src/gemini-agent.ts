@@ -172,29 +172,62 @@ Write an improved version of the prompt incorporating the feedback. Output ONLY 
 
 /**
  * Chat with the agent in a conversational context.
- * Loads recent memories (last 3 days) from /api/memory/list
- * and injects them as additional context.
- * After responding, auto-saves a brief summary as a new memory.
+ * Memory system:
+ * - Loads last 3 days of memories automatically
+ * - If user references past events, auto-searches ALL memories
+ * - Saves flexible summaries (3+ sentences, proportional to exchange length)
  */
 export async function chatWithAgent(
   message: string,
   history: AgentMessage[] = []
 ): Promise<{ text: string; updatedHistory: AgentMessage[]; error?: string }> {
-  // Load recent memories for context
+  // Load recent memories (last 3 days)
   let memoryContext = '';
   try {
     const memResp = await fetch('/api/memory/list');
     const memData = await memResp.json();
     if (memData.memories && memData.memories.length > 0) {
-      const summaries = memData.memories.slice(0, 15).map(
+      const summaries = memData.memories.slice(0, 20).map(
         (m: any) => `[${new Date(m.createdAt).toLocaleDateString()}] ${m.summary || m.topic || ''}`
       ).join('\n');
-      memoryContext = `\n\n--- RECENT PROJECT MEMORIES (last 3 days) ---\n${summaries}\n--- END MEMORIES ---\n`;
+      memoryContext = `\n\n--- RECENT PROJECT MEMORIES (last 3 days) ---\n${summaries}\n--- END MEMORIES ---`;
+    }
+
+    // Auto-search older memories if user seems to reference past events
+    const pastRefs = /remember|earlier|before|last week|ago|previous|we did|we made|we used|that time|back when/i;
+    if (pastRefs.test(message)) {
+      // Extract key terms from the message for searching
+      const keywords = message.split(/\s+/).filter(w => w.length > 4).slice(0, 3);
+      for (const kw of keywords) {
+        try {
+          const searchResp = await fetch('/api/memory/search', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ query: kw })
+          });
+          const searchData = await searchResp.json();
+          if (searchData.memories && searchData.memories.length > 0) {
+            const older = searchData.memories.filter(
+              (m: any) => !memoryContext.includes(m.summary || '')
+            ).slice(0, 5);
+            if (older.length > 0) {
+              memoryContext += `\n\n--- OLDER MEMORIES matching "${kw}" ---\n` +
+                older.map((m: any) => `[${new Date(m.createdAt).toLocaleDateString()}] ${m.summary || m.topic || ''}`).join('\n') +
+                `\n--- END OLDER MEMORIES ---`;
+            }
+          }
+        } catch { /* search failed, non-critical */ }
+      }
     }
   } catch { /* memory not available */ }
 
-  // Prepend memories to the system instruction
-  const enrichedInstruction = SYSTEM_INSTRUCTION + memoryContext;
+  // Instruction telling Gemini to use memories and search when unsure
+  const memoryInstruction = `\n\nIMPORTANT MEMORY RULES:
+- You have access to project memories below. Use them to maintain continuity.
+- If the user references something you don't find in your recent memories, tell them you'll check and search for it.
+- When you recognize context from memories, use it naturally without announcing it.
+- Always maintain awareness of the project timeline and previous decisions.`;
+
+  const enrichedInstruction = SYSTEM_INSTRUCTION + memoryInstruction + memoryContext;
   const result = await sendToGemini(message, history, enrichedInstruction);
 
   const updatedHistory: AgentMessage[] = [
@@ -205,12 +238,14 @@ export async function chatWithAgent(
   if (!result.error) {
     updatedHistory.push({ role: 'model', parts: [{ text: result.text }] });
 
-    // Auto-save memory summary (fire and forget)
+    // Auto-save memory — flexible length, proportional to exchange
+    const exchangeLength = message.length + result.text.length;
+    const sentenceGuide = exchangeLength > 2000 ? '5-8' : exchangeLength > 800 ? '3-5' : '2-3';
     try {
       const summaryResult = await sendToGemini(
-        `Summarize this conversation exchange in 1-2 short sentences for future memory. Include key decisions, names, and technical details. Be brief.\n\nUser: ${message}\nAssistant: ${result.text.substring(0, 500)}`,
-        [], // no history needed for summary
-        'You are a memory assistant. Write a brief factual summary of the conversation exchange. 1-2 sentences max.'
+        `Summarize this conversation exchange for future project memory. Write ${sentenceGuide} sentences capturing ALL important information: decisions made, technical details, names, file paths, models used, creative choices, and any action items. Be thorough — this is the only record.\n\nUser: ${message}\nAssistant: ${result.text.substring(0, 1500)}`,
+        [],
+        'You are a memory archivist. Write a clear, factual summary preserving all key details. No fluff.'
       );
       if (summaryResult.text) {
         fetch('/api/memory/save', {
@@ -218,8 +253,8 @@ export async function chatWithAgent(
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             id: `mem-${Date.now()}`,
-            topic: message.substring(0, 100),
-            summary: summaryResult.text.substring(0, 300),
+            topic: message.substring(0, 150),
+            summary: summaryResult.text,
             createdAt: new Date().toISOString(),
           }),
         }).catch(() => {});

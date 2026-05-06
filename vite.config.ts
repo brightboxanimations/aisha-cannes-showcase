@@ -377,19 +377,39 @@ function storyboardApiPlugin() {
       const memoryDir = path.join(storyboardRoot, 'memory')
       fs.mkdirSync(memoryDir, { recursive: true })
 
-      // LIST memories (returns last 3 days by default)
+      // LIST memories (default: last 3 days, ?days=N for custom, ?all=true for everything)
       server.middlewares.use('/api/memory/list', async (req, res) => {
         if (req.method !== 'GET') return sendJson(res, { error: 'Method not allowed' }, 405)
         try {
+          const url = new URL(req.url || '', 'http://localhost')
+          const showAll = url.searchParams.get('all') === 'true'
+          const days = parseInt(url.searchParams.get('days') || '3', 10)
           const files = fs.readdirSync(memoryDir).filter(f => f.endsWith('.json')).sort().reverse()
-          const threeDaysAgo = Date.now() - 3 * 24 * 60 * 60 * 1000
+          const cutoff = showAll ? 0 : Date.now() - days * 24 * 60 * 60 * 1000
           const memories = files.map(f => {
             const data = JSON.parse(fs.readFileSync(path.join(memoryDir, f), 'utf8'))
             return data
-          }).filter(m => new Date(m.createdAt).getTime() > threeDaysAgo)
+          }).filter(m => showAll || new Date(m.createdAt).getTime() > cutoff)
           sendJson(res, { memories })
         } catch (error) {
           sendJson(res, { error: error instanceof Error ? error.message : 'List memories failed' }, 500)
+        }
+      })
+
+      // SEARCH memories by keyword (searches all time)
+      server.middlewares.use('/api/memory/search', async (req, res) => {
+        if (req.method !== 'POST') return sendJson(res, { error: 'Method not allowed' }, 405)
+        try {
+          const body = await collectBody(req)
+          const { query } = JSON.parse(body.toString() || '{}')
+          if (!query) return sendJson(res, { memories: [] })
+          const files = fs.readdirSync(memoryDir).filter(f => f.endsWith('.json')).sort().reverse()
+          const q = query.toLowerCase()
+          const memories = files.map(f => JSON.parse(fs.readFileSync(path.join(memoryDir, f), 'utf8')))
+            .filter((m: any) => (m.summary || '').toLowerCase().includes(q) || (m.topic || '').toLowerCase().includes(q))
+          sendJson(res, { memories })
+        } catch (error) {
+          sendJson(res, { error: error instanceof Error ? error.message : 'Search failed' }, 500)
         }
       })
 
@@ -406,6 +426,69 @@ function storyboardApiPlugin() {
           sendJson(res, { ok: true, memory })
         } catch (error) {
           sendJson(res, { error: error instanceof Error ? error.message : 'Save memory failed' }, 500)
+        }
+      })
+
+      // ═══════════════════════════════════════════
+      // PDF DOCUMENTS API
+      // ═══════════════════════════════════════════
+      const docsDir = path.join(storyboardRoot, 'docs')
+      fs.mkdirSync(docsDir, { recursive: true })
+      const pinsFile = path.join(docsDir, '_pins.json')
+      if (!fs.existsSync(pinsFile)) fs.writeFileSync(pinsFile, '[]')
+
+      // LIST documents
+      server.middlewares.use('/api/docs/list', async (req, res) => {
+        if (req.method !== 'GET') return sendJson(res, { error: 'Method not allowed' }, 405)
+        try {
+          const files = fs.readdirSync(docsDir).filter(f => f.endsWith('.pdf'))
+          const pins: string[] = JSON.parse(fs.readFileSync(pinsFile, 'utf8') || '[]')
+          const docs = files.map(f => ({
+            name: f,
+            size: fs.statSync(path.join(docsDir, f)).size,
+            pinned: pins.includes(f),
+            path: `/assets/storyboard/docs/${f}`
+          }))
+          sendJson(res, { docs })
+        } catch (error) {
+          sendJson(res, { error: error instanceof Error ? error.message : 'List docs failed' }, 500)
+        }
+      })
+
+      // UPLOAD PDF (raw binary)
+      server.middlewares.use('/api/docs/upload', async (req, res) => {
+        if (req.method !== 'POST') return sendJson(res, { error: 'Method not allowed' }, 405)
+        try {
+          const chunks: Buffer[] = []
+          req.on('data', (c: Buffer) => chunks.push(c))
+          req.on('end', () => {
+            const buf = Buffer.concat(chunks)
+            const filename = (req.headers['x-filename'] as string) || `doc-${Date.now()}.pdf`
+            const filePath = path.join(docsDir, filename)
+            fs.writeFileSync(filePath, buf)
+            // Auto-pin new uploads
+            const pins: string[] = JSON.parse(fs.readFileSync(pinsFile, 'utf8') || '[]')
+            if (!pins.includes(filename)) { pins.push(filename); fs.writeFileSync(pinsFile, JSON.stringify(pins)) }
+            sendJson(res, { ok: true, name: filename, path: `/assets/storyboard/docs/${filename}` })
+          })
+        } catch (error) {
+          sendJson(res, { error: error instanceof Error ? error.message : 'Upload failed' }, 500)
+        }
+      })
+
+      // PIN/UNPIN document
+      server.middlewares.use('/api/docs/pin', async (req, res) => {
+        if (req.method !== 'POST') return sendJson(res, { error: 'Method not allowed' }, 405)
+        try {
+          const body = await collectBody(req)
+          const { name, pinned } = JSON.parse(body.toString() || '{}')
+          const pins: string[] = JSON.parse(fs.readFileSync(pinsFile, 'utf8') || '[]')
+          if (pinned && !pins.includes(name)) pins.push(name)
+          else if (!pinned) { const idx = pins.indexOf(name); if (idx > -1) pins.splice(idx, 1) }
+          fs.writeFileSync(pinsFile, JSON.stringify(pins))
+          sendJson(res, { ok: true })
+        } catch (error) {
+          sendJson(res, { error: error instanceof Error ? error.message : 'Pin failed' }, 500)
         }
       })
 

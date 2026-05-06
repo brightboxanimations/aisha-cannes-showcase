@@ -294,11 +294,11 @@
       "skillHint": "",
       "status": "pass",
       "createdAt": "2026-05-05T20:01:24.879Z",
-      "updatedAt": "2026-05-05T20:15:44.495Z",
+      "updatedAt": "2026-05-06T02:34:47.480Z",
       "passes": [
         {
           "id": "pass-1",
-          "name": "Pass 1 \u2014 PixVerse Favorites May 5 (07:00-08:15)",
+          "name": "Pass 1 — PixVerse Favorites May 5 (07:00-08:15)",
           "images": [
             {
               "id": "img-task36-401084693672166",
@@ -313,24 +313,33 @@
               "url": "/assets/storyboard/uploads/task36-pixverse-may5/pixverse_image_401084919746952_1778017970847.png",
               "note": "",
               "selected": false,
-              "improve4k": false,
-              "splitGrid": false
+              "improve4k": true,
+              "splitGrid": true,
+              "splitType": "2x2",
+              "improvePrompt": "Use exact @img1 image 1 but improve quality of character(s), objects and resolution. Do not change camera angle, composition, architecture or objects. The characters should remain in same poses and all objects in the same places. Camera should remain same angle exact the same as @img1 only improve quality. Style: 3d animated movie, cinematic AAA level 3d animation",
+              "improveModel": "seedream-4.5,gemini-3.1-flash"
             },
             {
               "id": "img-task36-401085184217906",
               "url": "/assets/storyboard/uploads/task36-pixverse-may5/pixverse_image_401085184217906_1778017973623.png",
               "note": "",
               "selected": false,
-              "improve4k": false,
-              "splitGrid": false
+              "improve4k": true,
+              "splitGrid": true,
+              "splitType": "2x2",
+              "improvePrompt": "Use exact @img1 image 1 but improve quality of character(s), objects and resolution. Do not change camera angle, composition, architecture or objects. The characters should remain in same poses and all objects in the same places. Camera should remain same angle exact the same as @img1 only improve quality. Style: 3d animated movie, cinematic AAA level 3d animation",
+              "improveModel": "seedream-4.5,gemini-3.1-flash"
             },
             {
               "id": "img-task36-401085537884653",
               "url": "/assets/storyboard/uploads/task36-pixverse-may5/pixverse_image_401085537884653_1778017976960.png",
               "note": "",
               "selected": false,
-              "improve4k": false,
-              "splitGrid": false
+              "improve4k": true,
+              "splitGrid": true,
+              "splitType": "2x2",
+              "improvePrompt": "Use exact @img1 image 1 but improve quality of character(s), objects and resolution. Do not change camera angle, composition, architecture or objects. The characters should remain in same poses and all objects in the same places. Camera should remain same angle exact the same as @img1 only improve quality. Style: 3d animated movie, cinematic AAA level 3d animation",
+              "improveModel": "seedream-4.5,gemini-3.1-flash"
             },
             {
               "id": "img-task36-401086199052866",
@@ -353,24 +362,33 @@
               "url": "/assets/storyboard/uploads/task36-pixverse-may5/pixverse_image_401086824798666_1778017987933.png",
               "note": "",
               "selected": false,
-              "improve4k": false,
-              "splitGrid": false
+              "improve4k": true,
+              "splitGrid": true,
+              "splitType": "2x2",
+              "improvePrompt": "Use exact @img1 image 1 but improve quality of character(s), objects and resolution. Do not change camera angle, composition, architecture or objects. The characters should remain in same poses and all objects in the same places. Camera should remain same angle exact the same as @img1 only improve quality. Style: 3d animated movie, cinematic AAA level 3d animation",
+              "improveModel": "seedream-4.5,gemini-3.1-flash"
             },
             {
               "id": "img-task36-401087072262479",
               "url": "/assets/storyboard/uploads/task36-pixverse-may5/pixverse_image_401087072262479_1778017994574.png",
               "note": "",
               "selected": false,
-              "improve4k": false,
-              "splitGrid": false
+              "improve4k": true,
+              "splitGrid": true,
+              "splitType": "2x2",
+              "improvePrompt": "Use exact @img1 image 1 but improve quality of character(s), objects and resolution. Do not change camera angle, composition, architecture or objects. The characters should remain in same poses and all objects in the same places. Camera should remain same angle exact the same as @img1 only improve quality. Style: 3d animated movie, cinematic AAA level 3d animation",
+              "improveModel": "seedream-4.5,gemini-3.1-flash"
             },
             {
               "id": "img-task36-401087362686738",
               "url": "/assets/storyboard/uploads/task36-pixverse-may5/pixverse_image_401087362686738_1778017997804.png",
               "note": "",
               "selected": false,
-              "improve4k": false,
-              "splitGrid": false
+              "improve4k": true,
+              "splitGrid": true,
+              "splitType": "2x2",
+              "improvePrompt": "Use exact @img1 image 1 but improve quality of character(s), objects and resolution. Do not change camera angle, composition, architecture or objects. The characters should remain in same poses and all objects in the same places. Camera should remain same angle exact the same as @img1 only improve quality. Style: 3d animated movie, cinematic AAA level 3d animation",
+              "improveModel": "seedream-4.5,gemini-3.1-flash"
             }
           ]
         }
@@ -390,24 +408,33 @@
           "url": "/assets/storyboard/uploads/task36-pixverse-may5/pixverse_image_401084919746952_1778017970847.png",
           "note": "",
           "selected": false,
-          "improve4k": false,
-          "splitGrid": false
+          "improve4k": true,
+          "splitGrid": true,
+          "splitType": "2x2",
+          "improvePrompt": "Use exact @img1 image 1 but improve quality of character(s), objects and resolution. Do not change camera angle, composition, architecture or objects. The characters should remain in same poses and all objects in the same places. Camera should remain same angle exact the same as @img1 only improve quality. Style: 3d animated movie, cinematic AAA level 3d animation",
+          "improveModel": "seedream-4.5,gemini-3.1-flash"
         },
         {
           "id": "img-task36-401085184217906",
           "url": "/assets/storyboard/uploads/task36-pixverse-may5/pixverse_image_401085184217906_1778017973623.png",
           "note": "",
           "selected": false,
-          "improve4k": false,
-          "splitGrid": false
+          "improve4k": true,
+          "splitGrid": true,
+          "splitType": "2x2",
+          "improvePrompt": "Use exact @img1 image 1 but improve quality of character(s), objects and resolution. Do not change camera angle, composition, architecture or objects. The characters should remain in same poses and all objects in the same places. Camera should remain same angle exact the same as @img1 only improve quality. Style: 3d animated movie, cinematic AAA level 3d animation",
+          "improveModel": "seedream-4.5,gemini-3.1-flash"
         },
         {
           "id": "img-task36-401085537884653",
           "url": "/assets/storyboard/uploads/task36-pixverse-may5/pixverse_image_401085537884653_1778017976960.png",
           "note": "",
           "selected": false,
-          "improve4k": false,
-          "splitGrid": false
+          "improve4k": true,
+          "splitGrid": true,
+          "splitType": "2x2",
+          "improvePrompt": "Use exact @img1 image 1 but improve quality of character(s), objects and resolution. Do not change camera angle, composition, architecture or objects. The characters should remain in same poses and all objects in the same places. Camera should remain same angle exact the same as @img1 only improve quality. Style: 3d animated movie, cinematic AAA level 3d animation",
+          "improveModel": "seedream-4.5,gemini-3.1-flash"
         },
         {
           "id": "img-task36-401086199052866",
@@ -430,24 +457,33 @@
           "url": "/assets/storyboard/uploads/task36-pixverse-may5/pixverse_image_401086824798666_1778017987933.png",
           "note": "",
           "selected": false,
-          "improve4k": false,
-          "splitGrid": false
+          "improve4k": true,
+          "splitGrid": true,
+          "splitType": "2x2",
+          "improvePrompt": "Use exact @img1 image 1 but improve quality of character(s), objects and resolution. Do not change camera angle, composition, architecture or objects. The characters should remain in same poses and all objects in the same places. Camera should remain same angle exact the same as @img1 only improve quality. Style: 3d animated movie, cinematic AAA level 3d animation",
+          "improveModel": "seedream-4.5,gemini-3.1-flash"
         },
         {
           "id": "img-task36-401087072262479",
           "url": "/assets/storyboard/uploads/task36-pixverse-may5/pixverse_image_401087072262479_1778017994574.png",
           "note": "",
           "selected": false,
-          "improve4k": false,
-          "splitGrid": false
+          "improve4k": true,
+          "splitGrid": true,
+          "splitType": "2x2",
+          "improvePrompt": "Use exact @img1 image 1 but improve quality of character(s), objects and resolution. Do not change camera angle, composition, architecture or objects. The characters should remain in same poses and all objects in the same places. Camera should remain same angle exact the same as @img1 only improve quality. Style: 3d animated movie, cinematic AAA level 3d animation",
+          "improveModel": "seedream-4.5,gemini-3.1-flash"
         },
         {
           "id": "img-task36-401087362686738",
           "url": "/assets/storyboard/uploads/task36-pixverse-may5/pixverse_image_401087362686738_1778017997804.png",
           "note": "",
           "selected": false,
-          "improve4k": false,
-          "splitGrid": false
+          "improve4k": true,
+          "splitGrid": true,
+          "splitType": "2x2",
+          "improvePrompt": "Use exact @img1 image 1 but improve quality of character(s), objects and resolution. Do not change camera angle, composition, architecture or objects. The characters should remain in same poses and all objects in the same places. Camera should remain same angle exact the same as @img1 only improve quality. Style: 3d animated movie, cinematic AAA level 3d animation",
+          "improveModel": "seedream-4.5,gemini-3.1-flash"
         }
       ]
     },
@@ -463,7 +499,7 @@
       "passes": [
         {
           "id": "pass-1",
-          "name": "Pass 1 \u2014 PixVerse Favorites May 5",
+          "name": "Pass 1 — PixVerse Favorites May 5",
           "images": [
             {
               "id": "img-pixverse-fav-1",
@@ -974,7 +1010,7 @@
         },
         {
           "id": "pass-2",
-          "name": "Pass 2 \u2014 Split Grid (84 panels)",
+          "name": "Pass 2 — Split Grid (84 panels)",
           "images": [
             {
               "id": "split-img-pixverse-fav-16-r1c1",
@@ -1660,7 +1696,7 @@
         },
         {
           "id": "pass-3",
-          "name": "Pass 3 \u2014 Split Grid (60 panels)",
+          "name": "Pass 3 — Split Grid (60 panels)",
           "images": [
             {
               "id": "img-pixverse-fav-1",
@@ -2140,7 +2176,7 @@
         },
         {
           "id": "pass-4",
-          "name": "Pass 4 \u2014 Split Grid (12 panels)",
+          "name": "Pass 4 — Split Grid (12 panels)",
           "images": [
             {
               "id": "img-pixverse-fav-1",
@@ -2620,7 +2656,7 @@
         },
         {
           "id": "pass-5",
-          "name": "Pass 5 \u2014 Split Grid (4 panels)",
+          "name": "Pass 5 — Split Grid (4 panels)",
           "images": [
             {
               "id": "split-img-pixverse-fav-16-r1c1",
@@ -3306,7 +3342,7 @@
         },
         {
           "id": "pass-6",
-          "name": "Pass 6 \u2014 Split Grid (4 panels)",
+          "name": "Pass 6 — Split Grid (4 panels)",
           "images": [
             {
               "id": "img-pixverse-fav-1",
@@ -3786,7 +3822,7 @@
         },
         {
           "id": "pass-7",
-          "name": "Pass 7 \u2014 Split Grid (4 panels)",
+          "name": "Pass 7 — Split Grid (4 panels)",
           "images": [
             {
               "id": "img-pixverse-fav-1",
@@ -4269,7 +4305,7 @@
         },
         {
           "id": "pass-8",
-          "name": "Pass 8 \u2014 Split Grid (16 panels)",
+          "name": "Pass 8 — Split Grid (16 panels)",
           "images": [
             {
               "id": "img-pixverse-fav-1",
@@ -4749,7 +4785,7 @@
         },
         {
           "id": "pass-9",
-          "name": "Pass 9 \u2014 Split Grid (20 panels)",
+          "name": "Pass 9 — Split Grid (20 panels)",
           "images": [
             {
               "id": "img-pixverse-fav-1",
@@ -5229,7 +5265,7 @@
         },
         {
           "id": "pass-10",
-          "name": "Pass 10 \u2014 Split Grid (124 panels)",
+          "name": "Pass 10 — Split Grid (124 panels)",
           "images": [
             {
               "id": "split-img-pixverse-fav-3-r1c1-1778014142861",
@@ -7371,7 +7407,7 @@
         },
         {
           "id": "pass-3",
-          "name": "Pass 3 \u2014 Split Grid (4 panels)",
+          "name": "Pass 3 — Split Grid (4 panels)",
           "images": [
             {
               "id": "split-img-task-ddprrp4-morwn4v0-11-r1c1-1778017114710",
@@ -7425,7 +7461,7 @@
         },
         {
           "id": "pass-4",
-          "name": "Pass 4 \u2014 Split Grid (8 panels)",
+          "name": "Pass 4 — Split Grid (8 panels)",
           "images": [
             {
               "id": "split-img-task-ddprrp4-morwn4v0-pass2-0.3995818729019195-r1c1-1778017197146",
@@ -9318,7 +9354,7 @@
     {
       "id": "task-vfc52q1-mortdur4",
       "title": "Task 12",
-      "prompt": "dfsfsfsffollow the sotryboard from top left to right top  then to left bottomthen to right boottm.  2x2 GRID PROMPT (WITH REFERENCE CONTROL)\n\n3D animated cinematic scene, ultra-detailed Moorish stone wall, cinematic depth of field, soft global illumination, night light with clear visibility, high-quality animated movie style.\n\nREFERENCE CONTROL (MANDATORY)\nReference Image 1: main wall environment \u2014 large stone wall covered with jasmine vines and green leaves, includes the three small mandala flower buttons on the left side with sapphire rubie and emeral (eachone with a diffent gem decor) \nReference Image 2: Aicha character design \u2014 exact outfit, proportions, face, and style\nReference Image 3: white panther design \u2014 exact scale, anatomy, and appearance\nReference Image 5: secret door design \u2014 hidden door shape and carved arabesque  pattern style (appears on the right side of the same wall jsust along the same long palace arabeque courtyyard wall  wall) plain as if embedded into the qwall like secrete carved magic petal shaped dor with subtle golden glow \nGRID LAYOUT: 4 IMAGES (2x2)\nIMAGE 1 (TOP LEFT \u2014 FIRST CONTACT)\n\nCamera: close-up, slight 45\u00b0 left angle, tight framing\n\nAicha (Reference 2) is touching the first small button from Reference Image 1.\nshe touches and names first star in a almost half wisper awed pressing softly : Alnitak\"\nfinger making contact. the buttin sirronding by white lush creeping jasmine\nsoft blue glow begins inside the button\ncamera close to her face and hand\n\nExpression:\n\neyes wide open\nmouth slightly open\nsurprised and curious\n\nEnvironment:\n\nwhite beautiful dense jasmine and green leaves from Reference Image 1 visible around the button\nbackground softly blurred\nIMAGE 2 (TOP RIGHT \u2014 SECOND ACTIVATION)\n\nCamera: medium close-up, slightly low frontal angle\nAisha presses second button that subtly glows   and she says in awe : \"Alnilam\" th epanter looks at her as if cnat believe it. \nTwo buttons (Reference Image 1) are glowing.\n\nAicha is reaching toward the third button. \"Mintaka \" \n\nhand extended, not touching yet\nglow from first two buttons stronger\n\nExpression:\n\nfocused and engaged\nstill surprised\neyes fixed on the third button\n\nEnvironment:\n\nsame wall and vegetation from Reference Image 1\ncarvings slightly illuminated\nIMAGE 3 (BOTTOM LEFT \u2014 REACTION VIEW)\n\nCamera: over-the-shoulder, 90\u00b0 side angle from behind\n\nAicha (Reference 2) and the panther (Reference 3) on the left side\nonly partial view (back/side of heads)\n\nIn front of them:\n\nall three buttons glowing\nsoft blue energy starting to spread across the wall\njasmine and leaves softly illuminated\n\nBody language:\n\nboth still, watching\npanther alert\nAicha slightly leaning forward\n\nFocus is on the wall reaction.\n\nIMAGE 4 (BOTTOM RIGHT \u2014 ENERGY TO DOOR)\n\nCamera: dynamic diagonal angle, around 135\u00b0 right\n\nScene shows:\n\nglowing energy traveling from buttons (left side) across the wall\nreaching the hidden door on the right (Reference Image 5, 6)\ndoor design becomes visible with glowing carved  aerabesque patterns\n\nCharacters:\n\nAicha and panther moving from left toward the door\n\nAicha slightly ahead, moving quickly\nforward-leaning motion\npanther following\n\nFocus:\n\nAicha movement + glowing door\n\nLighting:\n\nsubtle golden glow allgin the magic path form the stars to the opening h\nsubtle golden highlights\nclean magical look\nENVIRONMENT DETAILS\nmust follow Reference Image 1 wall and vegetation\nfloor includes scattered jasmine flowers in natural random placement\nsmall green leaves on the ground\nvery light golden dust accents\ndecoration remains subtle and elegant\nLIGHTING RULES\nnight light magic night combination of soft nigh air an subtle  golden glow \nclear visibility of all elements\nsoft blue and mix with golden subtle glow. from inside tthe magic openign \nminimal gold accents\nno heavy shadows or dark tint\nMOOD\n\nA gradual discovery sequence: Aicha activates glowing flower buttons on a white  jasmine-covered wall. Energy begins to travel across the surface, revealing a hidden door on the right while the characters react with surprise and curiosity. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric morning light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shalow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.",
+      "prompt": "dfsfsfsffollow the sotryboard from top left to right top  then to left bottomthen to right boottm.  2x2 GRID PROMPT (WITH REFERENCE CONTROL)\n\n3D animated cinematic scene, ultra-detailed Moorish stone wall, cinematic depth of field, soft global illumination, night light with clear visibility, high-quality animated movie style.\n\nREFERENCE CONTROL (MANDATORY)\nReference Image 1: main wall environment — large stone wall covered with jasmine vines and green leaves, includes the three small mandala flower buttons on the left side with sapphire rubie and emeral (eachone with a diffent gem decor) \nReference Image 2: Aicha character design — exact outfit, proportions, face, and style\nReference Image 3: white panther design — exact scale, anatomy, and appearance\nReference Image 5: secret door design — hidden door shape and carved arabesque  pattern style (appears on the right side of the same wall jsust along the same long palace arabeque courtyyard wall  wall) plain as if embedded into the qwall like secrete carved magic petal shaped dor with subtle golden glow \nGRID LAYOUT: 4 IMAGES (2x2)\nIMAGE 1 (TOP LEFT — FIRST CONTACT)\n\nCamera: close-up, slight 45° left angle, tight framing\n\nAicha (Reference 2) is touching the first small button from Reference Image 1.\nshe touches and names first star in a almost half wisper awed pressing softly : Alnitak\"\nfinger making contact. the buttin sirronding by white lush creeping jasmine\nsoft blue glow begins inside the button\ncamera close to her face and hand\n\nExpression:\n\neyes wide open\nmouth slightly open\nsurprised and curious\n\nEnvironment:\n\nwhite beautiful dense jasmine and green leaves from Reference Image 1 visible around the button\nbackground softly blurred\nIMAGE 2 (TOP RIGHT — SECOND ACTIVATION)\n\nCamera: medium close-up, slightly low frontal angle\nAisha presses second button that subtly glows   and she says in awe : \"Alnilam\" th epanter looks at her as if cnat believe it. \nTwo buttons (Reference Image 1) are glowing.\n\nAicha is reaching toward the third button. \"Mintaka \" \n\nhand extended, not touching yet\nglow from first two buttons stronger\n\nExpression:\n\nfocused and engaged\nstill surprised\neyes fixed on the third button\n\nEnvironment:\n\nsame wall and vegetation from Reference Image 1\ncarvings slightly illuminated\nIMAGE 3 (BOTTOM LEFT — REACTION VIEW)\n\nCamera: over-the-shoulder, 90° side angle from behind\n\nAicha (Reference 2) and the panther (Reference 3) on the left side\nonly partial view (back/side of heads)\n\nIn front of them:\n\nall three buttons glowing\nsoft blue energy starting to spread across the wall\njasmine and leaves softly illuminated\n\nBody language:\n\nboth still, watching\npanther alert\nAicha slightly leaning forward\n\nFocus is on the wall reaction.\n\nIMAGE 4 (BOTTOM RIGHT — ENERGY TO DOOR)\n\nCamera: dynamic diagonal angle, around 135° right\n\nScene shows:\n\nglowing energy traveling from buttons (left side) across the wall\nreaching the hidden door on the right (Reference Image 5, 6)\ndoor design becomes visible with glowing carved  aerabesque patterns\n\nCharacters:\n\nAicha and panther moving from left toward the door\n\nAicha slightly ahead, moving quickly\nforward-leaning motion\npanther following\n\nFocus:\n\nAicha movement + glowing door\n\nLighting:\n\nsubtle golden glow allgin the magic path form the stars to the opening h\nsubtle golden highlights\nclean magical look\nENVIRONMENT DETAILS\nmust follow Reference Image 1 wall and vegetation\nfloor includes scattered jasmine flowers in natural random placement\nsmall green leaves on the ground\nvery light golden dust accents\ndecoration remains subtle and elegant\nLIGHTING RULES\nnight light magic night combination of soft nigh air an subtle  golden glow \nclear visibility of all elements\nsoft blue and mix with golden subtle glow. from inside tthe magic openign \nminimal gold accents\nno heavy shadows or dark tint\nMOOD\n\nA gradual discovery sequence: Aicha activates glowing flower buttons on a white  jasmine-covered wall. Energy begins to travel across the surface, revealing a hidden door on the right while the characters react with surprise and curiosity. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric morning light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shalow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.",
       "sceneHint": "",
       "skillHint": "",
       "status": "working_pass",
@@ -9748,7 +9784,7 @@
     {
       "id": "task-hs6ovle-mors0y1t",
       "title": "Task 10",
-      "prompt": "follow the sotryboard from top left to right top  then to left bottomthen to right boottm.  2x2 GRID PROMPT (WITH REFERENCE CONTROL)\n\n3D animated cinematic scene, ultra-detailed Moorish stone wall, cinematic depth of field, soft global illumination, night light with clear visibility, high-quality animated movie style.\n\nREFERENCE CONTROL (MANDATORY)\nReference Image 1: main wall environment \u2014 large stone wall covered with jasmine vines and green leaves, includes the three small mandala flower buttons on the left side with sapphire rubie and emeral (eachone with a diffent gem decor) \nReference Image 2: Aicha character design \u2014 exact outfit, proportions, face, and style\nReference Image 3: white panther design \u2014 exact scale, anatomy, and appearance\nReference Image 5: secret door design \u2014 hidden door shape and carved arabesque  pattern style (appears on the right side of the same wall jsust along the same long palace arabeque courtyyard wall  wall) plain as if embedded into the qwall like secrete carved magic petal shaped dor with subtle golden glow \nGRID LAYOUT: 4 IMAGES (2x2)\nIMAGE 1 (TOP LEFT \u2014 FIRST CONTACT)\n\nCamera: close-up, slight 45\u00b0 left angle, tight framing\n\nAicha (Reference 2) is touching the first small button from Reference Image 1.\nshe touches and names first star in a almost half wisper awed pressing softly : Alnitak\"\nfinger making contact. the buttin sirronding by white lush creeping jasmine\nsoft blue glow begins inside the button\ncamera close to her face and hand\n\nExpression:\n\neyes wide open\nmouth slightly open\nsurprised and curious\n\nEnvironment:\n\nwhite beautiful dense jasmine and green leaves from Reference Image 1 visible around the button\nbackground softly blurred\nIMAGE 2 (TOP RIGHT \u2014 SECOND ACTIVATION)\n\nCamera: medium close-up, slightly low frontal angle\nAisha presses second button that subtly glows   and she says in awe : \"Alnilam\" th epanter looks at her as if cnat believe it. \nTwo buttons (Reference Image 1) are glowing.\n\nAicha is reaching toward the third button. \"Mintaka \" \n\nhand extended, not touching yet\nglow from first two buttons stronger\n\nExpression:\n\nfocused and engaged\nstill surprised\neyes fixed on the third button\n\nEnvironment:\n\nsame wall and vegetation from Reference Image 1\ncarvings slightly illuminated\nIMAGE 3 (BOTTOM LEFT \u2014 REACTION VIEW)\n\nCamera: over-the-shoulder, 90\u00b0 side angle from behind\n\nAicha (Reference 2) and the panther (Reference 3) on the left side\nonly partial view (back/side of heads)\n\nIn front of them:\n\nall three buttons glowing\nsoft blue energy starting to spread across the wall\njasmine and leaves softly illuminated\n\nBody language:\n\nboth still, watching\npanther alert\nAicha slightly leaning forward\n\nFocus is on the wall reaction.\n\nIMAGE 4 (BOTTOM RIGHT \u2014 ENERGY TO DOOR)\n\nCamera: dynamic diagonal angle, around 135\u00b0 right\n\nScene shows:\n\nglowing energy traveling from buttons (left side) across the wall\nreaching the hidden door on the right (Reference Image 5, 6)\ndoor design becomes visible with glowing carved  aerabesque patterns\n\nCharacters:\n\nAicha and panther moving from left toward the door\n\nAicha slightly ahead, moving quickly\nforward-leaning motion\npanther following\n\nFocus:\n\nAicha movement + glowing door\n\nLighting:\n\nsubtle golden glow allgin the magic path form the stars to the opening h\nsubtle golden highlights\nclean magical look\nENVIRONMENT DETAILS\nmust follow Reference Image 1 wall and vegetation\nfloor includes scattered jasmine flowers in natural random placement\nsmall green leaves on the ground\nvery light golden dust accents\ndecoration remains subtle and elegant\nLIGHTING RULES\nnight light magic night combination of soft nigh air an subtle  golden glow \nclear visibility of all elements\nsoft blue and mix with golden subtle glow. from inside tthe magic openign \nminimal gold accents\nno heavy shadows or dark tint\nMOOD\n\nA gradual discovery sequence: Aicha activates glowing flower buttons on a white  jasmine-covered wall. Energy begins to travel across the surface, revealing a hidden door on the right while the characters react with surprise and curiosity. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric morning light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shalow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.",
+      "prompt": "follow the sotryboard from top left to right top  then to left bottomthen to right boottm.  2x2 GRID PROMPT (WITH REFERENCE CONTROL)\n\n3D animated cinematic scene, ultra-detailed Moorish stone wall, cinematic depth of field, soft global illumination, night light with clear visibility, high-quality animated movie style.\n\nREFERENCE CONTROL (MANDATORY)\nReference Image 1: main wall environment — large stone wall covered with jasmine vines and green leaves, includes the three small mandala flower buttons on the left side with sapphire rubie and emeral (eachone with a diffent gem decor) \nReference Image 2: Aicha character design — exact outfit, proportions, face, and style\nReference Image 3: white panther design — exact scale, anatomy, and appearance\nReference Image 5: secret door design — hidden door shape and carved arabesque  pattern style (appears on the right side of the same wall jsust along the same long palace arabeque courtyyard wall  wall) plain as if embedded into the qwall like secrete carved magic petal shaped dor with subtle golden glow \nGRID LAYOUT: 4 IMAGES (2x2)\nIMAGE 1 (TOP LEFT — FIRST CONTACT)\n\nCamera: close-up, slight 45° left angle, tight framing\n\nAicha (Reference 2) is touching the first small button from Reference Image 1.\nshe touches and names first star in a almost half wisper awed pressing softly : Alnitak\"\nfinger making contact. the buttin sirronding by white lush creeping jasmine\nsoft blue glow begins inside the button\ncamera close to her face and hand\n\nExpression:\n\neyes wide open\nmouth slightly open\nsurprised and curious\n\nEnvironment:\n\nwhite beautiful dense jasmine and green leaves from Reference Image 1 visible around the button\nbackground softly blurred\nIMAGE 2 (TOP RIGHT — SECOND ACTIVATION)\n\nCamera: medium close-up, slightly low frontal angle\nAisha presses second button that subtly glows   and she says in awe : \"Alnilam\" th epanter looks at her as if cnat believe it. \nTwo buttons (Reference Image 1) are glowing.\n\nAicha is reaching toward the third button. \"Mintaka \" \n\nhand extended, not touching yet\nglow from first two buttons stronger\n\nExpression:\n\nfocused and engaged\nstill surprised\neyes fixed on the third button\n\nEnvironment:\n\nsame wall and vegetation from Reference Image 1\ncarvings slightly illuminated\nIMAGE 3 (BOTTOM LEFT — REACTION VIEW)\n\nCamera: over-the-shoulder, 90° side angle from behind\n\nAicha (Reference 2) and the panther (Reference 3) on the left side\nonly partial view (back/side of heads)\n\nIn front of them:\n\nall three buttons glowing\nsoft blue energy starting to spread across the wall\njasmine and leaves softly illuminated\n\nBody language:\n\nboth still, watching\npanther alert\nAicha slightly leaning forward\n\nFocus is on the wall reaction.\n\nIMAGE 4 (BOTTOM RIGHT — ENERGY TO DOOR)\n\nCamera: dynamic diagonal angle, around 135° right\n\nScene shows:\n\nglowing energy traveling from buttons (left side) across the wall\nreaching the hidden door on the right (Reference Image 5, 6)\ndoor design becomes visible with glowing carved  aerabesque patterns\n\nCharacters:\n\nAicha and panther moving from left toward the door\n\nAicha slightly ahead, moving quickly\nforward-leaning motion\npanther following\n\nFocus:\n\nAicha movement + glowing door\n\nLighting:\n\nsubtle golden glow allgin the magic path form the stars to the opening h\nsubtle golden highlights\nclean magical look\nENVIRONMENT DETAILS\nmust follow Reference Image 1 wall and vegetation\nfloor includes scattered jasmine flowers in natural random placement\nsmall green leaves on the ground\nvery light golden dust accents\ndecoration remains subtle and elegant\nLIGHTING RULES\nnight light magic night combination of soft nigh air an subtle  golden glow \nclear visibility of all elements\nsoft blue and mix with golden subtle glow. from inside tthe magic openign \nminimal gold accents\nno heavy shadows or dark tint\nMOOD\n\nA gradual discovery sequence: Aicha activates glowing flower buttons on a white  jasmine-covered wall. Energy begins to travel across the surface, revealing a hidden door on the right while the characters react with surprise and curiosity. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric morning light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shalow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.",
       "sceneHint": "",
       "skillHint": "",
       "status": "working_pass",

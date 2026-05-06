@@ -3047,7 +3047,7 @@ function AgentInbox({
                 ) : (
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '1rem' }}>
                     {resources.map(res => (
-                      <div key={res.id} style={{ background: sceneSelections.some(s => s.includes(res.name)) ? 'rgba(64,255,156,0.06)' : 'rgba(255,255,255,0.015)', backdropFilter: 'blur(12px)', border: sceneSelections.some(s => s.includes(res.name)) ? '1px solid rgba(64,255,156,0.35)' : '1px solid rgba(255,255,255,0.06)', borderRadius: '0.8rem', overflow: 'hidden', transition: 'all 0.25s', boxShadow: sceneSelections.some(s => s.includes(res.name)) ? '0 0 12px rgba(64,255,156,0.15)' : 'none' }}>
+                      <div key={res.id} style={(() => { const sel = sceneSelections.some(s => s.startsWith(`${scenePickerTab}: ${res.name} [`)); return { background: sel ? 'rgba(64,255,156,0.06)' : 'rgba(255,255,255,0.015)', backdropFilter: 'blur(12px)', border: sel ? '1px solid rgba(64,255,156,0.35)' : '1px solid rgba(255,255,255,0.06)', borderRadius: '0.8rem', overflow: 'hidden' as const, transition: 'all 0.25s', boxShadow: sel ? '0 0 12px rgba(64,255,156,0.15)' : 'none' } })()}>
                         {/* Card image */}
                         {res.media[0] && (
                           <button type="button" onClick={() => { const v = `${scenePickerTab}: ${res.name} [card] ${res.media[0].url}`; setSceneSelections(p => p.includes(v) ? p.filter(x => x !== v) : [...p, v]) }} style={{ width: '100%', background: 'none', border: 'none', padding: 0, cursor: 'pointer', position: 'relative' }}>
@@ -3187,36 +3187,71 @@ function AgentInbox({
 
           {composerTab === 'agent' ? (
             /* AGENT CHAT — scrollable like ChatGPT */
-            <div style={{ display: 'flex', flexDirection: 'column', minHeight: '350px', maxHeight: '400px', background: 'rgba(0,0,0,0.15)', border: '1px solid rgba(255,255,255,0.04)', borderRadius: '0.75rem', overflow: 'hidden' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', minHeight: '420px', maxHeight: '500px', background: 'rgba(0,0,0,0.15)', border: '1px solid rgba(255,255,255,0.04)', borderRadius: '0.75rem', overflow: 'hidden' }}
+              onDragOver={(e) => { e.preventDefault(); e.currentTarget.style.borderColor = 'rgba(212,175,55,0.4)' }}
+              onDragLeave={(e) => { e.preventDefault(); e.currentTarget.style.borderColor = 'rgba(255,255,255,0.04)' }}
+              onDrop={async (e) => {
+                e.preventDefault(); e.currentTarget.style.borderColor = 'rgba(255,255,255,0.04)';
+                const file = e.dataTransfer.files?.[0]; if (!file) return;
+                setAgentLoading(true);
+                if (file.type.startsWith('image/')) {
+                  const reader = new FileReader(); reader.onload = async () => {
+                    const desc = `[User dropped image: ${file.name}]`;
+                    const result = await chatWithAgent(desc + '\n\nPlease examine this image and describe what you see. How can we use it in our storyboard?', agentHistory);
+                    if (!result.error) setAgentHistory(result.updatedHistory);
+                    setAgentLoading(false);
+                  }; reader.readAsDataURL(file);
+                } else {
+                  const text = await file.text();
+                  const preview = text.substring(0, 2000);
+                  const result = await chatWithAgent(`[User dropped file: ${file.name}]\n\nContent:\n${preview}\n\nPlease review this document and tell me what you understand from it.`, agentHistory);
+                  if (!result.error) setAgentHistory(result.updatedHistory);
+                  setAgentLoading(false);
+                }
+              }}>
+              {/* Attached context bar */}
+              {(draft.sceneHint || draft.skillHint) && <div style={{ padding: '0.4rem 0.8rem', borderBottom: '1px solid rgba(255,255,255,0.04)', fontSize: '0.68rem', color: 'rgba(255,255,255,0.3)' }}>📎 Theo sees: {draft.sceneHint ? `scene refs (${draft.sceneHint.split(' | ').length})` : ''}{draft.sceneHint && draft.skillHint ? ', ' : ''}{draft.skillHint ? `skill: ${draft.skillHint}` : ''}</div>}
               <div style={{ flex: 1, overflowY: 'auto', padding: '1rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                 {agentHistory.length === 0 && <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'rgba(255,255,255,0.2)', fontSize: '0.85rem', flexDirection: 'column', gap: '0.5rem' }}><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1"><path d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7z"/></svg><span>Ask Theo anything about your project...</span></div>}
                 {agentHistory.map((msg, i) => (
                   <div key={i} style={{ padding: '0.6rem 0.8rem', borderRadius: '0.6rem', fontSize: '0.82rem', lineHeight: '1.5', background: msg.role === 'user' ? 'rgba(212,175,55,0.08)' : 'rgba(255,255,255,0.03)', border: `1px solid ${msg.role === 'user' ? 'rgba(212,175,55,0.15)' : 'rgba(255,255,255,0.04)'}`, color: msg.role === 'user' ? 'var(--gold)' : 'rgba(255,255,255,0.75)', alignSelf: msg.role === 'user' ? 'flex-end' : 'flex-start', maxWidth: '88%', whiteSpace: 'pre-wrap' }}>
-                    {msg.parts[0].text.substring(0, 500)}{msg.parts[0].text.length > 500 ? '...' : ''}
+                    {msg.parts[0].text.substring(0, 800)}{msg.parts[0].text.length > 800 ? '...' : ''}
                   </div>
                 ))}
               </div>
-              <div style={{ padding: '0.6rem', borderTop: '1px solid rgba(255,255,255,0.04)', display: 'flex', gap: '0.4rem', alignItems: 'center' }}>
-                <input type="text" placeholder="Ask Theo..." value={agentInput} onChange={e => setAgentInput(e.target.value)} onKeyDown={async (e) => {
-                  if (e.key === 'Enter' && agentInput.trim()) {
-                    const msg = agentInput; setAgentInput(''); setAgentLoading(true);
-                    const result = await chatWithAgent(msg, agentHistory);
+              <div style={{ padding: '0.6rem', borderTop: '1px solid rgba(255,255,255,0.04)', display: 'flex', gap: '0.4rem', alignItems: 'flex-end' }}>
+                <textarea placeholder="Ask Theo anything... (Shift+Enter for newline)" value={agentInput} onChange={e => setAgentInput(e.target.value)} onKeyDown={async (e) => {
+                  if (e.key === 'Enter' && !e.shiftKey && agentInput.trim()) {
+                    e.preventDefault(); const msg = agentInput; setAgentInput(''); setAgentLoading(true);
+                    const ctxParts: string[] = []; if (draft.sceneHint) ctxParts.push(`[Attached scene assets: ${draft.sceneHint}]`); if (draft.skillHint) ctxParts.push(`[Attached skill: ${draft.skillHint}]`);
+                    const fullMsg = ctxParts.length > 0 ? `${ctxParts.join(' ')}\n\n${msg}` : msg;
+                    const result = await chatWithAgent(fullMsg, agentHistory);
                     if (!result.error) setAgentHistory(result.updatedHistory);
                     setAgentLoading(false);
                   }
-                }} style={{ flex: 1, background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '0.5rem', padding: '0.5rem 0.8rem', color: 'white', fontSize: '0.82rem', outline: 'none' }} />
+                }} rows={3} style={{ flex: 1, background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '0.5rem', padding: '0.5rem 0.8rem', color: 'white', fontSize: '0.82rem', outline: 'none', resize: 'none', fontFamily: 'inherit', lineHeight: 1.5 }} />
                 <button type="button" disabled={agentLoading || !agentInput.trim()} onClick={async () => {
                   const msg = agentInput; setAgentInput(''); setAgentLoading(true);
-                  const result = await chatWithAgent(msg, agentHistory);
+                  const ctxParts: string[] = []; if (draft.sceneHint) ctxParts.push(`[Attached scene assets: ${draft.sceneHint}]`); if (draft.skillHint) ctxParts.push(`[Attached skill: ${draft.skillHint}]`);
+                  const fullMsg = ctxParts.length > 0 ? `${ctxParts.join(' ')}\n\n${msg}` : msg;
+                  const result = await chatWithAgent(fullMsg, agentHistory);
                   if (!result.error) setAgentHistory(result.updatedHistory);
                   setAgentLoading(false);
-                }} style={{ padding: '0.5rem 1rem', borderRadius: '0.5rem', border: 'none', background: agentLoading ? 'rgba(212,175,55,0.3)' : 'var(--gold)', color: '#000', cursor: agentLoading ? 'wait' : 'pointer', fontSize: '0.78rem', fontWeight: 700, transition: 'all 0.2s' }}>
+                }} style={{ padding: '0.6rem 1.2rem', borderRadius: '0.5rem', border: 'none', background: agentLoading ? 'rgba(212,175,55,0.3)' : 'var(--gold)', color: '#000', cursor: agentLoading ? 'wait' : 'pointer', fontSize: '0.82rem', fontWeight: 700, transition: 'all 0.2s', alignSelf: 'flex-end' }}>
                   {agentLoading ? '...' : 'Send'}
                 </button>
               </div>
             </div>
           ) : composerTab === 'task' ? (
-            <textarea placeholder="Write the highly detailed task for the agent. Specify framing, lighting, motion, and exact skills..." value={draft.prompt} onChange={(event) => onDraftChange({ ...draft, prompt: event.target.value })} className="node-prompt-input" style={{ minHeight: '350px' }} />
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+              <textarea placeholder="Write the highly detailed task for the agent. Specify framing, lighting, motion, and exact skills..." value={draft.prompt} onChange={(event) => onDraftChange({ ...draft, prompt: event.target.value })} className="node-prompt-input" style={{ minHeight: '300px' }} />
+              <button type="button" disabled={agentLoading || !draft.prompt.trim()} onClick={async () => {
+                setAgentLoading(true); const result = await generatePrompt(draft.title || 'scene', 'cinematic Pixar 3D animation, AAA quality, ' + draft.prompt.substring(0, 200));
+                if (!result.error) onDraftChange({ ...draft, prompt: result.text }); setAgentLoading(false);
+              }} style={{ padding: '0.45rem 1rem', borderRadius: '0.5rem', border: '1px solid rgba(212,175,55,0.2)', background: 'rgba(212,175,55,0.05)', color: 'var(--gold)', cursor: 'pointer', fontSize: '0.78rem', transition: 'all 0.2s', alignSelf: 'flex-start' }}>
+                {agentLoading ? '⏳ Enhancing...' : '✨ Enhance with AI'}
+              </button>
+            </div>
           ) : (
             <div className="prompt-builder-panel" style={{ background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '0.75rem', padding: '1.5rem', minHeight: '350px', display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
               <div>
@@ -3246,17 +3281,35 @@ function AgentInbox({
               <div style={{ marginTop: 'auto', padding: '0.8rem', background: 'rgba(0,0,0,0.2)', borderRadius: '0.5rem', color: 'rgba(255,255,255,0.5)', fontSize: '0.8rem', lineHeight: '1.4', maxHeight: '100px', overflowY: 'auto' }}>
                 <strong style={{ color: 'var(--gold)' }}>Preview:</strong> {draft.prompt || 'Click chunks above to build your prompt...'}
               </div>
+              <button type="button" disabled={agentLoading || !draft.prompt.trim()} onClick={async () => {
+                setAgentLoading(true); const result = await refinePrompt(draft.prompt, 'Make it more cinematic, add specific camera lens, lighting, and quality boosters');
+                if (!result.error) onDraftChange({ ...draft, prompt: result.text }); setAgentLoading(false);
+              }} style={{ padding: '0.45rem 1rem', borderRadius: '0.5rem', border: '1px solid rgba(212,175,55,0.2)', background: 'rgba(212,175,55,0.05)', color: 'var(--gold)', cursor: 'pointer', fontSize: '0.78rem', transition: 'all 0.2s', alignSelf: 'flex-start', marginTop: '0.5rem' }}>
+                {agentLoading ? '⏳ Refining...' : '✨ AI Refine Prompt'}
+              </button>
             </div>
           )}
 
-          {/* Attachment strip — fixed horizontal row of mini icons */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.6rem 0', marginTop: '0.5rem', borderTop: '1px solid rgba(255,255,255,0.06)', minHeight: '40px', flexWrap: 'wrap' }}>
-            {draft.sceneHint && draft.sceneHint.split(' | ').map((s, i) => (
-              <div key={`s${i}`} style={{ width: '34px', height: '34px', borderRadius: '0.4rem', border: '1px solid rgba(64,255,156,0.3)', background: 'rgba(64,255,156,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', position: 'relative' }} title={s} onClick={() => { const parts = draft.sceneHint.split(' | ').filter((_, j) => j !== i); onDraftChange({ ...draft, sceneHint: parts.join(' | ') }) }}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4ade80" strokeWidth="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/></svg>
-                <div style={{ position: 'absolute', top: '-4px', right: '-4px', width: '14px', height: '14px', borderRadius: '50%', background: '#4ade80', color: '#000', fontSize: '0.55rem', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{i + 1}</div>
+          {/* Attachment strip — compact row */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', padding: '0.35rem 0', marginTop: '0.3rem', borderTop: '1px solid rgba(255,255,255,0.05)', minHeight: '30px', flexWrap: 'wrap' }}>
+            {draft.sceneHint && draft.sceneHint.split(' | ').map((s, i) => {
+              const cat = s.split(':')[0]?.toLowerCase().trim() || 'images'
+              const iconMap: Record<string, { color: string, d: string }> = {
+                images: { color: '#d4af37', d: 'M4 16l4.586-4.586a2 2 0 0 1 2.828 0L16 16m-2-2l1.586-1.586a2 2 0 0 1 2.828 0L20 14m-6-6h.01M6 20h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2z' },
+                videos: { color: '#f59e0b', d: 'M15 10l4.553-2.276A1 1 0 0 1 21 8.618v6.764a1 1 0 0 1-1.447.894L15 14M5 18h8a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2z' },
+                characters: { color: '#60a5fa', d: 'M16 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0zM12 14a7 7 0 0 0-7 7h14a7 7 0 0 0-7-7z' },
+                locations: { color: '#4ade80', d: 'M17.657 16.657L13.414 20.9a1.998 1.998 0 0 1-2.827 0l-4.244-4.243a8 8 0 1 1 11.314 0zM15 11a3 3 0 1 1-6 0 3 3 0 0 1 6 0z' },
+                props: { color: '#f472b6', d: 'M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4' },
+                styles: { color: '#a78bfa', d: 'M7 21a4 4 0 0 1-4-4V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v12a4 4 0 0 1-4 4zm0 0h12a2 2 0 0 0 2-2v-4a2 2 0 0 0-2-2h-2.343' }
+              }
+              const ic = iconMap[cat] || iconMap.images
+              return (
+              <div key={`s${i}`} style={{ width: '28px', height: '28px', borderRadius: '0.35rem', border: `1px solid ${ic.color}55`, background: `${ic.color}15`, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', position: 'relative' }} title={s} onClick={() => { const parts = draft.sceneHint.split(' | ').filter((_, j) => j !== i); onDraftChange({ ...draft, sceneHint: parts.join(' | ') }) }}>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={ic.color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d={ic.d} /></svg>
+                <div style={{ position: 'absolute', top: '-3px', right: '-3px', width: '12px', height: '12px', borderRadius: '50%', background: ic.color, color: '#000', fontSize: '0.5rem', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{i + 1}</div>
               </div>
-            ))}
+              )
+            })}
             {draft.skillHint && (
               <div style={{ width: '34px', height: '34px', borderRadius: '0.4rem', border: '1px solid rgba(212,175,55,0.3)', background: 'rgba(212,175,55,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }} title={draft.skillHint} onClick={() => onDraftChange({ ...draft, skillHint: '' })}>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" strokeWidth="1.5"><path d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7z"/></svg>
@@ -3307,25 +3360,6 @@ function AgentInbox({
             )}
             <button className="attach-btn" type="button" onClick={() => { fetch('/api/docs/list').then(r => r.json()).then(d => setPdfDocs(d.docs || [])).catch(() => {}); setShowPdfViewer(true) }} style={{ textAlign: 'center', display: 'block', width: '100%', cursor: 'pointer' }}>
               📖 Open Document Viewer
-            </button>
-          </div>
-
-          {/* AI Quick Actions */}
-          <div className="attachment-node glass" style={{ border: '1px solid rgba(212,175,55,0.1)', background: 'rgba(212,175,55,0.02)', padding: '1.2rem', borderRadius: '1rem', width: '100%' }}>
-            <p className="eyebrow" style={{ color: 'var(--gold)' }}>Quick Actions</p>
-            <button type="button" disabled={agentLoading} onClick={async () => {
-              if (!draft.prompt.trim()) return; setAgentLoading(true);
-              const result = await refinePrompt(draft.prompt, 'Make it more cinematic, add specific camera lens, lighting, and quality boosters');
-              if (!result.error) onDraftChange({ ...draft, prompt: result.text }); setAgentLoading(false);
-            }} style={{ width: '100%', padding: '0.5rem', borderRadius: '0.5rem', border: '1px solid rgba(212,175,55,0.2)', background: 'rgba(212,175,55,0.05)', color: 'var(--gold)', cursor: 'pointer', fontSize: '0.78rem', marginBottom: '0.4rem', transition: 'all 0.2s' }}>
-              {agentLoading ? '⏳ Refining...' : '✨ AI Refine Prompt'}
-            </button>
-            <button type="button" disabled={agentLoading} onClick={async () => {
-              if (!draft.title.trim()) return; setAgentLoading(true);
-              const result = await generatePrompt(draft.title, 'cinematic Pixar 3D animation, AAA quality');
-              if (!result.error) onDraftChange({ ...draft, prompt: result.text }); setAgentLoading(false);
-            }} style={{ width: '100%', padding: '0.5rem', borderRadius: '0.5rem', border: '1px solid rgba(255,255,255,0.08)', background: 'rgba(255,255,255,0.02)', color: 'rgba(255,255,255,0.5)', cursor: 'pointer', fontSize: '0.78rem', transition: 'all 0.2s' }}>
-              {agentLoading ? '⏳ Generating...' : '🎬 Generate from Title'}
             </button>
           </div>
         </div>
@@ -3643,20 +3677,21 @@ function AgentInbox({
               <div style={{ display: 'flex', gap: '0.3rem', flex: 1, overflowX: 'auto', padding: '0.2rem 0' }}>
                 {pdfDocs.map(doc => (
                   <button key={doc.name} type="button" onClick={async () => {
-                    setActivePdf(doc.name); setPdfCurrentPage(0); setPdfPages([])
+                    setActivePdf(doc.name); setPdfCurrentPage(0); setPdfPages(['Loading...'])
                     try {
                       const pdfjsLib = await import('pdfjs-dist')
-                      pdfjsLib.GlobalWorkerOptions.workerSrc = new URL('pdfjs-dist/build/pdf.worker.min.mjs', import.meta.url).href
+                      pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.mjs'
                       const encodedPath = `/assets/storyboard/docs/${encodeURIComponent(doc.name)}`
-                      const pdf = await pdfjsLib.getDocument(encodedPath).promise
+                      const loadingTask = pdfjsLib.getDocument({ url: encodedPath, isEvalSupported: false })
+                      const pdf = await loadingTask.promise
                       const pages: string[] = []
                       for (let i = 1; i <= pdf.numPages; i++) {
                         const page = await pdf.getPage(i)
                         const content = await page.getTextContent()
                         pages.push(content.items.map((item: any) => item.str).join(' '))
                       }
-                      setPdfPages(pages)
-                    } catch (err) { setPdfPages([`Error: ${err}`]) }
+                      setPdfPages(pages.length > 0 ? pages : ['(No text content found in this PDF)'])
+                    } catch (err: any) { console.error('PDF load error:', err); setPdfPages([`Error loading PDF: ${err?.message || err}`]) }
                   }} style={{ padding: '0.3rem 0.7rem', borderRadius: '0.5rem', border: `1px solid ${activePdf === doc.name ? 'rgba(255,96,64,0.4)' : 'rgba(255,255,255,0.06)'}`, background: activePdf === doc.name ? 'rgba(255,96,64,0.08)' : 'transparent', color: activePdf === doc.name ? '#ff6040' : 'rgba(255,255,255,0.5)', cursor: 'pointer', fontSize: '0.72rem', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: '0.3rem', transition: 'all 0.2s' }}>
                     <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
                     {doc.name.replace(/\.(pdf|docx|pages)$/i,'').substring(0,20)}

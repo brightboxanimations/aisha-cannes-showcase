@@ -2936,7 +2936,7 @@ function AgentInbox({
     { id: 'bp-1', title: 'Aisha Close-Up Sequence', prompt: 'Cinematic close-up of Aisha looking determined, neon rain, anamorphic lens flare.', sceneHint: 'Act 1 - Scene 1', skillHint: 'Cinematography' },
     { id: 'bp-2', title: 'Desert Palace Wide', prompt: 'Extreme wide shot of the Bedouin palace at sunset, sand particles in the wind.', sceneHint: 'Act 2 - Scene 3', skillHint: '' }
   ])
-  const [composerTab, setComposerTab] = useState<'task' | 'promptBuilder'>('task')
+  const [composerTab, setComposerTab] = useState<'agent' | 'task' | 'promptBuilder'>('agent')
   const [isRecording, setIsRecording] = useState(false)
   const recognitionRef = useRef<any>(null)
   const [archiveSearch, setArchiveSearch] = useState('')
@@ -3000,7 +3000,7 @@ function AgentInbox({
                 </button>
               ))}
               {sceneSelections.length > 0 && (
-                <button type="button" onClick={() => { onDraftChange({ ...draft, sceneHint: sceneSelections.join(' | ') }); setSceneSelections([]); setIsModalOpen(false) }} style={{ marginLeft: 'auto', padding: '0.4rem 1rem', borderRadius: '0.5rem', border: '1px solid rgba(64,255,156,0.4)', background: 'rgba(64,255,156,0.1)', color: '#4ade80', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.35rem', whiteSpace: 'nowrap', boxShadow: '0 0 12px rgba(64,255,156,0.2)', transition: 'all 0.2s' }}>
+                <button type="button" onClick={() => { onDraftChange({ ...draft, sceneHint: sceneSelections.join(' | ') }); setSceneSelections([]); setIsModalOpen(false) }} style={{ marginLeft: 'auto', padding: '0.5rem 1.4rem', borderRadius: '0.6rem', border: '1px solid rgba(64,255,156,0.5)', background: 'rgba(64,255,156,0.12)', color: '#4ade80', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.4rem', whiteSpace: 'nowrap', boxShadow: '0 0 16px rgba(64,255,156,0.25)', transition: 'all 0.2s' }}>
                   Attach All · {sceneSelections.length}
                 </button>
               )}
@@ -3045,13 +3045,13 @@ function AgentInbox({
                 return resources.length === 0 ? (
                   <div style={{ color: 'rgba(255,255,255,0.3)', textAlign: 'center', padding: '3rem 0', fontSize: '0.85rem' }}>No {scenePickerTab} found in the storyboard.</div>
                 ) : (
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '1rem' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '1rem' }}>
                     {resources.map(res => (
-                      <div key={res.id} style={{ background: 'rgba(255,255,255,0.015)', backdropFilter: 'blur(12px)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '0.8rem', overflow: 'hidden', transition: 'all 0.2s' }}>
+                      <div key={res.id} style={{ background: sceneSelections.some(s => s.includes(res.name)) ? 'rgba(64,255,156,0.06)' : 'rgba(255,255,255,0.015)', backdropFilter: 'blur(12px)', border: sceneSelections.some(s => s.includes(res.name)) ? '1px solid rgba(64,255,156,0.35)' : '1px solid rgba(255,255,255,0.06)', borderRadius: '0.8rem', overflow: 'hidden', transition: 'all 0.25s', boxShadow: sceneSelections.some(s => s.includes(res.name)) ? '0 0 12px rgba(64,255,156,0.15)' : 'none' }}>
                         {/* Card image */}
                         {res.media[0] && (
                           <button type="button" onClick={() => { const v = `${scenePickerTab}: ${res.name} [card] ${res.media[0].url}`; setSceneSelections(p => p.includes(v) ? p.filter(x => x !== v) : [...p, v]) }} style={{ width: '100%', background: 'none', border: 'none', padding: 0, cursor: 'pointer', position: 'relative' }}>
-                            <img src={res.media[0].url} alt={res.name} loading="lazy" style={{ width: '100%', height: '120px', objectFit: 'cover', display: 'block' }} />
+                            <img src={res.media[0].url} alt={res.name} loading="lazy" style={{ width: '100%', height: '140px', objectFit: 'cover', display: 'block' }} />
                           </button>
                         )}
                         <div style={{ padding: '0.6rem' }}>
@@ -3141,14 +3141,18 @@ function AgentInbox({
             <input placeholder="Task Title (e.g. Master Shot 01)" value={draft.title} onChange={(event) => onDraftChange({ ...draft, title: event.target.value })} className="node-title-input" />
           </div>
 
-          {/* Composer Tabs: Task / Prompt Builder */}
+          {/* Composer Tabs: Agent / Task / Prompt Builder */}
           <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem' }}>
-            <button type="button" onClick={() => setComposerTab('task')} style={{ padding: '0.5rem 1.2rem', borderRadius: '2rem', border: composerTab === 'task' ? '1px solid rgba(248, 217, 120, 0.5)' : '1px solid rgba(255,255,255,0.1)', background: composerTab === 'task' ? 'rgba(248, 217, 120, 0.08)' : 'transparent', color: composerTab === 'task' ? 'var(--gold)' : 'rgba(255,255,255,0.5)', cursor: 'pointer', fontSize: '0.8rem', fontWeight: 600, transition: 'all 0.2s' }}>
-              <span style={{ marginRight: '0.4rem' }}>✍️</span> Task
-            </button>
-            <button type="button" onClick={() => setComposerTab('promptBuilder')} style={{ padding: '0.5rem 1.2rem', borderRadius: '2rem', border: composerTab === 'promptBuilder' ? '1px solid rgba(248, 217, 120, 0.5)' : '1px solid rgba(255,255,255,0.1)', background: composerTab === 'promptBuilder' ? 'rgba(248, 217, 120, 0.08)' : 'transparent', color: composerTab === 'promptBuilder' ? 'var(--gold)' : 'rgba(255,255,255,0.5)', cursor: 'pointer', fontSize: '0.8rem', fontWeight: 600, transition: 'all 0.2s' }}>
-              <span style={{ marginRight: '0.4rem' }}>🧩</span> Prompt Builder
-            </button>
+            {([
+              { key: 'agent', label: 'Agent', d: 'M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7z' },
+              { key: 'task', label: 'Task', d: 'M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2M9 5h6M9 14l2 2 4-4' },
+              { key: 'promptBuilder', label: 'Builder', d: 'M12 3l1.912 5.813L20 10.5l-4.587 3.979L16.978 21 12 17.5 7.022 21l1.565-6.521L4 10.5l6.088-1.687L12 3' }
+            ] as const).map(tab => (
+              <button key={tab.key} type="button" onClick={() => setComposerTab(tab.key as any)} style={{ padding: '0.5rem 1rem', borderRadius: '0.7rem', border: composerTab === tab.key ? '1px solid rgba(212,175,55,0.4)' : '1px solid rgba(255,255,255,0.06)', background: composerTab === tab.key ? 'rgba(212,175,55,0.08)' : 'rgba(255,255,255,0.015)', backdropFilter: 'blur(8px)', color: composerTab === tab.key ? 'var(--gold)' : 'rgba(255,255,255,0.45)', cursor: 'pointer', fontSize: '0.78rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.4rem', transition: 'all 0.25s', boxShadow: composerTab === tab.key ? '0 0 10px rgba(212,175,55,0.12), inset 0 1px 0 rgba(255,255,255,0.05)' : 'inset 0 1px 0 rgba(255,255,255,0.03)' }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d={tab.d} /></svg>
+                {tab.label}
+              </button>
+            ))}
             {/* Dictation Button */}
             <button type="button" title={isRecording ? "Stop Dictation" : "Start Dictation"} onClick={() => {
               if (isRecording && recognitionRef.current) {
@@ -3176,12 +3180,42 @@ function AgentInbox({
                 recognitionRef.current = recognition;
                 setIsRecording(true);
               }
-            }} style={{ marginLeft: 'auto', padding: '0.5rem', borderRadius: '50%', width: '36px', height: '36px', border: isRecording ? '2px solid #ff2a55' : '1px solid rgba(255,255,255,0.15)', background: isRecording ? 'rgba(255, 42, 85, 0.15)' : 'transparent', color: isRecording ? '#ff2a55' : 'rgba(255,255,255,0.5)', cursor: 'pointer', display: 'grid', placeItems: 'center', transition: 'all 0.3s', animation: isRecording ? 'pulse-recording 1.5s infinite' : 'none' }}>
+            }} style={{ marginLeft: 'auto', padding: '0.5rem', borderRadius: '0.6rem', width: '36px', height: '36px', border: isRecording ? '2px solid #ff2a55' : '1px solid rgba(255,255,255,0.1)', background: isRecording ? 'rgba(255, 42, 85, 0.15)' : 'rgba(255,255,255,0.015)', color: isRecording ? '#ff2a55' : 'rgba(255,255,255,0.4)', cursor: 'pointer', display: 'grid', placeItems: 'center', transition: 'all 0.3s', animation: isRecording ? 'pulse-recording 1.5s infinite' : 'none' }}>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>
             </button>
           </div>
 
-          {composerTab === 'task' ? (
+          {composerTab === 'agent' ? (
+            /* AGENT CHAT — scrollable like ChatGPT */
+            <div style={{ display: 'flex', flexDirection: 'column', minHeight: '350px', maxHeight: '400px', background: 'rgba(0,0,0,0.15)', border: '1px solid rgba(255,255,255,0.04)', borderRadius: '0.75rem', overflow: 'hidden' }}>
+              <div style={{ flex: 1, overflowY: 'auto', padding: '1rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                {agentHistory.length === 0 && <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'rgba(255,255,255,0.2)', fontSize: '0.85rem', flexDirection: 'column', gap: '0.5rem' }}><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1"><path d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7z"/></svg><span>Ask Theo anything about your project...</span></div>}
+                {agentHistory.map((msg, i) => (
+                  <div key={i} style={{ padding: '0.6rem 0.8rem', borderRadius: '0.6rem', fontSize: '0.82rem', lineHeight: '1.5', background: msg.role === 'user' ? 'rgba(212,175,55,0.08)' : 'rgba(255,255,255,0.03)', border: `1px solid ${msg.role === 'user' ? 'rgba(212,175,55,0.15)' : 'rgba(255,255,255,0.04)'}`, color: msg.role === 'user' ? 'var(--gold)' : 'rgba(255,255,255,0.75)', alignSelf: msg.role === 'user' ? 'flex-end' : 'flex-start', maxWidth: '88%', whiteSpace: 'pre-wrap' }}>
+                    {msg.parts[0].text.substring(0, 500)}{msg.parts[0].text.length > 500 ? '...' : ''}
+                  </div>
+                ))}
+              </div>
+              <div style={{ padding: '0.6rem', borderTop: '1px solid rgba(255,255,255,0.04)', display: 'flex', gap: '0.4rem', alignItems: 'center' }}>
+                <input type="text" placeholder="Ask Theo..." value={agentInput} onChange={e => setAgentInput(e.target.value)} onKeyDown={async (e) => {
+                  if (e.key === 'Enter' && agentInput.trim()) {
+                    const msg = agentInput; setAgentInput(''); setAgentLoading(true);
+                    const result = await chatWithAgent(msg, agentHistory);
+                    if (!result.error) setAgentHistory(result.updatedHistory);
+                    setAgentLoading(false);
+                  }
+                }} style={{ flex: 1, background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '0.5rem', padding: '0.5rem 0.8rem', color: 'white', fontSize: '0.82rem', outline: 'none' }} />
+                <button type="button" disabled={agentLoading || !agentInput.trim()} onClick={async () => {
+                  const msg = agentInput; setAgentInput(''); setAgentLoading(true);
+                  const result = await chatWithAgent(msg, agentHistory);
+                  if (!result.error) setAgentHistory(result.updatedHistory);
+                  setAgentLoading(false);
+                }} style={{ padding: '0.5rem 1rem', borderRadius: '0.5rem', border: 'none', background: agentLoading ? 'rgba(212,175,55,0.3)' : 'var(--gold)', color: '#000', cursor: agentLoading ? 'wait' : 'pointer', fontSize: '0.78rem', fontWeight: 700, transition: 'all 0.2s' }}>
+                  {agentLoading ? '...' : 'Send'}
+                </button>
+              </div>
+            </div>
+          ) : composerTab === 'task' ? (
             <textarea placeholder="Write the highly detailed task for the agent. Specify framing, lighting, motion, and exact skills..." value={draft.prompt} onChange={(event) => onDraftChange({ ...draft, prompt: event.target.value })} className="node-prompt-input" style={{ minHeight: '350px' }} />
           ) : (
             <div className="prompt-builder-panel" style={{ background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '0.75rem', padding: '1.5rem', minHeight: '350px', display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
@@ -3215,124 +3249,87 @@ function AgentInbox({
             </div>
           )}
 
-          <div className="task-attachment-preview">
-            {draft.sceneHint && (
-              <div className="preview-icon-chip">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
-                {draft.sceneHint}
+          {/* Attachment strip — fixed horizontal row of mini icons */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.6rem 0', marginTop: '0.5rem', borderTop: '1px solid rgba(255,255,255,0.06)', minHeight: '40px', flexWrap: 'wrap' }}>
+            {draft.sceneHint && draft.sceneHint.split(' | ').map((s, i) => (
+              <div key={`s${i}`} style={{ width: '34px', height: '34px', borderRadius: '0.4rem', border: '1px solid rgba(64,255,156,0.3)', background: 'rgba(64,255,156,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', position: 'relative' }} title={s} onClick={() => { const parts = draft.sceneHint.split(' | ').filter((_, j) => j !== i); onDraftChange({ ...draft, sceneHint: parts.join(' | ') }) }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4ade80" strokeWidth="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/></svg>
+                <div style={{ position: 'absolute', top: '-4px', right: '-4px', width: '14px', height: '14px', borderRadius: '50%', background: '#4ade80', color: '#000', fontSize: '0.55rem', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{i + 1}</div>
               </div>
-            )}
+            ))}
             {draft.skillHint && (
-              <div className="preview-icon-chip">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-                {draft.skillHint}
+              <div style={{ width: '34px', height: '34px', borderRadius: '0.4rem', border: '1px solid rgba(212,175,55,0.3)', background: 'rgba(212,175,55,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }} title={draft.skillHint} onClick={() => onDraftChange({ ...draft, skillHint: '' })}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" strokeWidth="1.5"><path d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7z"/></svg>
               </div>
             )}
+            {/* Show count label */}
+            {(draft.sceneHint || draft.skillHint) && <span style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.3)', marginLeft: '0.3rem' }}>{(draft.sceneHint ? draft.sceneHint.split(' | ').length : 0) + (draft.skillHint ? 1 : 0)} attached</span>}
           </div>
-          <hr style={{ border: 'none', borderTop: '1px solid rgba(255,255,255,0.1)', margin: '0 0 1rem 0' }} />
+
           <div className="node-footer" style={{ position: 'relative', right: 0, bottom: 0 }}>
             <button className="execute-task-btn" onClick={onAdd} type="button">
-              Launch Agent Pipeline <span>⚡️</span>
+              Launch Pipeline <span>⚡️</span>
             </button>
           </div>
         </div>
 
-        <div className="mindmap-attachment-nodes" style={{ flex: 1, gap: '1.5rem', display: 'flex', flexDirection: 'column' }}>
-          <div className="attachment-node glass scene-node" style={{ border: '1px solid rgba(255,255,255,0.05)', background: 'rgba(255,255,255,0.02)', padding: '1.5rem', borderRadius: '1rem', width: '100%' }}>
+        <div className="mindmap-attachment-nodes" style={{ flex: 1, gap: '1.2rem', display: 'flex', flexDirection: 'column' }}>
+          <div className="attachment-node glass scene-node" style={{ border: '1px solid rgba(255,255,255,0.05)', background: 'rgba(255,255,255,0.02)', padding: '1.2rem', borderRadius: '1rem', width: '100%' }}>
             <p className="eyebrow">Target Scene</p>
             <input placeholder="e.g. Act 1 Scene 2" value={draft.sceneHint} onChange={(event) => onDraftChange({ ...draft, sceneHint: event.target.value })} />
             <button className="attach-btn" type="button" onClick={() => setIsModalOpen(true)}>Link Visual Node</button>
           </div>
-          <div className="attachment-node glass skill-node" style={{ border: '1px solid rgba(255,255,255,0.05)', background: 'rgba(255,255,255,0.02)', padding: '1.5rem', borderRadius: '1rem', width: '100%' }}>
+          <div className="attachment-node glass skill-node" style={{ border: '1px solid rgba(255,255,255,0.05)', background: 'rgba(255,255,255,0.02)', padding: '1.2rem', borderRadius: '1rem', width: '100%' }}>
             <p className="eyebrow">Agent Skills</p>
             {draft.skillHint && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem 0.8rem', background: 'rgba(212,175,55,0.1)', border: '1px solid rgba(212,175,55,0.3)', borderRadius: '0.5rem', marginBottom: '0.5rem', fontSize: '0.85rem', color: 'var(--gold)' }}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.4rem 0.7rem', background: 'rgba(212,175,55,0.08)', border: '1px solid rgba(212,175,55,0.2)', borderRadius: '0.5rem', marginBottom: '0.5rem', fontSize: '0.82rem', color: 'var(--gold)' }}>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
                 {draft.skillHint}
-                <button type="button" onClick={() => onDraftChange({ ...draft, skillHint: '' })} style={{ marginLeft: 'auto', background: 'none', border: 'none', color: 'rgba(255,255,255,0.4)', cursor: 'pointer', fontSize: '1rem', padding: 0 }}>×</button>
+                <button type="button" onClick={() => onDraftChange({ ...draft, skillHint: '' })} style={{ marginLeft: 'auto', background: 'none', border: 'none', color: 'rgba(255,255,255,0.4)', cursor: 'pointer', fontSize: '0.9rem', padding: 0 }}>×</button>
               </div>
             )}
             <button className="attach-btn" type="button" onClick={() => setShowSkillsStore(true)} style={{ textAlign: 'center', display: 'block', width: '100%', cursor: 'pointer' }}>
               🧠 Browse Skills Store
             </button>
           </div>
-          <div className="attachment-node glass ref-node" style={{ border: '1px solid rgba(255,255,255,0.05)', background: 'rgba(255,255,255,0.02)', padding: '1.5rem', borderRadius: '1rem', width: '100%' }}>
+          {/* References & PDFs — bookstore icons */}
+          <div className="attachment-node glass ref-node" style={{ border: '1px solid rgba(255,255,255,0.05)', background: 'rgba(255,255,255,0.02)', padding: '1.2rem', borderRadius: '1rem', width: '100%' }}>
             <p className="eyebrow">References & PDFs</p>
-            {/* Pinned docs bar */}
             {pdfDocs.filter(d => d.pinned).length > 0 && (
-              <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', marginBottom: '0.6rem' }}>
+              <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '0.6rem' }}>
                 {pdfDocs.filter(d => d.pinned).map(doc => (
-                  <button key={doc.name} type="button" onClick={() => { setActivePdf(doc.name); setShowPdfViewer(true) }} style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', padding: '0.3rem 0.6rem', borderRadius: '0.4rem', border: '1px solid rgba(255,255,255,0.08)', background: 'rgba(255,255,255,0.02)', color: 'rgba(255,255,255,0.6)', cursor: 'pointer', fontSize: '0.7rem', transition: 'all 0.2s' }}>
-                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#ff6040" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-                    {doc.name.replace('.pdf', '').substring(0, 18)}
+                  <button key={doc.name} type="button" onClick={() => { setActivePdf(doc.name); setShowPdfViewer(true) }} style={{ width: '52px', height: '62px', borderRadius: '0.5rem', border: activePdf === doc.name ? '1px solid rgba(255,96,64,0.5)' : '1px solid rgba(255,255,255,0.08)', background: activePdf === doc.name ? 'rgba(255,96,64,0.08)' : 'rgba(255,255,255,0.02)', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '0.2rem', transition: 'all 0.25s', boxShadow: activePdf === doc.name ? '0 0 10px rgba(255,96,64,0.15)' : 'none' }}>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={activePdf === doc.name ? '#ff6040' : 'rgba(255,255,255,0.35)'} strokeWidth="1.5"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+                    <span style={{ fontSize: '0.5rem', color: activePdf === doc.name ? '#ff6040' : 'rgba(255,255,255,0.35)', textAlign: 'center', lineHeight: 1.1, overflow: 'hidden', maxWidth: '46px' }}>{doc.name.replace(/\.(pdf|docx|pages)$/i,'').substring(0,10)}</span>
                   </button>
                 ))}
               </div>
             )}
             <button className="attach-btn" type="button" onClick={() => { fetch('/api/docs/list').then(r => r.json()).then(d => setPdfDocs(d.docs || [])).catch(() => {}); setShowPdfViewer(true) }} style={{ textAlign: 'center', display: 'block', width: '100%', cursor: 'pointer' }}>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ verticalAlign: 'middle', marginRight: '0.4rem' }}><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-              Open PDF Book Viewer
+              📖 Open Document Viewer
             </button>
           </div>
 
-          {/* AI Agent Quick Actions */}
-          <div className="attachment-node glass" style={{ border: '1px solid rgba(248, 217, 120, 0.1)', background: 'rgba(248, 217, 120, 0.02)', padding: '1.5rem', borderRadius: '1rem', width: '100%' }}>
-            <p className="eyebrow" style={{ color: 'var(--gold)' }}>🧠 Theo Agent</p>
+          {/* AI Quick Actions */}
+          <div className="attachment-node glass" style={{ border: '1px solid rgba(212,175,55,0.1)', background: 'rgba(212,175,55,0.02)', padding: '1.2rem', borderRadius: '1rem', width: '100%' }}>
+            <p className="eyebrow" style={{ color: 'var(--gold)' }}>Quick Actions</p>
             <button type="button" disabled={agentLoading} onClick={async () => {
-              if (!draft.prompt.trim()) return;
-              setAgentLoading(true);
+              if (!draft.prompt.trim()) return; setAgentLoading(true);
               const result = await refinePrompt(draft.prompt, 'Make it more cinematic, add specific camera lens, lighting, and quality boosters');
-              if (!result.error) onDraftChange({ ...draft, prompt: result.text });
-              setAgentLoading(false);
-            }} style={{ width: '100%', padding: '0.6rem', borderRadius: '0.5rem', border: '1px solid rgba(248, 217, 120, 0.2)', background: 'rgba(248, 217, 120, 0.05)', color: 'var(--gold)', cursor: 'pointer', fontSize: '0.8rem', marginBottom: '0.5rem', transition: 'all 0.2s' }}>
+              if (!result.error) onDraftChange({ ...draft, prompt: result.text }); setAgentLoading(false);
+            }} style={{ width: '100%', padding: '0.5rem', borderRadius: '0.5rem', border: '1px solid rgba(212,175,55,0.2)', background: 'rgba(212,175,55,0.05)', color: 'var(--gold)', cursor: 'pointer', fontSize: '0.78rem', marginBottom: '0.4rem', transition: 'all 0.2s' }}>
               {agentLoading ? '⏳ Refining...' : '✨ AI Refine Prompt'}
             </button>
             <button type="button" disabled={agentLoading} onClick={async () => {
-              if (!draft.title.trim()) return;
-              setAgentLoading(true);
+              if (!draft.title.trim()) return; setAgentLoading(true);
               const result = await generatePrompt(draft.title, 'cinematic Pixar 3D animation, AAA quality');
-              if (!result.error) onDraftChange({ ...draft, prompt: result.text });
-              setAgentLoading(false);
-            }} style={{ width: '100%', padding: '0.6rem', borderRadius: '0.5rem', border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(255,255,255,0.02)', color: 'rgba(255,255,255,0.6)', cursor: 'pointer', fontSize: '0.8rem', marginBottom: '0.8rem', transition: 'all 0.2s' }}>
-              {agentLoading ? '⏳ Generating...' : '🎬 AI Generate from Title'}
+              if (!result.error) onDraftChange({ ...draft, prompt: result.text }); setAgentLoading(false);
+            }} style={{ width: '100%', padding: '0.5rem', borderRadius: '0.5rem', border: '1px solid rgba(255,255,255,0.08)', background: 'rgba(255,255,255,0.02)', color: 'rgba(255,255,255,0.5)', cursor: 'pointer', fontSize: '0.78rem', transition: 'all 0.2s' }}>
+              {agentLoading ? '⏳ Generating...' : '🎬 Generate from Title'}
             </button>
-
-            {/* Agent Chat */}
-            <div style={{ borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '0.8rem' }}>
-              <div style={{ maxHeight: '200px', overflowY: 'auto', marginBottom: '0.5rem', display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
-                {agentHistory.map((msg, i) => (
-                  <div key={i} style={{ padding: '0.5rem 0.7rem', borderRadius: '0.5rem', fontSize: '0.78rem', lineHeight: '1.4', background: msg.role === 'user' ? 'rgba(248, 217, 120, 0.08)' : 'rgba(255,255,255,0.03)', color: msg.role === 'user' ? 'var(--gold)' : 'rgba(255,255,255,0.7)', alignSelf: msg.role === 'user' ? 'flex-end' : 'flex-start', maxWidth: '90%', whiteSpace: 'pre-wrap' }}>
-                    {msg.parts[0].text.substring(0, 300)}{msg.parts[0].text.length > 300 ? '...' : ''}
-                  </div>
-                ))}
-              </div>
-              <div style={{ display: 'flex', gap: '0.4rem' }}>
-                <input type="text" placeholder="Ask Theo..." value={agentInput} onChange={e => setAgentInput(e.target.value)} onKeyDown={async (e) => {
-                  if (e.key === 'Enter' && agentInput.trim()) {
-                    const msg = agentInput;
-                    setAgentInput('');
-                    setAgentLoading(true);
-                    const result = await chatWithAgent(msg, agentHistory);
-                    if (!result.error) setAgentHistory(result.updatedHistory);
-                    setAgentLoading(false);
-                  }
-                }} style={{ flex: 1, background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '2rem', padding: '0.4rem 0.8rem', color: 'white', fontSize: '0.78rem' }} />
-                <button type="button" disabled={agentLoading || !agentInput.trim()} onClick={async () => {
-                  const msg = agentInput;
-                  setAgentInput('');
-                  setAgentLoading(true);
-                  const result = await chatWithAgent(msg, agentHistory);
-                  if (!result.error) setAgentHistory(result.updatedHistory);
-                  setAgentLoading(false);
-                }} style={{ padding: '0.4rem 0.8rem', borderRadius: '2rem', border: 'none', background: 'var(--gold)', color: '#000', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 600 }}>
-                  {agentLoading ? '...' : '→'}
-                </button>
-              </div>
-            </div>
           </div>
         </div>
       </div>
-
       <div className="agent-pipeline-board">
         <div className="pipeline-tabs">
           <button className={`pipeline-tab ${activeTab === 'todo' ? 'is-active' : ''}`} onClick={() => setActiveTab('todo')}>
@@ -3481,7 +3478,7 @@ function AgentInbox({
 
             {/* Skills Grid */}
             <div style={{ flex: 1, overflowY: 'auto', padding: '1.5rem 2rem' }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.8rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.2rem' }}>
                 <p style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.35)', textTransform: 'uppercase', letterSpacing: '1.5px', fontWeight: 600, margin: 0 }}>Available Skills</p>
                 {(() => { const totalPages = availableSkills.length <= 5 ? 1 : 1 + Math.ceil((availableSkills.length - 5) / 6); return totalPages > 1 ? (
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.7rem' }}>
@@ -3649,7 +3646,7 @@ function AgentInbox({
                     setActivePdf(doc.name); setPdfCurrentPage(0); setPdfPages([])
                     try {
                       const pdfjsLib = await import('pdfjs-dist')
-                      pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.mjs`
+                      pdfjsLib.GlobalWorkerOptions.workerSrc = new URL('pdfjs-dist/build/pdf.worker.min.mjs', import.meta.url).href
                       const encodedPath = `/assets/storyboard/docs/${encodeURIComponent(doc.name)}`
                       const pdf = await pdfjsLib.getDocument(encodedPath).promise
                       const pages: string[] = []

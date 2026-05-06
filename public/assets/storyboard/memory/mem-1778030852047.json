@@ -1,0 +1,6 @@
+{
+  "id": "mem-1778030852047",
+  "topic": "[Attached scene assets: Act 1 - Scene 3 [palace-exterior.png] | characters:  [card] /assets/pdf-characters/antagonists/antagonists-p08-02.png | charac",
+  "summary": "The user provided scene assets: `Act 1 - Scene 3 [palace-exterior.png]`, character cards (`/assets/pdf-characters/antagonists/antagonists-p08-02.png`, `/assets/pdf-characters/main-protagonists/main-protagonists-p04-02.png`), and `Act 1 - Scene 1` images (`PixVerse_Image_Effect...1777856207397.png`, `PixVerse_Image_Effect...1777846217393.png`, `bedouin-wonder-tent-grid.png`), along with the \"Batch 2x2 Grid Prompt Writing & Generation\" skill. The user requested the exact content of the skill file. The assistant clarified that skills are operational definitions/workflows embedded in its processing, not accessible files. The \"Batch 2x2 Grid Prompt Writing & Generation\" skill generates cinematic JSON prompts for 2x2 image grids. These prompts detail camera (lens, focal length, DOF), lighting (key, fill, rim, ambient), emotional tone, cinematographic techniques, and quality boosters. For locations, it includes `CAMERA LOCK` and `SET GEOMETRY LAW` referencing `@img1`. This skill is designed for PixVerse CLI batch generation, targeting Nano Banana 2 (4K), Nano Banana Pro (2K), and GPT2 Medium (2K) models.",
+  "createdAt": "2026-05-06T01:27:32.047Z"
+}

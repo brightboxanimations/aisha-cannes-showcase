@@ -3210,7 +3210,7 @@ function AgentInbox({
                 }
               }}>
               {/* Attached context bar */}
-              {(draft.sceneHint || draft.skillHint) && <div style={{ padding: '0.4rem 0.8rem', borderBottom: '1px solid rgba(255,255,255,0.04)', fontSize: '0.68rem', color: 'rgba(255,255,255,0.3)' }}>📎 Theo sees: {draft.sceneHint ? `scene refs (${draft.sceneHint.split(' | ').length})` : ''}{draft.sceneHint && draft.skillHint ? ', ' : ''}{draft.skillHint ? `skill: ${draft.skillHint}` : ''}</div>}
+              {(draft.sceneHint || draft.skillHint || (activePdf && pdfPages.length > 0)) && <div style={{ padding: '0.4rem 0.8rem', borderBottom: '1px solid rgba(255,255,255,0.04)', fontSize: '0.68rem', color: 'rgba(255,255,255,0.3)' }}>📎 Theo sees: {draft.sceneHint ? `scene refs (${draft.sceneHint.split(' | ').length})` : ''}{draft.sceneHint && draft.skillHint ? ', ' : ''}{draft.skillHint ? `skill: ${draft.skillHint}` : ''}{activePdf && pdfPages.length > 0 ? `${draft.sceneHint || draft.skillHint ? ', ' : ''}doc: ${activePdf}${(pdfMarkers[activePdf]||[]).length > 0 ? ` (${(pdfMarkers[activePdf]||[]).length} marks)` : ' (full)'}` : ''}</div>}
               <div style={{ flex: 1, overflowY: 'auto', padding: '1rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                 {agentHistory.length === 0 && <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'rgba(255,255,255,0.2)', fontSize: '0.85rem', flexDirection: 'column', gap: '0.5rem' }}><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1"><path d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7z"/></svg><span>Ask Theo anything about your project...</span></div>}
                 {agentHistory.map((msg, i) => (
@@ -3219,27 +3219,54 @@ function AgentInbox({
                   </div>
                 ))}
               </div>
-              <div style={{ padding: '0.6rem', borderTop: '1px solid rgba(255,255,255,0.04)', display: 'flex', gap: '0.4rem', alignItems: 'flex-end' }}>
+              <div style={{ padding: '0.6rem', borderTop: '1px solid rgba(255,255,255,0.04)', display: 'flex', gap: '0.4rem', alignItems: 'flex-start' }}>
                 <textarea placeholder="Ask Theo anything... (Shift+Enter for newline)" value={agentInput} onChange={e => setAgentInput(e.target.value)} onKeyDown={async (e) => {
                   if (e.key === 'Enter' && !e.shiftKey && agentInput.trim()) {
                     e.preventDefault(); const msg = agentInput; setAgentInput(''); setAgentLoading(true);
-                    const ctxParts: string[] = []; if (draft.sceneHint) ctxParts.push(`[Attached scene assets: ${draft.sceneHint}]`); if (draft.skillHint) ctxParts.push(`[Attached skill: ${draft.skillHint}]`);
-                    const fullMsg = ctxParts.length > 0 ? `${ctxParts.join(' ')}\n\n${msg}` : msg;
+                    const ctxParts: string[] = []; if (draft.sceneHint) ctxParts.push(`[Attached scene assets: ${draft.sceneHint}]`);
+                    if (draft.skillHint) { try { const r = await fetch(`/assets/storyboard/skills/${draft.skillHint}`); const t = await r.text(); ctxParts.push(`[Attached skill "${draft.skillHint}" content:\n${t.substring(0, 3000)}]`); } catch { ctxParts.push(`[Attached skill: ${draft.skillHint}]`); } }
+                    if (activePdf && pdfPages.length > 0) { const marks = pdfMarkers[activePdf] || []; if (marks.length > 0) { const excerpts = marks.map(m => pdfPages[m.page]?.slice(m.startIdx, m.endIdx)).filter(Boolean); ctxParts.push(`[Document "${activePdf}" marked excerpts:\n${excerpts.join('\n---\n')}]`); } else if (pdfPages.join('').length < 3000) { ctxParts.push(`[Document "${activePdf}" full text:\n${pdfPages.join('\n')}]`); } }
+                    const fullMsg = ctxParts.length > 0 ? `${ctxParts.join('\n')}\n\n${msg}` : msg;
                     const result = await chatWithAgent(fullMsg, agentHistory);
                     if (!result.error) setAgentHistory(result.updatedHistory);
                     setAgentLoading(false);
                   }
                 }} rows={3} style={{ flex: 1, background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '0.5rem', padding: '0.5rem 0.8rem', color: 'white', fontSize: '0.82rem', outline: 'none', resize: 'none', fontFamily: 'inherit', lineHeight: 1.5 }} />
-                <button type="button" disabled={agentLoading || !agentInput.trim()} onClick={async () => {
-                  const msg = agentInput; setAgentInput(''); setAgentLoading(true);
-                  const ctxParts: string[] = []; if (draft.sceneHint) ctxParts.push(`[Attached scene assets: ${draft.sceneHint}]`); if (draft.skillHint) ctxParts.push(`[Attached skill: ${draft.skillHint}]`);
-                  const fullMsg = ctxParts.length > 0 ? `${ctxParts.join(' ')}\n\n${msg}` : msg;
-                  const result = await chatWithAgent(fullMsg, agentHistory);
-                  if (!result.error) setAgentHistory(result.updatedHistory);
-                  setAgentLoading(false);
-                }} style={{ padding: '0.6rem 1.2rem', borderRadius: '0.5rem', border: 'none', background: agentLoading ? 'rgba(212,175,55,0.3)' : 'var(--gold)', color: '#000', cursor: agentLoading ? 'wait' : 'pointer', fontSize: '0.82rem', fontWeight: 700, transition: 'all 0.2s', alignSelf: 'flex-end' }}>
-                  {agentLoading ? '...' : 'Send'}
-                </button>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
+                  <button type="button" disabled={agentLoading || !agentInput.trim()} onClick={async () => {
+                    const msg = agentInput; setAgentInput(''); setAgentLoading(true);
+                    const ctxParts: string[] = []; if (draft.sceneHint) ctxParts.push(`[Attached scene assets: ${draft.sceneHint}]`);
+                    if (draft.skillHint) { try { const r = await fetch(`/assets/storyboard/skills/${draft.skillHint}`); const t = await r.text(); ctxParts.push(`[Attached skill "${draft.skillHint}" content:\n${t.substring(0, 3000)}]`); } catch { ctxParts.push(`[Attached skill: ${draft.skillHint}]`); } }
+                    if (activePdf && pdfPages.length > 0) { const marks = pdfMarkers[activePdf] || []; if (marks.length > 0) { const excerpts = marks.map(m => pdfPages[m.page]?.slice(m.startIdx, m.endIdx)).filter(Boolean); ctxParts.push(`[Document "${activePdf}" marked excerpts:\n${excerpts.join('\n---\n')}]`); } else if (pdfPages.join('').length < 3000) { ctxParts.push(`[Document "${activePdf}" full text:\n${pdfPages.join('\n')}]`); } }
+                    const fullMsg = ctxParts.length > 0 ? `${ctxParts.join('\n')}\n\n${msg}` : msg;
+                    const result = await chatWithAgent(fullMsg, agentHistory);
+                    if (!result.error) setAgentHistory(result.updatedHistory);
+                    setAgentLoading(false);
+                  }} style={{ padding: '0.5rem 1rem', borderRadius: '0.5rem', border: 'none', background: agentLoading ? 'rgba(212,175,55,0.3)' : 'var(--gold)', color: '#000', cursor: agentLoading ? 'wait' : 'pointer', fontSize: '0.78rem', fontWeight: 700, transition: 'all 0.2s' }}>
+                    {agentLoading ? '...' : 'Send'}
+                  </button>
+                  {/* Mic */}
+                  <button type="button" title="Voice input" onClick={() => {
+                    if (isRecording && recognitionRef.current) { recognitionRef.current.stop(); setIsRecording(false); return }
+                    const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition; if (!SR) return;
+                    const r = new SR(); r.continuous = true; r.interimResults = true; r.lang = 'en-US';
+                    r.onresult = (ev: any) => { let t = ''; for (let i = ev.resultIndex; i < ev.results.length; i++) t += ev.results[i][0].transcript; if (ev.results[ev.results.length-1].isFinal) setAgentInput(p => p + ' ' + t) };
+                    r.onerror = () => setIsRecording(false); r.onend = () => setIsRecording(false);
+                    r.start(); recognitionRef.current = r; setIsRecording(true);
+                  }} style={{ width: '100%', padding: '0.35rem', borderRadius: '0.4rem', border: isRecording ? '1px solid #ff2a55' : '1px solid rgba(255,255,255,0.08)', background: isRecording ? 'rgba(255,42,85,0.15)' : 'transparent', color: isRecording ? '#ff2a55' : 'rgba(255,255,255,0.35)', cursor: 'pointer', display: 'grid', placeItems: 'center' }}>
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/></svg>
+                  </button>
+                  {/* Attach file */}
+                  <label style={{ width: '100%', padding: '0.35rem', borderRadius: '0.4rem', border: '1px solid rgba(255,255,255,0.08)', background: 'transparent', color: 'rgba(255,255,255,0.35)', cursor: 'pointer', display: 'grid', placeItems: 'center' }} title="Attach file from disk">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+                    <input type="file" style={{ display: 'none' }} onChange={async (e) => {
+                      const file = e.target.files?.[0]; if (!file) return; setAgentLoading(true);
+                      const text = await file.text(); const preview = text.substring(0, 2000);
+                      const result = await chatWithAgent(`[User attached file: ${file.name}]\n\nContent:\n${preview}\n\nPlease review this and tell me how to use it.`, agentHistory);
+                      if (!result.error) setAgentHistory(result.updatedHistory); setAgentLoading(false);
+                    }} />
+                  </label>
+                </div>
               </div>
             </div>
           ) : composerTab === 'task' ? (
@@ -3290,8 +3317,8 @@ function AgentInbox({
             </div>
           )}
 
-          {/* Attachment strip — compact row */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', padding: '0.35rem 0', marginTop: '0.3rem', borderTop: '1px solid rgba(255,255,255,0.05)', minHeight: '30px', flexWrap: 'wrap' }}>
+          {/* Attachment strip — compact row with bigger icons */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', padding: '0.25rem 0', marginTop: '0.2rem', borderTop: '1px solid rgba(255,255,255,0.04)', flexWrap: 'wrap' }}>
             {draft.sceneHint && draft.sceneHint.split(' | ').map((s, i) => {
               const cat = s.split(':')[0]?.toLowerCase().trim() || 'images'
               const iconMap: Record<string, { color: string, d: string }> = {
@@ -3304,19 +3331,20 @@ function AgentInbox({
               }
               const ic = iconMap[cat] || iconMap.images
               return (
-              <div key={`s${i}`} style={{ width: '28px', height: '28px', borderRadius: '0.35rem', border: `1px solid ${ic.color}55`, background: `${ic.color}15`, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', position: 'relative' }} title={s} onClick={() => { const parts = draft.sceneHint.split(' | ').filter((_, j) => j !== i); onDraftChange({ ...draft, sceneHint: parts.join(' | ') }) }}>
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={ic.color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d={ic.d} /></svg>
-                <div style={{ position: 'absolute', top: '-3px', right: '-3px', width: '12px', height: '12px', borderRadius: '50%', background: ic.color, color: '#000', fontSize: '0.5rem', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{i + 1}</div>
+              <div key={`s${i}`} className="att-chip" style={{ width: '40px', height: '40px', borderRadius: '0.5rem', border: `1px solid ${ic.color}44`, background: `${ic.color}12`, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', position: 'relative', transition: 'all 0.2s' }} title={s}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={ic.color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d={ic.d} /></svg>
+                <div style={{ position: 'absolute', top: '-4px', right: '-4px', width: '14px', height: '14px', borderRadius: '50%', background: ic.color, color: '#000', fontSize: '0.55rem', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{i + 1}</div>
+                <button type="button" onClick={(e) => { e.stopPropagation(); const parts = draft.sceneHint.split(' | ').filter((_, j) => j !== i); onDraftChange({ ...draft, sceneHint: parts.join(' | ') }) }} className="att-del" style={{ position: 'absolute', top: '-5px', left: '-5px', width: '16px', height: '16px', borderRadius: '50%', background: 'rgba(255,60,60,0.9)', border: 'none', color: 'white', fontSize: '0.6rem', fontWeight: 700, display: 'none', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', padding: 0 }}>×</button>
               </div>
               )
             })}
             {draft.skillHint && (
-              <div style={{ width: '34px', height: '34px', borderRadius: '0.4rem', border: '1px solid rgba(212,175,55,0.3)', background: 'rgba(212,175,55,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }} title={draft.skillHint} onClick={() => onDraftChange({ ...draft, skillHint: '' })}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" strokeWidth="1.5"><path d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7z"/></svg>
+              <div className="att-chip" style={{ width: '40px', height: '40px', borderRadius: '0.5rem', border: '1px solid rgba(212,175,55,0.3)', background: 'rgba(212,175,55,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', position: 'relative' }} title={draft.skillHint}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" strokeWidth="1.5" strokeLinecap="round"><path d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7z"/><line x1="9" y1="21" x2="15" y2="21"/></svg>
+                <button type="button" onClick={() => onDraftChange({ ...draft, skillHint: '' })} className="att-del" style={{ position: 'absolute', top: '-5px', left: '-5px', width: '16px', height: '16px', borderRadius: '50%', background: 'rgba(255,60,60,0.9)', border: 'none', color: 'white', fontSize: '0.6rem', fontWeight: 700, display: 'none', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', padding: 0 }}>×</button>
               </div>
             )}
-            {/* Show count label */}
-            {(draft.sceneHint || draft.skillHint) && <span style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.3)', marginLeft: '0.3rem' }}>{(draft.sceneHint ? draft.sceneHint.split(' | ').length : 0) + (draft.skillHint ? 1 : 0)} attached</span>}
+            {(draft.sceneHint || draft.skillHint) && <span style={{ fontSize: '0.6rem', color: 'rgba(255,255,255,0.25)' }}>{(draft.sceneHint ? draft.sceneHint.split(' | ').length : 0) + (draft.skillHint ? 1 : 0)} attached</span>}
           </div>
 
           <div className="node-footer" style={{ position: 'relative', right: 0, bottom: 0 }}>
@@ -3326,13 +3354,17 @@ function AgentInbox({
           </div>
         </div>
 
-        <div className="mindmap-attachment-nodes" style={{ flex: 1, gap: '1.2rem', display: 'flex', flexDirection: 'column' }}>
-          <div className="attachment-node glass scene-node" style={{ border: '1px solid rgba(255,255,255,0.05)', background: 'rgba(255,255,255,0.02)', padding: '1.2rem', borderRadius: '1rem', width: '100%' }}>
+        <div className="mindmap-attachment-nodes" style={{ flex: 1, gap: '1rem', display: 'flex', flexDirection: 'column', marginTop: '-0.5rem' }}>
+          <div className="attachment-node glass scene-node" style={{ border: '1px solid rgba(255,255,255,0.05)', background: 'rgba(255,255,255,0.02)', padding: '1.5rem', borderRadius: '1rem', width: '100%' }}>
             <p className="eyebrow">Target Scene</p>
-            <input placeholder="e.g. Act 1 Scene 2" value={draft.sceneHint} onChange={(event) => onDraftChange({ ...draft, sceneHint: event.target.value })} />
-            <button className="attach-btn" type="button" onClick={() => setIsModalOpen(true)}>Link Visual Node</button>
+            <input placeholder={draft.sceneHint && draft.sceneHint.includes(' | ') ? `Multiple (${draft.sceneHint.split(' | ').length}) attached` : 'e.g. Act 1 Scene 2'} value={draft.sceneHint && draft.sceneHint.includes(' | ') ? '' : draft.sceneHint} onChange={(event) => onDraftChange({ ...draft, sceneHint: event.target.value })} style={{ color: draft.sceneHint && draft.sceneHint.includes(' | ') ? 'rgba(255,255,255,0.3)' : undefined }} readOnly={!!(draft.sceneHint && draft.sceneHint.includes(' | '))} />
+            {draft.sceneHint && draft.sceneHint.includes(' | ') && <p style={{ fontSize: '0.65rem', color: '#4ade80', margin: '0.3rem 0 0 0' }}>{draft.sceneHint.split(' | ').length} refs attached — click icons below to remove</p>}
+            <button className="attach-btn" type="button" onClick={() => setIsModalOpen(true)}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" style={{ verticalAlign: 'middle', marginRight: '0.4rem' }}><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+              Link Visual Node
+            </button>
           </div>
-          <div className="attachment-node glass skill-node" style={{ border: '1px solid rgba(255,255,255,0.05)', background: 'rgba(255,255,255,0.02)', padding: '1.2rem', borderRadius: '1rem', width: '100%' }}>
+          <div className="attachment-node glass skill-node" style={{ border: '1px solid rgba(255,255,255,0.05)', background: 'rgba(255,255,255,0.02)', padding: '1.5rem', borderRadius: '1rem', width: '100%' }}>
             <p className="eyebrow">Agent Skills</p>
             {draft.skillHint && (
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.4rem 0.7rem', background: 'rgba(212,175,55,0.08)', border: '1px solid rgba(212,175,55,0.2)', borderRadius: '0.5rem', marginBottom: '0.5rem', fontSize: '0.82rem', color: 'var(--gold)' }}>
@@ -3342,11 +3374,12 @@ function AgentInbox({
               </div>
             )}
             <button className="attach-btn" type="button" onClick={() => setShowSkillsStore(true)} style={{ textAlign: 'center', display: 'block', width: '100%', cursor: 'pointer' }}>
-              🧠 Browse Skills Store
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" style={{ verticalAlign: 'middle', marginRight: '0.4rem' }}><path d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7z"/><line x1="9" y1="21" x2="15" y2="21"/></svg>
+              Browse Skills Store
             </button>
           </div>
           {/* References & PDFs — bookstore icons */}
-          <div className="attachment-node glass ref-node" style={{ border: '1px solid rgba(255,255,255,0.05)', background: 'rgba(255,255,255,0.02)', padding: '1.2rem', borderRadius: '1rem', width: '100%' }}>
+          <div className="attachment-node glass ref-node" style={{ border: '1px solid rgba(255,255,255,0.05)', background: 'rgba(255,255,255,0.02)', padding: '1.5rem', borderRadius: '1rem', width: '100%' }}>
             <p className="eyebrow">References & PDFs</p>
             {pdfDocs.filter(d => d.pinned).length > 0 && (
               <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '0.6rem' }}>
@@ -3359,7 +3392,8 @@ function AgentInbox({
               </div>
             )}
             <button className="attach-btn" type="button" onClick={() => { fetch('/api/docs/list').then(r => r.json()).then(d => setPdfDocs(d.docs || [])).catch(() => {}); setShowPdfViewer(true) }} style={{ textAlign: 'center', display: 'block', width: '100%', cursor: 'pointer' }}>
-              📖 Open Document Viewer
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" style={{ verticalAlign: 'middle', marginRight: '0.4rem' }}><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+              Open Document Viewer
             </button>
           </div>
         </div>

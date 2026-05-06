@@ -1,0 +1,6 @@
+{
+  "id": "mem-1778030737190",
+  "topic": "[Attached scene assets: Act 1 - Scene 3 [palace-exterior.png] | characters:  [card] /assets/pdf-characters/antagonists/antagonists-p08-02.png | charac",
+  "summary": "The user attached six image assets, including `palace-exterior.png` (Act 1 Scene 3), `bedouin-wonder-tent-grid.png` (Act 1 Scene 1), two PixVerse effect images for Act 1 Scene 1, and character cards from `/assets/pdf-characters/antagonists/antagonists-p08-02.png` and `/assets/pdf-characters/main-protagonists/main-protagonists-p04-02.png`. The \"Batch 2x2 Grid Prompt Writing & Generation\" skill was also attached. It was decided the Assistant will accept scene descriptions and generate specific cinematic prompts for 2x2 grids. These prompts will include camera language, lighting, and mood details, formatted as a JSON file. This JSON will directly integrate with a user-made shell script for batch generation via PixVerse CLI, with the next action being the user providing a scene description.",
+  "createdAt": "2026-05-06T01:25:37.190Z"
+}

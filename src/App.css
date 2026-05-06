@@ -4443,3 +4443,15 @@ p {
   border-color: rgba(248, 217, 120, 0.3) !important;
   color: var(--gold) !important;
 }
+
+/* Attachment chip hover delete */
+.att-chip:hover .att-del {
+  display: flex !important;
+}
+.att-chip:hover {
+  transform: scale(1.08);
+}
+.att-del:hover {
+  background: rgba(255,40,40,1) !important;
+  transform: scale(1.15);
+}

@@ -1,0 +1,11 @@
+{
+  "id": "task-act10-1778122971941-051",
+  "title": "51. The Landing",
+  "prompt": "premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.\n\nCHARACTER AND LOCATION LOCKS:\n@image1 = Aisha, 16-year-old human princess, curious brave beautiful, exact as the reference; no modification to looks or clothes.\n@image8 = Giant Sand Guardian, kinetic sand creature, flowing like liquid light, faceless hidden beneath a hood of swirling golden grains.\n\nSCENE: Daytime scene outside the Kingdom Walls.\n\nCreate 2x2 grid with 4 panels with 3D animated scenes in each one:\nPanel 1: Low angle impact shot. The Giant Sand Guardians exact as @image8 land perfectly in unison, slamming their glowing hands into the sand.\nPanel 2: Wide impact shot. A massive shockwave of pure golden magic ripples out across the desert from the point of their landing.\nPanel 3: Cinematic master shot. The six Giant Sand Guardians exact as @image8 kneeling in a perfect, glowing circle around Aisha exact as @image1, the storms entirely dead.\nPanel 4: Close-up. Aisha exact as @image1 slowly lowering her arms, her song gently fading out, breathing heavily as the world is bathed in beautiful golden sunlight.\n\nAll panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.",
+  "status": "todo",
+  "createdAt": "2026-05-07T03:02:51.941Z",
+  "updatedAt": "2026-05-07T03:02:51.941Z",
+  "passes": [],
+  "generatedImages": [],
+  "skillHint": "skill-codex-2x2-grid-prompt"
+}

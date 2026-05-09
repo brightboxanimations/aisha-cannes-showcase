@@ -1,0 +1,24 @@
+premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm golden morning light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.
+
+CHARACTER LOCKS:
+@image1 = First merchant — Bedouin in sand-colored robes, joyful now, exact as reference.
+@image2 = Funny camel — tall goofy camel, exact as reference.
+@image3 = City gate clerk — behind permit stand, exact as reference.
+@image4 = Gate guards — two armored guards, exact as reference.
+
+LOCATION REFERENCE:
+@image5 = Merchant line at gate — exact positioning, 100% unchanged.
+@image6 = Altair far away — hawk approaching from far away over dunes toward the gate, dunes background, exact as reference.
+
+SCENE: Morning, city gate. Altair appears on horizon.
+The first merchant happily heads toward the gate with his permit. The indigo Bedouin is arguing with the clerk about his rejected jars. Meanwhile, far in the distance beyond the dunes, a tiny speck appears — Altair the hawk, flying fast toward the gate. Only the most observant merchant (the tired one, ironically) glances backward and notices.
+
+Create 2x2 grid with 4 panels with 3D animated scenes in each one:
+Panel 1: Wide master shot exact as @image5. First merchant exact as @image1 walks happily with his funny camel exact as @image2 toward the open gate on the right. At the permit stand center, the indigo Bedouin slams his fist on the counter while the clerk exact as @image3 pushes the beetle jars away. Fat jade-green merchant steps forward eagerly. In the far background dunes, a tiny golden speck — Altair exact as @image6 — is barely visible.
+Panel 2: Medium shot of the indigo Bedouin at the stand arguing. His false grin has cracked into frustrated gesturing. The clerk has one hand on the "REJECTED" stamp. Three jars of preserved beetles sit between them like an insult. Guards exact as @image4 behind watch with mild amusement.
+Panel 3: Close-up of the tired merchant at the back of the line. His heavy-lidded eyes are half-closed, leaning on his walking stick. Then his eyes pop open — he squints at the horizon behind the queue. In the distant dunes, Altair exact as @image6 grows slightly larger, a blur of feathers and speed.
+Panel 4: Wide shot — camera positioned behind the queue, looking out toward the dunes exact as @image6. The merchants and camels fill the foreground silhouettes. Altair is now clearly visible mid-sky, wings spread, racing toward the gate. Dust trails behind him. The first merchant and camel are already passing through the gate on the far right.
+
+Environment: Gate, permit stand, dunes exact as @image5 and @image6, golden morning light, dusty air.
+
+All panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm golden morning light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.

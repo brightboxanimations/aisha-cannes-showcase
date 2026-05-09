@@ -989,6 +989,144 @@ function App() {
   )
 }
 
+/* Lightbox Skills Store Modal — exact replica of Director's Cut Skills Store */
+function LbSkillStoreModal({ lbAvailableSkills, lbAttachedSkills, setLbAttachedSkills, setLbSkillOpen, setLbAvailableSkills, lbSkillsPage, setLbSkillsPage, onInjectPrompt }: { lbAvailableSkills: any[]; lbAttachedSkills: { id: string; name: string }[]; setLbAttachedSkills: React.Dispatch<React.SetStateAction<{ id: string; name: string }[]>>; setLbSkillOpen: (v: boolean) => void; setLbAvailableSkills: React.Dispatch<React.SetStateAction<any[]>>; lbSkillsPage: number; setLbSkillsPage: (v: number) => void; onInjectPrompt?: (text: string) => void }) {
+  const [storeTab, setStoreTab] = useState<'skills' | 'prompts'>('skills')
+  const PROMPT_SVGS = [
+    { color: '#e8c547', d: 'M4 4h16v16H4zM4 12h16M12 4v16' },
+    { color: '#47c5e8', d: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0h4' },
+    { color: '#c547e8', d: 'M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z' },
+    { color: '#47e88c', d: 'M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z' },
+    { color: '#e87847', d: 'M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z' },
+    { color: '#4778e8', d: 'M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z' },
+    { color: '#e8d447', d: 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2' },
+    { color: '#e84777', d: 'M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122' },
+    { color: '#78e847', d: 'M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z' },
+    { color: '#47e8e8', d: 'M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4' },
+  ]
+  const BUILTIN_PROMPTS = [
+    { id: 'bp-cinematic-grid', name: '2×2 Cinematic Grid', icon: 0, desc: '4-panel premium 3D animated grid', text: 'premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric morning light, little tiny dust motes, in soft sunrays soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look\n\nCreate 2x2 cinematic grid with 4 panels with 3d animated scenes in each one:\n\nPanel 1: [character action, emotions, interaction. Camera/shot type. Light, background details]\nPanel 2: [describe]\nPanel 3: [describe]\nPanel 4: [describe]\n\nEnvironment: [describe main features]\n\nStyle: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric morning light, soft depth of field, expressive animated 3D eyes, realistic textures, detailed clear emotional staging, high-quality 4K animated movie look' },
+    { id: 'bp-room-projections', name: '4 Room Projections', icon: 1, desc: 'Same room 4 camera angles in 2×2 grid', text: 'Show exact same room in four projections - 2x2 grid:\n\nPanel 1: Camera facing front. [describe wall, furniture, door, window]\nPanel 2: Camera close up facing left wall. [describe details]\nPanel 3: Top down view of the entire room. [describe layout]\nPanel 4: Camera angle from one side towards opposite wall. [describe perspective]\n\nAll panels must show SAME room, only camera angles change.\n\nStyle: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric light, expressive animated 3D eyes, realistic textures, high-quality 4K animated movie look' },
+    { id: 'bp-quality-improve', name: 'Quality Improvement', icon: 2, desc: 'Enhance quality preserving composition', text: 'Use exact @img1 but improve quality of characters and resolution. Do not change camera angle, composition, architecture or objects. Characters remain in same poses, all objects in same places. Camera same angle as @img1 only improve quality.\n\nStyle: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric morning light, soft depth of field, expressive animated 3D eyes, realistic textures, detailed clear emotional staging, high-quality 4K animated movie look' },
+  ]
+  const SKILL_SVGS = [
+    { color: '#d4af37', d: 'M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5' },
+    { color: '#409cff', d: 'M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83' },
+    { color: '#9c40ff', d: 'M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z' },
+    { color: '#40ff9c', d: 'M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z' },
+    { color: '#ff9c40', d: 'M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14l-5-4.87 6.91-1.01L12 2z' },
+    { color: '#ff4090', d: 'M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z' },
+    { color: '#40ffff', d: 'M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1zM4 22V15' },
+    { color: '#ffc840', d: 'M12 3v18M3 12h18M7.5 7.5l9 9M16.5 7.5l-9 9' },
+    { color: '#a0ff40', d: 'M22 11.08V12a10 10 0 1 1-5.93-9.14M22 4L12 14.01l-3-3' },
+    { color: '#ff6040', d: 'M13 2L3 14h9l-1 8 10-12h-9l1-8' },
+  ]
+  const getIcon = (idx: number) => SKILL_SVGS[idx % SKILL_SVGS.length]
+  const totalPages = lbAvailableSkills.length <= 5 ? 1 : 1 + Math.ceil((lbAvailableSkills.length - 5) / 6)
+  const page = Math.min(lbSkillsPage, totalPages - 1)
+  const p1Count = Math.min(lbAvailableSkills.length, 5)
+  const pageSkills = page === 0 ? lbAvailableSkills.slice(0, p1Count) : lbAvailableSkills.slice(p1Count + (page - 1) * 6, p1Count + page * 6)
+
+  return (
+    <div style={{ position: 'fixed', inset: 0, zIndex: 9999, background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', display: 'flex', alignItems: 'center', justifyContent: 'center', animation: 'fadeIn 0.3s ease' }} onClick={() => setLbSkillOpen(false)}>
+      <div onClick={(e) => e.stopPropagation()} style={{ width: 'min(90vw, 900px)', maxHeight: '85vh', background: 'linear-gradient(145deg, rgba(20,20,30,0.95), rgba(10,10,20,0.98))', border: '1px solid rgba(212,175,55,0.15)', borderRadius: '1.5rem', overflow: 'hidden', display: 'flex', flexDirection: 'column', boxShadow: '0 30px 80px rgba(0,0,0,0.6), 0 0 40px rgba(212,175,55,0.08), inset 0 1px 0 rgba(255,255,255,0.05)' }}>
+        {/* Header with Tabs */}
+        <div style={{ padding: '1.2rem 2rem 0', display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <h2 style={{ margin: 0, fontSize: '1.2rem', color: 'white', fontWeight: 700 }}>{storeTab === 'skills' ? 'Skills Store' : 'Prompt Blueprints'}</h2>
+            <button type="button" onClick={() => setLbSkillOpen(false)} style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '0.5rem', color: 'rgba(255,255,255,0.5)', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: '1.1rem' }}>✕</button>
+          </div>
+          <div style={{ display: 'flex', gap: '0.3rem', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+            {(['skills', 'prompts'] as const).map(t => (
+              <button key={t} type="button" onClick={() => setStoreTab(t)} style={{ padding: '0.5rem 1.2rem', border: 'none', borderBottom: storeTab === t ? '2px solid var(--gold)' : '2px solid transparent', background: 'none', color: storeTab === t ? 'var(--gold)' : 'rgba(255,255,255,0.4)', fontSize: '0.82rem', fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s' }}>{t === 'skills' ? '⚡ Skills' : '📝 Prompts'}</button>
+            ))}
+          </div>
+        </div>
+        {/* Content area */}
+        <div style={{ flex: 1, overflowY: 'auto', padding: '1.5rem 2rem' }}>
+        {storeTab === 'prompts' ? (
+          /* ── Prompt Blueprints Tab ── */
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem' }}>
+            {BUILTIN_PROMPTS.map((bp) => {
+              const ic = PROMPT_SVGS[bp.icon % PROMPT_SVGS.length]
+              return (
+                <button key={bp.id} type="button" onClick={() => onInjectPrompt?.(bp.text)} style={{ width: '100%', minHeight: '140px', background: `rgba(${parseInt(ic.color.slice(1,3),16)},${parseInt(ic.color.slice(3,5),16)},${parseInt(ic.color.slice(5,7),16)},0.06)`, backdropFilter: 'blur(16px)', border: `1px solid ${ic.color}44`, borderRadius: '1rem', padding: '1.4rem 1rem', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.7rem', transition: 'all 0.3s', textAlign: 'center', boxShadow: `0 0 20px ${ic.color}22` }}>
+                  <svg viewBox="0 0 24 24" fill="none" stroke={ic.color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ width: '36px', height: '36px' }}><path d={ic.d} /></svg>
+                  <div style={{ fontSize: '0.82rem', fontWeight: 600, color: 'white' }}>{bp.name}</div>
+                  <div style={{ fontSize: '0.68rem', color: 'rgba(255,255,255,0.35)', lineHeight: 1.4 }}>{bp.desc}</div>
+                  <div style={{ fontSize: '0.6rem', color: 'rgba(64,255,156,0.6)', marginTop: 'auto' }}>Click to inject →</div>
+                </button>
+              )
+            })}
+          </div>
+        ) : (
+          /* ── Skills Tab ── */
+          <>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.2rem' }}>
+            <p style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.35)', textTransform: 'uppercase', letterSpacing: '1.5px', fontWeight: 600, margin: 0 }}>Available Skills</p>
+            {totalPages > 1 && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.7rem' }}>
+                <button type="button" onClick={() => setLbSkillsPage(Math.max(0, page - 1))} disabled={page === 0} style={{ background: 'none', border: 'none', cursor: page === 0 ? 'default' : 'pointer', padding: '2px', opacity: page === 0 ? 0.15 : 0.5 }}>
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round"><polyline points="15 18 9 12 15 6" /></svg>
+                </button>
+                {Array.from({ length: totalPages }).map((_, i) => (
+                  <button key={i} type="button" onClick={() => setLbSkillsPage(i)} style={{ width: '9px', height: '9px', borderRadius: '50%', border: 'none', background: i === page ? 'var(--gold)' : 'rgba(255,255,255,0.18)', boxShadow: i === page ? '0 0 8px rgba(212,175,55,0.6)' : 'none', cursor: 'pointer', padding: 0 }} />
+                ))}
+                <button type="button" onClick={() => setLbSkillsPage(Math.min(totalPages - 1, page + 1))} disabled={page >= totalPages - 1} style={{ background: 'none', border: 'none', cursor: page >= totalPages - 1 ? 'default' : 'pointer', padding: '2px', opacity: page >= totalPages - 1 ? 0.15 : 0.5 }}>
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round"><polyline points="9 18 15 12 9 6" /></svg>
+                </button>
+              </div>
+            )}
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', marginBottom: '2rem' }}>
+            {pageSkills.map((skill, sliceIdx) => {
+              const idx = page === 0 ? sliceIdx : p1Count + (page - 1) * 6 + sliceIdx
+              const isSelected = lbAttachedSkills.some(s => s.id === skill.id)
+              const ic = getIcon(skill.iconIdx ?? idx)
+              return (
+                <button key={skill.id} type="button" onClick={() => {
+                  if (isSelected) { setLbAttachedSkills(prev => prev.filter(s => s.id !== skill.id)) }
+                  else { setLbAttachedSkills(prev => [...prev, { id: skill.id, name: skill.name }]) }
+                }} style={{ width: '100%', minHeight: '140px', background: isSelected ? `rgba(${parseInt(ic.color.slice(1,3),16)},${parseInt(ic.color.slice(3,5),16)},${parseInt(ic.color.slice(5,7),16)},0.08)` : 'rgba(255,255,255,0.015)', backdropFilter: 'blur(16px)', border: `1px solid ${isSelected ? ic.color + '66' : 'rgba(255,255,255,0.06)'}`, borderRadius: '1rem', padding: '1.4rem 1rem', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.7rem', transition: 'all 0.35s cubic-bezier(0.4,0,0.2,1)', textAlign: 'center', position: 'relative', overflow: 'hidden', boxShadow: isSelected ? `0 0 24px ${ic.color}33` : '0 2px 12px rgba(0,0,0,0.3)', transform: isSelected ? 'scale(1.04)' : 'scale(1)' }}>
+                  <div style={{ position: 'absolute', bottom: '-30px', left: '50%', transform: 'translateX(-50%)', width: '80%', height: '60px', borderRadius: '50%', background: `radial-gradient(ellipse, ${ic.color}18, transparent 70%)`, pointerEvents: 'none', filter: 'blur(8px)' }} />
+                  <div style={{ width: isSelected ? '44px' : '36px', height: isSelected ? '44px' : '36px', transition: 'all 0.3s ease', filter: isSelected ? `drop-shadow(0 0 10px ${ic.color})` : 'none' }}>
+                    <svg viewBox="0 0 24 24" fill="none" stroke={ic.color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ width: '100%', height: '100%' }}><path d={ic.d} /></svg>
+                  </div>
+                  <div style={{ fontSize: '0.78rem', fontWeight: 600, color: isSelected ? 'white' : 'rgba(255,255,255,0.75)', lineHeight: 1.3, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{skill.name}</div>
+                  <div style={{ fontSize: '0.68rem', color: 'rgba(255,255,255,0.3)', lineHeight: 1.4, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{skill.description?.substring(0, 80) || ''}</div>
+                  {isSelected && <div style={{ position: 'absolute', top: '0.5rem', left: '0.5rem' }}><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={ic.color} strokeWidth="2.5"><polyline points="20 6 9 17 4 12" /></svg></div>}
+                </button>
+              )
+            })}
+            {page === 0 && (
+              <label style={{ background: 'rgba(255,255,255,0.015)', border: '1px dashed rgba(255,255,255,0.1)', borderRadius: '1rem', padding: '1.4rem 1rem', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.7rem', textAlign: 'center', minHeight: '140px', justifyContent: 'center' }}>
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.3)" strokeWidth="1.5" strokeLinecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="17 8 12 3 7 8" /><line x1="12" y1="3" x2="12" y2="15" /></svg>
+                <div style={{ fontSize: '0.82rem', fontWeight: 600, color: 'rgba(255,255,255,0.35)' }}>Upload Skills</div>
+                <div style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.2)' }}>.json or .md</div>
+                <input type="file" accept=".json,.md" multiple style={{ display: 'none' }} onChange={(e) => {
+                  const files = e.target.files; if (!files) return;
+                  Array.from(files).forEach(file => {
+                    const reader = new FileReader()
+                    reader.onload = () => { try { if (file.name.endsWith('.json')) { const skill = JSON.parse(reader.result as string); fetch('/api/skills/save', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(skill) }).then(() => setLbAvailableSkills(prev => [...prev, skill])) } } catch {} }
+                    reader.readAsText(file)
+                  })
+                }} />
+              </label>
+            )}
+          </div>
+          {lbAttachedSkills.length > 0 && (
+            <div style={{ display: 'flex', justifyContent: 'center', padding: '0.8rem 0' }}>
+              <button type="button" onClick={() => setLbSkillOpen(false)} style={{ padding: '0.6rem 2rem', borderRadius: '0.5rem', border: '1.5px solid rgba(96,165,250,0.5)', background: 'transparent', color: 'rgba(96,165,250,0.95)', fontSize: '0.82rem', fontWeight: 600, cursor: 'pointer' }}>Attach Selected ({lbAttachedSkills.length})</button>
+            </div>
+          )}
+          </>
+        )}
+        </div>
+      </div>
+    </div>
+  )
+}
+
 function CustomAudioPlayer({ url, fileName, autoPlay, onExpand }: { url: string; fileName: string; autoPlay?: boolean; onExpand?: () => void }) {
   const audioRef = useRef<HTMLAudioElement>(null)
   const [playing, setPlaying] = useState(autoPlay || false)
@@ -1157,7 +1295,42 @@ function StoryboardWorkspace() {
   const [workspaceMode, setWorkspaceMode] = useState<'storyboard' | StoryboardResourceType | 'agent' | 'moodboard'>('storyboard')
   const [newResourceName, setNewResourceName] = useState('')
   const [agentDraft, setAgentDraft] = useState({ title: '', sceneHint: '', skillHint: '', prompt: '' })
-  const [lightbox, setLightbox] = useState<StoryboardMedia | null>(null)
+  const [lightbox, setLightbox] = useState<{ media: StoryboardMedia; allMedia: StoryboardMedia[]; shotId: string; actId: string; sceneId: string; mode: StoryboardSequenceMode } | null>(null)
+  const [lightboxCompare, setLightboxCompare] = useState(false)
+  const [lightboxCrop, setLightboxCrop] = useState(false)
+  const [lbNote, setLbNote] = useState('')
+  const [lbNoteOpen, setLbNoteOpen] = useState(false)
+  const [lbEnhanceOpen, setLbEnhanceOpen] = useState(false)
+  const [lbSplitOpen, setLbSplitOpen] = useState(false)
+  const [lbAssignOpen, setLbAssignOpen] = useState(false)
+  const [lbAssignTab, setLbAssignTab] = useState<'image' | 'actor' | 'scene' | 'props'>('image')
+  const [lbAssignNewName, setLbAssignNewName] = useState('')
+  const [lbAssignExpandAct, setLbAssignExpandAct] = useState<string | null>(null)
+  const [lbAttachOpen, setLbAttachOpen] = useState(false)
+  const [lbAttachments, setLbAttachments] = useState<string[]>([])
+  const [lbModel, setLbModel] = useState('seedream-4.5')
+  const [lbQuality, setLbQuality] = useState('2160p')
+  const [lbSplitSize, setLbSplitSize] = useState('2x2')
+  const [lbProcessing, setLbProcessing] = useState(false)
+  const lbFileRef = useRef<HTMLInputElement>(null)
+  const [lbAttachTab, setLbAttachTab] = useState<'all' | 'actors' | 'locations' | 'props'>('all')
+  const [lbAttachShowAll, setLbAttachShowAll] = useState(false)
+  const [lbSkillOpen, setLbSkillOpen] = useState(false)
+  const [lbAvailableSkills, setLbAvailableSkills] = useState<any[]>([])
+  const [lbSkillsPage, setLbSkillsPage] = useState(0)
+  const [lbAiEnhancing, setLbAiEnhancing] = useState(false)
+  const [lbEnhancePrompt, setLbEnhancePrompt] = useState('')  // editable prompt for enhance popup
+  const [lbModelConfigOpen, setLbModelConfigOpen] = useState(false)
+  const [lbSelectedModels, setLbSelectedModels] = useState<Record<string, boolean>>({ 'gemini-3.1-flash': true, 'gemini-3.0': true, 'gpt-image-2.0': true, 'seedream-4.5': false, 'seedream-5.0-lite': false })
+  const [lbAspectRatio, setLbAspectRatio] = useState('16:9')
+  const [lbBatchSize, setLbBatchSize] = useState(1)
+  const [lbEmptyMode, setLbEmptyMode] = useState(false)
+  const [lbDragIdx, setLbDragIdx] = useState<number | null>(null)
+  const [lbAltPage, setLbAltPage] = useState(0)  // pagination for lightbox alt thumbnails
+  const [bgGenerating, setBgGenerating] = useState(0)  // background generation counter
+  const [bgShotJobs, setBgShotJobs] = useState<Record<string, number>>({})  // per-shot generation counter
+  const [lbAttachedSkills, setLbAttachedSkills] = useState<{id: string, name: string}[]>([])  // skills attached as metadata
+  const [selectedShotId, setSelectedShotId] = useState<string | null>(null)
   const [status, setStatus] = useState('Loading storyboard archive...')
   const saveTimer = useRef<number | null>(null)
 
@@ -1261,7 +1434,18 @@ function StoryboardWorkspace() {
       const scene = draft.acts.find((act) => act.id === actId)?.scenes.find((item) => item.id === sceneId)
       if (!scene) return
       const shots = getSceneShots(scene, mode)
-      shots.push(createShot(shots.length + 1, getMediaTypeForMode(mode)))
+      const newShot = createShot(shots.length + 1, getMediaTypeForMode(mode))
+      // Insert after selected shot if one is selected, otherwise append
+      if (selectedShotId) {
+        const idx = shots.findIndex(s => s.id === selectedShotId)
+        if (idx >= 0) {
+          shots.splice(idx + 1, 0, newShot)
+        } else {
+          shots.push(newShot)
+        }
+      } else {
+        shots.push(newShot)
+      }
     })
   }
 
@@ -1288,10 +1472,66 @@ function StoryboardWorkspace() {
     })
   }
 
+  const duplicateShot = (actId: string, sceneId: string, mode: StoryboardSequenceMode, shotId: string) => {
+    updateScene(actId, sceneId, (scene) => {
+      const shotsKey = mode === 'videos' ? 'videoShots' : 'imageShots'
+      const shots = (scene as any)[shotsKey] as StoryboardShot[]
+      const idx = shots.findIndex(s => s.id === shotId)
+      if (idx === -1) return
+      const original = shots[idx]
+      const clone: StoryboardShot = JSON.parse(JSON.stringify(original))
+      clone.id = `shot-dup-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`
+      clone.title = original.title + ' (copy)'
+      clone.media = clone.media.map(m => ({ ...m, id: `media-dup-${Date.now()}-${Math.random().toString(36).substr(2, 6)}` }))
+      if (clone.media.length > 0) clone.selectedMediaId = clone.media[0].id
+      shots.splice(idx + 1, 0, clone)
+    })
+  }
+
   const deleteShotMedia = (actId: string, sceneId: string, mode: StoryboardSequenceMode, shotId: string, mediaId: string) => {
     updateShot(actId, sceneId, mode, shotId, (shot) => {
       shot.media = shot.media.filter((media) => media.id !== mediaId)
       if (shot.selectedMediaId === mediaId) shot.selectedMediaId = shot.media[0]?.id
+    })
+  }
+
+  /** Inject generated result media into shot alt slots, or create a new shot if full (8+) */
+  const injectResultMedia = (actId: string, sceneId: string, mode: StoryboardSequenceMode, shotId: string, newMediaList: StoryboardMedia[]) => {
+    setStoryboard(prev => {
+      const next = JSON.parse(JSON.stringify(prev)) as StoryboardData
+      const act = next.acts.find(a => a.id === actId)
+      if (!act) return prev
+      const scene = act.scenes.find(s => s.id === sceneId)
+      if (!scene) return prev
+      const shotsKey = mode === 'videos' ? 'videoShots' : mode === 'audio' ? 'audioShots' : 'imageShots'
+      const shots = scene[shotsKey] || []
+      const shotIdx = shots.findIndex(s => s.id === shotId)
+      if (shotIdx === -1) return prev
+      const shot = shots[shotIdx]
+      const maxAlts = 16
+      const freeSlots = maxAlts - shot.media.length
+      if (freeSlots >= newMediaList.length) {
+        // Enough room — push into current shot
+        shot.media.push(...newMediaList)
+        shot.selectedMediaId = newMediaList[newMediaList.length - 1].id
+      } else {
+        // Push what fits into current shot
+        const fits = newMediaList.slice(0, Math.max(freeSlots, 0))
+        const overflow = newMediaList.slice(Math.max(freeSlots, 0))
+        if (fits.length > 0) shot.media.push(...fits)
+        // Create new shot right after current one for overflow
+        const newShot: StoryboardShot = {
+          id: `shot-auto-${Date.now()}`,
+          title: `${shot.title} (generated)`,
+          prompt: `Proceeded from shot [${shot.title}] via enhance/edit`,
+          media: overflow,
+          selectedMediaId: overflow[0]?.id,
+          actor: shot.actor,
+          dialogue: '',
+        }
+        shots.splice(shotIdx + 1, 0, newShot)
+      }
+      return next
     })
   }
 
@@ -1585,7 +1825,7 @@ function StoryboardWorkspace() {
             onBack={() => setWorkspaceMode('storyboard')}
             onCopyPath={revealPath}
             onDeleteMedia={deleteResourceMedia}
-            onLightbox={setLightbox}
+            onLightbox={(m) => setLightbox({ media: m, allMedia: [m], shotId: '', actId: '', sceneId: '', mode: 'images' })}
             onNameChange={setNewResourceName}
             onResourceChange={updateResource}
             onUpload={uploadResourceMedia}
@@ -1667,10 +1907,18 @@ function StoryboardWorkspace() {
                 onCopyPath={revealPath}
                 onDeleteMedia={deleteShotMedia}
                 onDeleteShot={deleteShot}
-                onLightbox={setLightbox}
+                onDuplicateShot={duplicateShot}
+                onLightbox={(media, allMedia, shotId) => setLightbox({ media, allMedia, shotId, actId: activeAct.id, sceneId: activeScene.id, mode: activeScene.mode })}
+                onEmptyLightbox={(shotId) => {
+                  const emptyMedia: StoryboardMedia = { id: `empty-${Date.now()}`, type: 'image', url: '', fileName: '' }
+                  setLightbox({ media: emptyMedia, allMedia: [], shotId, actId: activeAct.id, sceneId: activeScene.id, mode: activeScene.mode })
+                  setLbEmptyMode(true); setLbNoteOpen(true)
+                }}
                 onReorder={reorderShot}
                 onShotChange={updateShot}
                 onUpload={uploadMedia}
+                selectedShotId={selectedShotId}
+                onSelectShot={setSelectedShotId}
               />
             ) : activeScene.mode === 'moodboards' ? (
               <div className="scene-resources" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '300px', color: 'rgba(255,255,255,0.4)', border: '1px dashed rgba(255,255,255,0.1)', borderRadius: '1rem', marginTop: '1rem' }}>
@@ -1680,7 +1928,7 @@ function StoryboardWorkspace() {
               <div className="scene-resources">
                 <SceneResourcePanel
                   onCopyPath={revealPath}
-                  onLightbox={setLightbox}
+                  onLightbox={(m) => setLightbox({ media: m, allMedia: [m], shotId: '', actId: '', sceneId: '', mode: 'images' })}
                   onToggle={toggleSceneResource}
                   refs={activeScene.resourceRefs[activeScene.mode]}
                   resources={storyboard.resources[activeScene.mode]}
@@ -1692,13 +1940,774 @@ function StoryboardWorkspace() {
         )}
       </section>
 
+      {/* Background generation indicator */}
+      {bgGenerating > 0 && (
+        <div style={{ position: 'fixed', bottom: '1.5rem', right: '1.5rem', zIndex: 9990, display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.55rem 1rem', borderRadius: '999px', background: 'rgba(8,16,30,0.92)', border: '1px solid rgba(248,217,120,0.25)', backdropFilter: 'blur(16px)', boxShadow: '0 12px 40px rgba(0,0,0,0.4), 0 0 20px rgba(248,217,120,0.08)', animation: 'fadeIn 0.3s ease' }}>
+          <div style={{ width: '14px', height: '14px', border: '2px solid rgba(248,217,120,0.2)', borderTop: '2px solid var(--gold)', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
+          <span style={{ color: 'var(--gold)', fontSize: '0.78rem', fontWeight: 700 }}>Generating {bgGenerating} image{bgGenerating > 1 ? 's' : ''}...</span>
+        </div>
+      )}
+
       {lightbox && (
-        <div className="storyboard-lightbox" onClick={() => setLightbox(null)} role="presentation">
-          <button aria-label="Close preview" onClick={() => setLightbox(null)} type="button">×</button>
-          {lightbox.type === 'video' && <video src={lightbox.url} controls autoPlay />}
-          {lightbox.type === 'audio' && <div className="audio-lightbox"><CustomAudioPlayer url={lightbox.url} fileName={lightbox.fileName} autoPlay /></div>}
-          {lightbox.type === 'image' && <img src={lightbox.url} alt={lightbox.fileName} />}
-          <a href={lightbox.url} download={lightbox.fileName}>Download original</a>
+        <div className="storyboard-lightbox" style={{ position: 'fixed', inset: 0, zIndex: 9999, background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem' }} onClick={(e) => { if (e.target === e.currentTarget) { if (lightboxCompare) { setLightboxCompare(false) } else if (lbNoteOpen || lbEnhanceOpen || lbSplitOpen || lbAssignOpen || lbAttachOpen) { setLbNoteOpen(false); setLbEnhanceOpen(false); setLbSplitOpen(false); setLbAssignOpen(false); setLbAttachOpen(false); setLbSkillOpen(false); setLbModelConfigOpen(false) } else { setLightbox(null); setLightboxCompare(false); setLbEmptyMode(false) } } }} onDoubleClick={(e) => { if (e.target === e.currentTarget && lightboxCompare) setLightboxCompare(false) }} role="presentation">
+          {/* Close button */}
+          <button aria-label="Close" onClick={() => { setLightbox(null); setLightboxCompare(false); setLbNoteOpen(false); setLbEnhanceOpen(false); setLbSplitOpen(false); setLbAssignOpen(false); setLbAttachOpen(false); setLbNote(''); setLbAttachments([]); setLbEmptyMode(false) }} type="button" style={{ position: 'absolute', top: '1.5rem', right: '1.5rem', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '0.5rem', color: 'rgba(255,255,255,0.5)', width: '36px', height: '36px', display: 'grid', placeItems: 'center', cursor: 'pointer', fontSize: '1.2rem', zIndex: 10 }}>✕</button>
+          {!lightboxCompare ? (
+            /* === Normal View — fully functional === */
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem', maxWidth: '90vw', maxHeight: '90vh' }}>
+              {(() => {
+                // Get current shot for prompt injection — computed inside the view
+                const lbAct = storyboard.acts.find(a => a.id === lightbox.actId)
+                const lbScene = lbAct?.scenes.find(s => s.id === lightbox.sceneId)
+                const lbShots = lbScene ? (lightbox.mode === 'images' ? lbScene.imageShots : lightbox.mode === 'videos' ? lbScene.videoShots : lbScene.audioShots) : []
+                const lbShotIdx = lbShots.findIndex(s => s.id === lightbox.shotId)
+                const lbCurrentShot = lbShotIdx >= 0 ? lbShots[lbShotIdx] : null
+                const lbShotLabel = lbCurrentShot?.title || `Shot ${lbShotIdx + 1}`
+                const lbShotPrompt = lbCurrentShot?.prompt || ''
+                return (<>
+              <div style={{ position: 'relative', borderRadius: '1rem', overflow: 'visible', boxShadow: '0 30px 80px rgba(0,0,0,0.7)', maxHeight: '72vh', maxWidth: '85vw' }} onClick={() => { if (lbNoteOpen) { setLbNoteOpen(false); setLbSkillOpen(false); setLbModelConfigOpen(false) } }}>
+                {/* Shot number badge — top right of image */}
+                <div style={{ position: 'absolute', top: '0.6rem', right: '4.5rem', zIndex: 8, padding: '0.25rem 0.7rem', borderRadius: '999px', background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(8px)', border: '1px solid rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.65)', fontSize: '0.72rem', fontWeight: 600, letterSpacing: '0.05em', pointerEvents: 'none' }}>{lbShotLabel}</div>
+                {lbEmptyMode && !lightbox.media.url ? (
+                  /* Empty shot generation canvas */
+                  <div style={{ width: '85vw', maxWidth: '1200px', aspectRatio: '16/9', maxHeight: '72vh', borderRadius: '1rem', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '1.2rem', background: 'linear-gradient(135deg, rgba(10,20,38,0.85), rgba(15,25,45,0.9))', border: '1px solid rgba(248,217,120,0.08)', backdropFilter: 'blur(32px)' }}>
+                    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="rgba(248,217,120,0.2)" strokeWidth="1"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+                    <div style={{ color: 'rgba(248,217,120,0.35)', fontSize: '1.1rem', fontWeight: 600, letterSpacing: '0.08em' }}>It all starts with an image.</div>
+                    <div style={{ color: 'rgba(255,255,255,0.2)', fontSize: '0.78rem', maxWidth: '400px', textAlign: 'center', lineHeight: 1.5 }}>Write your vision in the note below, attach references, choose your models and hit submit to generate.</div>
+                  </div>
+                ) : lightbox.media.type === 'video' ? <video src={lightbox.media.url} controls autoPlay style={{ maxHeight: '72vh', maxWidth: '85vw', borderRadius: '1rem', display: 'block' }} /> : lightbox.media.type === 'audio' ? <div style={{ padding: '3rem' }}><CustomAudioPlayer url={lightbox.media.url} fileName={lightbox.media.fileName} autoPlay /></div> : <img src={lightbox.media.url} alt={lightbox.media.fileName} style={{ maxHeight: '72vh', maxWidth: '85vw', borderRadius: '1rem', display: 'block' }} />}
+                {lbProcessing && (
+                  <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.6)', borderRadius: '1rem', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '1rem', zIndex: 10 }}>
+                    <div style={{ width: '40px', height: '40px', border: '3px solid rgba(248,217,120,0.2)', borderTop: '3px solid var(--gold)', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
+                    <span style={{ color: 'var(--gold)', fontSize: '0.9rem', fontWeight: 600 }}>Generating...</span>
+                  </div>
+                )}
+                {lightbox.media.type === 'image' && (
+                  <div onClick={(e) => e.stopPropagation()}>
+                    <div className="floating-tools left vertical" style={{ position: 'absolute', top: '1rem', left: '1rem', display: 'flex', flexDirection: 'column', gap: '0.8rem', zIndex: 5 }}>
+                      <button className="tool-icon action-doodle" onClick={() => { setLightboxCrop(true); setLbNoteOpen(false); setLbEnhanceOpen(false); setLbSplitOpen(false); setLbAssignOpen(false) }} title="Crop"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6.13 1L6 16a2 2 0 0 0 2 2h15"/><path d="M1 6.13L16 6a2 2 0 0 1 2 2v15"/></svg></button>
+                      <button className={`tool-icon action-star ${lbEnhanceOpen ? 'is-active' : ''}`} onClick={() => { setLbEnhanceOpen(!lbEnhanceOpen); setLbSplitOpen(false); setLbAssignOpen(false); setLbNoteOpen(false) }} title="Enhance"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2l3 7 7 3-7 3-3 7-3-7-7-3 7-3z" /></svg></button>
+                      <button className={`tool-icon action-cut ${lbSplitOpen ? 'is-active' : ''}`} onClick={() => { setLbSplitOpen(!lbSplitOpen); setLbEnhanceOpen(false); setLbAssignOpen(false); setLbNoteOpen(false) }} title="Split Grid"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2" /><line x1="12" y1="3" x2="12" y2="21" /><line x1="3" y1="12" x2="21" y2="12" /></svg></button>
+                    </div>
+                    <div className="floating-tools right vertical" style={{ position: 'absolute', top: '1rem', right: '1rem', display: 'flex', flexDirection: 'column', gap: '0.8rem', zIndex: 5 }}>
+                      <button className={`tool-icon assign-star ${lbAssignOpen ? 'is-active' : ''}`} onClick={() => { setLbAssignOpen(!lbAssignOpen); setLbEnhanceOpen(false); setLbSplitOpen(false); setLbNoteOpen(false) }} title="Add to Scene"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></button>
+                      <button className={`tool-icon action-note ${lbNoteOpen ? 'is-active' : ''}`} onClick={() => { setLbNoteOpen(!lbNoteOpen); setLbEnhanceOpen(false); setLbSplitOpen(false); setLbAssignOpen(false) }} title="Note"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" /><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" /></svg></button>
+                      <button className="tool-icon discard" onClick={() => { if (lightbox.shotId && lightbox.actId) { deleteShotMedia(lightbox.actId, lightbox.sceneId, lightbox.mode, lightbox.shotId, lightbox.media.id); if (lightbox.allMedia.length > 1) { const next = lightbox.allMedia.find(m => m.id !== lightbox.media.id); if (next) setLightbox({ ...lightbox, media: next, allMedia: lightbox.allMedia.filter(m => m.id !== lightbox.media.id) }); else setLightbox(null) } else { setLightbox(null) } } }} title="Delete"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6" /><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /><line x1="10" y1="11" x2="10" y2="17" /><line x1="14" y1="11" x2="14" y2="17" /></svg></button>
+                    </div>
+                    <div style={{ position: 'absolute', bottom: '1rem', left: '1rem', right: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', zIndex: 5 }}>
+                      <div style={{ display: 'flex', gap: '0.5rem' }}>
+                        <button className="tool-icon" onClick={() => { const a = document.createElement('a'); a.href = lightbox.media.url; a.download = lightbox.media.fileName || 'image.png'; document.body.appendChild(a); a.click(); document.body.removeChild(a) }} title="Download"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></button>
+                      </div>
+                      <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                        {(bgShotJobs[lightbox.shotId] || 0) > 0 && (
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', padding: '0.3rem 0.7rem', borderRadius: '999px', background: 'rgba(248,217,120,0.1)', border: '1px solid rgba(248,217,120,0.2)' }}>
+                            <div style={{ width: '10px', height: '10px', border: '2px solid rgba(248,217,120,0.2)', borderTop: '2px solid var(--gold)', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
+                            <span style={{ color: 'var(--gold)', fontSize: '0.7rem', fontWeight: 700 }}>{bgShotJobs[lightbox.shotId]} generating</span>
+                          </div>
+                        )}
+                        {lightbox.allMedia.length > 1 && <button className="tool-icon action-star" onClick={() => setLightboxCompare(true)} title="Compare"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></button>}
+                      </div>
+                    </div>
+                    {/* Note area */}
+                    {lbNoteOpen && (
+                      <div className="floating-note-area glass" style={{ position: 'absolute', bottom: '1rem', left: '1rem', right: '1rem', zIndex: 6, display: 'flex', flexDirection: 'column', gap: '0.5rem', maxHeight: '60vh' }}>
+                        <div style={{ position: 'relative' }}>
+                          <textarea placeholder="Leave an iteration note..." value={lbNote} onChange={(e) => setLbNote(e.target.value)} rows={4} style={{ background: 'transparent', border: 'none', color: 'var(--cream)', outline: 'none', width: '100%', fontSize: '0.95rem', resize: 'vertical', lineHeight: 1.5, minHeight: '4.5em', maxHeight: '18rem', overflowY: 'auto', paddingRight: '2.5rem' }} />
+                          {/* Inject last prompt button — top right of textarea */}
+                          {lbShotPrompt && (
+                            <button type="button" onClick={() => setLbNote(lbShotPrompt)} title="Inject last generation prompt" style={{ position: 'absolute', top: '0.2rem', right: '0.2rem', width: '2rem', height: '2rem', borderRadius: '50%', border: '1.5px solid rgba(64,255,156,0.35)', background: 'rgba(64,255,156,0.08)', color: 'rgba(64,255,156,0.7)', cursor: 'pointer', display: 'grid', placeItems: 'center', fontSize: '0.8rem', transition: 'all 0.2s' }} onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(64,255,156,0.2)'; e.currentTarget.style.borderColor = 'rgba(64,255,156,0.6)' }} onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(64,255,156,0.08)'; e.currentTarget.style.borderColor = 'rgba(64,255,156,0.35)' }}>
+                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 4v6h6" /><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" /></svg>
+                            </button>
+                          )}
+                        </div>
+                        {/* Single toolbar row: [icons LEFT] [attachments CENTERED] [OK RIGHT] */}
+                        <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                          <button className="tool-icon" onClick={() => setLbAttachOpen(true)} title="Attach reference images" style={{ width: '2.4rem', height: '2.4rem' }}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg></button>
+                          <button className={`tool-icon ${lbAiEnhancing ? 'is-active' : ''}`} disabled={lbAiEnhancing || !lbNote.trim()} onClick={async () => {
+                            setLbAiEnhancing(true)
+                            try {
+                              // Load skill content as system instruction (not part of prompt)
+                              let skillInstructions = ''
+                              for (const sk of lbAttachedSkills) {
+                                try {
+                                  const r = await fetch('/api/skills/read-md', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: sk.id }) })
+                                  const d = await r.json()
+                                  if (d.content) skillInstructions += `\n--- Skill: ${sk.name} ---\n${d.content.substring(0, 2000)}\n`
+                                } catch {}
+                              }
+                              const feedback = skillInstructions
+                                ? `You MUST follow these skill instructions precisely and apply them to transform/restructure the prompt accordingly:\n${skillInstructions}\n\nApply the skill rules to the user's prompt. If the skill says to create a grid, make a grid prompt. If it says to use specific formatting, use that formatting. Do NOT just improve the prompt generically — APPLY the skill's specific rules and structure.`
+                                : 'Enhance this for cinematic AI image generation. Make it more detailed, vivid and precise. Add lighting, camera angle, mood, composition details if missing. Keep the original intent.'
+                              // Build image context for Gemini to understand the scene
+                              const imageCtx = lightbox.media.url ? `\n\nYou are looking at an image: ${lightbox.media.url}` : ''
+                              const attachCtx = lbAttachments.length > 0 ? `\nAttached reference images: ${lbAttachments.map((u, i) => `@img${i + 1} = ${u}`).join(', ')}` : ''
+                              const result = await refinePrompt(lbNote, feedback + imageCtx + attachCtx + '\n\nIMPORTANT: Output ONLY the final prompt text. Do NOT include any thinking, reasoning, commentary, or preamble. Just the raw prompt ready for image generation.')
+                              if (result.text) {
+                                // Strip any agent thinking/preamble
+                                let cleaned = result.text.replace(/^(Here'?s?|OK|Sure|I'?ll|Let me|Now I|The refined|The enhanced|Here is|Certainly|Of course)[^\n]*\n+/i, '').trim()
+                                setLbNote(cleaned)
+                              }
+                            } catch {}
+                            setLbAiEnhancing(false)
+                          }} title="AI Enhance prompt (uses attached skills)" style={{ width: '2.4rem', height: '2.4rem' }}>{lbAiEnhancing ? <span style={{ fontSize: '0.7rem', animation: 'spin 1s linear infinite', display: 'inline-block' }}>⏳</span> : <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2l3 7 7 3-7 3-3 7-3-7-7-3 7-3z"/></svg>}</button>
+                          <button className={`tool-icon ${lbSkillOpen ? 'is-active' : ''}`} onClick={() => { setLbSkillOpen(!lbSkillOpen); setLbModelConfigOpen(false); if (!lbSkillOpen) fetch('/api/skills/list').then(r => r.json()).then(d => setLbAvailableSkills(d.skills || [])).catch(() => {}) }} title="Inject skill" style={{ width: '2.4rem', height: '2.4rem' }}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></button>
+                          <button className={`tool-icon ${lbModelConfigOpen ? 'is-active' : ''}`} onClick={() => { setLbModelConfigOpen(!lbModelConfigOpen); setLbSkillOpen(false) }} title="Model & generation config" style={{ width: '2.4rem', height: '2.4rem' }}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
+                          {/* CENTER: attachments + skills (flex:1 centers them) */}
+                          <div style={{ flex: 1, display: 'flex', gap: '0.3rem', flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center', minHeight: '2.4rem' }}>
+                            {lbAttachments.map((url, i) => (
+                              <div key={`att-${i}`} style={{ position: 'relative', width: '44px', height: '44px', borderRadius: '6px', overflow: 'hidden', border: lbDragIdx === i ? '2px solid var(--gold)' : '1px solid rgba(248,217,120,0.3)', flexShrink: 0, cursor: 'grab', opacity: lbDragIdx === i ? 0.5 : 1, transition: 'all 0.15s' }}
+                                draggable onDragStart={() => setLbDragIdx(i)} onDragEnd={() => setLbDragIdx(null)} onDragOver={(e) => { e.preventDefault(); e.currentTarget.style.borderColor = 'rgba(248,217,120,0.8)' }} onDragLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(248,217,120,0.3)' }} onDrop={(e) => { e.currentTarget.style.borderColor = 'rgba(248,217,120,0.3)'; if (lbDragIdx !== null && lbDragIdx !== i) { setLbAttachments(prev => { const n = [...prev]; const [moved] = n.splice(lbDragIdx, 1); n.splice(i, 0, moved); return n }); setLbDragIdx(null) } }}>
+                                <img src={url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt={`Ref ${i + 1}`} />
+                                <div style={{ position: 'absolute', top: 0, left: 0, background: 'rgba(0,0,0,0.7)', borderRadius: '0 0 4px 0', padding: '0 3px', fontSize: '0.5rem', color: 'var(--gold)', fontWeight: 700 }}>{i + 1}</div>
+                                <button type="button" onClick={() => setLbAttachments(prev => prev.filter((_, j) => j !== i))} style={{ position: 'absolute', top: '1px', right: '1px', background: 'rgba(0,0,0,0.7)', border: 'none', color: 'rgba(255,255,255,0.6)', cursor: 'pointer', fontSize: '0.55rem', borderRadius: '50%', width: '14px', height: '14px', display: 'grid', placeItems: 'center', padding: 0 }}>×</button>
+                              </div>
+                            ))}
+                            {lbAttachedSkills.map(s => (
+                              <div key={s.id} style={{ display: 'flex', alignItems: 'center', gap: '0.2rem', padding: '0.15rem 0.4rem', borderRadius: '999px', background: 'rgba(248,217,120,0.08)', border: '1px solid rgba(248,217,120,0.2)', fontSize: '0.55rem', color: 'var(--gold)' }}>
+                                <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>
+                                {s.name}
+                                <button type="button" onClick={() => setLbAttachedSkills(prev => prev.filter(sk => sk.id !== s.id))} style={{ background: 'none', border: 'none', color: 'rgba(248,217,120,0.5)', cursor: 'pointer', fontSize: '0.65rem', padding: 0, lineHeight: 1 }}>×</button>
+                              </div>
+                            ))}
+                            {lbAttachments.length === 0 && lbAttachedSkills.length === 0 && (
+                              <span style={{ color: 'rgba(255,255,255,0.2)', fontSize: '0.65rem' }}>{lbAttachments.length}/8 · {Object.values(lbSelectedModels).filter(Boolean).length}m</span>
+                            )}
+                          </div>
+                          {/* RIGHT: OK button */}
+                          <button className="tick-save-btn" style={{ flexShrink: 0 }} disabled={lbProcessing} onClick={() => {
+                            if (!lbNote.trim() && lbAttachments.length === 0) { setLbNoteOpen(false); return }
+                            // Model quality map
+                            const modelQuality: Record<string, string> = { 'gemini-3.1-flash': '2160p', 'gemini-3.0': '1440p', 'gpt-image-2.0': '1440p', 'seedream-4.5': '2160p', 'seedream-5.0-lite': '1440p' }
+                            const activeModels = Object.entries(lbSelectedModels).filter(([, v]) => v).map(([k]) => k)
+                            console.log('[submit] activeModels:', activeModels, 'batchSize:', lbBatchSize, 'selectedModels state:', lbSelectedModels)
+                            if (activeModels.length === 0) activeModels.push('gemini-3.1-flash')
+                            const totalJobs = activeModels.length * lbBatchSize
+                            // Capture values before closing lightbox
+                            const capturedLightbox = { ...lightbox }
+                            const capturedNote = lbNote
+                            const capturedAttachments = [...lbAttachments]
+                            const capturedAspectRatio = lbAspectRatio
+                            const capturedEmptyMode = lbEmptyMode
+                            setBgGenerating(prev => prev + totalJobs)
+                            setBgShotJobs(prev => ({ ...prev, [capturedLightbox.shotId]: (prev[capturedLightbox.shotId] || 0) + totalJobs }))
+                            // Inject prompt into shot
+                            setStoryboard(prev => {
+                              const next = JSON.parse(JSON.stringify(prev)) as StoryboardData
+                              const act = next.acts.find(a => a.id === capturedLightbox.actId)
+                              if (act) {
+                                const scene = act.scenes.find(s => s.id === capturedLightbox.sceneId)
+                                if (scene) {
+                                  const shotsKey = capturedLightbox.mode === 'videos' ? 'videoShots' : capturedLightbox.mode === 'audio' ? 'audioShots' : 'imageShots'
+                                  const shot = (scene[shotsKey] || []).find(s => s.id === capturedLightbox.shotId)
+                                  if (shot) shot.prompt = capturedNote
+                                }
+                              }
+                              return next
+                            })
+                            // Swoop animation: animate a pill from note area to bottom-right
+                            const swooper = document.createElement('div')
+                            swooper.textContent = `🚀 ${totalJobs} image${totalJobs > 1 ? 's' : ''}`
+                            Object.assign(swooper.style, {
+                              position: 'fixed', zIndex: '99999',
+                              top: '50%', left: '50%',
+                              transform: 'translate(-50%, -50%) scale(1.2)',
+                              padding: '0.65rem 1.6rem', borderRadius: '999px',
+                              background: 'linear-gradient(135deg, rgba(248,217,120,0.22), rgba(248,217,120,0.08))',
+                              border: '1px solid rgba(248,217,120,0.5)',
+                              color: '#f8d978', fontSize: '1.1rem', fontWeight: '700',
+                              backdropFilter: 'blur(16px)', boxShadow: '0 12px 40px rgba(248,217,120,0.3), 0 0 60px rgba(248,217,120,0.1)',
+                              transition: 'all 0.7s cubic-bezier(0.16, 1, 0.3, 1)',
+                              pointerEvents: 'none', opacity: '1',
+                              letterSpacing: '0.05em',
+                            })
+                            document.body.appendChild(swooper)
+                            // Need two rAFs for the browser to register the initial position
+                            requestAnimationFrame(() => requestAnimationFrame(() => {
+                              Object.assign(swooper.style, {
+                                top: 'calc(100vh - 2.5rem)', left: 'calc(100vw - 8rem)',
+                                transform: 'translate(0, 0) scale(0.5)',
+                                opacity: '0',
+                              })
+                            }))
+                            setTimeout(() => swooper.remove(), 800)
+                            // Close note area — generation continues in background
+                            setLbNoteOpen(false); setLbSkillOpen(false); setLbModelConfigOpen(false)
+                            // Fire all requests in background
+                            activeModels.forEach(mdl => {
+                              for (let bi = 0; bi < lbBatchSize; bi++) {
+                                const q = modelQuality[mdl] || '1440p'
+                                const payload: Record<string, any> = { imageUrl: capturedLightbox.media?.url || '', note: capturedNote, attachments: capturedAttachments, shotId: capturedLightbox.shotId, actId: capturedLightbox.actId, sceneId: capturedLightbox.sceneId, mode: capturedLightbox.mode, type: capturedEmptyMode ? 'generate' : 'note', model: mdl, quality: q, aspectRatio: capturedAspectRatio }
+                                if (mdl === 'gpt-image-2.0') payload.detailLevel = 'medium'
+                                // Pass skill IDs so backend can read them
+                                if (lbAttachedSkills.length > 0) payload.skillIds = lbAttachedSkills.map(s => s.id)
+                                fetch('/api/tasks/edit-from-lightbox', {
+                                  method: 'POST', headers: { 'Content-Type': 'application/json' },
+                                  body: JSON.stringify(payload)
+                                }).then(r => r.json()).then(data => {
+                                  setBgGenerating(prev => Math.max(0, prev - 1))
+                                  setBgShotJobs(prev => ({ ...prev, [capturedLightbox.shotId]: Math.max(0, (prev[capturedLightbox.shotId] || 0) - 1) }))
+                                  if (data.url) {
+                                    // Add cache-busting so image shows immediately without reload
+                                    const cacheBust = data.url + (data.url.includes('?') ? '&' : '?') + 't=' + Date.now()
+                                    const nm: StoryboardMedia = { id: `media-${mdl}-${Date.now()}-${bi}`, type: 'image', url: cacheBust, fileName: `${mdl}-${Date.now()}.png`, localPath: data.localPath }
+                                    injectResultMedia(capturedLightbox.actId, capturedLightbox.sceneId, capturedLightbox.mode, capturedLightbox.shotId, [nm])
+                                  }
+                                }).catch(() => {
+                                  setBgGenerating(prev => Math.max(0, prev - 1))
+                                  setBgShotJobs(prev => ({ ...prev, [capturedLightbox.shotId]: Math.max(0, (prev[capturedLightbox.shotId] || 0) - 1) }))
+                                })
+                              }
+                            })
+                          }}>{lbProcessing ? <span style={{ fontSize: '0.6rem' }}>⏳</span> : <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>}</button>
+                        </div>
+                      </div>
+                    )}
+                    {/* SKILLS STORE MODAL — OUTSIDE note area to avoid backdrop-filter containing block */}
+                    {lbSkillOpen && <LbSkillStoreModal lbAvailableSkills={lbAvailableSkills} lbAttachedSkills={lbAttachedSkills} setLbAttachedSkills={setLbAttachedSkills} setLbSkillOpen={setLbSkillOpen} setLbAvailableSkills={setLbAvailableSkills} lbSkillsPage={lbSkillsPage} setLbSkillsPage={setLbSkillsPage} onInjectPrompt={(text: string) => { setLbNote(text); setLbSkillOpen(false) }} />}
+                    {/* Model & Generation Config popup — OUTSIDE note area */}
+                    {lbNoteOpen && lbModelConfigOpen && (
+                          <>
+                          {/* Click-outside backdrop */}
+                          <div style={{ position: 'fixed', inset: 0, zIndex: 10 }} onClick={() => setLbModelConfigOpen(false)} />
+                          <div style={{ position: 'absolute', bottom: 0, left: 0, zIndex: 11, background: 'rgba(10,12,20,0.97)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', border: '1px solid rgba(248,217,120,0.2)', borderRadius: '1rem', padding: '1.2rem 1.4rem', display: 'flex', flexDirection: 'column', gap: '0.7rem', minWidth: '380px', boxShadow: '0 -12px 40px rgba(0,0,0,0.6), 0 0 20px rgba(248,217,120,0.04)' }}>
+                            <div style={{ fontSize: '0.85rem', color: 'var(--gold)', fontWeight: 700, letterSpacing: '0.03em' }}>Generation Models</div>
+                            {([
+                              { key: 'gemini-3.1-flash', label: 'Nano Banana 2', res: '4K', quality: '2160p', def: true },
+                              { key: 'gemini-3.0', label: 'Nano Banana Pro', res: '2K', quality: '1440p', def: true },
+                              { key: 'gpt-image-2.0', label: 'GPT-2 Medium', res: '2K', quality: '1440p', def: true },
+                              { key: 'seedream-4.5', label: 'SeedReam 4.5', res: '4K', quality: '2160p', def: false },
+                              { key: 'seedream-5.0-lite', label: 'SeedReam 5 Lite', res: '3K', quality: '1440p', def: false },
+                            ] as const).map(m => (
+                              <label key={m.key} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.9rem', color: lbSelectedModels[m.key] ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.45)', cursor: 'pointer', padding: '0.3rem 0' }}>
+                                <input type="checkbox" checked={!!lbSelectedModels[m.key]} onChange={() => setLbSelectedModels(prev => ({ ...prev, [m.key]: !prev[m.key] }))} style={{ accentColor: 'var(--gold)', width: '16px', height: '16px' }} />
+                                {m.label} <span style={{ color: 'rgba(248,217,120,0.5)', fontSize: '0.75rem' }}>{m.res}</span>
+                                {m.def && <span style={{ color: 'rgba(64,255,156,0.5)', fontSize: '0.65rem', marginLeft: 'auto' }}>default</span>}
+                              </label>
+                            ))}
+                            <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '0.5rem', display: 'flex', gap: '0.7rem', alignItems: 'center' }}>
+                              <div style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.45)' }}>Aspect</div>
+                              {['16:9', '9:16', '1:1', '4:3'].map(ar => (
+                                <button key={ar} type="button" onClick={() => setLbAspectRatio(ar)} style={{ padding: '0.25rem 0.6rem', borderRadius: '0.4rem', border: `1px solid ${lbAspectRatio === ar ? 'rgba(248,217,120,0.4)' : 'rgba(255,255,255,0.08)'}`, background: lbAspectRatio === ar ? 'rgba(248,217,120,0.08)' : 'transparent', color: lbAspectRatio === ar ? 'var(--gold)' : 'rgba(255,255,255,0.4)', cursor: 'pointer', fontSize: '0.8rem' }}>{ar}</button>
+                              ))}
+                            </div>
+                            <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'center' }}>
+                              <div style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.45)' }}>Batch ×</div>
+                              {[1, 2, 3].map(n => (
+                                <button key={n} type="button" onClick={() => setLbBatchSize(n)} style={{ padding: '0.25rem 0.6rem', borderRadius: '0.4rem', border: `1px solid ${lbBatchSize === n ? 'rgba(248,217,120,0.4)' : 'rgba(255,255,255,0.08)'}`, background: lbBatchSize === n ? 'rgba(248,217,120,0.08)' : 'transparent', color: lbBatchSize === n ? 'var(--gold)' : 'rgba(255,255,255,0.4)', cursor: 'pointer', fontSize: '0.8rem' }}>{n}</button>
+                              ))}
+                              <span style={{ fontSize: '0.6rem', color: 'rgba(255,255,255,0.25)', marginLeft: 'auto' }}>{Object.values(lbSelectedModels).filter(Boolean).length * lbBatchSize} total</span>
+                            </div>
+                          </div>
+                          </>
+                        )}
+                  </div>
+                )}
+              </div>
+              {/* Alternatives row — paginated, max 8 per page */}
+              {lightbox.allMedia.length >= 1 && (() => {
+                const perPage = 8
+                const totalAlts = lightbox.allMedia.length
+                const totalPages = Math.ceil(totalAlts / perPage)
+                const page = Math.min(lbAltPage, totalPages - 1)
+                const visibleAlts = lightbox.allMedia.slice(page * perPage, page * perPage + perPage)
+                const isLastPage = page >= totalPages - 1
+                return (
+                <div style={{ display: 'flex', gap: '0.4rem', justifyContent: 'center', alignItems: 'center' }}>
+                  {/* Left arrow */}
+                  {page > 0 && (
+                    <button type="button" onClick={() => setLbAltPage(p => Math.max(0, p - 1))} style={{ width: '32px', height: '52px', borderRadius: '6px', border: 'none', background: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.5)', cursor: 'pointer', fontSize: '1.1rem', display: 'grid', placeItems: 'center', transition: 'background 0.2s', flexShrink: 0 }} onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(248,217,120,0.15)'; e.currentTarget.style.color = 'var(--gold)' }} onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.06)'; e.currentTarget.style.color = 'rgba(255,255,255,0.5)' }}>‹</button>
+                  )}
+                  {visibleAlts.map((m, idx) => (
+                    <button key={m.id} type="button" onClick={() => { setLightbox({ ...lightbox, media: m }); setLbEmptyMode(false) }} style={{ width: m.id === lightbox.media.id ? '64px' : '52px', height: m.id === lightbox.media.id ? '64px' : '52px', borderRadius: '8px', overflow: 'hidden', border: m.id === lightbox.media.id ? '2px solid var(--gold)' : '1px solid rgba(255,255,255,0.15)', cursor: 'pointer', padding: 0, background: 'transparent', transition: 'all 0.25s cubic-bezier(0.4,0,0.2,1)', opacity: m.id === lightbox.media.id ? 1 : 0.6, transform: m.id === lightbox.media.id ? 'translateY(-4px)' : 'none', boxShadow: m.id === lightbox.media.id ? '0 8px 20px rgba(248,217,120,0.15)' : 'none', flexShrink: 0 }}>
+                      {m.type === 'image' && m.url ? <img src={m.url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt={`Alt ${page * perPage + idx + 1}`} /> : <div style={{ width: '100%', height: '100%', background: 'rgba(255,255,255,0.05)', display: 'grid', placeItems: 'center', color: 'rgba(255,255,255,0.4)', fontSize: '0.7rem' }}>{!m.url ? '∅' : page * perPage + idx + 1}</div>}
+                    </button>
+                  ))}
+                  {/* Empty "+" slot — only on last page */}
+                  {isLastPage && (
+                    <button type="button" onClick={() => { setLbEmptyMode(true); setLbNoteOpen(true); setLightbox({ ...lightbox, media: { id: 'empty-new', type: 'image', url: '', fileName: '' } }) }} title="Create new from scratch" className="lb-plus-btn" style={{ width: '52px', height: '52px', borderRadius: '8px', border: '1px dashed rgba(248,217,120,0.35)', background: 'rgba(248,217,120,0.04)', cursor: 'pointer', display: 'grid', placeItems: 'center', color: 'rgba(248,217,120,0.5)', fontSize: '1.5rem', fontWeight: 300, transition: 'all 0.2s', padding: 0, flexShrink: 0 }} onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(248,217,120,0.12)'; e.currentTarget.style.borderColor = 'rgba(248,217,120,0.6)'; e.currentTarget.style.color = '#f8d978' }} onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(248,217,120,0.04)'; e.currentTarget.style.borderColor = 'rgba(248,217,120,0.35)'; e.currentTarget.style.color = 'rgba(248,217,120,0.5)' }}>+</button>
+                  )}
+                  {/* Right arrow */}
+                  {totalPages > 1 && !isLastPage && (
+                    <button type="button" onClick={() => setLbAltPage(p => Math.min(totalPages - 1, p + 1))} style={{ width: '32px', height: '52px', borderRadius: '6px', border: 'none', background: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.5)', cursor: 'pointer', fontSize: '1.1rem', display: 'grid', placeItems: 'center', transition: 'background 0.2s', flexShrink: 0 }} onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(248,217,120,0.15)'; e.currentTarget.style.color = 'var(--gold)' }} onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.06)'; e.currentTarget.style.color = 'rgba(255,255,255,0.5)' }}>›</button>
+                  )}
+                </div>
+                )
+              })()}
+              </>)
+              })()}
+            </div>
+          ) : (() => {
+            const alts = lightbox.allMedia.filter(m => m.id !== lightbox.media.id)
+            const compPerPage = 8
+            const compTotalPages = Math.ceil(alts.length / compPerPage)
+            const compPage = Math.min(lbAltPage, compTotalPages - 1)
+            const compVisible = alts.slice(compPage * compPerPage, compPage * compPerPage + compPerPage)
+            const hasMany = compVisible.length > 4
+            const mainFlex = hasMany ? '0 0 42%' : '0 0 50%'
+            const altH = hasMany ? `${Math.floor(70 / 4)}vh` : `${Math.floor(72 / Math.max(compVisible.length, 1))}vh`
+            return (
+            <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center', maxWidth: '95vw', maxHeight: '90vh', animation: 'fadeIn 0.3s ease' }}>
+              <div style={{ flex: mainFlex, position: 'relative' }}>
+                {lightbox.media.type === 'image' ? <img src={lightbox.media.url} alt="Main" style={{ width: '100%', maxHeight: '80vh', objectFit: 'contain', borderRadius: '1rem', display: 'block' }} /> : <video src={lightbox.media.url} controls style={{ width: '100%', maxHeight: '80vh', borderRadius: '1rem' }} />}
+                <div style={{ position: 'absolute', bottom: '0.8rem', left: '0.8rem', background: 'rgba(0,0,0,0.6)', padding: '0.3rem 0.8rem', borderRadius: '1rem', color: 'var(--gold)', fontSize: '0.7rem', fontWeight: 700 }}>MAIN</div>
+                <button type="button" onClick={() => setLightboxCompare(false)} style={{ position: 'absolute', bottom: '0.8rem', right: '0.8rem', padding: '0.4rem 1rem', background: 'rgba(0,0,0,0.6)', border: '1px solid rgba(248,217,120,0.25)', borderRadius: '2rem', color: 'var(--gold)', cursor: 'pointer', fontSize: '0.7rem', fontWeight: 600 }}>← Normal</button>
+              </div>
+              <div style={{ flex: hasMany ? '0 0 52%' : '0 0 45%', display: 'flex', gap: hasMany ? '1rem' : '0.5rem', flexDirection: hasMany ? 'row' : 'column', position: 'relative' }}>
+                {/* Compare page arrows */}
+                {compTotalPages > 1 && (
+                  <div style={{ position: 'absolute', top: '-2rem', right: 0, display: 'flex', gap: '0.3rem', zIndex: 5 }}>
+                    <button type="button" disabled={compPage === 0} onClick={() => setLbAltPage(p => Math.max(0, p - 1))} style={{ width: '28px', height: '28px', borderRadius: '6px', border: 'none', background: compPage > 0 ? 'rgba(248,217,120,0.12)' : 'rgba(255,255,255,0.04)', color: compPage > 0 ? 'var(--gold)' : 'rgba(255,255,255,0.2)', cursor: compPage > 0 ? 'pointer' : 'default', fontSize: '0.9rem', display: 'grid', placeItems: 'center' }}>‹</button>
+                    <span style={{ fontSize: '0.6rem', color: 'rgba(255,255,255,0.3)', display: 'grid', placeItems: 'center' }}>{compPage + 1}/{compTotalPages}</span>
+                    <button type="button" disabled={compPage >= compTotalPages - 1} onClick={() => setLbAltPage(p => Math.min(compTotalPages - 1, p + 1))} style={{ width: '28px', height: '28px', borderRadius: '6px', border: 'none', background: compPage < compTotalPages - 1 ? 'rgba(248,217,120,0.12)' : 'rgba(255,255,255,0.04)', color: compPage < compTotalPages - 1 ? 'var(--gold)' : 'rgba(255,255,255,0.2)', cursor: compPage < compTotalPages - 1 ? 'pointer' : 'default', fontSize: '0.9rem', display: 'grid', placeItems: 'center' }}>›</button>
+                  </div>
+                )}
+                {hasMany ? (<>
+                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                    {compVisible.slice(0, 4).map((m, idx) => (
+                      <div key={m.id} style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', animation: `fadeIn 0.3s ease ${idx * 0.05}s both` }}>
+                        <div style={{ width: '28px', height: '2px', background: 'linear-gradient(90deg, rgba(248,217,120,0.5), rgba(248,217,120,0.1))', flexShrink: 0 }} />
+                        <button type="button" onClick={() => setLightbox({ ...lightbox, media: m })} style={{ borderRadius: '0.5rem', overflow: 'hidden', border: 'none', cursor: 'pointer', padding: 0, background: 'none', width: '100%', height: altH }}>
+                          <img src={m.url} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '0.5rem' }} alt={`Alt ${compPage * compPerPage + idx + 1}`} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                    {compVisible.slice(4, 8).map((m, idx) => (
+                      <div key={m.id} style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', animation: `fadeIn 0.3s ease ${(idx + 4) * 0.05}s both` }}>
+                        <div style={{ width: '28px', height: '2px', background: 'linear-gradient(90deg, rgba(248,217,120,0.5), rgba(248,217,120,0.1))', flexShrink: 0 }} />
+                        <button type="button" onClick={() => setLightbox({ ...lightbox, media: m })} style={{ borderRadius: '0.5rem', overflow: 'hidden', border: 'none', cursor: 'pointer', padding: 0, background: 'none', width: '100%', height: altH }}>
+                          <img src={m.url} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '0.5rem' }} alt={`Alt ${compPage * compPerPage + idx + 5}`} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </>) : (
+                  compVisible.map((m, idx) => (
+                    <div key={m.id} style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', animation: `fadeIn 0.3s ease ${idx * 0.08}s both` }}>
+                      <div style={{ width: '36px', height: '2px', background: 'linear-gradient(90deg, rgba(248,217,120,0.5), rgba(248,217,120,0.1))', flexShrink: 0 }} />
+                      <button type="button" onClick={() => setLightbox({ ...lightbox, media: m })} style={{ borderRadius: '0.6rem', overflow: 'hidden', border: 'none', cursor: 'pointer', padding: 0, background: 'none', width: '100%', height: altH }}>
+                        <img src={m.url} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '0.6rem' }} alt={`Alt ${compPage * compPerPage + idx + 1}`} />
+                      </button>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+            )
+          })()}
+          {/* Crop Tool Overlay */}
+          {lightboxCrop && lightbox.media.type === 'image' && (
+            <CropTool
+              key={`crop-${lightbox.media.id}`}
+              imageUrl={lightbox.media.url}
+              onClose={() => setLightboxCrop(false)}
+              onApply={(croppedUrl) => {
+                // Preload the image before updating state to avoid broken icon
+                const cacheBusted = croppedUrl + '?t=' + Date.now()
+                const preload = new Image()
+                preload.onload = () => {
+                  setLightboxCrop(false)
+                  if (lightbox.shotId && lightbox.actId) {
+                    const newMedia: StoryboardMedia = {
+                      id: `media-crop-${Date.now()}`,
+                      type: 'image',
+                      url: cacheBusted,
+                      fileName: `cropped-${Date.now()}.png`,
+                    }
+                    updateShot(lightbox.actId, lightbox.sceneId, lightbox.mode, lightbox.shotId, (shot) => {
+                      shot.media.push(newMedia)
+                      shot.selectedMediaId = newMedia.id
+                    })
+                    const updatedAllMedia = [...lightbox.allMedia, newMedia]
+                    setLightbox({ ...lightbox, media: newMedia, allMedia: updatedAllMedia })
+                  }
+                }
+                preload.onerror = () => {
+                  // Retry once after 500ms if file not ready yet
+                  setTimeout(() => { setLightboxCrop(false); setLightbox({ ...lightbox, media: { ...lightbox.media, url: cacheBusted }, allMedia: [...lightbox.allMedia] }) }, 500)
+                }
+                preload.src = cacheBusted
+              }}
+            />
+          )}
+          {/* Enhance popup */}
+          {lbEnhanceOpen && lightbox.media.type === 'image' && (
+            <div className="enhance-menu-glass glass" onClick={(e) => e.stopPropagation()}>
+              <div className="assign-menu-title">Quality Enhancement</div>
+              {/* Editable prompt textarea with inject button */}
+              <div style={{ position: 'relative' }}>
+                <textarea
+                  className="enhance-prompt-input"
+                  placeholder="Describe enhancements or leave empty for auto-enhance..."
+                  value={lbEnhancePrompt}
+                  onChange={(e) => setLbEnhancePrompt(e.target.value)}
+                  rows={3}
+                  style={{ width: '100%', background: 'rgba(0,0,0,0.4)', border: '1px solid rgba(248,217,120,0.15)', borderRadius: '0.6rem', color: 'var(--cream)', padding: '0.7rem 2.5rem 0.7rem 0.7rem', fontSize: '0.9rem', resize: 'vertical', outline: 'none', lineHeight: 1.5, minHeight: '3rem' }}
+                />
+                {/* Inject prompt from shot */}
+                <button type="button" onClick={() => { const act = storyboard.acts.find(a => a.id === lightbox.actId); const sc = act?.scenes.find(s => s.id === lightbox.sceneId); const shots = sc ? (lightbox.mode === 'images' ? sc.imageShots : lightbox.mode === 'videos' ? sc.videoShots : sc.audioShots) : []; const shot = shots.find(s => s.id === lightbox.shotId); if (shot?.prompt) setLbEnhancePrompt(shot.prompt) }} title="Inject shot prompt" style={{ position: 'absolute', top: '0.4rem', right: '0.4rem', width: '1.8rem', height: '1.8rem', borderRadius: '50%', border: '1.5px solid rgba(64,255,156,0.3)', background: 'rgba(64,255,156,0.06)', color: 'rgba(64,255,156,0.6)', cursor: 'pointer', display: 'grid', placeItems: 'center' }}>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M1 4v6h6" /><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" /></svg>
+                </button>
+              </div>
+              <div className="enhance-options-row">
+                <select className="enhance-select" value={lbModel} onChange={(e) => setLbModel(e.target.value)}>
+                  <option value="gemini-3.1-flash">Nano Banana 2</option>
+                  <option value="gemini-3.0">Nano Banana Pro</option>
+                  <option value="gpt-image-2.0">GPT-2 Medium</option>
+                  <option value="seedream-4.5">SeedReam 4.5</option>
+                  <option value="seedream-5.0-lite">SeedReam 5 Lite</option>
+                </select>
+                <select className="enhance-select" value={lbQuality} onChange={(e) => setLbQuality(e.target.value)}>
+                  <option value="2160p">4K (2160p)</option>
+                  <option value="1440p">2K (1440p)</option>
+                  <option value="1080p">1080p</option>
+                  <option value="720p">720p</option>
+                </select>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'flex-end', paddingTop: '0.3rem' }}>
+                <button className="tick-save-btn" disabled={lbProcessing} onClick={() => {
+                  // Run enhance in background — close popup immediately
+                  const capturedLightbox = { ...lightbox }
+                  const capturedModel = lbModel
+                  const capturedQuality = lbQuality
+                  const capturedPrompt = lbEnhancePrompt.trim()
+                  const shotId = lightbox.shotId
+                  setLbEnhanceOpen(false)
+                  setBgGenerating(prev => prev + 1)
+                  setBgShotJobs(prev => ({ ...prev, [shotId]: (prev[shotId] || 0) + 1 }))
+                  // Fire and forget
+                  ;(async () => {
+                    try {
+                      const res = await fetch('/api/tasks/edit-from-lightbox', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ imageUrl: capturedLightbox.media.url, attachments: [], shotId: capturedLightbox.shotId, actId: capturedLightbox.actId, sceneId: capturedLightbox.sceneId, mode: capturedLightbox.mode, type: 'enhance', model: capturedModel, quality: capturedQuality, prompt: capturedPrompt }) })
+                      const data = await res.json()
+                      if (data.url) {
+                        const cacheBust = data.url + (data.url.includes('?') ? '&' : '?') + 't=' + Date.now()
+                        const newMedia: StoryboardMedia = { id: `media-enhance-${Date.now()}`, type: 'image', url: cacheBust, fileName: `enhanced-${capturedModel}-${capturedQuality}-${Date.now()}.png`, localPath: data.localPath }
+                        injectResultMedia(capturedLightbox.actId, capturedLightbox.sceneId, capturedLightbox.mode, capturedLightbox.shotId, [newMedia])
+                      }
+                    } catch {}
+                    setBgGenerating(prev => Math.max(0, prev - 1))
+                    setBgShotJobs(prev => ({ ...prev, [shotId]: Math.max(0, (prev[shotId] || 0) - 1) }))
+                  })()
+                }}>{lbProcessing ? <span style={{ fontSize: '0.6rem' }}>⏳</span> : <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>}</button>
+              </div>
+              <button type="button" onClick={() => setLbEnhanceOpen(false)} style={{ position: 'absolute', top: '0.8rem', right: '0.8rem', background: 'none', border: 'none', color: 'rgba(255,255,255,0.4)', cursor: 'pointer', fontSize: '1.2rem' }}>✕</button>
+            </div>
+          )}
+          {/* Split Grid */}
+          {lbSplitOpen && lightbox.media.type === 'image' && (
+            <div className="assign-menu-glass glass" onClick={(e) => e.stopPropagation()}>
+              <div className="assign-menu-title">Split Grid</div>
+              <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center' }}>
+                {['2x2', '3x3', '2x1', '1x2'].map(s => (
+                  <button key={s} type="button" onClick={() => setLbSplitSize(s)} style={{ padding: '0.4rem 0.9rem', borderRadius: '2rem', border: lbSplitSize === s ? '1px solid var(--gold)' : '1px solid rgba(255,255,255,0.15)', background: lbSplitSize === s ? 'rgba(248,217,120,0.12)' : 'rgba(255,255,255,0.05)', color: lbSplitSize === s ? 'var(--gold)' : 'rgba(255,255,255,0.5)', cursor: 'pointer', fontSize: '0.8rem', fontWeight: lbSplitSize === s ? 700 : 400 }}>{s}</button>
+                ))}
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'center' }}>
+                <button className="tick-save-btn" disabled={lbProcessing} onClick={async () => {
+                  setLbProcessing(true)
+                  try {
+                    const res = await fetch('/api/tasks/edit-from-lightbox', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ imageUrl: lightbox.media.url, shotId: lightbox.shotId, actId: lightbox.actId, sceneId: lightbox.sceneId, mode: lightbox.mode, type: 'split', splitSize: lbSplitSize }) })
+                    const data = await res.json()
+                    if (data.panels && data.panels.length > 0) {
+                      const panelMedia: StoryboardMedia[] = data.panels.map((p: any) => ({ id: p.id || `media-split-${Date.now()}-${Math.random().toString(36).slice(2,6)}`, type: 'image' as const, url: (p.url || '') + '?t=' + Date.now(), fileName: p.fileName || `split-panel.png`, localPath: p.localPath }))
+                      injectResultMedia(lightbox.actId, lightbox.sceneId, lightbox.mode, lightbox.shotId, panelMedia)
+                      setLightbox({ ...lightbox, media: panelMedia[0], allMedia: [...lightbox.allMedia, ...panelMedia] })
+                    }
+                  } catch {}
+                  setLbProcessing(false); setLbSplitOpen(false)
+                }}>{lbProcessing ? <span style={{ fontSize: '0.6rem' }}>⏳</span> : <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>}</button>
+              </div>
+              <button type="button" onClick={() => setLbSplitOpen(false)} style={{ position: 'absolute', top: '0.8rem', right: '0.8rem', background: 'none', border: 'none', color: 'rgba(255,255,255,0.4)', cursor: 'pointer', fontSize: '1.2rem' }}>✕</button>
+            </div>
+          )}
+          {/* Assign to scene popup — tabbed: Image | Actor | Scene | Props */}
+          {lbAssignOpen && (() => {
+            const assignTabs = [
+              { key: 'image' as const, label: 'Image', icon: 'M4 16l4.586-4.586a2 2 0 0 1 2.828 0L16 16m-2-2l1.586-1.586a2 2 0 0 1 2.828 0L20 14m-6-6h.01M6 20h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2z' },
+              { key: 'actor' as const, label: 'Actor', icon: 'M16 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0zM12 14a7 7 0 0 0-7 7h14a7 7 0 0 0-7-7z' },
+              { key: 'scene' as const, label: 'Location', icon: 'M17.657 16.657L13.414 20.9a1.998 1.998 0 0 1-2.827 0l-4.244-4.243a8 8 0 1 1 11.314 0z' },
+              { key: 'props' as const, label: 'Props', icon: 'M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4' },
+            ]
+            const doAssign = (resKey: 'actors' | 'locations' | 'props', name: string) => {
+              if (!lightbox.media.url) return
+              setStoryboard(prev => {
+                const next = JSON.parse(JSON.stringify(prev))
+                if (!next.resources[resKey]) next.resources[resKey] = []
+                const existing = next.resources[resKey].find((x: any) => x.name === name)
+                const entry = { id: `media-assign-${Date.now()}`, type: 'image', url: lightbox.media.url, fileName: lightbox.media.fileName }
+                if (existing) { if (!existing.media) existing.media = []; existing.media.push(entry) }
+                else { next.resources[resKey].push({ name, media: [entry] }) }
+                if (lightbox.actId && lightbox.sceneId) {
+                  const act = next.acts.find((a: any) => a.id === lightbox.actId)
+                  const scene = act?.scenes.find((s: any) => s.id === lightbox.sceneId)
+                  if (scene) {
+                    if (!scene.resourceRefs) scene.resourceRefs = { actors: [], locations: [], props: [] }
+                    if (!scene.resourceRefs[resKey]) scene.resourceRefs[resKey] = []
+                    if (!scene.resourceRefs[resKey].includes(name)) scene.resourceRefs[resKey].push(name)
+                  }
+                }
+                return next
+              })
+              setLbAssignOpen(false)
+            }
+            const renderResourceSlots = (resKey: 'actors' | 'locations' | 'props') => {
+              const resources = storyboard.resources[resKey] || []
+              return (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
+                  {resources.map((r: any) => {
+                    const img = (r.media || [])[0]
+                    return (
+                      <button key={r.name} type="button" onClick={() => doAssign(resKey, r.name)} style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', padding: '0.7rem 1rem', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '0.7rem', cursor: 'pointer', color: '#fff', transition: 'all 0.15s', width: '100%', textAlign: 'left' }} onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(248,217,120,0.4)'; e.currentTarget.style.background = 'rgba(248,217,120,0.06)' }} onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)'; e.currentTarget.style.background = 'rgba(255,255,255,0.03)' }}>
+                        {img ? <img src={img.url} style={{ width: '64px', height: '64px', borderRadius: '8px', objectFit: 'cover', flexShrink: 0 }} alt="" /> : <div style={{ width: '64px', height: '64px', borderRadius: '8px', background: 'rgba(255,255,255,0.05)', display: 'grid', placeItems: 'center', color: 'rgba(255,255,255,0.2)', fontSize: '1.6rem', flexShrink: 0 }}>∅</div>}
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <div style={{ fontSize: '1rem', fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{r.name}</div>
+                          <div style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.3)' }}>{(r.media || []).length} image{(r.media || []).length !== 1 ? 's' : ''}</div>
+                        </div>
+                        <div style={{ fontSize: '0.85rem', color: 'rgba(64,255,156,0.5)', flexShrink: 0 }}>+ Add →</div>
+                      </button>
+                    )
+                  })}
+                  {/* Add new inline */}
+                  <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                    <input type="text" value={lbAssignNewName} onChange={e => setLbAssignNewName(e.target.value)} placeholder={`New ${resKey === 'actors' ? 'actor' : resKey === 'locations' ? 'location' : 'prop'} name...`} style={{ flex: 1, padding: '0.7rem 1rem', background: 'rgba(255,255,255,0.04)', border: '1px dashed rgba(255,255,255,0.15)', borderRadius: '0.6rem', color: '#fff', fontSize: '1rem', outline: 'none' }} onKeyDown={e => { if (e.key === 'Enter' && lbAssignNewName.trim()) { doAssign(resKey, lbAssignNewName.trim()); setLbAssignNewName('') } }} />
+                    <button type="button" disabled={!lbAssignNewName.trim()} onClick={() => { if (lbAssignNewName.trim()) { doAssign(resKey, lbAssignNewName.trim()); setLbAssignNewName('') } }} style={{ padding: '0.7rem 1.2rem', background: lbAssignNewName.trim() ? 'var(--gold)' : 'rgba(255,255,255,0.05)', border: 'none', borderRadius: '0.6rem', color: lbAssignNewName.trim() ? '#000' : 'rgba(255,255,255,0.2)', cursor: lbAssignNewName.trim() ? 'pointer' : 'default', fontSize: '0.95rem', fontWeight: 700, transition: 'all 0.15s' }}>+ Add</button>
+                  </div>
+                </div>
+              )
+            }
+            return (
+            <div className="assign-menu-glass glass" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '700px', width: '94vw', maxHeight: '85vh' }}>
+              <div className="assign-menu-title" style={{ marginBottom: '0.6rem', fontSize: '1.3rem' }}>Assign to Scene</div>
+              {/* Type tabs */}
+              <div style={{ display: 'flex', gap: '0.4rem', borderBottom: '1px solid rgba(255,255,255,0.06)', paddingBottom: '0' }}>
+                {assignTabs.map(tab => (
+                  <button key={tab.key} type="button" onClick={() => { setLbAssignTab(tab.key); setLbAssignNewName(''); setLbAssignExpandAct(null) }} style={{ padding: '0.7rem 1.2rem', border: 'none', borderBottom: lbAssignTab === tab.key ? '3px solid var(--gold)' : '3px solid transparent', background: 'none', color: lbAssignTab === tab.key ? 'var(--gold)' : 'rgba(255,255,255,0.4)', fontSize: '1rem', fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d={tab.icon}/></svg>
+                    {tab.label}
+                  </button>
+                ))}
+              </div>
+              {/* Tab content */}
+              <div style={{ maxHeight: '50vh', overflowY: 'auto', padding: '0.8rem 0' }}>
+                {lbAssignTab === 'image' ? (
+                  /* Image tab — show acts with + to expand */
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+                    {storyboard.acts.map(act => {
+                      const isExpanded = lbAssignExpandAct === act.id
+                      return (
+                        <div key={act.id}>
+                          <button type="button" onClick={() => setLbAssignExpandAct(isExpanded ? null : act.id)} style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', width: '100%', padding: '0.8rem 1rem', background: isExpanded ? 'rgba(248,217,120,0.06)' : 'rgba(255,255,255,0.02)', border: `1px solid ${isExpanded ? 'rgba(248,217,120,0.2)' : 'rgba(255,255,255,0.06)'}`, borderRadius: '0.6rem', cursor: 'pointer', color: isExpanded ? 'var(--gold)' : 'rgba(255,255,255,0.7)', fontSize: '1rem', fontWeight: 600, transition: 'all 0.15s', textAlign: 'left' }}>
+                            <span style={{ fontSize: '0.9rem', transform: isExpanded ? 'rotate(90deg)' : 'none', transition: 'transform 0.2s' }}>▸</span>
+                            {act.title}
+                            <span style={{ marginLeft: 'auto', fontSize: '0.8rem', color: 'rgba(255,255,255,0.3)' }}>{act.scenes.length} scenes</span>
+                          </button>
+                          {isExpanded && (
+                            <div style={{ padding: '0.5rem 0 0.5rem 0.8rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                              {act.scenes.map(scene => {
+                                const shots = getSceneShots(scene, 'images')
+                                const imgs = shots.flatMap(s => s.media.filter(m => m.type === 'image'))
+                                return (
+                                  <div key={scene.id}>
+                                    <div style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.5)', fontWeight: 500, marginBottom: '0.4rem' }}>{scene.title}</div>
+                                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '0.35rem' }}>
+                                      {imgs.slice(0, 15).map(m => (
+                                        <button key={m.id} type="button" onClick={() => {
+                                          /* Add current lightbox image as new shot in this scene */
+                                          if (!lightbox.media.url) return
+                                          const newShot = { id: `shot-assign-${Date.now()}`, media: [{ id: `media-assign-${Date.now()}`, type: 'image' as const, url: lightbox.media.url, fileName: lightbox.media.fileName }], selectedMediaId: `media-assign-${Date.now()}` }
+                                          updateShot(act.id, scene.id, 'images', shots[0]?.id || '', (draft) => { /* noop — we'll inject below */ })
+                                          setStoryboard(prev => {
+                                            const next = JSON.parse(JSON.stringify(prev))
+                                            const a = next.acts.find((x: any) => x.id === act.id)
+                                            const s = a?.scenes.find((x: any) => x.id === scene.id)
+                                            if (s) { if (!s.passes) s.passes = {}; if (!s.passes.images) s.passes.images = []; s.passes.images.push(newShot) }
+                                            return next
+                                          })
+                                          setLbAssignOpen(false)
+                                        }} style={{ width: '100%', aspectRatio: '16/11', borderRadius: '5px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.08)', cursor: 'pointer', padding: 0, background: 'rgba(0,0,0,0.3)', opacity: 0.75, transition: 'all 0.15s' }}>
+                                          <img src={m.url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
+                                        </button>
+                                      ))}
+                                      {/* + Add to this scene */}
+                                      <button type="button" onClick={() => {
+                                        if (!lightbox.media.url) return
+                                        const newShotId = `shot-assign-${Date.now()}`
+                                        const newMediaId = `media-assign-${Date.now()}`
+                                        setStoryboard(prev => {
+                                          const next = JSON.parse(JSON.stringify(prev))
+                                          const a = next.acts.find((x: any) => x.id === act.id)
+                                          const s = a?.scenes.find((x: any) => x.id === scene.id)
+                                          if (s) { if (!s.passes) s.passes = {}; if (!s.passes.images) s.passes.images = []; s.passes.images.push({ id: newShotId, media: [{ id: newMediaId, type: 'image', url: lightbox.media.url, fileName: lightbox.media.fileName }], selectedMediaId: newMediaId }) }
+                                          return next
+                                        })
+                                        setLbAssignOpen(false)
+                                      }} style={{ width: '100%', aspectRatio: '16/11', borderRadius: '6px', border: '2px dashed rgba(248,217,120,0.3)', background: 'rgba(248,217,120,0.04)', cursor: 'pointer', display: 'grid', placeItems: 'center', color: 'rgba(248,217,120,0.5)', fontSize: '1.8rem', transition: 'all 0.15s' }}>+</button>
+                                    </div>
+                                  </div>
+                                )
+                              })}
+                            </div>
+                          )}
+                        </div>
+                      )
+                    })}
+                  </div>
+                ) : lbAssignTab === 'actor' ? (
+                  renderResourceSlots('actors')
+                ) : lbAssignTab === 'scene' ? (
+                  renderResourceSlots('locations')
+                ) : (
+                  renderResourceSlots('props')
+                )}
+              </div>
+              <button type="button" onClick={() => setLbAssignOpen(false)} style={{ position: 'absolute', top: '0.8rem', right: '0.8rem', background: 'none', border: 'none', color: 'rgba(255,255,255,0.4)', cursor: 'pointer', fontSize: '1.2rem' }}>✕</button>
+            </div>
+            )
+          })()}
+          {/* Attachment Picker popup — with Resource tabs, scene-filtering, preview images */}
+          {lbAttachOpen && (() => {
+            // Get resources for the active scene
+            const lbActiveAct = storyboard.acts.find(a => a.id === lightbox?.actId)
+            const lbActiveScene = lbActiveAct?.scenes.find(s => s.id === lightbox?.sceneId)
+            const sceneActorRefs = lbActiveScene?.resourceRefs?.actors || []
+            const sceneLocationRefs = lbActiveScene?.resourceRefs?.locations || []
+            const scenePropRefs = lbActiveScene?.resourceRefs?.props || []
+
+            // Filter resources: scene-assigned first, then show all if toggled
+            const filterResources = (type: StoryboardResourceType) => {
+              const all = storyboard.resources[type] || []
+              if (lbAttachShowAll || lbAttachTab === 'all') return all
+              const refs = type === 'actors' ? sceneActorRefs : type === 'locations' ? sceneLocationRefs : scenePropRefs
+              const filtered = all.filter(r => refs.includes(r.name))
+              return filtered.length > 0 ? filtered : all // fallback to all if none assigned
+            }
+
+            const tabs = [
+              { key: 'all' as const, label: 'Images', icon: 'M4 16l4.586-4.586a2 2 0 0 1 2.828 0L16 16m-2-2l1.586-1.586a2 2 0 0 1 2.828 0L20 14m-6-6h.01M6 20h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2z' },
+              { key: 'actors' as const, label: 'Actors', icon: 'M16 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0zM12 14a7 7 0 0 0-7 7h14a7 7 0 0 0-7-7z' },
+              { key: 'locations' as const, label: 'Locations', icon: 'M17.657 16.657L13.414 20.9a1.998 1.998 0 0 1-2.827 0l-4.244-4.243a8 8 0 1 1 11.314 0z' },
+              { key: 'props' as const, label: 'Props', icon: 'M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4' },
+            ]
+
+            return (
+            <div className="assign-menu-glass glass" style={{ maxWidth: '800px', maxHeight: '85vh', width: '94vw' }} onClick={(e) => e.stopPropagation()}>
+              <div className="assign-menu-title" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '1.3rem' }}>
+                <span>Attach References ({lbAttachments.length}/8)</span>
+                <button type="button" onClick={() => lbFileRef.current?.click()} style={{ padding: '0.5rem 1.2rem', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '2rem', color: 'rgba(255,255,255,0.6)', cursor: 'pointer', fontSize: '0.95rem' }}>↑ Upload</button>
+              </div>
+              <button type="button" onClick={() => { setLbAttachOpen(false); setLbAttachShowAll(false) }} style={{ position: 'absolute', top: '0.8rem', right: '0.8rem', background: 'none', border: 'none', color: 'rgba(255,255,255,0.4)', cursor: 'pointer', fontSize: '1.6rem' }}>✕</button>
+              <input ref={lbFileRef} type="file" accept="image/*" multiple style={{ display: 'none' }} onChange={(e) => {
+                const files = Array.from(e.target.files || []).slice(0, 8 - lbAttachments.length)
+                files.forEach(file => {
+                  const formData = new FormData(); formData.append('file', file)
+                  fetch('/api/storyboard/upload', { method: 'POST', body: formData }).then(r => r.json()).then(d => { if (d.url && lbAttachments.length < 8) { const cacheBusted = d.url + '?t=' + Date.now(); setLbAttachments(prev => prev.length < 8 ? [...prev, cacheBusted] : prev) } }).catch(() => {})
+                })
+                e.target.value = ''
+              }} />
+
+              {/* Resource Type Tabs */}
+              <div style={{ display: 'flex', gap: '0.4rem', padding: '0 0 0.6rem', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+                {tabs.map(tab => (
+                  <button key={tab.key} type="button" onClick={() => { setLbAttachTab(tab.key); setLbAttachShowAll(false) }} style={{ padding: '0.6rem 1rem', borderRadius: '0.5rem', border: `1px solid ${lbAttachTab === tab.key ? 'rgba(248,217,120,0.35)' : 'rgba(255,255,255,0.06)'}`, background: lbAttachTab === tab.key ? 'rgba(248,217,120,0.08)' : 'transparent', color: lbAttachTab === tab.key ? 'var(--gold)' : 'rgba(255,255,255,0.45)', cursor: 'pointer', fontSize: '0.95rem', display: 'flex', alignItems: 'center', gap: '0.45rem', whiteSpace: 'nowrap', transition: 'all 0.2s' }}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d={tab.icon}/></svg>
+                    {tab.label}
+                  </button>
+                ))}
+              </div>
+
+              {/* Content area */}
+              <div style={{ maxHeight: '48vh', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '0.8rem', padding: '0.4rem 0' }}>
+                {lbAttachTab === 'all' ? (
+                  /* All Images — grouped by act/scene */
+                  storyboard.acts.map(act => {
+                    const actImages = act.scenes.flatMap(s => getSceneShots(s, 'images').flatMap(sh => sh.media.filter(m => m.type === 'image')))
+                    if (actImages.length === 0) return null
+                    return (
+                    <details key={act.id} open>
+                      <summary style={{ color: 'var(--gold)', fontSize: '1rem', fontWeight: 700, cursor: 'pointer', padding: '0.4rem 0', listStyle: 'none', display: 'flex', alignItems: 'center', gap: '0.5rem', userSelect: 'none' }}>
+                        <span style={{ fontSize: '0.9rem', transition: 'transform 0.2s' }}>▸</span> {act.title} <span style={{ color: 'rgba(255,255,255,0.3)', fontWeight: 400, fontSize: '0.85rem' }}>({actImages.length})</span>
+                      </summary>
+                      {act.scenes.map(scene => {
+                        const shots = getSceneShots(scene, 'images')
+                        const sceneImages = shots.flatMap(s => s.media.filter(m => m.type === 'image'))
+                        if (sceneImages.length === 0) return null
+                        return (
+                          <div key={scene.id} style={{ marginBottom: '0.6rem', marginLeft: '0.5rem' }}>
+                            <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.9rem', marginBottom: '0.35rem', fontWeight: 500 }}>{scene.title}</div>
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '0.4rem' }}>
+                              {sceneImages.slice(0, 20).map((m) => (
+                                <button key={m.id} type="button" disabled={lbAttachments.length >= 8 || lbAttachments.includes(m.url)} onClick={() => { if (lbAttachments.length < 8) setLbAttachments(prev => [...prev, m.url]) }} style={{ width: '100%', aspectRatio: '16/11', borderRadius: '6px', overflow: 'hidden', border: lbAttachments.includes(m.url) ? '2.5px solid var(--gold)' : '1px solid rgba(255,255,255,0.08)', cursor: 'pointer', padding: 0, background: 'rgba(0,0,0,0.3)', opacity: lbAttachments.includes(m.url) ? 1 : 0.75, transition: 'all 0.15s', position: 'relative' }}>
+                                  <img src={m.url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
+                                  {lbAttachments.includes(m.url) && <div style={{ position: 'absolute', top: '3px', right: '3px', background: 'var(--gold)', borderRadius: '50%', width: '24px', height: '24px', display: 'grid', placeItems: 'center', color: '#000', fontSize: '0.75rem', fontWeight: 800 }}>{lbAttachments.indexOf(m.url) + 1}</div>}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        )
+                      })}
+                    </details>
+                    )
+                  })
+                ) : (
+                  /* Resource tab — actors/locations/props with preview images */
+                  (() => {
+                    const resources = filterResources(lbAttachTab)
+                    const allResources = storyboard.resources[lbAttachTab] || []
+                    const isFiltered = !lbAttachShowAll && resources.length < allResources.length
+                    return (
+                      <>
+                        {resources.map(resource => {
+                          const allMedia = [...(resource.media || []), ...(resource.sheetMedia || [])].filter(m => m.type === 'image')
+                          const principal = allMedia[0]
+                          const additional = allMedia.slice(1)
+                          return (
+                            <div key={resource.name} style={{ marginBottom: '0.8rem', background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '0.6rem', padding: '0.6rem' }}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.5rem' }}>
+                                <span style={{ color: 'rgba(255,255,255,0.8)', fontSize: '1rem', fontWeight: 600 }}>{resource.name}</span>
+                                <span style={{ color: 'rgba(255,255,255,0.25)', fontSize: '0.8rem' }}>{allMedia.length} img{allMedia.length !== 1 ? 's' : ''}</span>
+                              </div>
+                              {allMedia.length > 0 && (
+                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.35rem' }}>
+                                  {allMedia.slice(0, 9).map((m) => (
+                                    <button key={m.id} type="button" disabled={lbAttachments.length >= 8 || lbAttachments.includes(m.url)} onClick={() => { if (lbAttachments.length < 8) setLbAttachments(prev => [...prev, m.url]) }} style={{ width: '100%', aspectRatio: '16/11', borderRadius: '6px', overflow: 'hidden', border: lbAttachments.includes(m.url) ? '2px solid var(--gold)' : '1px solid rgba(255,255,255,0.08)', cursor: 'pointer', padding: 0, background: 'rgba(0,0,0,0.3)', opacity: lbAttachments.includes(m.url) ? 1 : 0.75, transition: 'all 0.15s', position: 'relative' }}>
+                                      <img src={m.url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
+                                      {lbAttachments.includes(m.url) && <div style={{ position: 'absolute', top: '2px', right: '2px', background: 'var(--gold)', borderRadius: '50%', width: '16px', height: '16px', display: 'grid', placeItems: 'center', color: '#000', fontSize: '0.55rem', fontWeight: 800 }}>{lbAttachments.indexOf(m.url) + 1}</div>}
+                                    </button>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                          )
+                        })}
+                        {isFiltered && (
+                          <button type="button" onClick={() => setLbAttachShowAll(true)} style={{ padding: '0.5rem', background: 'rgba(255,255,255,0.03)', border: '1px dashed rgba(255,255,255,0.15)', borderRadius: '0.5rem', color: 'rgba(255,255,255,0.4)', cursor: 'pointer', fontSize: '0.75rem', textAlign: 'center', transition: 'all 0.2s' }}>
+                            Show All {lbAttachTab === 'actors' ? 'Actors' : lbAttachTab === 'locations' ? 'Locations' : 'Props'} ({allResources.length} total)
+                          </button>
+                        )}
+                      </>
+                    )
+                  })()
+                )}
+              </div>
+              {/* Current attachments strip */}
+              {/* Drag-reorderable attachment strip */}
+              {lbAttachments.length > 0 && (
+                <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '0.6rem', display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                  {lbAttachments.map((url, i) => (
+                    <div key={`att-${i}-${url.slice(-12)}`} draggable onDragStart={() => setLbDragIdx(i)} onDragOver={(e) => e.preventDefault()} onDrop={() => { if (lbDragIdx !== null && lbDragIdx !== i) { setLbAttachments(prev => { const next = [...prev]; const [moved] = next.splice(lbDragIdx, 1); next.splice(i, 0, moved); return next }); } setLbDragIdx(null) }} style={{ position: 'relative', width: '72px', height: '72px', borderRadius: '7px', overflow: 'hidden', border: '2.5px solid var(--gold)', cursor: 'grab', opacity: lbDragIdx === i ? 0.5 : 1, transition: 'opacity 0.15s' }}>
+                      <img src={url} style={{ width: '100%', height: '100%', objectFit: 'cover', pointerEvents: 'none' }} alt="" />
+                      <div style={{ position: 'absolute', top: '2px', left: '2px', background: 'rgba(0,0,0,0.85)', borderRadius: '4px', padding: '0 4px', fontSize: '0.7rem', color: 'var(--gold)', fontWeight: 700 }}>{i + 1}</div>
+                      <button type="button" onClick={(e) => { e.stopPropagation(); setLbAttachments(prev => prev.filter((_, j) => j !== i)) }} style={{ position: 'absolute', top: 0, right: 0, background: 'rgba(0,0,0,0.7)', border: 'none', color: 'rgba(255,255,255,0.7)', cursor: 'pointer', fontSize: '0.8rem', borderRadius: '50%', width: '20px', height: '20px', display: 'grid', placeItems: 'center', padding: 0 }}>×</button>
+                    </div>
+                  ))}
+                </div>
+              )}
+              <button type="button" onClick={() => { setLbAttachOpen(false); setLbAttachShowAll(false) }} style={{ padding: '0.7rem 2rem', background: 'var(--gold)', border: 'none', color: '#000', borderRadius: '2rem', cursor: 'pointer', fontWeight: 700, fontSize: '1.05rem', alignSelf: 'center' }}>Done</button>
+            </div>
+            )
+          })()}
         </div>
       )}
     </main>
@@ -1943,17 +2952,22 @@ function TaskNode({ task, onTaskChange, data, onAssignAsset, onEditTask, onSaveB
   const [expandedImageId, setExpandedImageId] = useState<string | null>(null)
   const [multiSelectMode, setMultiSelectMode] = useState(false)
   const [selectedImageIds, setSelectedImageIds] = useState<string[]>([])
-  const [dragBox, setDragBox] = useState<{startX:number;startY:number;endX:number;endY:number}|null>(null)
+  const [dragBox, setDragBox] = useState<{ startX: number; startY: number; endX: number; endY: number } | null>(null)
   const [isDragging, setIsDragging] = useState(false)
   const galleryRef = useRef<HTMLDivElement>(null)
   const [enhanceOpen, setEnhanceOpen] = useState(false)
   const [enhancePrompt, setEnhancePrompt] = useState("Use exact @img1 image 1 but improve quality of character(s), objects and resolution. Do not change camera angle, composition, architecture or objects. The characters should remain in same poses and all objects in the same places. Camera should remain same angle exact the same as @img1 only improve quality. Style: 3d animated movie, cinematic AAA level 3d animation")
-  const [enhanceModels, setEnhanceModels] = useState<Record<string,boolean>>({ 'seedream-4.5': true, 'gpt-image-2.0': false, 'gemini-3.1-flash': true })
+  const [enhanceModels, setEnhanceModels] = useState<Record<string, boolean>>({ 'seedream-4.5': true, 'gpt-image-2.0': false, 'gemini-3.1-flash': true })
   const [splitGridType, setSplitGridType] = useState<string>('2x2')
   const [splitDropdownOpen, setSplitDropdownOpen] = useState(false)
-  const [splitProgress, setSplitProgress] = useState<{current:number;total:number;panels:number}|null>(null)
+  const [splitProgress, setSplitProgress] = useState<{ current: number; total: number; panels: number } | null>(null)
   const [processingPassId, setProcessingPassId] = useState<string | null>(null)
   const isProcessingRef = useRef(false)
+  const [batchNoteOpen, setBatchNoteOpen] = useState(false)
+  const [batchNoteText, setBatchNoteText] = useState('')
+  const [batchNoteAttachments, setBatchNoteAttachments] = useState<string[]>([])
+  const [batchNoteEnhancing, setBatchNoteEnhancing] = useState(false)
+  const noteFileInputRef = useRef<HTMLInputElement>(null)
 
   // handleRunAgent — called DIRECTLY from Run Agent button click, NOT from useEffect
   const handleRunAgent = async () => {
@@ -1968,161 +2982,133 @@ function TaskNode({ task, onTaskChange, data, onAssignAsset, onEditTask, onSaveB
     setProcessingPassId(activePass)
     onTaskChange(task.id, (draft) => { draft.status = 'pass_working' as any })
 
-    // 1) SPLIT GRID — batch API
+    // 1) Collect all edits
     const splitImages = (task.generatedImages || []).filter(i => i.splitGrid)
-    if (splitImages.length > 0) {
-      try {
-        const res = await fetch('/api/skills/split-grid-batch', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ images: splitImages.map(i => ({ id: i.id, url: i.url, splitType: (i as any).splitType || '2x2' })) }),
-        })
-        const data = await res.json()
-        if (data.ok && data.panels && data.panels.length > 0) {
-          // Build new pass
-          const newPass = { id: `pass-${nextPassNum}`, name: `Pass ${nextPassNum} — Split Grid (${data.panels.length} panels)`, images: data.panels }
-          onTaskChange(task.id, (draft) => {
-            draft.status = 'pass' as any
-            // Read fresh passes from draft (not stale snapshot) to avoid overwriting other passes
-            const freshPasses = (draft.passes || []).map(p => {
-              if (p.id === activePass) {
-                return { ...p, images: (p.images || []).map((i: any) => ({ ...i, splitGrid: false, improve4k: false, splitType: undefined })) }
-              }
-              return p
-            })
-            draft.passes = [...freshPasses, newPass]
-            draft.activePassId = newPass.id
-            draft.generatedImages = data.panels
-          })
-          // Also persist to disk
-          onTaskChange(task.id, (draft) => {
-            fetch('/api/tasks/update', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ id: task.id, status: 'pass', passes: draft.passes, activePassId: draft.activePassId, generatedImages: draft.generatedImages }),
-            }).catch(() => {})
-          })
-        } else {
-          onTaskChange(task.id, (draft) => { draft.status = 'pass' as any })
-        }
-      } catch {
-        onTaskChange(task.id, (draft) => { draft.status = 'pass' as any })
-      }
-      isProcessingRef.current = false
-      setProcessingPassId(null)
-      return
-    }
-
-    // 2) ENHANCE QUALITY — per-image API
     const improveImages = (task.generatedImages || []).filter(i => i.improve4k)
-    if (improveImages.length > 0) {
-      const allResults: any[] = []
-      const models = improveImages[0]?.improveModel?.split(',') || ['seedream-4.5', 'gemini-3.1-flash']
-      const userPrompt = improveImages[0]?.improvePrompt || enhancePrompt
-      for (const img of improveImages) {
-        for (const model of models) {
-          const modelQuality: Record<string,string> = { 'seedream-4.5': '2160p', 'gpt-image-2.0': '1440p', 'gemini-3.1-flash': '2160p', 'gemini-3.0': '1440p', 'kling-image-v3': '2160p' }
-          try {
-            const res = await fetch('/api/skills/enhance', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ imagePath: img.url, prompt: userPrompt, model, quality: modelQuality[model] || '2160p', aspectRatio: '16:9' }),
-            })
-            const data = await res.json()
-            if (data.ok) {
-              allResults.push({
-                id: `enhanced-${img.id}-${model}-${Date.now()}`,
-                url: data.url,
-                note: `${model} ${data.quality} enhanced`,
-                selected: false, improve4k: false, splitGrid: false,
-              })
-            }
-          } catch { /* continue */ }
-        }
-      }
-      if (allResults.length > 0) {
-        const newPass = { id: `pass-${nextPassNum}`, name: `Pass ${nextPassNum} — Enhanced (${allResults.length} images)`, images: allResults }
-        onTaskChange(task.id, (draft) => {
-          draft.status = 'pass' as any
-          draft.passes = [...(draft.passes || []), newPass]
-          draft.activePassId = newPass.id
-          draft.generatedImages = allResults
-        })
-        fetch('/api/tasks/update', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ id: task.id, status: 'pass', passes: [...currentPasses, newPass], activePassId: newPass.id, generatedImages: allResults }),
-        }).catch(() => {})
-      } else {
-        onTaskChange(task.id, (draft) => { draft.status = 'pass' as any })
-      }
+    const noteImages = (task.generatedImages || []).filter(i => i.note && !i.splitGrid && !i.improve4k)
+    
+    if (splitImages.length === 0 && improveImages.length === 0 && noteImages.length === 0) {
       isProcessingRef.current = false
       setProcessingPassId(null)
       return
     }
+    
+    let passLabel = 'Batch Edits'
+    if (splitImages.length > 0 && improveImages.length === 0 && noteImages.length === 0) passLabel = 'Split Grid'
+    else if (improveImages.length > 0 && splitImages.length === 0 && noteImages.length === 0) passLabel = 'AI Refine'
+    else if (noteImages.length > 0 && splitImages.length === 0 && improveImages.length === 0) passLabel = 'AI Notes'
 
-    // 3) GENERAL TASK — save to disk and start polling
-    onTaskChange(task.id, (draft) => { 
-      draft.status = 'pass_working' as any;
-      draft.updatedAt = new Date().toISOString();
+    // Create new pass immediately
+    const newPass = { 
+      id: `pass-${nextPassNum}`, 
+      name: `Pass ${nextPassNum} — ${passLabel}`, 
+      images: [],
+      batchStats: { splits: splitImages.length, improves: improveImages.length, notes: noteImages.length }
+    }
+    const freshPasses = (currentPasses || []).map(p => {
+      if (p.id === activePass) {
+        return { ...p, images: (p.images || []).map((i: any) => ({ ...i, splitGrid: false, improve4k: false, splitType: undefined })) }
+      }
+      return p
     })
-
-    fetch('/api/tasks/update', {
+    const updatedPasses = [...freshPasses, newPass]
+    
+    onTaskChange(task.id, (draft) => {
+      draft.status = 'pass_working' as any
+      draft.passes = updatedPasses
+      draft.activePassId = newPass.id
+      draft.updatedAt = new Date().toISOString()
+    })
+    
+    // Send to backend
+    const payload = {
+      splits: splitImages.map(i => ({ id: i.id, url: i.url, splitType: (i as any).splitType || '2x2' })),
+      improves: improveImages.map(img => ({
+        imageId: img.id,
+        imagePath: img.path || img.url,
+        prompt: img.improvePrompt || enhancePrompt,
+        models: img.improveModel?.split(',') || ['seedream-4.5', 'gemini-3.1-flash']
+      })),
+      notes: noteImages.map(img => ({
+        imageId: img.id,
+        imagePath: img.path || img.url,
+        note: img.note,
+        doodle: img.doodle,
+        attachedImages: (img as any).noteAttachedImages || []
+      }))
+    }
+    
+    fetch('/api/tasks/run-batch', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id: task.id, title: task.title, prompt: task.prompt, sceneHint: task.sceneHint, skillHint: task.skillHint, status: 'pass_working', createdAt: task.createdAt, updatedAt: new Date().toISOString(), passes: currentPasses, generatedImages: task.generatedImages || [] }),
-    }).catch(() => {})
-
-    isProcessingRef.current = false
-    setProcessingPassId(null)
+      body: JSON.stringify({ taskId: task.id, activePassId: newPass.id, passes: updatedPasses, payload }),
+    }).catch(() => { })
+    
+    setProcessingPassId(newPass.id)
+    // isProcessingRef stays true — polling will reset it when done
   }
 
-  // useEffect ONLY for polling external agent responses (general tasks)
+  // useEffect for polling ALL working tasks — including batch splits, improves, and general tasks
   useEffect(() => {
-    if (task.status.endsWith('_working')) {
-      // Only poll — no skill execution here
-      const splitImages = (task.generatedImages || []).filter(i => i.splitGrid)
-      const improveImages = (task.generatedImages || []).filter(i => i.improve4k)
-      if (splitImages.length > 0 || improveImages.length > 0) return // Skills handled by handleRunAgent
+    if (!task.status.endsWith('_working')) return
 
-      const currentPasses = task.passes || []
-      const currentPassCount = currentPasses.length
-      const interval = setInterval(async () => {
-        try {
-          const res = await fetch(`/api/tasks/poll?id=${task.id}`)
-          if (!res.ok) return
-          const data = await res.json()
-          if (!data.found || !data.task) return
-          const fileTask = data.task
+    const interval = setInterval(async () => {
+      try {
+        const res = await fetch(`/api/tasks/poll?id=${task.id}`)
+        if (!res.ok) return
+        const data = await res.json()
+        if (!data.found || !data.task) return
+        const fileTask = data.task
 
-          if (fileTask.passes && fileTask.passes.length > currentPassCount) {
-            const latestPass = fileTask.passes[fileTask.passes.length - 1]
-            if (latestPass.images && latestPass.images.length > 0) {
-              onTaskChange(task.id, (draft) => {
-                draft.status = 'pass' as any
-                draft.passes = fileTask.passes
-                draft.activePassId = latestPass.id
-                draft.generatedImages = latestPass.images
-              })
-              clearInterval(interval)
+        // Check if the backend has completed (status no longer _working)
+        if (fileTask.status && !fileTask.status.endsWith('_working')) {
+          const activePass = fileTask.passes?.find((p: any) => p.id === fileTask.activePassId)
+          onTaskChange(task.id, (draft) => {
+            draft.status = fileTask.status
+            // CRITICAL: Only update the active pass's images, preserve all other passes
+            if (fileTask.passes && draft.passes) {
+              const fileActivePass = fileTask.passes.find((p: any) => p.id === fileTask.activePassId)
+              const draftActiveIdx = draft.passes.findIndex(p => p.id === fileTask.activePassId)
+              if (draftActiveIdx !== -1 && fileActivePass) {
+                draft.passes[draftActiveIdx] = fileActivePass
+              } else if (fileActivePass) {
+                draft.passes.push(fileActivePass)
+              }
+            } else if (fileTask.passes) {
+              draft.passes = fileTask.passes
             }
-          }
+            // Only show the active pass's images
+            if (activePass?.images?.length) {
+              draft.generatedImages = activePass.images
+            }
+            if (fileTask.activePassId) draft.activePassId = fileTask.activePassId
+          })
+          isProcessingRef.current = false
+          setProcessingPassId(null)
+          clearInterval(interval)
+        } else if (fileTask.updatedAt !== task.updatedAt) {
+          // Incremental batch updates (images arriving one by one)
+          const activePass = fileTask.passes?.find((p: any) => p.id === fileTask.activePassId)
+          onTaskChange(task.id, (draft) => {
+            // Only update the active pass, never overwrite other passes
+            if (fileTask.passes && draft.passes) {
+              const fileActivePass = fileTask.passes.find((p: any) => p.id === fileTask.activePassId)
+              const draftActiveIdx = draft.passes.findIndex(p => p.id === fileTask.activePassId)
+              if (draftActiveIdx !== -1 && fileActivePass) {
+                draft.passes[draftActiveIdx] = fileActivePass
+              }
+            }
+            if (activePass?.images?.length) {
+              draft.generatedImages = activePass.images
+            }
+            draft.updatedAt = fileTask.updatedAt
+          })
+        }
+      } catch { /* continue polling */ }
+    }, 2500)
 
-          if (fileTask.status && fileTask.status !== task.status && !fileTask.status.endsWith('_working')) {
-            onTaskChange(task.id, (draft) => {
-              draft.status = fileTask.status
-              if (fileTask.passes) draft.passes = fileTask.passes
-              if (fileTask.generatedImages) draft.generatedImages = fileTask.generatedImages
-              if (fileTask.activePassId) draft.activePassId = fileTask.activePassId
-            })
-            clearInterval(interval)
-          }
-        } catch { /* continue polling */ }
-      }, 3000)
-
-      return () => clearInterval(interval)
-    }
-  }, [task.status, task.id, onTaskChange])
+    return () => clearInterval(interval)
+  }, [task.status, task.id, task.updatedAt, onTaskChange])
 
   // Close dropdowns when clicking outside — uses BUBBLE phase (not capture)
   // so the button onClick handlers fire first
@@ -2144,10 +3130,10 @@ function TaskNode({ task, onTaskChange, data, onAssignAsset, onEditTask, onSaveB
     return () => { clearTimeout(timer); document.removeEventListener('click', handler) }
   }, [splitDropdownOpen, enhanceOpen])
 
-  // Rubber band drag selection handlers
+  // Rubber band drag selection handlers — drag auto-activates batch selection
   const handleGalleryMouseDown = (e: React.MouseEvent) => {
-    if (!multiSelectMode || !galleryRef.current) return
-    if ((e.target as HTMLElement).closest('button') || (e.target as HTMLElement).closest('.expanded-tools')) return
+    if (!galleryRef.current) return
+    if ((e.target as HTMLElement).closest('button') || (e.target as HTMLElement).closest('.expanded-tools') || (e.target as HTMLElement).closest('.floating-note-area') || (e.target as HTMLElement).closest('.assign-menu-glass')) return
     const rect = galleryRef.current.getBoundingClientRect()
     const scrollTop = galleryRef.current.scrollTop || 0
     setDragBox({ startX: e.clientX - rect.left, startY: e.clientY - rect.top + scrollTop, endX: e.clientX - rect.left, endY: e.clientY - rect.top + scrollTop })
@@ -2162,15 +3148,14 @@ function TaskNode({ task, onTaskChange, data, onAssignAsset, onEditTask, onSaveB
   }
   const handleGalleryMouseUp = () => {
     if (!isDragging || !dragBox || !galleryRef.current) { setIsDragging(false); setDragBox(null); return }
-    // Find which gallery items intersect the drag box
     const items = galleryRef.current.querySelectorAll('.gallery-item')
     const containerRect = galleryRef.current.getBoundingClientRect()
     const boxLeft = Math.min(dragBox.startX, dragBox.endX)
     const boxRight = Math.max(dragBox.startX, dragBox.endX)
     const boxTop = Math.min(dragBox.startY, dragBox.endY)
     const boxBottom = Math.max(dragBox.startY, dragBox.endY)
-    // Only proceed if drag was more than 10px
-    if (Math.abs(dragBox.endX - dragBox.startX) > 10 && Math.abs(dragBox.endY - dragBox.startY) > 10) {
+    // Only proceed if drag was more than 30px (avoid confusion with tap/scroll)
+    if (Math.abs(dragBox.endX - dragBox.startX) > 30 && Math.abs(dragBox.endY - dragBox.startY) > 30) {
       const intersectingIds: string[] = []
       items.forEach(item => {
         const r = item.getBoundingClientRect()
@@ -2180,17 +3165,24 @@ function TaskNode({ task, onTaskChange, data, onAssignAsset, onEditTask, onSaveB
         const itemRight = itemLeft + r.width
         const itemBottom = itemTop + r.height
         if (itemLeft < boxRight && itemRight > boxLeft && itemTop < boxBottom && itemBottom > boxTop) {
-          const imgEl = item.querySelector('img')
           const key = item.getAttribute('data-img-id')
           if (key) intersectingIds.push(key)
         }
       })
       if (intersectingIds.length > 0) {
+        // Auto-activate batch selection if not already active
+        if (!multiSelectMode) setMultiSelectMode(true)
         setSelectedImageIds(prev => {
           const newSet = new Set(prev)
           intersectingIds.forEach(id => newSet.add(id))
           return Array.from(newSet)
         })
+      }
+    } else if (Math.abs(dragBox.endX - dragBox.startX) < 5 && Math.abs(dragBox.endY - dragBox.startY) < 5) {
+      // Tiny drag = click on empty area — deselect all
+      if (multiSelectMode) {
+        setMultiSelectMode(false)
+        setSelectedImageIds([])
       }
     }
     setIsDragging(false)
@@ -2210,7 +3202,7 @@ function TaskNode({ task, onTaskChange, data, onAssignAsset, onEditTask, onSaveB
           <input value={task.title} onChange={(event) => onTaskChange(task.id, (draftTask) => { draftTask.title = event.target.value })} style={{ background: 'transparent', border: 'none', color: 'var(--gold)', fontSize: '1.25rem', outline: 'none', fontWeight: '600', width: '100%', fontFamily: '"Outfit", sans-serif' }} />
           <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.75rem', whiteSpace: 'nowrap', paddingTop: '0.3rem' }}>{new Date(task.updatedAt).toLocaleDateString()}</div>
         </div>
-        
+
         {task.generatedImages && task.generatedImages.length > 0 && (
           <div style={{ display: 'flex', gap: '0.5rem', overflow: 'hidden', flex: 1, alignItems: 'flex-start' }}>
             {task.generatedImages.slice(0, 3).map(img => (
@@ -2225,10 +3217,13 @@ function TaskNode({ task, onTaskChange, data, onAssignAsset, onEditTask, onSaveB
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
             </button>
           )}
-          <button type="button" title="Edit (Send to Pass 1)" onClick={() => onTaskChange(task.id, draft => { draft.status = 'pass1' })} style={{ padding: '0.5rem', background: 'transparent', color: 'rgba(255,255,255,0.5)', border: 'none', cursor: 'pointer', transition: 'all 0.2s' }}>
+          <button type="button" title="Reopen (Send back to Queue)" onClick={() => { onTaskChange(task.id, draft => { draft.status = 'todo' }); fetch('/api/tasks/update', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: task.id, status: 'todo', updatedAt: new Date().toISOString() }) }).catch(() => { }); }} style={{ padding: '0.5rem', background: 'transparent', color: 'rgba(64,255,156,0.7)', border: 'none', cursor: 'pointer', transition: 'all 0.2s' }}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
+          </button>
+          <button type="button" title="Edit (Send to Edit)" onClick={() => { onTaskChange(task.id, draft => { draft.status = 'pass' as any }); fetch('/api/tasks/update', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: task.id, status: 'pass', updatedAt: new Date().toISOString() }) }).catch(() => { }); }} style={{ padding: '0.5rem', background: 'transparent', color: 'rgba(255,255,255,0.5)', border: 'none', cursor: 'pointer', transition: 'all 0.2s' }}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
           </button>
-          <button type="button" title="Delete" onClick={() => {}} style={{ padding: '0.5rem', background: 'transparent', color: 'rgba(255,42,85,0.7)', border: 'none', cursor: 'pointer', transition: 'all 0.2s' }}>
+          <button type="button" title="Delete permanently" onClick={() => { if (confirm('Permanently delete this task?')) { onTaskChange(task.id, draft => { draft.status = 'deleted' as any }); fetch('/api/tasks/archive', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: task.id }) }).catch(() => { }); } }} style={{ padding: '0.5rem', background: 'transparent', color: 'rgba(255,42,85,0.7)', border: 'none', cursor: 'pointer', transition: 'all 0.2s' }}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
           </button>
         </div>
@@ -2241,12 +3236,10 @@ function TaskNode({ task, onTaskChange, data, onAssignAsset, onEditTask, onSaveB
       <article className="agent-task-card glass todo" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem', position: 'relative' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
           <input value={task.title} onChange={(event) => onTaskChange(task.id, (draftTask) => { draftTask.title = event.target.value })} style={{ background: 'transparent', border: 'none', color: 'var(--gold)', fontSize: '1.25rem', outline: 'none', fontWeight: '600', width: '100%', fontFamily: '"Outfit", sans-serif' }} />
-          <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.75rem', whiteSpace: 'nowrap', paddingTop: '0.3rem' }}>{new Date(task.updatedAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
+          <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.75rem', whiteSpace: 'nowrap', paddingTop: '0.3rem' }}>{new Date(task.updatedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
         </div>
 
-        <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.9rem', lineHeight: '1.5', flex: 1, overflowY: 'auto', wordBreak: 'break-word', whiteSpace: 'pre-wrap', marginBottom: '0.5rem', paddingRight: '0.5rem' }}>
-          {task.prompt}
-        </div>
+        <textarea value={task.prompt} onChange={(e) => onTaskChange(task.id, (draft) => { draft.prompt = e.target.value })} style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.9rem', lineHeight: '1.5', flex: 1, overflowY: 'auto', wordBreak: 'break-word', whiteSpace: 'pre-wrap', marginBottom: '0.5rem', paddingRight: '0.5rem', background: 'transparent', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '8px', padding: '0.6rem', resize: 'vertical', minHeight: '60px', fontFamily: 'inherit', outline: 'none', width: '100%' }} placeholder="Write prompt..." />
 
         <div className="task-attachment-preview" style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '1rem' }}>
           {task.sceneHint && (
@@ -2266,23 +3259,90 @@ function TaskNode({ task, onTaskChange, data, onAssignAsset, onEditTask, onSaveB
         <div className="task-actions-text" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem', marginTop: 'auto' }}>
           <button type="button" onClick={() => {
             onTaskChange(task.id, draft => { draft.status = 'todo_working' as any })
-            // Also write to disk so the poller can find it
+
+            // 1. Update status to working on disk
             fetch('/api/tasks/update', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ id: task.id, status: 'todo_working', updatedAt: new Date().toISOString() }),
-            }).catch(() => {})
+            }).catch(() => { })
+
+            // 2. Trigger the automated execution based on dynamic skill parsing
+            const skillLower = (task.skillHint || '').toLowerCase();
+            const promptLower = (task.prompt || '').toLowerCase();
+
+            if (skillLower.includes('download') || promptLower.includes('download the pixverse images')) {
+              fetch('/api/tasks/download-pixverse', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ taskId: task.id, prompt: task.prompt })
+              }).catch(() => { })
+            } else if (skillLower.includes('improve') || skillLower.includes('enhance')) {
+              // Route to enhance quality (assuming backend can handle a task id directly if we adapt it, 
+              // but for now, we'll mark as working and let a backend script handle it or fallback to generate)
+              fetch('/api/tasks/generate-pixverse', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  taskId: task.id,
+                  prompt: task.prompt,
+                  sceneHint: task.sceneHint,
+                  skillHint: task.skillHint,
+                  model: 'gemini-3.1-flash',
+                  quality: '2160p',
+                  aspectRatio: '16:9'
+                })
+              }).catch(() => { })
+            } else if (skillLower.includes('split')) {
+              // Route to split grid
+              fetch('/api/tasks/generate-pixverse', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  taskId: task.id,
+                  prompt: task.prompt,
+                  sceneHint: task.sceneHint,
+                  skillHint: task.skillHint,
+                  model: 'gemini-3.1-flash',
+                  quality: '2160p',
+                  aspectRatio: '16:9'
+                })
+              }).catch(() => { })
+            } else {
+              // Default to generation
+              fetch('/api/tasks/generate-pixverse', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  taskId: task.id,
+                  prompt: task.prompt,
+                  sceneHint: task.sceneHint,
+                  skillHint: task.skillHint,
+                  model: 'gemini-3.1-flash',
+                  quality: '2160p',
+                  aspectRatio: '16:9'
+                })
+              }).catch(() => { })
+            }
           }} style={{ fontSize: '0.9rem', padding: '0.8rem 1.5rem', background: 'rgba(248, 217, 120, 0.1)', color: 'var(--gold)', border: '1px solid rgba(248, 217, 120, 0.3)', borderRadius: '2rem', fontWeight: 600, flex: 1, display: 'flex', justifyContent: 'center', transition: 'all 0.2s' }}>Start Task</button>
-          
+
           <button type="button" title="Make Blueprint" onClick={() => onSaveBlueprint?.(task)} style={{ padding: '0.5rem', background: 'transparent', color: 'rgba(255,255,255,0.5)', border: 'none', cursor: 'pointer', transition: 'all 0.2s' }} className="queue-action-btn">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
           </button>
 
-          <button type="button" title="Edit" onClick={() => onEditTask?.(task)} style={{ padding: '0.5rem', background: 'transparent', color: 'rgba(255,255,255,0.5)', border: 'none', cursor: 'pointer', transition: 'all 0.2s' }} className="queue-action-btn">
+          <button type="button" title="Edit in Composer" onClick={() => onEditTask?.(task)} style={{ padding: '0.5rem', background: 'transparent', color: 'rgba(255,255,255,0.5)', border: 'none', cursor: 'pointer', transition: 'all 0.2s' }} className="queue-action-btn">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
           </button>
 
-          <button type="button" title="Delete" onClick={() => { onTaskChange(task.id, draft => { draft.status = 'archived' }); fetch('/api/tasks/archive', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: task.id }) }).catch(() => {}); }} style={{ padding: '0.5rem', background: 'transparent', color: 'rgba(255,42,85,0.7)', border: 'none', cursor: 'pointer', transition: 'all 0.2s' }} className="queue-action-btn">
+          <button type="button" title="Duplicate Task" onClick={() => {
+            const newTask = { ...task, id: `task-dup-${Date.now()}-${Math.random().toString(36).substr(2,6)}`, title: task.title + ' (copy)', status: 'todo' as any, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(), passes: [], generatedImages: [] };
+            onTaskChange(newTask.id, () => newTask);
+            fetch('/api/tasks/update', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(newTask) }).catch(() => {});
+          }} style={{ padding: '0.5rem', background: 'transparent', color: 'rgba(255,255,255,0.5)', border: 'none', cursor: 'pointer', transition: 'all 0.2s' }} className="queue-action-btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+          </button>
+
+          <button type="button" title="Delete" onClick={() => { onTaskChange(task.id, draft => { draft.status = 'archived' }); fetch('/api/tasks/archive', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: task.id }) }).catch(() => { }); }} style={{ padding: '0.5rem', background: 'transparent', color: 'rgba(255,42,85,0.7)', border: 'none', cursor: 'pointer', transition: 'all 0.2s' }} className="queue-action-btn">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
           </button>
         </div>
@@ -2313,22 +3373,78 @@ function TaskNode({ task, onTaskChange, data, onAssignAsset, onEditTask, onSaveB
       {task.status.startsWith('pass') && task.passes && task.passes.length > 0 && (
         <div className="task-passes-subtabs" style={{ display: 'flex', gap: '0.5rem', padding: '1rem 1rem 0 1rem', position: 'relative', zIndex: 200 }}>
           {task.passes.map(p => (
-            <button key={p.id} className={`pass-tab ${task.activePassId === p.id ? 'is-active' : ''}`} onClick={() => {
-              // Reset multi-select state when switching passes
-              setMultiSelectMode(false)
-              setSelectedImageIds([])
-              setSplitDropdownOpen(false)
-              setEnhanceOpen(false)
-              setExpandedImageId(null)
-              onTaskChange(task.id, draft => { draft.activePassId = p.id; draft.generatedImages = draft.passes?.find(x => x.id === p.id)?.images || [] })
-            }} style={{ padding: '0.6rem 1.2rem', borderRadius: '8px 8px 0 0', border: '1px solid rgba(255,255,255,0.1)', borderBottom: 'none', color: task.activePassId === p.id ? 'var(--gold)' : 'rgba(255,255,255,0.6)', background: task.activePassId === p.id ? 'rgba(248, 217, 120, 0.05)' : 'rgba(0,0,0,0.2)', cursor: 'pointer', fontSize: '0.85rem', position: 'relative', top: '1px', zIndex: task.activePassId === p.id ? 2 : 1 }}>
-              {p.name}
-            </button>
+            <div key={p.id} style={{ position: 'relative', display: 'flex', alignItems: 'stretch' }}>
+              <button className={`pass-tab ${task.activePassId === p.id ? 'is-active' : ''}`} onClick={() => {
+                setMultiSelectMode(false)
+                setSelectedImageIds([])
+                setSplitDropdownOpen(false)
+                setEnhanceOpen(false)
+                setExpandedImageId(null)
+                onTaskChange(task.id, draft => { draft.activePassId = p.id; draft.generatedImages = draft.passes?.find(x => x.id === p.id)?.images || [] })
+              }} style={{ padding: '0.6rem 1.2rem', paddingRight: task.passes!.length > 1 ? '2rem' : '1.2rem', borderRadius: '8px 8px 0 0', border: '1px solid rgba(255,255,255,0.1)', borderBottom: 'none', color: task.activePassId === p.id ? 'var(--gold)' : 'rgba(255,255,255,0.6)', background: task.activePassId === p.id ? 'rgba(248, 217, 120, 0.05)' : 'rgba(0,0,0,0.2)', cursor: 'pointer', fontSize: '0.85rem', position: 'relative', top: '1px', zIndex: task.activePassId === p.id ? 2 : 1 }}>
+                {p.name}
+              </button>
+              {task.passes!.length > 1 && (
+                <button type="button" title="Delete Pass" className="pass-tab-close" onClick={(e) => {
+                  e.stopPropagation();
+                  const remaining = task.passes!.filter(x => x.id !== p.id);
+                  if (remaining.length === 0) {
+                    onTaskChange(task.id, draft => { draft.status = 'archived'; draft.passes = []; draft.generatedImages = []; });
+                  } else {
+                    const newActive = task.activePassId === p.id ? remaining[remaining.length - 1] : remaining.find(x => x.id === task.activePassId) || remaining[remaining.length - 1];
+                    onTaskChange(task.id, draft => { draft.passes = remaining; draft.activePassId = newActive.id; draft.generatedImages = newActive.images || []; });
+                  }
+                  fetch('/api/tasks/update', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: task.id }) }).catch(() => {});
+                }} style={{ position: 'absolute', top: '4px', right: '4px', width: '16px', height: '16px', borderRadius: '50%', background: 'transparent', border: 'none', color: 'rgba(255,255,255,0.3)', display: 'grid', placeItems: 'center', cursor: 'pointer', fontSize: '0.6rem', zIndex: 10, opacity: 0, transition: 'all 0.2s', padding: 0 }}>
+                  ✕
+                </button>
+              )}
+            </div>
           ))}
         </div>
       )}
 
-      {(!task.generatedImages || task.generatedImages.length === 0) ? (
+      {processingPassId && task.activePassId === processingPassId ? (
+        <div className="generated-gallery-wrapper" style={{ minHeight: '400px', position: 'relative' }}>
+          {/* Processing overlay — over EMPTY area, no images shown */}
+          {(() => {
+            const pass = task.passes?.find(p => p.id === processingPassId)
+            const stats = (pass as any)?.batchStats || { splits: 0, improves: 0, notes: 0 }
+            const splitCount = stats.splits
+            const enhanceCount = stats.improves
+            const notesCount = stats.notes
+            const activeCount = splitCount + enhanceCount + notesCount
+            const activeTask = splitCount > 0 ? 'Splitting grids' : enhanceCount > 0 ? 'Enhancing quality' : notesCount > 0 ? 'Refining Prompts' : 'Processing batch'
+            const estTime = (splitCount * 5) + (enhanceCount * 30) + (notesCount * 15)
+            return (
+              <div className="processing-overlay glass">
+                <button className="stop-btn" title="Stop Generation" style={{ position: 'absolute', top: '1.5rem', right: '1.5rem', background: 'transparent', border: 'none', color: 'var(--gold)', padding: '0.5rem', cursor: 'pointer', zIndex: 10 }} onClick={(e) => { e.stopPropagation(); isProcessingRef.current = false; setProcessingPassId(null); onTaskChange(task.id, draft => { draft.status = draft.status.replace('_working', '') as any; }); }}>
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
+                </button>
+                <div className="processing-stats">
+                  <h3 className="processing-title">{activeTask}...</h3>
+                  <div className="stats-row">
+                    {splitCount > 0 && <div className="stat-item"><span className="stat-num">{splitCount}</span> Split Grid</div>}
+                    {enhanceCount > 0 && <div className="stat-item"><span className="stat-num">{enhanceCount}</span> Enhance</div>}
+                    {notesCount > 0 && <div className="stat-item"><span className="stat-num">{notesCount}</span> AI Notes</div>}
+                  </div>
+                  <div style={{ marginTop: '0.8rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                    <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.75rem', letterSpacing: '0.5px' }}>
+                      {splitProgress ? `${splitProgress.current}/${splitProgress.total} processed • ${splitProgress.panels} panels created` : `${activeCount} operations queued${estTime > 0 ? ` • ~${estTime < 60 ? estTime + 's' : Math.round(estTime / 60) + 'min'} estimated` : ''}`}
+                    </div>
+                    <div style={{ width: '100%', height: '6px', background: 'rgba(255,255,255,0.08)', borderRadius: '3px', overflow: 'hidden', marginTop: '0.3rem' }}>
+                      <div style={{ width: splitProgress ? `${Math.round((splitProgress.current / splitProgress.total) * 100)}%` : '30%', height: '100%', background: 'linear-gradient(90deg, var(--gold), #f8c040)', borderRadius: '3px', transition: 'width 0.5s ease', animation: splitProgress ? 'none' : 'progressPulse 2s ease-in-out infinite' }} />
+                    </div>
+                  </div>
+                  <div className="holographic-loader" style={{ marginTop: '1rem' }}>
+                    <div className="scanner-line"></div>
+                  </div>
+                </div>
+              </div>
+            )
+          })()}
+        </div>
+      ) : (!task.generatedImages || task.generatedImages.length === 0) ? (
         <textarea className="task-huge-textarea" placeholder="Write task instructions..." value={task.prompt} onChange={(event) => onTaskChange(task.id, (draftTask) => { draftTask.prompt = event.target.value })} />
       ) : (
         <div className="generated-gallery-wrapper">
@@ -2374,17 +3490,17 @@ function TaskNode({ task, onTaskChange, data, onAssignAsset, onEditTask, onSaveB
                     <span style={{ color: 'var(--gold)', fontSize: '0.85rem', fontWeight: 600, marginRight: '0.4rem', whiteSpace: 'nowrap' }}>Split into:</span>
                     {['2x2', '3x2', '3x3'].map(grid => (
                       <button key={grid} type="button" onClick={() => {
-                        onTaskChange(task.id, draft => { 
+                        onTaskChange(task.id, draft => {
                           if (draft.passes) {
                             const pIdx = draft.passes.findIndex(p => p.id === draft.activePassId);
                             if (pIdx !== -1 && draft.passes[pIdx].images) {
-                              draft.passes[pIdx].images = draft.passes[pIdx].images.map(i => 
+                              draft.passes[pIdx].images = draft.passes[pIdx].images.map(i =>
                                 selectedImageIds.includes(i.id) ? { ...i, splitGrid: true, splitType: grid } as any : i
                               );
                             }
                           }
                           if (draft.generatedImages) {
-                            draft.generatedImages = draft.generatedImages.map(i => 
+                            draft.generatedImages = draft.generatedImages.map(i =>
                               selectedImageIds.includes(i.id) ? { ...i, splitGrid: true, splitType: grid } as any : i
                             );
                           }
@@ -2402,17 +3518,17 @@ function TaskNode({ task, onTaskChange, data, onAssignAsset, onEditTask, onSaveB
                     <button type="button" title="Split Grid" onClick={() => {
                       const anyMarked = (task.generatedImages || []).some(i => selectedImageIds.includes(i.id) && i.splitGrid)
                       if (anyMarked) {
-                        onTaskChange(task.id, draft => { 
+                        onTaskChange(task.id, draft => {
                           if (draft.passes) {
                             const pIdx = draft.passes.findIndex(p => p.id === draft.activePassId);
                             if (pIdx !== -1 && draft.passes[pIdx].images) {
-                              draft.passes[pIdx].images = draft.passes[pIdx].images.map(i => 
+                              draft.passes[pIdx].images = draft.passes[pIdx].images.map(i =>
                                 selectedImageIds.includes(i.id) ? { ...i, splitGrid: false, splitType: undefined } as any : i
                               );
                             }
                           }
                           if (draft.generatedImages) {
-                            draft.generatedImages = draft.generatedImages.map(i => 
+                            draft.generatedImages = draft.generatedImages.map(i =>
                               selectedImageIds.includes(i.id) ? { ...i, splitGrid: false, splitType: undefined } as any : i
                             );
                           }
@@ -2429,24 +3545,8 @@ function TaskNode({ task, onTaskChange, data, onAssignAsset, onEditTask, onSaveB
                     </button>
 
                     <button type="button" title="Add Note to All" onClick={() => {
-                      const note = prompt('Add note to all selected images:')
-                      if (note !== null) {
-                        onTaskChange(task.id, draft => { 
-                          if (draft.passes) {
-                            const pIdx = draft.passes.findIndex(p => p.id === draft.activePassId);
-                            if (pIdx !== -1 && draft.passes[pIdx].images) {
-                              draft.passes[pIdx].images = draft.passes[pIdx].images.map(i => 
-                                selectedImageIds.includes(i.id) ? { ...i, note } : i
-                              );
-                            }
-                          }
-                          if (draft.generatedImages) {
-                            draft.generatedImages = draft.generatedImages.map(i => 
-                              selectedImageIds.includes(i.id) ? { ...i, note } : i
-                            );
-                          }
-                        })
-                      }
+                      setBatchNoteText('')
+                      setBatchNoteOpen(true)
                     }} style={{ padding: '0.5rem', background: 'transparent', color: 'rgba(255,255,255,0.7)', border: 'none', cursor: 'pointer', transition: 'all 0.2s', display: 'grid', placeItems: 'center' }}>
                       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
                     </button>
@@ -2477,17 +3577,17 @@ function TaskNode({ task, onTaskChange, data, onAssignAsset, onEditTask, onSaveB
                     </button>
 
                     <button type="button" title="Assign to Scene" onClick={() => {
-                      onTaskChange(task.id, draft => { 
+                      onTaskChange(task.id, draft => {
                         if (draft.passes) {
                           const pIdx = draft.passes.findIndex(p => p.id === draft.activePassId);
                           if (pIdx !== -1 && draft.passes[pIdx].images) {
-                            draft.passes[pIdx].images = draft.passes[pIdx].images.map(i => 
+                            draft.passes[pIdx].images = draft.passes[pIdx].images.map(i =>
                               selectedImageIds.includes(i.id) ? { ...i, assignMenuOpen: true } : i
                             );
                           }
                         }
                         if (draft.generatedImages) {
-                          draft.generatedImages = draft.generatedImages.map(i => 
+                          draft.generatedImages = draft.generatedImages.map(i =>
                             selectedImageIds.includes(i.id) ? { ...i, assignMenuOpen: true } : i
                           );
                         }
@@ -2499,17 +3599,17 @@ function TaskNode({ task, onTaskChange, data, onAssignAsset, onEditTask, onSaveB
                     <div style={{ width: '1px', height: '20px', background: 'rgba(255,255,255,0.15)', margin: '0 0.3rem' }}></div>
 
                     <button type="button" title="Reset Edits" onClick={() => {
-                      onTaskChange(task.id, draft => { 
+                      onTaskChange(task.id, draft => {
                         if (draft.passes) {
                           const pIdx = draft.passes.findIndex(p => p.id === draft.activePassId);
                           if (pIdx !== -1 && draft.passes[pIdx].images) {
-                            draft.passes[pIdx].images = draft.passes[pIdx].images.map(i => 
+                            draft.passes[pIdx].images = draft.passes[pIdx].images.map(i =>
                               selectedImageIds.includes(i.id) ? { ...i, splitGrid: false, improve4k: false, note: '', splitType: undefined } as any : i
                             );
                           }
                         }
                         if (draft.generatedImages) {
-                          draft.generatedImages = draft.generatedImages.map(i => 
+                          draft.generatedImages = draft.generatedImages.map(i =>
                             selectedImageIds.includes(i.id) ? { ...i, splitGrid: false, improve4k: false, note: '', splitType: undefined } as any : i
                           );
                         }
@@ -2520,7 +3620,7 @@ function TaskNode({ task, onTaskChange, data, onAssignAsset, onEditTask, onSaveB
 
                     <button type="button" title="Delete Selected" onClick={() => {
                       if (confirm(`Delete ${selectedImageIds.length} selected images?`)) {
-                        onTaskChange(task.id, draft => { 
+                        onTaskChange(task.id, draft => {
                           const pass = draft.passes?.find(p => p.id === draft.activePassId);
                           if (pass && pass.images) pass.images = pass.images.filter(i => !selectedImageIds.includes(i.id));
                           draft.generatedImages = draft.generatedImages?.filter(i => !selectedImageIds.includes(i.id));
@@ -2568,17 +3668,17 @@ function TaskNode({ task, onTaskChange, data, onAssignAsset, onEditTask, onSaveB
               <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '1rem', gap: '0.8rem' }}>
                 <button type="button" onClick={() => {
                   onTaskChange(task.id, draft => {
-                    const improveModelStr = Object.entries(enhanceModels).filter(([,v]) => v).map(([k]) => k).join(',');
+                    const improveModelStr = Object.entries(enhanceModels).filter(([, v]) => v).map(([k]) => k).join(',');
                     if (draft.passes) {
                       const pIdx = draft.passes.findIndex(p => p.id === draft.activePassId);
                       if (pIdx !== -1 && draft.passes[pIdx].images) {
-                        draft.passes[pIdx].images = draft.passes[pIdx].images.map(i => 
+                        draft.passes[pIdx].images = draft.passes[pIdx].images.map(i =>
                           selectedImageIds.includes(i.id) ? { ...i, improve4k: true, improvePrompt: enhancePrompt, improveModel: improveModelStr } : i
                         );
                       }
                     }
                     if (draft.generatedImages) {
-                      draft.generatedImages = draft.generatedImages.map(i => 
+                      draft.generatedImages = draft.generatedImages.map(i =>
                         selectedImageIds.includes(i.id) ? { ...i, improve4k: true, improvePrompt: enhancePrompt, improveModel: improveModelStr } : i
                       );
                     }
@@ -2614,8 +3714,8 @@ function TaskNode({ task, onTaskChange, data, onAssignAsset, onEditTask, onSaveB
                     setExpandedImageId(expandedImageId === img.id ? null : img.id)
                   }}
                 >
-                  {isMultiSelected && <div style={{ position: 'absolute', top: '0.5rem', left: '0.5rem', zIndex: 5, width: '24px', height: '24px', borderRadius: '50%', background: 'var(--gold)', display: 'grid', placeItems: 'center' }}><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#000" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div>}
-                  <img src={img.url} alt="Generated Draft" />
+                  {isMultiSelected && <div style={{ position: 'absolute', top: '0.5rem', left: '0.5rem', zIndex: 5, width: '26px', height: '26px', borderRadius: '50%', background: 'var(--gold)', display: 'grid', placeItems: 'center', fontSize: '0.75rem', fontWeight: 900, color: '#000', fontFamily: '"Outfit", sans-serif' }}>{selectedImageIds.indexOf(img.id) + 1}</div>}
+                  <img src={img.url} alt="Generated Draft" loading="lazy" decoding="async" />
                   {img.doodleDataUrl && !img.doodleActive && <img src={img.doodleDataUrl} className="doodle-overlay-static" alt="Doodle Overlay" />}
 
                   <div className="thumbnail-badges">
@@ -2804,10 +3904,22 @@ function TaskNode({ task, onTaskChange, data, onAssignAsset, onEditTask, onSaveB
                           )}
 
                           <div className="assign-keep-row mt-2">
-                            <button className="keep-image-btn" onClick={() => onTaskChange(task.id, draft => {
-                              const dImg = draft.generatedImages?.find(i => i.id === img.id);
-                              if (dImg) { dImg.improve4k = true; dImg.improveMenuOpen = false; }
-                            })}>
+                            <button className="keep-image-btn" onClick={() => {
+                              onTaskChange(task.id, draft => {
+                                const dImg = draft.generatedImages?.find(i => i.id === img.id);
+                                if (dImg) { dImg.improve4k = true; dImg.improveMenuOpen = false; }
+                              });
+                              fetch('/api/tasks/improve-pixverse', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                  taskId: task.id,
+                                  imageId: img.id,
+                                  imagePath: img.path,
+                                  prompt: img.improvePrompt || enhancePrompt
+                                })
+                              }).catch(() => {});
+                            }}>
                               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
                             </button>
                           </div>
@@ -2844,37 +3956,115 @@ function TaskNode({ task, onTaskChange, data, onAssignAsset, onEditTask, onSaveB
               )
             })}
           </div>
-          {/* Beautiful processing overlay — ONLY on the pass being processed */}
-          {processingPassId && task.activePassId === processingPassId && (() => {
-            const splitCount = task.generatedImages.filter(i => i.splitGrid).length
-            const enhanceCount = task.generatedImages.filter(i => i.improve4k).length
-            const activeCount = splitCount + enhanceCount
-            if (activeCount === 0 && !isProcessingRef.current) return null;
-            const activeTask = splitCount > 0 ? 'Splitting grids' : enhanceCount > 0 ? 'Enhancing quality' : 'Processing task'
-            const estTime = splitCount > 0 ? Math.round(splitCount * 5) : enhanceCount > 0 ? Math.round(enhanceCount * 30) : 0
-            return (
-            <div className="processing-overlay glass">
-              <button className="stop-btn" title="Stop Generation" style={{ position: 'absolute', top: '1.5rem', right: '1.5rem', background: 'transparent', border: 'none', color: 'var(--gold)', padding: '0.5rem', cursor: 'pointer', zIndex: 10 }} onClick={(e) => { e.stopPropagation(); isProcessingRef.current = false; setProcessingPassId(null); onTaskChange(task.id, draft => { draft.status = draft.status.replace('_working', '') as any; }); }}>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
-              </button>
-              <div className="processing-stats">
-                <h3 className="processing-title">{activeTask}...</h3>
-                <div className="stats-row">
-                  {splitCount > 0 && <div className="stat-item"><span className="stat-num">{splitCount}</span> Split Grid</div>}
-                  {enhanceCount > 0 && <div className="stat-item"><span className="stat-num">{enhanceCount}</span> Enhance</div>}
+
+          {/* Glassmorphism Batch Note Popup — Full featured with attachments + AI enhance */}
+          {batchNoteOpen && (
+            <div style={{ position: 'fixed', inset: 0, zIndex: 9000, background: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', display: 'flex', alignItems: 'center', justifyContent: 'center', animation: 'fadeIn 0.15s ease' }} onClick={(e) => { if (e.target === e.currentTarget) setBatchNoteOpen(false) }}>
+              <div style={{ width: 'min(92%, 560px)', maxHeight: '85vh', overflowY: 'auto', background: 'linear-gradient(145deg, rgba(20,20,30,0.97), rgba(10,10,20,0.99))', border: '1px solid rgba(248,217,120,0.15)', borderRadius: '1.5rem', padding: '2rem', display: 'flex', flexDirection: 'column', gap: '1.2rem', boxShadow: '0 40px 100px rgba(0,0,0,0.7), 0 0 50px rgba(248,217,120,0.06)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <h3 style={{ margin: 0, color: 'var(--gold)', fontSize: '1.15rem', fontFamily: '"Outfit", sans-serif', fontWeight: 700 }}>Edit Note — {selectedImageIds.length} Image{selectedImageIds.length > 1 ? 's' : ''}</h3>
+                  <button type="button" onClick={() => setBatchNoteOpen(false)} style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '0.5rem', color: 'rgba(255,255,255,0.5)', width: '32px', height: '32px', display: 'grid', placeItems: 'center', cursor: 'pointer', fontSize: '1rem' }}>✕</button>
                 </div>
-                <div style={{ marginTop: '0.8rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                  <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.75rem', letterSpacing: '0.5px' }}>
-                    {splitProgress ? `${splitProgress.current}/${splitProgress.total} processed • ${splitProgress.panels} panels created` : `${activeCount} images queued${estTime > 0 ? ` • ~${estTime < 60 ? estTime + 's' : Math.round(estTime / 60) + 'min'} estimated` : ''}`}
+
+                {/* Note textarea with AI enhance button */}
+                <div style={{ position: 'relative' }}>
+                  <textarea value={batchNoteText} onChange={(e) => setBatchNoteText(e.target.value)} placeholder="Describe exactly what changes you want. This text will be sent directly as the prompt to PixVerse..." autoFocus style={{ background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '0.75rem', padding: '1rem', paddingRight: '3rem', color: 'white', fontSize: '0.95rem', lineHeight: '1.6', minHeight: '140px', maxHeight: '300px', width: '100%', resize: 'vertical', overflowY: 'auto', outline: 'none', fontFamily: 'inherit', boxSizing: 'border-box' }} />
+                  {/* Magic wand AI enhance */}
+                  <button type="button" title="AI Enhance Note" disabled={batchNoteEnhancing || !batchNoteText.trim()} onClick={async () => {
+                    setBatchNoteEnhancing(true)
+                    try {
+                      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=AIzaSyByGTS8kcuNGPK9sKNPcU-9iEaAP93uW78`, {
+                        method: 'POST', headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                          contents: [{ role: 'user', parts: [{ text: `Improve this image editing note into a clear, detailed prompt for an image generation AI. Keep the exact intent but make it more precise and descriptive. Output ONLY the improved text:\n\n"${batchNoteText}"` }] }],
+                          systemInstruction: { parts: [{ text: "You are a visual director writing precise image generation prompts. Be concise but specific." }] }
+                        })
+                      })
+                      if (res.ok) {
+                        const d = await res.json()
+                        const improved = d.candidates?.[0]?.content?.parts?.[0]?.text?.trim()
+                        if (improved) setBatchNoteText(improved)
+                      }
+                    } catch {}
+                    setBatchNoteEnhancing(false)
+                  }} style={{ position: 'absolute', bottom: '12px', right: '12px', width: '32px', height: '32px', borderRadius: '50%', background: batchNoteEnhancing ? 'rgba(248,217,120,0.2)' : 'rgba(248,217,120,0.1)', border: '1px solid rgba(248,217,120,0.3)', color: batchNoteEnhancing ? 'rgba(248,217,120,0.5)' : 'var(--gold)', display: 'grid', placeItems: 'center', cursor: batchNoteEnhancing ? 'wait' : 'pointer', transition: 'all 0.2s' }}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ animation: batchNoteEnhancing ? 'pulse 1s infinite' : 'none' }}><path d="M12 2l3 7 7 3-7 3-3 7-3-7-7-3 7-3z"></path></svg>
+                  </button>
+                </div>
+
+                {/* Attached reference images */}
+                <div>
+                  <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)', marginBottom: '0.5rem', textTransform: 'uppercase', letterSpacing: '1px' }}>Reference Images ({batchNoteAttachments.length}/5)</div>
+                  <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', alignItems: 'center' }}>
+                    {batchNoteAttachments.map((url, idx) => (
+                      <div key={idx} style={{ position: 'relative', width: '60px', height: '60px', borderRadius: '8px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.15)' }}>
+                        <img src={url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt={`Ref ${idx + 1}`} />
+                        <button type="button" onClick={() => setBatchNoteAttachments(prev => prev.filter((_, i) => i !== idx))} style={{ position: 'absolute', top: '2px', right: '2px', width: '16px', height: '16px', borderRadius: '50%', background: 'rgba(0,0,0,0.7)', border: 'none', color: 'white', fontSize: '0.5rem', display: 'grid', placeItems: 'center', cursor: 'pointer' }}>✕</button>
+                      </div>
+                    ))}
+                    {batchNoteAttachments.length < 5 && (
+                      <>
+                        <button type="button" title="Attach from Scene" onClick={() => {
+                          // Show scene images to attach
+                          const sceneImages = (task.generatedImages || []).filter(i => !selectedImageIds.includes(i.id)).slice(0, 20)
+                          if (sceneImages.length > 0) {
+                            const url = sceneImages[0]?.url
+                            if (url) setBatchNoteAttachments(prev => [...prev.slice(0, 4), url])
+                          }
+                        }} style={{ width: '60px', height: '60px', borderRadius: '8px', border: '1px dashed rgba(255,255,255,0.2)', background: 'rgba(255,255,255,0.03)', color: 'rgba(255,255,255,0.3)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: '0.6rem', gap: '4px', transition: 'all 0.2s' }}>
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                          Scene
+                        </button>
+                        <button type="button" title="Upload from Disk" onClick={() => noteFileInputRef.current?.click()} style={{ width: '60px', height: '60px', borderRadius: '8px', border: '1px dashed rgba(255,255,255,0.2)', background: 'rgba(255,255,255,0.03)', color: 'rgba(255,255,255,0.3)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: '0.6rem', gap: '4px', transition: 'all 0.2s' }}>
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                          Upload
+                        </button>
+                        <input ref={noteFileInputRef} type="file" accept="image/*" multiple style={{ display: 'none' }} onChange={(e) => {
+                          const files = Array.from(e.target.files || [])
+                          const remaining = 5 - batchNoteAttachments.length
+                          files.slice(0, remaining).forEach(file => {
+                            const formData = new FormData()
+                            formData.append('file', file)
+                            fetch('/api/storyboard/upload', { method: 'POST', body: formData }).then(r => r.json()).then(d => {
+                              if (d.url) setBatchNoteAttachments(prev => prev.length < 5 ? [...prev, d.url] : prev)
+                            }).catch(() => {})
+                          })
+                          e.target.value = ''
+                        }} />
+                      </>
+                    )}
                   </div>
-                  <div style={{ width: '100%', height: '6px', background: 'rgba(255,255,255,0.08)', borderRadius: '3px', overflow: 'hidden', marginTop: '0.3rem' }}>
-                    <div style={{ width: splitProgress ? `${Math.round((splitProgress.current / splitProgress.total) * 100)}%` : '30%', height: '100%', background: 'linear-gradient(90deg, var(--gold), #f8c040)', borderRadius: '3px', transition: 'width 0.5s ease', animation: splitProgress ? 'none' : 'progressPulse 2s ease-in-out infinite' }} />
-                  </div>
+                </div>
+
+                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.8rem', marginTop: '0.5rem' }}>
+                  <button type="button" onClick={() => setBatchNoteOpen(false)} style={{ padding: '0.6rem 1.2rem', background: 'transparent', border: '1px solid rgba(255,255,255,0.15)', color: 'rgba(255,255,255,0.7)', borderRadius: '2rem', cursor: 'pointer', fontSize: '0.85rem' }}>Cancel</button>
+                  <button type="button" onClick={() => {
+                    if (batchNoteText.trim()) {
+                      onTaskChange(task.id, draft => {
+                        if (draft.passes) {
+                          const pIdx = draft.passes.findIndex(p => p.id === draft.activePassId);
+                          if (pIdx !== -1 && draft.passes[pIdx].images) {
+                            draft.passes[pIdx].images = draft.passes[pIdx].images.map(i =>
+                              selectedImageIds.includes(i.id) ? { ...i, note: batchNoteText, noteAttachedImages: batchNoteAttachments } as any : i
+                            );
+                          }
+                        }
+                        if (draft.generatedImages) {
+                          draft.generatedImages = draft.generatedImages.map(i =>
+                            selectedImageIds.includes(i.id) ? { ...i, note: batchNoteText, noteAttachedImages: batchNoteAttachments } as any : i
+                          );
+                        }
+                      })
+                    }
+                    setBatchNoteOpen(false)
+                    setBatchNoteAttachments([])
+                  }} style={{ padding: '0.6rem 1.5rem', background: 'var(--gold)', border: 'none', color: '#000', borderRadius: '2rem', cursor: 'pointer', fontWeight: 700, fontSize: '0.85rem' }}>Apply Note</button>
                 </div>
               </div>
             </div>
-            )
-          })()}
+          )}
+
+
         </div>
       )}
 
@@ -2915,7 +4105,8 @@ function AgentInbox({
   data: StoryboardData
   onAssignAsset?: (type: string, name: string, sceneId: string, url: string) => void
 }) {
-  const [activeTab, setActiveTab] = useState<'todo' | 'pass1' | 'pass2' | 'archived'>('pass1')
+  const [activeTab, setActiveTab] = useState<'tasks' | 'edit' | 'archived'>('tasks')
+  const [tasksSubTab, setTasksSubTab] = useState<'queue' | 'completed'>('queue')
   const [activeTaskIds, setActiveTaskIds] = useState<Record<string, string>>({})
   const [mediaTab, setMediaTab] = useState<'images' | 'videos'>('images')
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -2929,17 +4120,16 @@ function AgentInbox({
   const [activePdf, setActivePdf] = useState<string | null>(null)
   const [pdfPages, setPdfPages] = useState<string[]>([])
   const [pdfCurrentPage, setPdfCurrentPage] = useState(0)
-  const [pdfMarkers, setPdfMarkers] = useState<Record<string, Array<{page: number, color: string, startIdx: number, endIdx: number}>>>({})
+  const [pdfMarkers, setPdfMarkers] = useState<Record<string, Array<{ page: number, color: string, startIdx: number, endIdx: number }>>>({})
   const [activeMarkerColor, setActiveMarkerColor] = useState('#ffe14d')
   const [blueprintSaveModal, setBlueprintSaveModal] = useState<AgentTask | null>(null)
-  const [savedBlueprints, setSavedBlueprints] = useState<any[]>([
-    { id: 'bp-1', title: 'Aisha Close-Up Sequence', prompt: 'Cinematic close-up of Aisha looking determined, neon rain, anamorphic lens flare.', sceneHint: 'Act 1 - Scene 1', skillHint: 'Cinematography' },
-    { id: 'bp-2', title: 'Desert Palace Wide', prompt: 'Extreme wide shot of the Bedouin palace at sunset, sand particles in the wind.', sceneHint: 'Act 2 - Scene 3', skillHint: '' }
-  ])
+  const [savedBlueprints, setSavedBlueprints] = useState<any[]>([])
   const [composerTab, setComposerTab] = useState<'agent' | 'task' | 'promptBuilder'>('agent')
   const [isRecording, setIsRecording] = useState(false)
   const recognitionRef = useRef<any>(null)
   const [archiveSearch, setArchiveSearch] = useState('')
+  const [selectedTaskIds, setSelectedTaskIds] = useState<string[]>([])
+  const [taskSelectMode, setTaskSelectMode] = useState(false)
   const [agentHistory, setAgentHistory] = useState<AgentMessage[]>([])
   const [agentInput, setAgentInput] = useState('')
   const [agentLoading, setAgentLoading] = useState(false)
@@ -2954,8 +4144,21 @@ function AgentInbox({
   const skillRecognitionRef = useRef<any>(null)
 
   useEffect(() => {
-    fetch('/api/skills/list').then(r => r.json()).then(d => setAvailableSkills(d.skills || [])).catch(() => {})
+    fetch('/api/skills/list').then(r => r.json()).then(d => {
+      const skills = d.skills || [];
+      const seen = new Set<string>();
+      const seenNames = new Set<string>();
+      const unique = skills.filter((s: any) => { if (seen.has(s.id) || seenNames.has(s.name)) return false; seen.add(s.id); seenNames.add(s.name); return true });
+      setAvailableSkills(unique);
+    }).catch(() => { })
   }, [showSkillsStore])
+
+  // Load blueprints from disk on mount
+  useEffect(() => {
+    fetch('/api/blueprints/list').then(r => r.json()).then(d => {
+      if (d.blueprints && d.blueprints.length > 0) setSavedBlueprints(d.blueprints);
+    }).catch(() => {})
+  }, [])
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>, type: 'skill' | 'ref') => {
     const file = e.target.files?.[0]
@@ -3022,12 +4225,12 @@ function AgentInbox({
                         {scene.title || `Scene ${si + 1}`}
                         <span style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.25)', marginLeft: 'auto' }}>{(scenePickerTab === 'images' ? scene.imageShots : scene.videoShots).length} items</span>
                         {/* Quick select entire scene */}
-                        <button type="button" onClick={(e) => { e.stopPropagation(); const v = `${act.title} - ${scene.title || `Scene ${si+1}`}`; setSceneSelections(p => p.includes(v) ? p.filter(x => x !== v) : [...p, v]) }} style={{ background: 'rgba(212,175,55,0.1)', border: '1px solid rgba(212,175,55,0.2)', borderRadius: '4px', color: 'var(--gold)', fontSize: '0.6rem', padding: '0.15rem 0.4rem', cursor: 'pointer' }}>Select Scene</button>
+                        <button type="button" onClick={(e) => { e.stopPropagation(); const v = `${act.title} - ${scene.title || `Scene ${si + 1}`}`; setSceneSelections(p => p.includes(v) ? p.filter(x => x !== v) : [...p, v]) }} style={{ background: 'rgba(212,175,55,0.1)', border: '1px solid rgba(212,175,55,0.2)', borderRadius: '4px', color: 'var(--gold)', fontSize: '0.6rem', padding: '0.15rem 0.4rem', cursor: 'pointer' }}>Select Scene</button>
                       </button>
                       {expandedScenes[scene.id] && (
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))', gap: '0.5rem', padding: '0.5rem 0 0.5rem 1rem' }}>
                           {(scenePickerTab === 'images' ? scene.imageShots : scene.videoShots).map(shot => shot.media.map(m => (
-                            <button key={m.id} type="button" onClick={() => { const v = `${act.title} - ${scene.title || `Scene ${si+1}`} [${m.url.split('/').pop()}]`; setSceneSelections(p => p.includes(v) ? p.filter(x => x !== v) : [...p, v]) }} style={{ background: sceneSelections.includes(`${act.title} - ${scene.title || `Scene ${si+1}`} [${m.url.split('/').pop()}]`) ? 'rgba(64,255,156,0.1)' : 'rgba(0,0,0,0.3)', border: sceneSelections.includes(`${act.title} - ${scene.title || `Scene ${si+1}`} [${m.url.split('/').pop()}]`) ? '1px solid rgba(64,255,156,0.4)' : '1px solid rgba(255,255,255,0.06)', borderRadius: '0.5rem', padding: '0.3rem', cursor: 'pointer', transition: 'all 0.2s', overflow: 'hidden', position: 'relative' }}>
+                            <button key={m.id} type="button" onClick={() => { const v = `${act.title} - ${scene.title || `Scene ${si + 1}`} [${m.url.split('/').pop()}]`; setSceneSelections(p => p.includes(v) ? p.filter(x => x !== v) : [...p, v]) }} style={{ background: sceneSelections.includes(`${act.title} - ${scene.title || `Scene ${si + 1}`} [${m.url.split('/').pop()}]`) ? 'rgba(64,255,156,0.1)' : 'rgba(0,0,0,0.3)', border: sceneSelections.includes(`${act.title} - ${scene.title || `Scene ${si + 1}`} [${m.url.split('/').pop()}]`) ? '1px solid rgba(64,255,156,0.4)' : '1px solid rgba(255,255,255,0.06)', borderRadius: '0.5rem', padding: '0.3rem', cursor: 'pointer', transition: 'all 0.2s', overflow: 'hidden', position: 'relative' }}>
                               <img src={m.url} alt="" loading="lazy" style={{ width: '100%', height: '65px', objectFit: 'cover', borderRadius: '0.3rem', display: 'block' }} />
                               <div style={{ fontSize: '0.55rem', color: 'rgba(255,255,255,0.4)', padding: '0.2rem 0.1rem 0', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{m.url.split('/').pop()}</div>
                             </button>
@@ -3076,13 +4279,23 @@ function AgentInbox({
               {/* Upload from computer */}
               {scenePickerTab === 'upload' && (
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '3rem 0', gap: '1rem' }}>
-                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="1.5" strokeLinecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="1.5" strokeLinecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="17 8 12 3 7 8" /><line x1="12" y1="3" x2="12" y2="15" /></svg>
                   <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.85rem' }}>Upload any reference file (image, video, audio)</p>
                   <label style={{ padding: '0.6rem 1.5rem', borderRadius: '2rem', border: '1px solid rgba(212,175,55,0.3)', background: 'rgba(212,175,55,0.08)', color: 'var(--gold)', cursor: 'pointer', fontSize: '0.85rem', transition: 'all 0.2s' }}>
-                    Choose File
-                    <input type="file" accept="image/*,video/*,audio/*" style={{ display: 'none' }} onChange={(e) => {
-                      const file = e.target.files?.[0]
-                      if (file) { onDraftChange({ ...draft, sceneHint: `Upload: ${file.name}` }); setIsModalOpen(false) }
+                    Choose Files
+                    <input type="file" accept="image/*,video/*,audio/*" multiple style={{ display: 'none' }} onChange={async (e) => {
+                      const files = e.target.files; if (!files || files.length === 0) return;
+                      const newSelections: string[] = [...sceneSelections];
+                      for (let i = 0; i < files.length; i++) {
+                        const file = files[i];
+                        const formData = new FormData(); formData.append('file', file);
+                        try {
+                          const resp = await fetch('/api/storyboard/upload', { method: 'POST', body: formData });
+                          const result = await resp.json();
+                          if (result.url) newSelections.push(`upload: ${file.name} ${result.url}`);
+                        } catch { }
+                      }
+                      setSceneSelections(newSelections);
                     }} />
                   </label>
                 </div>
@@ -3106,6 +4319,7 @@ function AgentInbox({
               summary: formData.get('summary') as string
             }
             setSavedBlueprints([newBlueprint, ...savedBlueprints])
+            fetch('/api/blueprints/save', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(newBlueprint) }).catch(() => {})
             setBlueprintSaveModal(null)
           }} style={{ padding: '2rem', width: '450px', display: 'flex', flexDirection: 'column', gap: '1.5rem', background: 'rgba(10,15,25,0.95)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '1rem', boxShadow: '0 20px 40px rgba(0,0,0,0.5)' }}>
             <h3 style={{ margin: 0, color: 'var(--gold)', fontSize: '1.2rem', fontFamily: '"Outfit", sans-serif' }}>Save Blueprint</h3>
@@ -3135,7 +4349,7 @@ function AgentInbox({
       </div>
 
       <div className="mindmap-composer">
-        <div className="mindmap-main-node task-form-glass" style={{ flex: 2, padding: '2rem' }}>
+        <div className="mindmap-main-node task-form-glass" style={{ flex: 2, padding: '1.2rem 2rem' }}>
           {/* Composer Tabs: Agent / Task / Builder — colored */}
           <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem' }}>
             {([
@@ -3145,17 +4359,17 @@ function AgentInbox({
             ] as const).map(tab => {
               const active = composerTab === tab.key;
               return (
-              <button key={tab.key} type="button" onClick={() => setComposerTab(tab.key as any)} style={{ padding: '0.5rem 1.1rem', borderRadius: '0.7rem', border: active ? `1px solid ${tab.color}66` : '1px solid rgba(255,255,255,0.06)', background: active ? `${tab.color}14` : 'rgba(255,255,255,0.015)', backdropFilter: 'blur(8px)', color: active ? tab.color : 'rgba(255,255,255,0.45)', cursor: 'pointer', fontSize: '0.8rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.4rem', transition: 'all 0.25s', boxShadow: active ? `0 0 10px ${tab.color}20` : 'none' }}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d={tab.d} /></svg>
-                {tab.label}
-              </button>
+                <button key={tab.key} type="button" onClick={() => setComposerTab(tab.key as any)} style={{ padding: '0.5rem 1.1rem', borderRadius: '0.7rem', border: active ? `1px solid ${tab.color}66` : '1px solid rgba(255,255,255,0.06)', background: active ? `${tab.color}14` : 'rgba(255,255,255,0.015)', backdropFilter: 'blur(8px)', color: active ? tab.color : 'rgba(255,255,255,0.45)', cursor: 'pointer', fontSize: '0.8rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.4rem', transition: 'all 0.25s', boxShadow: active ? `0 0 10px ${tab.color}20` : 'none' }}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d={tab.d} /></svg>
+                  {tab.label}
+                </button>
               )
             })}
           </div>
 
           {composerTab === 'agent' ? (
             /* AGENT CHAT — scrollable like ChatGPT */
-            <div style={{ display: 'flex', flexDirection: 'column', minHeight: '420px', maxHeight: '500px', background: 'rgba(0,0,0,0.15)', border: '1px solid rgba(255,255,255,0.04)', borderRadius: '0.75rem', overflow: 'hidden' }}
+            <div style={{ display: 'flex', flexDirection: 'column', minHeight: '480px', maxHeight: '600px', background: 'rgba(0,0,0,0.15)', border: '1px solid rgba(255,255,255,0.04)', borderRadius: '0.75rem', overflow: 'hidden' }}
               onDragOver={(e) => { e.preventDefault(); e.currentTarget.style.borderColor = 'rgba(212,175,55,0.4)' }}
               onDragLeave={(e) => { e.preventDefault(); e.currentTarget.style.borderColor = 'rgba(255,255,255,0.04)' }}
               onDrop={async (e) => {
@@ -3177,12 +4391,33 @@ function AgentInbox({
                 }
               }}>
               {/* Attached context bar */}
-              {(draft.sceneHint || draft.skillHint || (activePdf && pdfPages.length > 0)) && <div style={{ padding: '0.4rem 0.8rem', borderBottom: '1px solid rgba(255,255,255,0.04)', fontSize: '0.68rem', color: 'rgba(255,255,255,0.3)' }}>📎 Theo sees: {draft.sceneHint ? `scene refs (${draft.sceneHint.split(' | ').length})` : ''}{draft.sceneHint && draft.skillHint ? ', ' : ''}{draft.skillHint ? `skill: ${draft.skillHint}` : ''}{activePdf && pdfPages.length > 0 ? `${draft.sceneHint || draft.skillHint ? ', ' : ''}doc: ${activePdf}${(pdfMarkers[activePdf]||[]).length > 0 ? ` (${(pdfMarkers[activePdf]||[]).length} marks)` : ' (full)'}` : ''}</div>}
+              {(draft.sceneHint || draft.skillHint || (activePdf && pdfPages.length > 0)) && <div style={{ padding: '0.4rem 0.8rem', borderBottom: '1px solid rgba(255,255,255,0.04)', fontSize: '0.68rem', color: 'rgba(255,255,255,0.3)' }}>📎 Theo sees: {draft.sceneHint ? `scene refs (${draft.sceneHint.split(' | ').length})` : ''}{draft.sceneHint && draft.skillHint ? ', ' : ''}{draft.skillHint ? `skill: ${draft.skillHint}` : ''}{activePdf && pdfPages.length > 0 ? `${draft.sceneHint || draft.skillHint ? ', ' : ''}doc: ${activePdf}${(pdfMarkers[activePdf] || []).length > 0 ? ` (${(pdfMarkers[activePdf] || []).length} marks)` : ' (full)'}` : ''}</div>}
               <div style={{ flex: 1, overflowY: 'auto', padding: '1rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                {agentHistory.length === 0 && <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'rgba(255,255,255,0.2)', fontSize: '0.85rem', flexDirection: 'column', gap: '0.5rem' }}><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1"><path d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7z"/></svg><span>Ask Theo anything about your project...</span></div>}
+                {agentHistory.length === 0 && <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'rgba(255,255,255,0.2)', fontSize: '0.85rem', flexDirection: 'column', gap: '0.5rem' }}><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1"><path d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7z" /></svg><span>Ask Theo anything about your project...</span></div>}
                 {agentHistory.map((msg, i) => (
-                  <div key={i} style={{ padding: '0.6rem 0.8rem', borderRadius: '0.6rem', fontSize: '0.82rem', lineHeight: '1.5', background: msg.role === 'user' ? 'rgba(212,175,55,0.08)' : 'rgba(255,255,255,0.03)', border: `1px solid ${msg.role === 'user' ? 'rgba(212,175,55,0.15)' : 'rgba(255,255,255,0.04)'}`, color: msg.role === 'user' ? 'var(--gold)' : 'rgba(255,255,255,0.75)', alignSelf: msg.role === 'user' ? 'flex-end' : 'flex-start', maxWidth: '88%', whiteSpace: 'pre-wrap' }}>
-                    {msg.parts[0].text.substring(0, 800)}{msg.parts[0].text.length > 800 ? '...' : ''}
+                  <div key={i} style={{ padding: '0.6rem 0.8rem', borderRadius: '0.6rem', fontSize: '0.82rem', lineHeight: '1.5', background: msg.role === 'user' ? 'rgba(96,165,250,0.08)' : 'rgba(255,255,255,0.03)', border: `1px solid ${msg.role === 'user' ? 'rgba(96,165,250,0.2)' : 'rgba(255,255,255,0.04)'}`, color: msg.role === 'user' ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.75)', alignSelf: msg.role === 'user' ? 'flex-end' : 'flex-start', maxWidth: '88%', whiteSpace: 'pre-wrap', position: 'relative' }}
+                    onMouseUp={(e) => {
+                      if (msg.role !== 'model') return;
+                      const sel = window.getSelection();
+                      const text = sel?.toString().trim();
+                      const bubble = e.currentTarget;
+                      const existing = bubble.querySelector('.send-to-task-btn') as HTMLElement;
+                      if (existing) existing.remove();
+                      if (text && text.length > 10) {
+                        const btn = document.createElement('button');
+                        btn.className = 'send-to-task-btn';
+                        btn.innerHTML = '📋 Send to Task';
+                        Object.assign(btn.style, { position: 'absolute', top: '-28px', right: '8px', padding: '4px 10px', borderRadius: '6px', border: '1px solid rgba(212,175,55,0.4)', background: 'rgba(20,20,30,0.92)', color: '#d4af37', fontSize: '0.7rem', fontWeight: '600', cursor: 'pointer', zIndex: '99', backdropFilter: 'blur(8px)', boxShadow: '0 4px 16px rgba(0,0,0,0.5)', transition: 'all 0.2s' });
+                        btn.onclick = () => {
+                          onDraftChange({ title: `Task ${tasks.length + 1}`, prompt: text, sceneHint: draft.sceneHint || '', skillHint: draft.skillHint || '' });
+                          setTimeout(() => onAdd(), 50);
+                          btn.remove();
+                        };
+                        bubble.appendChild(btn);
+                        setTimeout(() => { if (btn.parentNode) btn.remove(); }, 8000);
+                      }
+                    }}>
+                    {msg.parts[0].text}
                   </div>
                 ))}
               </div>
@@ -3191,26 +4426,26 @@ function AgentInbox({
                   if (e.key === 'Enter' && !e.shiftKey && agentInput.trim()) {
                     e.preventDefault(); const msg = agentInput; setAgentInput(''); setAgentLoading(true);
                     const ctxParts: string[] = []; if (draft.sceneHint) ctxParts.push(`Scene assets: ${draft.sceneHint}`);
-                    if (draft.skillHint) { for (const sn of draft.skillHint.split(' | ')) { try { const r = await fetch(`/assets/storyboard/skills/${sn}`); const t = await r.text(); ctxParts.push(`Skill "${sn}":\n${t.substring(0, 2000)}`); } catch {} } }
+                    if (draft.skillHint) { for (const sn of draft.skillHint.split(' | ')) { try { const sk = availableSkills.find((s: any) => s.name === sn); if (sk) { const r = await fetch('/api/skills/read-md', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: sk.id }) }); const d = await r.json(); ctxParts.push(`Skill "${sn}":\n${(d.content || sk.fullText || sk.description || '').substring(0, 40000)}`); } } catch { } } }
                     if (activePdf && pdfPages.length > 0) { const marks = pdfMarkers[activePdf] || []; if (marks.length > 0) { const excerpts = marks.map(m => pdfPages[m.page]?.slice(m.startIdx, m.endIdx)).filter(Boolean); ctxParts.push(`Doc "${activePdf}" marked:\n${excerpts.join('\n---\n')}`); } else if (pdfPages.join('').length < 3000) { ctxParts.push(`Doc "${activePdf}":\n${pdfPages.join('\n')}`); } }
                     const result = await chatWithAgent(msg, agentHistory, ctxParts.length > 0 ? ctxParts.join('\n\n') : undefined);
                     if (!result.error) setAgentHistory(result.updatedHistory); setAgentLoading(false);
                   }
-                }} rows={3} style={{ flex: 1, background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '0.5rem', padding: '0.5rem 0.8rem', color: 'white', fontSize: '0.82rem', outline: 'none', resize: 'none', fontFamily: 'inherit', lineHeight: 1.5 }} />
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', width: '54px', flexShrink: 0 }}>
+                }} rows={2} style={{ flex: 1, background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '0.5rem', padding: '0.5rem 0.8rem', color: 'white', fontSize: '0.82rem', outline: 'none', resize: 'none', fontFamily: 'inherit', lineHeight: 1.5, minHeight: '76px' }} />
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', width: '130px', flexShrink: 0 }}>
                   <div style={{ display: 'flex', gap: '0.25rem' }}>
                     <button type="button" title="Voice" onClick={() => {
                       if (isRecording && recognitionRef.current) { recognitionRef.current.stop(); setIsRecording(false); return }
                       const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition; if (!SR) return;
                       const r = new SR(); r.continuous = true; r.interimResults = true; r.lang = 'en-US';
-                      r.onresult = (ev: any) => { let t = ''; for (let i = ev.resultIndex; i < ev.results.length; i++) t += ev.results[i][0].transcript; if (ev.results[ev.results.length-1].isFinal) setAgentInput(p => p + ' ' + t) };
+                      r.onresult = (ev: any) => { let t = ''; for (let i = ev.resultIndex; i < ev.results.length; i++) t += ev.results[i][0].transcript; if (ev.results[ev.results.length - 1].isFinal) setAgentInput(p => p + ' ' + t) };
                       r.onerror = () => setIsRecording(false); r.onend = () => setIsRecording(false);
                       r.start(); recognitionRef.current = r; setIsRecording(true);
-                    }} style={{ flex: 1, padding: '0.3rem', borderRadius: '0.35rem', border: isRecording ? '1px solid #ff2a55' : '1px solid rgba(255,255,255,0.08)', background: isRecording ? 'rgba(255,42,85,0.15)' : 'transparent', color: isRecording ? '#ff2a55' : 'rgba(255,255,255,0.35)', cursor: 'pointer', display: 'grid', placeItems: 'center' }}>
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/></svg>
+                    }} style={{ flex: 1, padding: '0.5rem', borderRadius: '0.4rem', border: isRecording ? '1px solid #ff2a55' : '1px solid rgba(255,255,255,0.12)', background: isRecording ? 'rgba(255,42,85,0.15)' : 'transparent', color: isRecording ? '#ff2a55' : 'rgba(255,255,255,0.4)', cursor: 'pointer', display: 'grid', placeItems: 'center' }}>
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" /><path d="M19 10v2a7 7 0 0 1-14 0v-2" /></svg>
                     </button>
-                    <label style={{ flex: 1, padding: '0.3rem', borderRadius: '0.35rem', border: '1px solid rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.35)', cursor: 'pointer', display: 'grid', placeItems: 'center' }} title="Attach">
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+                    <label style={{ flex: 1, padding: '0.5rem', borderRadius: '0.4rem', border: '1px solid rgba(255,255,255,0.12)', color: 'rgba(255,255,255,0.4)', cursor: 'pointer', display: 'grid', placeItems: 'center' }} title="Attach">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48" /></svg>
                       <input type="file" style={{ display: 'none' }} onChange={async (e) => {
                         const file = e.target.files?.[0]; if (!file) return; setAgentLoading(true);
                         const text = await file.text();
@@ -3222,11 +4457,11 @@ function AgentInbox({
                   <button type="button" disabled={agentLoading || !agentInput.trim()} onClick={async () => {
                     const msg = agentInput; setAgentInput(''); setAgentLoading(true);
                     const ctxParts: string[] = []; if (draft.sceneHint) ctxParts.push(`Scene assets: ${draft.sceneHint}`);
-                    if (draft.skillHint) { for (const sn of draft.skillHint.split(' | ')) { try { const r = await fetch(`/assets/storyboard/skills/${sn}`); const t = await r.text(); ctxParts.push(`Skill "${sn}":\n${t.substring(0, 2000)}`); } catch {} } }
+                    if (draft.skillHint) { for (const sn of draft.skillHint.split(' | ')) { try { const sk = availableSkills.find((s: any) => s.name === sn); if (sk) { const r = await fetch('/api/skills/read-md', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: sk.id }) }); const d = await r.json(); ctxParts.push(`Skill "${sn}":\n${(d.content || sk.fullText || sk.description || '').substring(0, 40000)}`); } } catch { } } }
                     if (activePdf && pdfPages.length > 0) { const marks = pdfMarkers[activePdf] || []; if (marks.length > 0) { const excerpts = marks.map(m => pdfPages[m.page]?.slice(m.startIdx, m.endIdx)).filter(Boolean); ctxParts.push(`Doc "${activePdf}" marked:\n${excerpts.join('\n---\n')}`); } else if (pdfPages.join('').length < 3000) { ctxParts.push(`Doc "${activePdf}":\n${pdfPages.join('\n')}`); } }
                     const result = await chatWithAgent(msg, agentHistory, ctxParts.length > 0 ? ctxParts.join('\n\n') : undefined);
                     if (!result.error) setAgentHistory(result.updatedHistory); setAgentLoading(false);
-                  }} style={{ width: '100%', padding: '0.4rem', borderRadius: '0.4rem', border: 'none', background: agentLoading ? 'rgba(212,175,55,0.3)' : 'var(--gold)', color: '#000', cursor: agentLoading ? 'wait' : 'pointer', fontSize: '0.72rem', fontWeight: 700, flex: 1 }}>
+                  }} style={{ width: '100%', padding: '0.55rem', borderRadius: '0.45rem', border: '1.5px solid rgba(96,165,250,0.5)', background: 'transparent', color: agentLoading ? 'rgba(96,165,250,0.4)' : 'rgba(96,165,250,0.95)', cursor: agentLoading ? 'wait' : 'pointer', fontSize: '0.82rem', fontWeight: 600, flex: 1, letterSpacing: '0.03em' }}>
                     {agentLoading ? '...' : 'Send'}
                   </button>
                 </div>
@@ -3280,8 +4515,8 @@ function AgentInbox({
             </div>
           )}
 
-          {/* Attachment strip — compact row with bigger icons */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', padding: '0.25rem 0', marginTop: '0.2rem', borderTop: '1px solid rgba(255,255,255,0.04)', flexWrap: 'wrap' }}>
+          {/* Attachment strip */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', padding: '0.25rem 0.5rem', borderTop: '1px solid rgba(255,255,255,0.04)', flexWrap: 'wrap', minHeight: '60px' }}>
             {draft.sceneHint && draft.sceneHint.split(' | ').map((s, i) => {
               const cat = s.split(':')[0]?.toLowerCase().trim() || 'images'
               const iconMap: Record<string, { color: string, d: string }> = {
@@ -3293,24 +4528,26 @@ function AgentInbox({
                 styles: { color: '#a78bfa', d: 'M7 21a4 4 0 0 1-4-4V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v12a4 4 0 0 1-4 4zm0 0h12a2 2 0 0 0 2-2v-4a2 2 0 0 0-2-2h-2.343' }
               }
               const ic = iconMap[cat] || iconMap.images
-              return (
-              <div key={`s${i}`} className="att-chip" style={{ width: '40px', height: '40px', borderRadius: '0.5rem', border: `1px solid ${ic.color}44`, background: `${ic.color}12`, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', position: 'relative', transition: 'all 0.2s' }} title={s}>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={ic.color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d={ic.d} /></svg>
+              return (<div key={`s${i}`} className="att-chip" style={{ width: '52px', height: '52px', borderRadius: '0.5rem', border: `1px solid ${ic.color}44`, background: `${ic.color}12`, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', position: 'relative', transition: 'all 0.2s' }} title={s}>
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke={ic.color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d={ic.d} /></svg>
                 <div style={{ position: 'absolute', top: '-4px', right: '-4px', width: '14px', height: '14px', borderRadius: '50%', background: ic.color, color: '#000', fontSize: '0.55rem', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{i + 1}</div>
                 <button type="button" onClick={(e) => { e.stopPropagation(); const parts = draft.sceneHint.split(' | ').filter((_, j) => j !== i); onDraftChange({ ...draft, sceneHint: parts.join(' | ') }) }} className="att-del" style={{ position: 'absolute', top: '-5px', left: '-5px', width: '16px', height: '16px', borderRadius: '50%', background: 'rgba(255,60,60,0.9)', border: 'none', color: 'white', fontSize: '0.6rem', fontWeight: 700, display: 'none', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', padding: 0 }}>×</button>
-              </div>
-              )
+              </div>)
             })}
             {draft.skillHint && draft.skillHint.split(' | ').map((sn, si) => (
-              <div key={`sk${si}`} className="att-chip" style={{ width: '40px', height: '40px', borderRadius: '0.5rem', border: '1px solid rgba(212,175,55,0.3)', background: 'rgba(212,175,55,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', position: 'relative' }} title={sn}>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" strokeWidth="1.5" strokeLinecap="round"><path d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7z"/><line x1="9" y1="21" x2="15" y2="21"/></svg>
+              <div key={`sk${si}`} className="att-chip" style={{ width: '52px', height: '52px', borderRadius: '0.5rem', border: '1px solid rgba(212,175,55,0.3)', background: 'rgba(212,175,55,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', position: 'relative' }} title={sn}>
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" strokeWidth="1.5" strokeLinecap="round"><path d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7z" /><line x1="9" y1="21" x2="15" y2="21" /></svg>
                 <button type="button" onClick={() => { const remaining = draft.skillHint.split(' | ').filter((_, j) => j !== si).join(' | '); onDraftChange({ ...draft, skillHint: remaining }) }} className="att-del" style={{ position: 'absolute', top: '-5px', left: '-5px', width: '16px', height: '16px', borderRadius: '50%', background: 'rgba(255,60,60,0.9)', border: 'none', color: 'white', fontSize: '0.6rem', fontWeight: 700, display: 'none', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', padding: 0 }}>×</button>
               </div>
             ))}
-            {(draft.sceneHint || draft.skillHint) && <span style={{ fontSize: '0.6rem', color: 'rgba(255,255,255,0.25)' }}>{(draft.sceneHint ? draft.sceneHint.split(' | ').length : 0) + (draft.skillHint ? draft.skillHint.split(' | ').length : 0)} attached</span>}
+            {activePdf && pdfPages.length > 0 && (
+              <div className="att-chip" style={{ width: '52px', height: '52px', borderRadius: '0.5rem', border: '1px solid rgba(255,96,64,0.3)', background: 'rgba(255,96,64,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', position: 'relative' }} title={activePdf} onClick={() => setShowPdfViewer(true)}>
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#ff6040" strokeWidth="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" /></svg>
+                {(pdfMarkers[activePdf] || []).length > 0 && <div style={{ position: 'absolute', top: '-4px', right: '-4px', width: '14px', height: '14px', borderRadius: '50%', background: '#ff6040', color: '#fff', fontSize: '0.5rem', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{(pdfMarkers[activePdf] || []).length}</div>}
+              </div>
+            )}
           </div>
-
-          <div className="node-footer" style={{ position: 'relative', right: 0, bottom: 0 }}>
+          <div className="node-footer" style={{ padding: '0.3rem 0 0 0' }}>
             <button className="execute-task-btn" onClick={onAdd} type="button">
               Launch Pipeline <span>⚡️</span>
             </button>
@@ -3318,44 +4555,44 @@ function AgentInbox({
         </div>
 
         <div className="mindmap-attachment-nodes" style={{ flex: 1, gap: '1rem', display: 'flex', flexDirection: 'column', marginTop: '-0.5rem' }}>
-          <div className="attachment-node glass scene-node" style={{ border: '1px solid rgba(255,255,255,0.05)', background: 'rgba(255,255,255,0.02)', padding: '1.5rem', borderRadius: '1rem', width: '100%' }}>
+          <div className="attachment-node glass scene-node" style={{ border: '1px solid rgba(255,255,255,0.05)', background: 'rgba(255,255,255,0.02)', padding: '1.2rem 1.5rem', borderRadius: '1rem', width: '100%', minHeight: '120px' }}>
             <p className="eyebrow">Target Scene</p>
             <input placeholder={draft.sceneHint && draft.sceneHint.includes(' | ') ? `Multiple (${draft.sceneHint.split(' | ').length}) attached` : 'e.g. Act 1 Scene 2'} value={draft.sceneHint && draft.sceneHint.includes(' | ') ? '' : draft.sceneHint} onChange={(event) => onDraftChange({ ...draft, sceneHint: event.target.value })} style={{ color: draft.sceneHint && draft.sceneHint.includes(' | ') ? 'rgba(255,255,255,0.3)' : undefined }} readOnly={!!(draft.sceneHint && draft.sceneHint.includes(' | '))} />
-            {draft.sceneHint && draft.sceneHint.includes(' | ') && <p style={{ fontSize: '0.65rem', color: '#4ade80', margin: '0.3rem 0 0 0' }}>{draft.sceneHint.split(' | ').length} refs attached — click icons below to remove</p>}
+
             <button className="attach-btn" type="button" onClick={() => setIsModalOpen(true)}>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" style={{ verticalAlign: 'middle', marginRight: '0.4rem' }}><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" style={{ verticalAlign: 'middle', marginRight: '0.4rem' }}><rect x="3" y="3" width="7" height="7" /><rect x="14" y="3" width="7" height="7" /><rect x="3" y="14" width="7" height="7" /><rect x="14" y="14" width="7" height="7" /></svg>
               Link Visual Node
             </button>
           </div>
-          <div className="attachment-node glass skill-node" style={{ border: '1px solid rgba(255,255,255,0.05)', background: 'rgba(255,255,255,0.02)', padding: '1.5rem', borderRadius: '1rem', width: '100%' }}>
+          <div className="attachment-node glass skill-node" style={{ border: '1px solid rgba(255,255,255,0.05)', background: 'rgba(255,255,255,0.02)', padding: '1.2rem 1.5rem', borderRadius: '1rem', width: '100%', minHeight: '120px' }}>
             <p className="eyebrow">Agent Skills</p>
             {draft.skillHint && (
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.4rem 0.7rem', background: 'rgba(212,175,55,0.08)', border: '1px solid rgba(212,175,55,0.2)', borderRadius: '0.5rem', marginBottom: '0.5rem', fontSize: '0.82rem', color: 'var(--gold)' }}>
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-                {draft.skillHint}
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" /></svg>
+                {draft.skillHint.includes(' | ') ? `Multiple selected (${draft.skillHint.split(' | ').length})` : draft.skillHint}
                 <button type="button" onClick={() => onDraftChange({ ...draft, skillHint: '' })} style={{ marginLeft: 'auto', background: 'none', border: 'none', color: 'rgba(255,255,255,0.4)', cursor: 'pointer', fontSize: '0.9rem', padding: 0 }}>×</button>
               </div>
             )}
             <button className="attach-btn" type="button" onClick={() => setShowSkillsStore(true)} style={{ textAlign: 'center', display: 'block', width: '100%', cursor: 'pointer' }}>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" style={{ verticalAlign: 'middle', marginRight: '0.4rem' }}><path d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7z"/><line x1="9" y1="21" x2="15" y2="21"/></svg>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" style={{ verticalAlign: 'middle', marginRight: '0.4rem' }}><path d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7z" /><line x1="9" y1="21" x2="15" y2="21" /></svg>
               Browse Skills Store
             </button>
           </div>
           {/* References & PDFs — bookstore icons */}
-          <div className="attachment-node glass ref-node" style={{ border: '1px solid rgba(255,255,255,0.05)', background: 'rgba(255,255,255,0.02)', padding: '1.5rem', borderRadius: '1rem', width: '100%' }}>
+          <div className="attachment-node glass ref-node" style={{ border: '1px solid rgba(255,255,255,0.05)', background: 'rgba(255,255,255,0.02)', padding: '1.2rem 1.5rem', borderRadius: '1rem', width: '100%', minHeight: '120px' }}>
             <p className="eyebrow">References & PDFs</p>
             {pdfDocs.filter(d => d.pinned).length > 0 && (
               <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '0.6rem' }}>
                 {pdfDocs.filter(d => d.pinned).map(doc => (
                   <button key={doc.name} type="button" onClick={() => { setActivePdf(doc.name); setShowPdfViewer(true) }} style={{ width: '52px', height: '62px', borderRadius: '0.5rem', border: activePdf === doc.name ? '1px solid rgba(255,96,64,0.5)' : '1px solid rgba(255,255,255,0.08)', background: activePdf === doc.name ? 'rgba(255,96,64,0.08)' : 'rgba(255,255,255,0.02)', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '0.2rem', transition: 'all 0.25s', boxShadow: activePdf === doc.name ? '0 0 10px rgba(255,96,64,0.15)' : 'none' }}>
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={activePdf === doc.name ? '#ff6040' : 'rgba(255,255,255,0.35)'} strokeWidth="1.5"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
-                    <span style={{ fontSize: '0.5rem', color: activePdf === doc.name ? '#ff6040' : 'rgba(255,255,255,0.35)', textAlign: 'center', lineHeight: 1.1, overflow: 'hidden', maxWidth: '46px' }}>{doc.name.replace(/\.(pdf|docx|pages)$/i,'').substring(0,10)}</span>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={activePdf === doc.name ? '#ff6040' : 'rgba(255,255,255,0.35)'} strokeWidth="1.5"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" /><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" /></svg>
+                    <span style={{ fontSize: '0.5rem', color: activePdf === doc.name ? '#ff6040' : 'rgba(255,255,255,0.35)', textAlign: 'center', lineHeight: 1.1, overflow: 'hidden', maxWidth: '46px' }}>{doc.name.replace(/\.(pdf|docx|pages)$/i, '').substring(0, 10)}</span>
                   </button>
                 ))}
               </div>
             )}
-            <button className="attach-btn" type="button" onClick={() => { fetch('/api/docs/list').then(r => r.json()).then(d => setPdfDocs(d.docs || [])).catch(() => {}); setShowPdfViewer(true) }} style={{ textAlign: 'center', display: 'block', width: '100%', cursor: 'pointer' }}>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" style={{ verticalAlign: 'middle', marginRight: '0.4rem' }}><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+            <button className="attach-btn" type="button" onClick={() => { fetch('/api/docs/list').then(r => r.json()).then(d => setPdfDocs(d.docs || [])).catch(() => { }); setShowPdfViewer(true) }} style={{ textAlign: 'center', display: 'block', width: '100%', cursor: 'pointer' }}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" style={{ verticalAlign: 'middle', marginRight: '0.4rem' }}><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" /><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" /></svg>
               Open Document Viewer
             </button>
           </div>
@@ -3363,8 +4600,8 @@ function AgentInbox({
       </div>
       <div className="agent-pipeline-board">
         <div className="pipeline-tabs">
-          <button className={`pipeline-tab ${activeTab === 'todo' ? 'is-active' : ''}`} onClick={() => setActiveTab('todo')}>
-            Queue ({tasks.filter(t => t.status === 'todo' || t.status === 'todo_working').length})
+          <button className={`pipeline-tab ${activeTab === 'tasks' ? 'is-active' : ''}`} onClick={() => setActiveTab('tasks')}>
+            Tasks ({tasks.filter(t => t.status === 'todo' || t.status === 'todo_working' || t.status === 'done' || (t.status as any) === 'completed').length})
           </button>
           <button className={`pipeline-tab ${activeTab === 'edit' ? 'is-active' : ''}`} onClick={() => setActiveTab('edit')}>
             Edit ({tasks.filter(t => t.status.startsWith('pass') || t.status === 'pass_working').length})
@@ -3375,59 +4612,107 @@ function AgentInbox({
         </div>
 
         <div className="pipeline-content">
-          {activeTab === 'todo' && (
-            <div className="todo-container">
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', padding: '0 1rem' }}>
-                <h3 style={{ color: 'var(--gold)', margin: 0, fontWeight: 500, fontFamily: '"Outfit", sans-serif' }}>Tasks Awaiting Execution</h3>
-                <div style={{ position: 'relative' }}>
-                  <button type="button" onClick={() => setShowBlueprintGallery(!showBlueprintGallery)} style={{ background: 'rgba(248, 217, 120, 0.1)', color: 'var(--gold)', border: '1px solid var(--gold)', borderRadius: '2rem', padding: '0.6rem 1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s' }} className="queue-action-btn">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-                    {showBlueprintGallery ? 'Close Blueprint Library' : 'Start Task from Blueprint'}
-                  </button>
-                </div>
+          {activeTab === 'tasks' && (
+            <>
+              {/* Queue / Completed subtabs */}
+              <div style={{ display: 'flex', gap: '0.3rem', marginBottom: '1.2rem', padding: '0 0.5rem' }}>
+                <button type="button" onClick={() => setTasksSubTab('queue')} style={{ padding: '0.4rem 1.2rem', borderRadius: '2rem', border: tasksSubTab === 'queue' ? '1px solid rgba(248,217,120,0.4)' : '1px solid rgba(255,255,255,0.08)', background: tasksSubTab === 'queue' ? 'rgba(248,217,120,0.08)' : 'transparent', color: tasksSubTab === 'queue' ? 'var(--gold)' : 'rgba(255,255,255,0.5)', cursor: 'pointer', fontSize: '0.78rem', fontWeight: 600, transition: 'all 0.2s' }}>Queue ({tasks.filter(t => t.status === 'todo' || t.status === 'todo_working').length})</button>
+                <button type="button" onClick={() => setTasksSubTab('completed')} style={{ padding: '0.4rem 1.2rem', borderRadius: '2rem', border: tasksSubTab === 'completed' ? '1px solid rgba(64,255,156,0.4)' : '1px solid rgba(255,255,255,0.08)', background: tasksSubTab === 'completed' ? 'rgba(64,255,156,0.08)' : 'transparent', color: tasksSubTab === 'completed' ? '#4ade80' : 'rgba(255,255,255,0.5)', cursor: 'pointer', fontSize: '0.78rem', fontWeight: 600, transition: 'all 0.2s' }}>Completed ({tasks.filter(t => ['done', 'completed', 'pass', 'pass_working'].includes(t.status as string)).length})</button>
               </div>
-              {showBlueprintGallery ? (
-                <>
-                  <div className="pipeline-grid blueprint-open">
-                    <div className="queue-cards-section" onClick={() => setShowBlueprintGallery(false)}>
-                      {tasks.filter(t => t.status === 'todo' || t.status === 'todo_working').slice(0, 4).map(task => (
-                        <TaskNode data={data} key={task.id} task={task} onTaskChange={onTaskChange} onAssignAsset={onAssignAsset} onEditTask={(t) => { onDraftChange({ title: t.title, sceneHint: t.sceneHint, skillHint: t.skillHint, prompt: t.prompt }); window.scrollTo({ top: 0, behavior: 'smooth' }); }} onSaveBlueprint={(t) => setBlueprintSaveModal(t)} />
-                      ))}
+              {tasksSubTab === 'queue' && (
+                <div className="todo-container">
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem', padding: '0 0.5rem', gap: '0.5rem', flexWrap: 'wrap' }}>
+                    <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center' }}>
+                      <button type="button" onClick={() => { setTaskSelectMode(!taskSelectMode); setSelectedTaskIds([]); }} style={{ padding: '0.4rem 1rem', borderRadius: '2rem', border: taskSelectMode ? '1px solid var(--gold)' : '1px solid rgba(255,255,255,0.1)', background: taskSelectMode ? 'rgba(248, 217, 120, 0.08)' : 'transparent', color: taskSelectMode ? 'var(--gold)' : 'rgba(255,255,255,0.5)', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><path d="M9 12l2 2 4-4"></path></svg>
+                        {taskSelectMode ? 'Cancel' : 'Select'}
+                      </button>
+                      {taskSelectMode && <>
+                        <button type="button" onClick={() => { const allIds = tasks.filter(t => t.status === 'todo' || t.status === 'todo_working').map(t => t.id); setSelectedTaskIds(prev => prev.length === allIds.length ? [] : allIds); }} style={{ padding: '0.4rem 0.8rem', borderRadius: '2rem', border: '1px solid rgba(255,255,255,0.1)', background: 'transparent', color: 'rgba(255,255,255,0.5)', cursor: 'pointer', fontSize: '0.72rem' }}>{selectedTaskIds.length === tasks.filter(t => t.status === 'todo' || t.status === 'todo_working').length ? 'Deselect All' : 'Select All'}</button>
+                        {selectedTaskIds.length > 0 && <>
+                          <button type="button" onClick={() => { selectedTaskIds.forEach(id => { onTaskChange(id, draft => { draft.status = 'archived' }); fetch('/api/tasks/archive', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id }) }).catch(() => {}); }); setSelectedTaskIds([]); setTaskSelectMode(false); }} style={{ padding: '0.4rem 0.8rem', borderRadius: '2rem', border: '1px solid rgba(248,217,120,0.3)', background: 'rgba(248,217,120,0.08)', color: 'var(--gold)', cursor: 'pointer', fontSize: '0.72rem', fontWeight: 600 }}>Archive {selectedTaskIds.length}</button>
+                          <button type="button" onClick={() => { selectedTaskIds.forEach(id => { onTaskChange(id, draft => { draft.status = 'archived' }); fetch('/api/tasks/archive', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id }) }).catch(() => {}); }); setSelectedTaskIds([]); setTaskSelectMode(false); }} style={{ padding: '0.4rem 0.8rem', borderRadius: '2rem', border: '1px solid rgba(255,42,85,0.3)', background: 'rgba(255,42,85,0.08)', color: '#ff2a55', cursor: 'pointer', fontSize: '0.72rem', fontWeight: 600 }}>Delete {selectedTaskIds.length}</button>
+                        </>}
+                      </>}
                     </div>
-                    <article className="agent-task-card glass blueprint-library">
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
-                        <h3 style={{ margin: 0, color: 'var(--gold)', fontSize: '1.1rem', fontWeight: 600, fontFamily: '"Outfit", sans-serif' }}>Saved Blueprints</h3>
-                        <div style={{ position: 'relative' }}>
-                          <input type="text" placeholder="Search..." style={{ background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '2rem', padding: '0.4rem 0.5rem 0.4rem 2rem', color: 'white', width: '120px', fontSize: '0.8rem' }} />
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.5)" strokeWidth="2" style={{ position: 'absolute', left: '0.6rem', top: '50%', transform: 'translateY(-50%)' }}><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                        </div>
-                      </div>
-                      <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '0.8rem', paddingRight: '0.5rem' }}>
-                        {savedBlueprints.map(bp => (
-                          <button key={bp.id} className="blueprint-item" onClick={() => { onDraftChange({ title: bp.title, prompt: bp.prompt, sceneHint: bp.sceneHint, skillHint: bp.skillHint }); setShowBlueprintGallery(false); window.scrollTo({ top: 0, behavior: 'smooth' }); }} style={{ background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.05)', color: 'white', textAlign: 'left', padding: '1rem', borderRadius: '8px', cursor: 'pointer', transition: 'all 0.2s' }}>
-                            <div style={{ fontWeight: 600, color: 'var(--gold)' }}>{bp.title}</div>
-                            {bp.summary && <div style={{ fontSize: '0.8rem', opacity: 0.7, marginTop: '0.4rem', lineHeight: '1.4' }}>{bp.summary}</div>}
-                          </button>
-                        ))}
-                      </div>
-                    </article>
                   </div>
-                  {tasks.filter(t => t.status === 'todo' || t.status === 'todo_working').length > 4 && (
-                    <div className="pipeline-grid" style={{ marginTop: '1.5rem' }}>
-                      {tasks.filter(t => t.status === 'todo' || t.status === 'todo_working').slice(4).map(task => (
+                  <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '1rem', padding: '0 0.5rem' }}>
+                    <button type="button" onClick={() => setShowBlueprintGallery(!showBlueprintGallery)} style={{ background: 'rgba(248, 217, 120, 0.1)', color: 'var(--gold)', border: '1px solid var(--gold)', borderRadius: '2rem', padding: '0.5rem 1.2rem', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 600, cursor: 'pointer', fontSize: '0.78rem', transition: 'all 0.2s' }} className="queue-action-btn">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                      {showBlueprintGallery ? 'Close Blueprints' : 'Blueprints'}
+                    </button>
+                  </div>
+                  {showBlueprintGallery ? (
+                    <>
+                      <div className="pipeline-grid blueprint-open">
+                        <div className="queue-cards-section" onClick={() => setShowBlueprintGallery(false)}>
+                          {tasks.filter(t => t.status === 'todo' || t.status === 'todo_working').slice(0, 4).map(task => (
+                            <TaskNode data={data} key={task.id} task={task} onTaskChange={onTaskChange} onAssignAsset={onAssignAsset} onEditTask={(t) => { onDraftChange({ title: t.title, sceneHint: t.sceneHint, skillHint: t.skillHint, prompt: t.prompt }); window.scrollTo({ top: 0, behavior: 'smooth' }); }} onSaveBlueprint={(t) => setBlueprintSaveModal(t)} />
+                          ))}
+                        </div>
+                        <article className="agent-task-card glass blueprint-library">
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
+                            <h3 style={{ margin: 0, color: 'var(--gold)', fontSize: '1.1rem', fontWeight: 600, fontFamily: '"Outfit", sans-serif' }}>Saved Blueprints</h3>
+                            <div style={{ position: 'relative' }}>
+                              <input type="text" placeholder="Search..." style={{ background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '2rem', padding: '0.4rem 0.5rem 0.4rem 2rem', color: 'white', width: '120px', fontSize: '0.8rem' }} />
+                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.5)" strokeWidth="2" style={{ position: 'absolute', left: '0.6rem', top: '50%', transform: 'translateY(-50%)' }}><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                            </div>
+                          </div>
+                          <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '0.8rem', paddingRight: '0.5rem' }}>
+                            {savedBlueprints.map(bp => (
+                              <button key={bp.id} className="blueprint-item" onClick={() => { onDraftChange({ title: bp.title, prompt: bp.prompt, sceneHint: bp.sceneHint, skillHint: bp.skillHint }); setShowBlueprintGallery(false); window.scrollTo({ top: 0, behavior: 'smooth' }); }} style={{ background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.05)', color: 'white', textAlign: 'left', padding: '1rem', borderRadius: '8px', cursor: 'pointer', transition: 'all 0.2s' }}>
+                                <div style={{ fontWeight: 600, color: 'var(--gold)' }}>{bp.title}</div>
+                                {bp.summary && <div style={{ fontSize: '0.8rem', opacity: 0.7, marginTop: '0.4rem', lineHeight: '1.4' }}>{bp.summary}</div>}
+                              </button>
+                            ))}
+                          </div>
+                        </article>
+                      </div>
+                      {tasks.filter(t => t.status === 'todo' || t.status === 'todo_working').length > 4 && (
+                        <div className="pipeline-grid" style={{ marginTop: '1.5rem' }}>
+                          {tasks.filter(t => t.status === 'todo' || t.status === 'todo_working').slice(4).map(task => (
+                            <TaskNode data={data} key={task.id} task={task} onTaskChange={onTaskChange} onAssignAsset={onAssignAsset} onEditTask={(t) => { onDraftChange({ title: t.title, sceneHint: t.sceneHint, skillHint: t.skillHint, prompt: t.prompt }); window.scrollTo({ top: 0, behavior: 'smooth' }); }} onSaveBlueprint={(t) => setBlueprintSaveModal(t)} />
+                          ))}
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <div className="pipeline-grid">
+                      {tasks.filter(t => t.status === 'todo' || t.status === 'todo_working').map(task => (
                         <TaskNode data={data} key={task.id} task={task} onTaskChange={onTaskChange} onAssignAsset={onAssignAsset} onEditTask={(t) => { onDraftChange({ title: t.title, sceneHint: t.sceneHint, skillHint: t.skillHint, prompt: t.prompt }); window.scrollTo({ top: 0, behavior: 'smooth' }); }} onSaveBlueprint={(t) => setBlueprintSaveModal(t)} />
                       ))}
                     </div>
                   )}
-                </>
-              ) : (
-                <div className="pipeline-grid">
-                  {tasks.filter(t => t.status === 'todo' || t.status === 'todo_working').map(task => (
-                    <TaskNode data={data} key={task.id} task={task} onTaskChange={onTaskChange} onAssignAsset={onAssignAsset} onEditTask={(t) => { onDraftChange({ title: t.title, sceneHint: t.sceneHint, skillHint: t.skillHint, prompt: t.prompt }); window.scrollTo({ top: 0, behavior: 'smooth' }); }} onSaveBlueprint={(t) => setBlueprintSaveModal(t)} />
-                  ))}
                 </div>
               )}
-            </div>
+              {tasksSubTab === 'completed' && (
+                <div className="completed-container">
+                  <div className="pipeline-grid">
+                    {tasks.filter(t => ['done', 'completed', 'pass', 'pass_working'].includes(t.status as string)).length === 0 ? (
+                      <div className="empty-state" style={{ color: 'rgba(255,255,255,0.5)', padding: '2rem', textAlign: 'center', gridColumn: '1/-1' }}>No completed tasks yet. Tasks move here automatically after generation finishes.</div>
+                    ) : tasks.filter(t => ['done', 'completed', 'pass', 'pass_working'].includes(t.status as string)).map(task => (
+                      <article key={task.id} className="agent-task-card glass" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.8rem', height: '220px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                          <div style={{ fontWeight: 700, color: 'var(--gold)', fontSize: '1rem', fontFamily: '"Outfit", sans-serif', lineHeight: 1.3 }}>{task.title}</div>
+                          <div style={{ color: 'rgba(255,255,255,0.3)', fontSize: '0.7rem', whiteSpace: 'nowrap', paddingTop: '0.2rem' }}>{new Date(task.updatedAt).toLocaleDateString()}</div>
+                        </div>
+                        <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.8rem', lineHeight: 1.5, overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' as any }}>{task.prompt}</div>
+                        <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
+                          {task.sceneHint && <span style={{ fontSize: '0.7rem', padding: '0.2rem 0.5rem', background: 'rgba(95,189,255,0.1)', color: '#7edbff', borderRadius: '4px', border: '1px solid rgba(95,189,255,0.2)' }}>{task.sceneHint}</span>}
+                          {task.skillHint && <span style={{ fontSize: '0.7rem', padding: '0.2rem 0.5rem', background: 'rgba(183,142,255,0.1)', color: '#c7b8ff', borderRadius: '4px', border: '1px solid rgba(183,142,255,0.2)' }}>{task.skillHint}</span>}
+                          {task.passes && task.passes.length > 0 && <span style={{ fontSize: '0.7rem', padding: '0.2rem 0.5rem', background: 'rgba(255,255,255,0.05)', color: 'rgba(255,255,255,0.5)', borderRadius: '4px' }}>{task.passes.length} pass{task.passes.length > 1 ? 'es' : ''} • {task.passes.reduce((n, p) => n + (p.images?.length || 0), 0)} images</span>}
+                        </div>
+                        <div style={{ display: 'flex', gap: '0.5rem', marginTop: 'auto', justifyContent: 'flex-end' }}>
+                          <button type="button" title="Edit in Composer" onClick={() => { onDraftChange({ title: task.title, sceneHint: task.sceneHint, skillHint: task.skillHint, prompt: task.prompt }); setActiveTab('tasks'); window.scrollTo({ top: 0, behavior: 'smooth' }); }} style={{ padding: '0.4rem 1rem', borderRadius: '2rem', border: '1px solid rgba(248,217,120,0.3)', background: 'rgba(248,217,120,0.05)', color: 'var(--gold)', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 600 }}>Edit</button>
+                          <button type="button" title="Reopen" onClick={() => { onTaskChange(task.id, draft => { draft.status = 'todo' }); }} style={{ padding: '0.4rem 0.8rem', borderRadius: '2rem', border: '1px solid rgba(255,255,255,0.1)', background: 'transparent', color: 'rgba(255,255,255,0.5)', cursor: 'pointer', fontSize: '0.75rem' }}>Reopen</button>
+                          <button type="button" title="Archive" onClick={() => { onTaskChange(task.id, draft => { draft.status = 'archived' }); fetch('/api/tasks/archive', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: task.id }) }).catch(() => {}); }} style={{ padding: '0.4rem 0.8rem', borderRadius: '2rem', border: '1px solid rgba(255,42,85,0.2)', background: 'transparent', color: 'rgba(255,42,85,0.6)', cursor: 'pointer', fontSize: '0.75rem' }}>Archive</button>
+                        </div>
+                      </article>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </>
           )}
           {activeTab === 'edit' && (
             <div className="edit-container" style={{ display: 'flex', flexDirection: 'column' }}>
@@ -3491,175 +4776,188 @@ function AgentInbox({
         const usedIndices = availableSkills.map((_: any, i: number) => i % SKILL_SVGS.length)
         const getNewIconIdx = () => { for (let i = 0; i < 10; i++) { if (!usedIndices.includes(i)) return i } return Math.floor(Math.random() * 10) }
         return (
-        <div className="skills-store-backdrop" onClick={() => setShowSkillsStore(false)} style={{ position: 'fixed', inset: 0, zIndex: 9999, background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', display: 'flex', alignItems: 'center', justifyContent: 'center', animation: 'fadeIn 0.3s ease' }}>
-          <div className="skills-store-modal" onClick={(e) => e.stopPropagation()} style={{ width: 'min(90vw, 900px)', maxHeight: '85vh', background: 'linear-gradient(145deg, rgba(20,20,30,0.95), rgba(10,10,20,0.98))', border: '1px solid rgba(212,175,55,0.15)', borderRadius: '1.5rem', overflow: 'hidden', display: 'flex', flexDirection: 'column', boxShadow: '0 30px 80px rgba(0,0,0,0.6), 0 0 40px rgba(212,175,55,0.08), inset 0 1px 0 rgba(255,255,255,0.05)' }}>
-            {/* Header */}
-            <div style={{ padding: '1.5rem 2rem', borderBottom: '1px solid rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
-                <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'linear-gradient(135deg, rgba(212,175,55,0.2), rgba(248,192,64,0.1))', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#d4af37" strokeWidth="1.5" strokeLinecap="round"><path d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7z"/><line x1="9" y1="21" x2="15" y2="21"/><line x1="10" y1="23" x2="14" y2="23"/></svg>
-                </div>
-                <div>
-                  <h2 style={{ margin: 0, fontSize: '1.2rem', color: 'white', fontWeight: 700, letterSpacing: '-0.3px' }}>Skills Store</h2>
-                  <p style={{ margin: 0, fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)', letterSpacing: '0.5px' }}>{availableSkills.length} skills available · <span style={{ color: 'rgba(212,175,55,0.6)' }}>public/assets/storyboard/skills/</span></p>
-                </div>
-              </div>
-              <button type="button" onClick={() => setShowSkillsStore(false)} style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '0.5rem', color: 'rgba(255,255,255,0.5)', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: '1.1rem', transition: 'all 0.2s' }}>✕</button>
-            </div>
-
-            {/* Skills Grid */}
-            <div style={{ flex: 1, overflowY: 'auto', padding: '1.5rem 2rem' }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.2rem' }}>
-                <p style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.35)', textTransform: 'uppercase', letterSpacing: '1.5px', fontWeight: 600, margin: 0 }}>Available Skills</p>
-                {(() => { const totalPages = availableSkills.length <= 5 ? 1 : 1 + Math.ceil((availableSkills.length - 5) / 6); return totalPages > 1 ? (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.7rem' }}>
-                    <button type="button" onClick={() => setSkillsPage(Math.max(0, skillsPage - 1))} disabled={skillsPage === 0} style={{ background: 'none', border: 'none', cursor: skillsPage === 0 ? 'default' : 'pointer', padding: '2px', opacity: skillsPage === 0 ? 0.15 : 0.5, transition: 'opacity 0.2s' }}>
-                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round"><polyline points="15 18 9 12 15 6" /></svg>
-                    </button>
-                    {Array.from({ length: totalPages }).map((_, i) => (
-                      <button key={i} type="button" onClick={() => setSkillsPage(i)} style={{ width: '9px', height: '9px', borderRadius: '50%', border: 'none', background: i === skillsPage ? 'var(--gold)' : 'rgba(255,255,255,0.18)', boxShadow: i === skillsPage ? '0 0 8px rgba(212,175,55,0.6)' : 'none', cursor: 'pointer', padding: 0, transition: 'all 0.25s' }} />
-                    ))}
-                    <button type="button" onClick={() => setSkillsPage(Math.min(totalPages - 1, skillsPage + 1))} disabled={skillsPage >= totalPages - 1} style={{ background: 'none', border: 'none', cursor: skillsPage >= totalPages - 1 ? 'default' : 'pointer', padding: '2px', opacity: skillsPage >= totalPages - 1 ? 0.15 : 0.5, transition: 'opacity 0.2s' }}>
-                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round"><polyline points="9 18 15 12 9 6" /></svg>
-                    </button>
+          <div className="skills-store-backdrop" onClick={() => setShowSkillsStore(false)} style={{ position: 'fixed', inset: 0, zIndex: 9999, background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', display: 'flex', alignItems: 'center', justifyContent: 'center', animation: 'fadeIn 0.3s ease' }}>
+            <div className="skills-store-modal" onClick={(e) => e.stopPropagation()} style={{ width: 'min(90vw, 900px)', maxHeight: '85vh', background: 'linear-gradient(145deg, rgba(20,20,30,0.95), rgba(10,10,20,0.98))', border: '1px solid rgba(212,175,55,0.15)', borderRadius: '1.5rem', overflow: 'hidden', display: 'flex', flexDirection: 'column', boxShadow: '0 30px 80px rgba(0,0,0,0.6), 0 0 40px rgba(212,175,55,0.08), inset 0 1px 0 rgba(255,255,255,0.05)' }}>
+              {/* Header */}
+              <div style={{ padding: '1.5rem 2rem', borderBottom: '1px solid rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
+                  <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'linear-gradient(135deg, rgba(212,175,55,0.2), rgba(248,192,64,0.1))', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#d4af37" strokeWidth="1.5" strokeLinecap="round"><path d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7z" /><line x1="9" y1="21" x2="15" y2="21" /><line x1="10" y1="23" x2="14" y2="23" /></svg>
                   </div>
-                ) : null })()}
+                  <div>
+                    <h2 style={{ margin: 0, fontSize: '1.2rem', color: 'white', fontWeight: 700, letterSpacing: '-0.3px' }}>Skills Store</h2>
+                    <p style={{ margin: 0, fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)', letterSpacing: '0.5px' }}>{availableSkills.length} skills available · <span style={{ color: 'rgba(212,175,55,0.6)' }}>public/assets/storyboard/skills/</span></p>
+                  </div>
+                </div>
+                <button type="button" onClick={() => setShowSkillsStore(false)} style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '0.5rem', color: 'rgba(255,255,255,0.5)', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: '1.1rem', transition: 'all 0.2s' }}>✕</button>
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', marginBottom: '2rem' }}>
-                {(() => { const p1Count = Math.min(availableSkills.length, 5); const pageSkills = skillsPage === 0 ? availableSkills.slice(0, p1Count) : availableSkills.slice(p1Count + (skillsPage - 1) * 6, p1Count + skillsPage * 6); return pageSkills })().map((skill, sliceIdx) => {
-                  const idx = skillsPage === 0 ? sliceIdx : Math.min(availableSkills.length, 5) + (skillsPage - 1) * 6 + sliceIdx
-                  const isSelected = draft.skillHint ? draft.skillHint.split(' | ').includes(skill.name) : false
-                  const ic = getIcon(skill.iconIdx ?? idx)
-                  return (
-                    <div key={skill.id} className="skill-card-wrap" style={{ position: 'relative' }}
-                      onMouseEnter={(e) => { const el = e.currentTarget; el.querySelector<HTMLElement>('.skill-actions')!.style.opacity = '1' }}
-                      onMouseLeave={(e) => { const el = e.currentTarget; el.querySelector<HTMLElement>('.skill-actions')!.style.opacity = '0' }}>
-                      {/* Delete + Edit overlay */}
-                      <div className="skill-actions" style={{ position: 'absolute', top: '0.4rem', right: '0.4rem', display: 'flex', gap: '0.3rem', zIndex: 2, opacity: 0, transition: 'opacity 0.2s' }}>
-                        <button type="button" title="Edit" onClick={async (e) => { e.stopPropagation(); setEditingSkillId(skill.id); setNewSkillTitle(skill.name || ''); try { const r = await fetch('/api/skills/read-md', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: skill.id }) }); const d = await r.json(); setNewSkillText(d.content || skill.fullText || skill.description || '') } catch { setNewSkillText(skill.fullText || skill.description || '') } }} style={{ width: '22px', height: '22px', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.15)', background: 'rgba(0,0,0,0.6)', color: 'rgba(255,255,255,0.6)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0, fontSize: '0.65rem' }}>
-                          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+
+              {/* Skills Grid */}
+              <div style={{ flex: 1, overflowY: 'auto', padding: '1.5rem 2rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.2rem' }}>
+                  <p style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.35)', textTransform: 'uppercase', letterSpacing: '1.5px', fontWeight: 600, margin: 0 }}>Available Skills</p>
+                  {(() => {
+                    const totalPages = availableSkills.length <= 5 ? 1 : 1 + Math.ceil((availableSkills.length - 5) / 6); return totalPages > 1 ? (
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.7rem' }}>
+                        <button type="button" onClick={() => setSkillsPage(Math.max(0, skillsPage - 1))} disabled={skillsPage === 0} style={{ background: 'none', border: 'none', cursor: skillsPage === 0 ? 'default' : 'pointer', padding: '2px', opacity: skillsPage === 0 ? 0.15 : 0.5, transition: 'opacity 0.2s' }}>
+                          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round"><polyline points="15 18 9 12 15 6" /></svg>
                         </button>
-                        <button type="button" title="Remove" onClick={(e) => { e.stopPropagation(); setAvailableSkills(prev => prev.filter(s => s.id !== skill.id)); if (draft.skillHint) { const remaining = draft.skillHint.split(' | ').filter(n => n !== skill.name).join(' | '); onDraftChange({ ...draft, skillHint: remaining }) } }} style={{ width: '22px', height: '22px', borderRadius: '6px', border: '1px solid rgba(255,80,80,0.3)', background: 'rgba(0,0,0,0.6)', color: 'rgba(255,80,80,0.7)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0, fontSize: '0.75rem' }}>
-                          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                        {Array.from({ length: totalPages }).map((_, i) => (
+                          <button key={i} type="button" onClick={() => setSkillsPage(i)} style={{ width: '9px', height: '9px', borderRadius: '50%', border: 'none', background: i === skillsPage ? 'var(--gold)' : 'rgba(255,255,255,0.18)', boxShadow: i === skillsPage ? '0 0 8px rgba(212,175,55,0.6)' : 'none', cursor: 'pointer', padding: 0, transition: 'all 0.25s' }} />
+                        ))}
+                        <button type="button" onClick={() => setSkillsPage(Math.min(totalPages - 1, skillsPage + 1))} disabled={skillsPage >= totalPages - 1} style={{ background: 'none', border: 'none', cursor: skillsPage >= totalPages - 1 ? 'default' : 'pointer', padding: '2px', opacity: skillsPage >= totalPages - 1 ? 0.15 : 0.5, transition: 'opacity 0.2s' }}>
+                          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round"><polyline points="9 18 15 12 9 6" /></svg>
                         </button>
                       </div>
-                      <button type="button" onClick={() => { const current = draft.skillHint ? draft.skillHint.split(' | ') : []; if (current.includes(skill.name)) { onDraftChange({ ...draft, skillHint: current.filter(n => n !== skill.name).join(' | ') }) } else { onDraftChange({ ...draft, skillHint: [...current, skill.name].join(' | ') }) } }} style={{ width: '100%', background: isSelected ? `rgba(${parseInt(ic.color.slice(1,3),16)},${parseInt(ic.color.slice(3,5),16)},${parseInt(ic.color.slice(5,7),16)},0.08)` : 'rgba(255,255,255,0.015)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)', border: `1px solid ${isSelected ? ic.color + '66' : 'rgba(255,255,255,0.06)'}`, borderRadius: '1rem', padding: '1.4rem 1rem', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.7rem', transition: 'all 0.35s cubic-bezier(0.4,0,0.2,1)', textAlign: 'center', position: 'relative', overflow: 'hidden', boxShadow: isSelected ? `0 0 24px ${ic.color}33, 0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08)` : '0 2px 12px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.04)', transform: isSelected ? 'scale(1.04)' : 'scale(1)' }}>
-                        {/* Floating light effect */}
-                        <div style={{ position: 'absolute', bottom: '-30px', left: '50%', transform: 'translateX(-50%)', width: '80%', height: '60px', borderRadius: '50%', background: `radial-gradient(ellipse, ${ic.color}18, transparent 70%)`, pointerEvents: 'none', filter: 'blur(8px)' }} />
-                        {/* SVG Icon */}
-                        <div style={{ width: isSelected ? '44px' : '36px', height: isSelected ? '44px' : '36px', transition: 'all 0.3s ease', filter: isSelected ? `drop-shadow(0 0 10px ${ic.color})` : 'none' }}>
-                          <svg viewBox="0 0 24 24" fill="none" stroke={ic.color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ width: '100%', height: '100%' }}><path d={ic.d} /></svg>
+                    ) : null
+                  })()}
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', marginBottom: '2rem' }}>
+                  {(() => { const p1Count = Math.min(availableSkills.length, 5); const pageSkills = skillsPage === 0 ? availableSkills.slice(0, p1Count) : availableSkills.slice(p1Count + (skillsPage - 1) * 6, p1Count + skillsPage * 6); return pageSkills })().map((skill, sliceIdx) => {
+                    const idx = skillsPage === 0 ? sliceIdx : Math.min(availableSkills.length, 5) + (skillsPage - 1) * 6 + sliceIdx
+                    const isSelected = draft.skillHint ? draft.skillHint.split(' | ').includes(skill.name) : false
+                    const ic = getIcon(skill.iconIdx ?? idx)
+                    return (
+                      <div key={skill.id} className="skill-card-wrap" style={{ position: 'relative' }}
+                        onMouseEnter={(e) => { const el = e.currentTarget; el.querySelector<HTMLElement>('.skill-actions')!.style.opacity = '1' }}
+                        onMouseLeave={(e) => { const el = e.currentTarget; el.querySelector<HTMLElement>('.skill-actions')!.style.opacity = '0' }}>
+                        {/* Delete + Edit overlay */}
+                        <div className="skill-actions" style={{ position: 'absolute', top: '0.4rem', right: '0.4rem', display: 'flex', gap: '0.3rem', zIndex: 2, opacity: 0, transition: 'opacity 0.2s' }}>
+                          <button type="button" title="Edit" onClick={async (e) => { e.stopPropagation(); setEditingSkillId(skill.id); setNewSkillTitle(skill.name || ''); try { const r = await fetch('/api/skills/read-md', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: skill.id }) }); const d = await r.json(); setNewSkillText(d.content || skill.fullText || skill.description || '') } catch { setNewSkillText(skill.fullText || skill.description || '') } }} style={{ width: '22px', height: '22px', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.15)', background: 'rgba(0,0,0,0.6)', color: 'rgba(255,255,255,0.6)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0, fontSize: '0.65rem' }}>
+                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" /><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" /></svg>
+                          </button>
+                          <button type="button" title="Remove" onClick={(e) => { e.stopPropagation(); setAvailableSkills(prev => prev.filter(s => s.id !== skill.id)); if (draft.skillHint) { const remaining = draft.skillHint.split(' | ').filter(n => n !== skill.name).join(' | '); onDraftChange({ ...draft, skillHint: remaining }) } }} style={{ width: '22px', height: '22px', borderRadius: '6px', border: '1px solid rgba(255,80,80,0.3)', background: 'rgba(0,0,0,0.6)', color: 'rgba(255,80,80,0.7)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0, fontSize: '0.75rem' }}>
+                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
+                          </button>
                         </div>
-                        <div style={{ fontSize: '0.82rem', fontWeight: 600, color: isSelected ? 'white' : 'rgba(255,255,255,0.75)', lineHeight: 1.3, letterSpacing: '-0.2px' }}>{skill.name}</div>
-                        <div style={{ fontSize: '0.68rem', color: 'rgba(255,255,255,0.3)', lineHeight: 1.4, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' as any, overflow: 'hidden' }}>{skill.description?.substring(0, 80) || ''}</div>
-                        {isSelected && <div style={{ position: 'absolute', top: '0.5rem', left: '0.5rem' }}><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={ic.color} strokeWidth="2.5"><polyline points="20 6 9 17 4 12" /></svg></div>}
-                      </button>
-                    </div>
-                  )
-                })}
-                {/* Upload from computer — always visible on page 1 only */}
-                {skillsPage === 0 && (
-                <label style={{ background: 'rgba(255,255,255,0.015)', backdropFilter: 'blur(16px)', border: '1px dashed rgba(255,255,255,0.1)', borderRadius: '1rem', padding: '1.4rem 1rem', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.7rem', transition: 'all 0.3s', textAlign: 'center' }}>
-                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.3)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                  <div style={{ fontSize: '0.82rem', fontWeight: 600, color: 'rgba(255,255,255,0.35)' }}>Upload Skill</div>
-                  <div style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.2)' }}>.json or .md</div>
-                  <input type="file" accept=".json,.md" style={{ display: 'none' }} onChange={(e) => {
-                    const file = e.target.files?.[0]
-                    if (file) {
-                      const reader = new FileReader()
-                      reader.onload = () => {
-                        try {
-                          if (file.name.endsWith('.json')) {
-                            const skill = JSON.parse(reader.result as string)
-                            skill.iconIdx = getNewIconIdx()
-                            fetch('/api/skills/save', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(skill) }).then(() => { setAvailableSkills(prev => [...prev, skill]); onDraftChange({ ...draft, skillHint: skill.name || file.name }); setShowSkillsStore(false) })
-                          } else { onDraftChange({ ...draft, skillHint: file.name }); setShowSkillsStore(false) }
-                        } catch { onDraftChange({ ...draft, skillHint: file.name }); setShowSkillsStore(false) }
-                      }
-                      reader.readAsText(file)
-                    }
-                  }} />
-                </label>
-                )}
-              </div>
-
-              {/* Create / Edit Skill Section */}
-              <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '1.5rem' }}>
-                <p style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.35)', textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: '0.8rem', fontWeight: 600 }}>
-                  {editingSkillId ? 'Edit Skill' : 'Create New Skill'}
-                  {editingSkillId && <button type="button" onClick={() => { setEditingSkillId(null); setNewSkillTitle(''); setNewSkillText('') }} style={{ marginLeft: '0.8rem', background: 'none', border: 'none', color: 'rgba(255,255,255,0.3)', cursor: 'pointer', fontSize: '0.7rem' }}>Cancel</button>}
-                </p>
-                <input value={newSkillTitle} onChange={(e) => setNewSkillTitle(e.target.value)} placeholder="Skill title (required)" style={{ width: '100%', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '0.5rem', color: 'white', padding: '0.6rem 1rem', fontSize: '0.85rem', marginBottom: '0.5rem', outline: 'none', fontFamily: 'inherit' }} />
-                <textarea value={newSkillText} onChange={(e) => setNewSkillText(e.target.value)} placeholder="Step-by-step instructions for the agent..." style={{ width: '100%', minHeight: '90px', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '0.75rem', color: 'white', padding: '0.8rem 1rem', fontSize: '0.82rem', resize: 'vertical', fontFamily: 'inherit', lineHeight: 1.5, outline: 'none' }} />
-                <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.6rem', flexWrap: 'wrap', alignItems: 'center' }}>
-                  {/* Mic */}
-                  <button type="button" onClick={() => {
-                    if (skillRecording) { skillRecognitionRef.current?.stop(); setSkillRecording(false); return }
-                    const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition
-                    if (!SR) return
-                    const r = new SR(); r.continuous = true; r.interimResults = true; r.lang = 'en-US'
-                    r.onresult = (ev: any) => { let t = ''; for (let i = 0; i < ev.results.length; i++) t += ev.results[i][0].transcript; setNewSkillText(t) }
-                    r.onerror = () => setSkillRecording(false); r.onend = () => setSkillRecording(false)
-                    r.start(); skillRecognitionRef.current = r; setSkillRecording(true)
-                  }} style={{ padding: '0.45rem 0.8rem', borderRadius: '0.5rem', border: `1px solid ${skillRecording ? 'rgba(255,64,64,0.5)' : 'rgba(255,255,255,0.1)'}`, background: skillRecording ? 'rgba(255,64,64,0.12)' : 'rgba(255,255,255,0.03)', color: skillRecording ? '#ff6464' : 'rgba(255,255,255,0.55)', cursor: 'pointer', fontSize: '0.78rem', display: 'flex', alignItems: 'center', gap: '0.4rem', transition: 'all 0.2s' }}>
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/></svg>
-                    {skillRecording ? 'Stop' : 'Dictate'}
-                  </button>
-                  {/* AI Improve */}
-                  <button type="button" disabled={aiImproving || !newSkillText.trim()} onClick={async () => {
-                    if (!newSkillText.trim()) return
-                    setAiImproving(true)
-                    try {
-                      const { sendToGemini } = await import('./gemini-agent')
-                      const result = await sendToGemini(`Improve this skill description for an AI agent. Make it clear, well-structured with step-by-step instructions, and professional. Keep all technical details. Return ONLY the improved text:\n\n${newSkillText}`)
-                      if (result.text) setNewSkillText(result.text)
-                    } catch {} finally { setAiImproving(false) }
-                  }} style={{ padding: '0.45rem 0.8rem', borderRadius: '0.5rem', border: '1px solid rgba(156,64,255,0.25)', background: 'rgba(156,64,255,0.06)', color: aiImproving ? 'rgba(200,160,255,0.5)' : 'rgba(200,160,255,0.75)', cursor: aiImproving ? 'wait' : 'pointer', fontSize: '0.78rem', display: 'flex', alignItems: 'center', gap: '0.4rem', transition: 'all 0.2s' }}>
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg>
-                    {aiImproving ? 'Improving...' : 'Improve with AI'}
-                  </button>
-                  {/* Spacer */}
-                  <div style={{ flex: 1 }} />
-                  {/* Edit mode: Save + Duplicate */}
-                  {editingSkillId ? (<>
-                    <button type="button" disabled={!newSkillTitle.trim()} onClick={async () => {
-                      if (!newSkillTitle.trim()) return
-                      const updated = { ...availableSkills.find(s => s.id === editingSkillId), name: newSkillTitle, description: newSkillText.substring(0, 200), fullText: newSkillText }
-                      await fetch('/api/skills/save', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(updated) })
-                      setAvailableSkills(prev => prev.map(s => s.id === editingSkillId ? updated : s))
-                      setEditingSkillId(null); setNewSkillTitle(''); setNewSkillText('')
-                    }} style={{ padding: '0.45rem 0.8rem', borderRadius: '0.5rem', border: '1px solid rgba(64,156,255,0.3)', background: 'rgba(64,156,255,0.08)', color: !newSkillTitle.trim() ? 'rgba(64,156,255,0.3)' : 'rgba(120,180,255,0.85)', cursor: !newSkillTitle.trim() ? 'not-allowed' : 'pointer', fontSize: '0.78rem', display: 'flex', alignItems: 'center', gap: '0.4rem', transition: 'all 0.2s' }}>
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/></svg>
-                      Save
-                    </button>
-                    <button type="button" disabled={!newSkillTitle.trim()} onClick={async () => {
-                      if (!newSkillTitle.trim()) return
-                      const dup = { id: `skill-custom-${Date.now()}`, name: newSkillTitle, description: newSkillText.substring(0, 200), fullText: newSkillText, iconIdx: getNewIconIdx(), createdAt: new Date().toISOString() }
-                      await fetch('/api/skills/save', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(dup) })
-                      setAvailableSkills(prev => [...prev, dup]); onDraftChange({ ...draft, skillHint: newSkillTitle })
-                      setEditingSkillId(null); setNewSkillTitle(''); setNewSkillText('')
-                    }} style={{ padding: '0.45rem 0.8rem', borderRadius: '0.5rem', border: '1px solid rgba(255,200,64,0.3)', background: 'rgba(255,200,64,0.08)', color: !newSkillTitle.trim() ? 'rgba(255,200,64,0.3)' : 'rgba(255,220,100,0.85)', cursor: !newSkillTitle.trim() ? 'not-allowed' : 'pointer', fontSize: '0.78rem', display: 'flex', alignItems: 'center', gap: '0.4rem', transition: 'all 0.2s' }}>
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-                      Duplicate
-                    </button>
-                  </>) : (
-                    <button type="button" disabled={!newSkillTitle.trim() || !newSkillText.trim()} onClick={async () => {
-                      if (!newSkillTitle.trim() || !newSkillText.trim()) return
-                      const newSkill = { id: `skill-custom-${Date.now()}`, name: newSkillTitle.trim(), description: newSkillText.substring(0, 200), fullText: newSkillText, iconIdx: getNewIconIdx(), createdAt: new Date().toISOString() }
-                      await fetch('/api/skills/save', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(newSkill) })
-                      setAvailableSkills(prev => [...prev, newSkill]); onDraftChange({ ...draft, skillHint: newSkillTitle.trim() })
-                      setNewSkillText(''); setNewSkillTitle(''); setShowSkillsStore(false)
-                    }} style={{ padding: '0.45rem 0.8rem', borderRadius: '0.5rem', border: `1px solid ${(!newSkillTitle.trim() || !newSkillText.trim()) ? 'rgba(64,255,156,0.15)' : 'rgba(64,255,156,0.3)'}`, background: 'rgba(64,255,156,0.06)', color: (!newSkillTitle.trim() || !newSkillText.trim()) ? 'rgba(100,255,180,0.3)' : 'rgba(100,255,180,0.8)', cursor: (!newSkillTitle.trim() || !newSkillText.trim()) ? 'not-allowed' : 'pointer', fontSize: '0.78rem', display: 'flex', alignItems: 'center', gap: '0.4rem', transition: 'all 0.2s' }}>
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                      Create & Attach
-                    </button>
+                        <button type="button" onClick={() => { const current = draft.skillHint ? draft.skillHint.split(' | ') : []; if (current.includes(skill.name)) { onDraftChange({ ...draft, skillHint: current.filter(n => n !== skill.name).join(' | ') }) } else { onDraftChange({ ...draft, skillHint: [...current, skill.name].join(' | ') }) } }} style={{ width: '100%', minHeight: '140px', background: isSelected ? `rgba(${parseInt(ic.color.slice(1, 3), 16)},${parseInt(ic.color.slice(3, 5), 16)},${parseInt(ic.color.slice(5, 7), 16)},0.08)` : 'rgba(255,255,255,0.015)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)', border: `1px solid ${isSelected ? ic.color + '66' : 'rgba(255,255,255,0.06)'}`, borderRadius: '1rem', padding: '1.4rem 1rem', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.7rem', transition: 'all 0.35s cubic-bezier(0.4,0,0.2,1)', textAlign: 'center', position: 'relative', overflow: 'hidden', boxShadow: isSelected ? `0 0 24px ${ic.color}33, 0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08)` : '0 2px 12px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.04)', transform: isSelected ? 'scale(1.04)' : 'scale(1)' }}>
+                          {/* Floating light effect */}
+                          <div style={{ position: 'absolute', bottom: '-30px', left: '50%', transform: 'translateX(-50%)', width: '80%', height: '60px', borderRadius: '50%', background: `radial-gradient(ellipse, ${ic.color}18, transparent 70%)`, pointerEvents: 'none', filter: 'blur(8px)' }} />
+                          {/* SVG Icon */}
+                          <div style={{ width: isSelected ? '44px' : '36px', height: isSelected ? '44px' : '36px', transition: 'all 0.3s ease', filter: isSelected ? `drop-shadow(0 0 10px ${ic.color})` : 'none' }}>
+                            <svg viewBox="0 0 24 24" fill="none" stroke={ic.color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ width: '100%', height: '100%' }}><path d={ic.d} /></svg>
+                          </div>
+                          <div style={{ fontSize: '0.78rem', fontWeight: 600, color: isSelected ? 'white' : 'rgba(255,255,255,0.75)', lineHeight: 1.3, letterSpacing: '-0.2px', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', maxWidth: '100%' }}>{skill.name}</div>
+                          <div style={{ fontSize: '0.68rem', color: 'rgba(255,255,255,0.3)', lineHeight: 1.4, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{skill.description?.substring(0, 80) || ''}</div>
+                          {isSelected && <div style={{ position: 'absolute', top: '0.5rem', left: '0.5rem' }}><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={ic.color} strokeWidth="2.5"><polyline points="20 6 9 17 4 12" /></svg></div>}
+                        </button>
+                      </div>
+                    )
+                  })}
+                  {/* Upload from computer — always visible on page 1 only */}
+                  {skillsPage === 0 && (
+                    <label style={{ background: 'rgba(255,255,255,0.015)', backdropFilter: 'blur(16px)', border: '1px dashed rgba(255,255,255,0.1)', borderRadius: '1rem', padding: '1.4rem 1rem', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.7rem', transition: 'all 0.3s', textAlign: 'center' }}>
+                      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.3)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="17 8 12 3 7 8" /><line x1="12" y1="3" x2="12" y2="15" /></svg>
+                      <div style={{ fontSize: '0.82rem', fontWeight: 600, color: 'rgba(255,255,255,0.35)' }}>Upload Skills</div>
+                      <div style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.2)' }}>.json or .md (multiple)</div>
+                      <input type="file" accept=".json,.md" multiple style={{ display: 'none' }} onChange={(e) => {
+                        const files = e.target.files; if (!files) return;
+                        const names: string[] = [];
+                        Array.from(files).forEach(file => {
+                          const reader = new FileReader()
+                          reader.onload = () => {
+                            try {
+                              if (file.name.endsWith('.json')) {
+                                const skill = JSON.parse(reader.result as string)
+                                skill.iconIdx = getNewIconIdx()
+                                fetch('/api/skills/save', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(skill) }).then(() => { setAvailableSkills(prev => [...prev, skill]); names.push(skill.name || file.name); })
+                              } else { names.push(file.name); }
+                            } catch { names.push(file.name); }
+                          }
+                          reader.readAsText(file)
+                        })
+                      }} />
+                    </label>
                   )}
+                </div>
+
+                {/* Attach Selected button — visible when skills are selected */}
+                {draft.skillHint && (
+                  <div style={{ display: 'flex', justifyContent: 'center', padding: '0.8rem 0' }}>
+                    <button type="button" onClick={() => setShowSkillsStore(false)} style={{ padding: '0.6rem 2rem', borderRadius: '0.5rem', border: '1.5px solid rgba(96,165,250,0.5)', background: 'transparent', color: 'rgba(96,165,250,0.95)', fontSize: '0.82rem', fontWeight: 600, cursor: 'pointer', letterSpacing: '0.03em' }}>
+                      Attach Selected ({draft.skillHint.split(' | ').length})
+                    </button>
+                  </div>
+                )}
+
+                {/* Create / Edit Skill Section */}
+                <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '1.5rem' }}>
+                  <p style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.35)', textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: '0.8rem', fontWeight: 600 }}>
+                    {editingSkillId ? 'Edit Skill' : 'Create New Skill'}
+                    {editingSkillId && <button type="button" onClick={() => { setEditingSkillId(null); setNewSkillTitle(''); setNewSkillText('') }} style={{ marginLeft: '0.8rem', background: 'none', border: 'none', color: 'rgba(255,255,255,0.3)', cursor: 'pointer', fontSize: '0.7rem' }}>Cancel</button>}
+                  </p>
+                  <input value={newSkillTitle} onChange={(e) => setNewSkillTitle(e.target.value)} placeholder="Skill title (required)" style={{ width: '100%', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '0.5rem', color: 'white', padding: '0.6rem 1rem', fontSize: '0.85rem', marginBottom: '0.5rem', outline: 'none', fontFamily: 'inherit' }} />
+                  <textarea value={newSkillText} onChange={(e) => setNewSkillText(e.target.value)} placeholder="Step-by-step instructions for the agent..." style={{ width: '100%', minHeight: '90px', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '0.75rem', color: 'white', padding: '0.8rem 1rem', fontSize: '0.82rem', resize: 'vertical', fontFamily: 'inherit', lineHeight: 1.5, outline: 'none' }} />
+                  <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.6rem', flexWrap: 'wrap', alignItems: 'center' }}>
+                    {/* Mic */}
+                    <button type="button" onClick={() => {
+                      if (skillRecording) { skillRecognitionRef.current?.stop(); setSkillRecording(false); return }
+                      const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition
+                      if (!SR) return
+                      const r = new SR(); r.continuous = true; r.interimResults = true; r.lang = 'en-US'
+                      r.onresult = (ev: any) => { let t = ''; for (let i = 0; i < ev.results.length; i++) t += ev.results[i][0].transcript; setNewSkillText(t) }
+                      r.onerror = () => setSkillRecording(false); r.onend = () => setSkillRecording(false)
+                      r.start(); skillRecognitionRef.current = r; setSkillRecording(true)
+                    }} style={{ padding: '0.45rem 0.8rem', borderRadius: '0.5rem', border: `1px solid ${skillRecording ? 'rgba(255,64,64,0.5)' : 'rgba(255,255,255,0.1)'}`, background: skillRecording ? 'rgba(255,64,64,0.12)' : 'rgba(255,255,255,0.03)', color: skillRecording ? '#ff6464' : 'rgba(255,255,255,0.55)', cursor: 'pointer', fontSize: '0.78rem', display: 'flex', alignItems: 'center', gap: '0.4rem', transition: 'all 0.2s' }}>
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" /><path d="M19 10v2a7 7 0 0 1-14 0v-2" /><line x1="12" y1="19" x2="12" y2="23" /></svg>
+                      {skillRecording ? 'Stop' : 'Dictate'}
+                    </button>
+                    {/* AI Improve */}
+                    <button type="button" disabled={aiImproving || !newSkillText.trim()} onClick={async () => {
+                      if (!newSkillText.trim()) return
+                      setAiImproving(true)
+                      try {
+                        const { sendToGemini } = await import('./gemini-agent')
+                        const result = await sendToGemini(`Improve this skill description for an AI agent. Make it clear, well-structured with step-by-step instructions, and professional. Keep all technical details. Return ONLY the improved text:\n\n${newSkillText}`)
+                        if (result.text) setNewSkillText(result.text)
+                      } catch { } finally { setAiImproving(false) }
+                    }} style={{ padding: '0.45rem 0.8rem', borderRadius: '0.5rem', border: '1px solid rgba(156,64,255,0.25)', background: 'rgba(156,64,255,0.06)', color: aiImproving ? 'rgba(200,160,255,0.5)' : 'rgba(200,160,255,0.75)', cursor: aiImproving ? 'wait' : 'pointer', fontSize: '0.78rem', display: 'flex', alignItems: 'center', gap: '0.4rem', transition: 'all 0.2s' }}>
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14l-5-4.87 6.91-1.01L12 2z" /></svg>
+                      {aiImproving ? 'Improving...' : 'Improve with AI'}
+                    </button>
+                    {/* Spacer */}
+                    <div style={{ flex: 1 }} />
+                    {/* Edit mode: Save + Duplicate */}
+                    {editingSkillId ? (<>
+                      <button type="button" disabled={!newSkillTitle.trim()} onClick={async () => {
+                        if (!newSkillTitle.trim()) return
+                        const updated = { ...availableSkills.find(s => s.id === editingSkillId), name: newSkillTitle, description: newSkillText.substring(0, 200), fullText: newSkillText }
+                        await fetch('/api/skills/save', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(updated) })
+                        setAvailableSkills(prev => prev.map(s => s.id === editingSkillId ? updated : s))
+                        setEditingSkillId(null); setNewSkillTitle(''); setNewSkillText('')
+                      }} style={{ padding: '0.45rem 0.8rem', borderRadius: '0.5rem', border: '1px solid rgba(64,156,255,0.3)', background: 'rgba(64,156,255,0.08)', color: !newSkillTitle.trim() ? 'rgba(64,156,255,0.3)' : 'rgba(120,180,255,0.85)', cursor: !newSkillTitle.trim() ? 'not-allowed' : 'pointer', fontSize: '0.78rem', display: 'flex', alignItems: 'center', gap: '0.4rem', transition: 'all 0.2s' }}>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" /><polyline points="17 21 17 13 7 13 7 21" /></svg>
+                        Save
+                      </button>
+                      <button type="button" disabled={!newSkillTitle.trim()} onClick={async () => {
+                        const slug = newSkillTitle.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').substring(0, 40)
+                        const dup = { id: `skill-${slug || 'custom'}-${Date.now()}`, name: newSkillTitle, description: newSkillText.substring(0, 200), fullText: newSkillText, iconIdx: getNewIconIdx(), createdAt: new Date().toISOString() }
+                        await fetch('/api/skills/save', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(dup) })
+                        setAvailableSkills(prev => [...prev, dup]); onDraftChange({ ...draft, skillHint: newSkillTitle })
+                        setEditingSkillId(null); setNewSkillTitle(''); setNewSkillText('')
+                      }} style={{ padding: '0.45rem 0.8rem', borderRadius: '0.5rem', border: '1px solid rgba(255,200,64,0.3)', background: 'rgba(255,200,64,0.08)', color: !newSkillTitle.trim() ? 'rgba(255,200,64,0.3)' : 'rgba(255,220,100,0.85)', cursor: !newSkillTitle.trim() ? 'not-allowed' : 'pointer', fontSize: '0.78rem', display: 'flex', alignItems: 'center', gap: '0.4rem', transition: 'all 0.2s' }}>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" /><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" /></svg>
+                        Duplicate
+                      </button>
+                    </>) : (
+                      <button type="button" disabled={!newSkillTitle.trim() || !newSkillText.trim()} onClick={async () => {
+                        if (!newSkillTitle.trim() || !newSkillText.trim()) return
+                        const slug = newSkillTitle.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').substring(0, 40)
+                        const newSkill = { id: `skill-${slug || 'custom'}-${Date.now()}`, name: newSkillTitle.trim(), description: newSkillText.substring(0, 200), fullText: newSkillText, iconIdx: getNewIconIdx(), createdAt: new Date().toISOString() }
+                        await fetch('/api/skills/save', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(newSkill) })
+                        setAvailableSkills(prev => [...prev, newSkill]); onDraftChange({ ...draft, skillHint: newSkillTitle.trim() })
+                        setNewSkillText(''); setNewSkillTitle(''); setShowSkillsStore(false)
+                      }} style={{ padding: '0.45rem 0.8rem', borderRadius: '0.5rem', border: `1px solid ${(!newSkillTitle.trim() || !newSkillText.trim()) ? 'rgba(64,255,156,0.15)' : 'rgba(64,255,156,0.3)'}`, background: 'rgba(64,255,156,0.06)', color: (!newSkillTitle.trim() || !newSkillText.trim()) ? 'rgba(100,255,180,0.3)' : 'rgba(100,255,180,0.8)', cursor: (!newSkillTitle.trim() || !newSkillText.trim()) ? 'not-allowed' : 'pointer', fontSize: '0.78rem', display: 'flex', alignItems: 'center', gap: '0.4rem', transition: 'all 0.2s' }}>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
+                        Create & Attach
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      )
+        )
       })()}
       {/* PDF BOOK VIEWER */}
       {showPdfViewer && (
@@ -3668,7 +4966,7 @@ function AgentInbox({
             {/* Header */}
             <div style={{ padding: '1rem 1.5rem', borderBottom: '1px solid rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.8rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', minWidth: 'fit-content' }}>
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ff6040" strokeWidth="1.5"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ff6040" strokeWidth="1.5"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" /><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" /></svg>
                 <h2 style={{ margin: 0, fontSize: '1.1rem', color: 'white', fontWeight: 700 }}>Document Viewer</h2>
               </div>
               <div style={{ display: 'flex', gap: '0.3rem', flex: 1, overflowX: 'auto', padding: '0.2rem 0' }}>
@@ -3690,14 +4988,14 @@ function AgentInbox({
                       setPdfPages(pages.length > 0 ? pages : ['(No text content found in this PDF)'])
                     } catch (err: any) { console.error('PDF load error:', err); setPdfPages([`Error loading PDF: ${err?.message || err}`]) }
                   }} style={{ padding: '0.3rem 0.7rem', borderRadius: '0.5rem', border: `1px solid ${activePdf === doc.name ? 'rgba(255,96,64,0.4)' : 'rgba(255,255,255,0.06)'}`, background: activePdf === doc.name ? 'rgba(255,96,64,0.08)' : 'transparent', color: activePdf === doc.name ? '#ff6040' : 'rgba(255,255,255,0.5)', cursor: 'pointer', fontSize: '0.72rem', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: '0.3rem', transition: 'all 0.2s' }}>
-                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-                    {doc.name.replace(/\.(pdf|docx|pages)$/i,'').substring(0,20)}
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" /></svg>
+                    {doc.name.replace(/\.(pdf|docx|pages)$/i, '').substring(0, 20)}
                     {doc.pinned && <span onClick={(e) => { e.stopPropagation(); fetch('/api/docs/pin', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: doc.name, pinned: false }) }).then(() => setPdfDocs(prev => prev.map(d => d.name === doc.name ? { ...d, pinned: false } : d))) }} style={{ cursor: 'pointer', opacity: 0.5, fontSize: '0.65rem' }}>📌</span>}
                   </button>
                 ))}
               </div>
               <label style={{ padding: '0.4rem 0.8rem', borderRadius: '0.5rem', border: '1px solid rgba(64,255,156,0.25)', background: 'rgba(64,255,156,0.06)', color: 'rgba(100,255,180,0.8)', cursor: 'pointer', fontSize: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.35rem', whiteSpace: 'nowrap' }}>
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="17 8 12 3 7 8" /><line x1="12" y1="3" x2="12" y2="15" /></svg>
                 Upload
                 <input type="file" accept=".pdf,.docx,.pages" style={{ display: 'none' }} onChange={async (e) => {
                   const file = e.target.files?.[0]; if (!file) return
@@ -3726,25 +5024,25 @@ function AgentInbox({
                   const r = await fetch('/api/docs/list'); const d = await r.json(); setPdfDocs(d.docs || [])
                 }}>
                   <div style={{ flex: 1, background: 'rgba(255,255,255,0.008)', borderRight: '1px solid rgba(255,255,255,0.04)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <div style={{ opacity: 0.15 }}>{Array.from({length: 8}).map((_, i) => <div key={i} style={{ width: '70%', maxWidth: '120px', height: '3px', background: 'white', margin: '8px auto', borderRadius: '2px' }} />)}</div>
+                    <div style={{ opacity: 0.15 }}>{Array.from({ length: 8 }).map((_, i) => <div key={i} style={{ width: '70%', maxWidth: '120px', height: '3px', background: 'white', margin: '8px auto', borderRadius: '2px' }} />)}</div>
                   </div>
                   <div style={{ flex: 1, background: 'rgba(255,255,255,0.012)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: '1rem' }}>
-                    <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.12)" strokeWidth="1"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+                    <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.12)" strokeWidth="1"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" /><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" /></svg>
                     <p style={{ color: 'rgba(255,255,255,0.25)', fontSize: '0.88rem', textAlign: 'center', lineHeight: 1.6 }}>{pdfDocs.length === 0 ? 'Drag & drop a document\nor click Upload' : 'Select a document above'}</p>
                   </div>
                 </div>
               ) : (
                 <div style={{ flex: 1, display: 'flex' }}>
                   <div style={{ flex: 1, padding: '2rem 1.8rem', overflowY: 'auto', background: 'rgba(255,255,255,0.008)', borderRight: '1px solid rgba(255,255,255,0.04)', fontSize: '0.88rem', lineHeight: 1.85, color: 'rgba(255,255,255,0.75)', fontFamily: 'Georgia, serif', whiteSpace: 'pre-wrap', cursor: 'text', userSelect: 'text' }}
-                    onMouseUp={() => { const s = window.getSelection(); if (s?.toString().trim()) { const t = s.toString(), pt = pdfPages[pdfCurrentPage] || '', si = pt.indexOf(t); if (si > -1) setPdfMarkers(p => ({ ...p, [activePdf||'']: [...(p[activePdf||'']||[]), { page: pdfCurrentPage, color: activeMarkerColor, startIdx: si, endIdx: si + t.length }] })) } }}>
+                    onMouseUp={() => { const s = window.getSelection(); if (s?.toString().trim()) { const t = s.toString(), pt = pdfPages[pdfCurrentPage] || '', si = pt.indexOf(t); if (si > -1) setPdfMarkers(p => ({ ...p, [activePdf || '']: [...(p[activePdf || ''] || []), { page: pdfCurrentPage, color: activeMarkerColor, startIdx: si, endIdx: si + t.length }] })) } }}>
                     <div style={{ fontSize: '0.68rem', color: 'rgba(255,255,255,0.25)', marginBottom: '0.8rem', textTransform: 'uppercase', letterSpacing: '1.5px', fontFamily: 'sans-serif' }}>Page {pdfCurrentPage + 1}</div>
-                    {(() => { const text = pdfPages[pdfCurrentPage]||'', marks = (pdfMarkers[activePdf||'']||[]).filter(m => m.page === pdfCurrentPage); if (!marks.length) return text; let parts: any[] = [], le = 0; [...marks].sort((a,b) => a.startIdx-b.startIdx).forEach(m => { if (m.startIdx > le) parts.push(<span key={`t${le}`}>{text.slice(le, m.startIdx)}</span>); parts.push(<span key={`m${m.startIdx}`} style={{ background: m.color, color: '#000', borderRadius: '3px', padding: '0 3px', fontWeight: 600 }}>{text.slice(m.startIdx, m.endIdx)}</span>); le = m.endIdx }); if (le < text.length) parts.push(<span key="e">{text.slice(le)}</span>); return parts })()}
+                    {(() => { const text = pdfPages[pdfCurrentPage] || '', marks = (pdfMarkers[activePdf || ''] || []).filter(m => m.page === pdfCurrentPage); if (!marks.length) return text; let parts: any[] = [], le = 0;[...marks].sort((a, b) => a.startIdx - b.startIdx).forEach(m => { if (m.startIdx > le) parts.push(<span key={`t${le}`}>{text.slice(le, m.startIdx)}</span>); parts.push(<span key={`m${m.startIdx}`} style={{ background: m.color, color: '#000', borderRadius: '3px', padding: '0 3px', fontWeight: 600 }}>{text.slice(m.startIdx, m.endIdx)}</span>); le = m.endIdx }); if (le < text.length) parts.push(<span key="e">{text.slice(le)}</span>); return parts })()}
                   </div>
                   {pdfCurrentPage + 1 < pdfPages.length && (
                     <div style={{ flex: 1, padding: '2rem 1.8rem', overflowY: 'auto', background: 'rgba(255,255,255,0.015)', fontSize: '0.88rem', lineHeight: 1.85, color: 'rgba(255,255,255,0.75)', fontFamily: 'Georgia, serif', whiteSpace: 'pre-wrap', cursor: 'text', userSelect: 'text' }}
-                      onMouseUp={() => { const s = window.getSelection(); if (s?.toString().trim()) { const t = s.toString(), pt = pdfPages[pdfCurrentPage+1]||'', si = pt.indexOf(t); if (si > -1) setPdfMarkers(p => ({ ...p, [activePdf||'']: [...(p[activePdf||'']||[]), { page: pdfCurrentPage+1, color: activeMarkerColor, startIdx: si, endIdx: si + t.length }] })) } }}>
+                      onMouseUp={() => { const s = window.getSelection(); if (s?.toString().trim()) { const t = s.toString(), pt = pdfPages[pdfCurrentPage + 1] || '', si = pt.indexOf(t); if (si > -1) setPdfMarkers(p => ({ ...p, [activePdf || '']: [...(p[activePdf || ''] || []), { page: pdfCurrentPage + 1, color: activeMarkerColor, startIdx: si, endIdx: si + t.length }] })) } }}>
                       <div style={{ fontSize: '0.68rem', color: 'rgba(255,255,255,0.25)', marginBottom: '0.8rem', textTransform: 'uppercase', letterSpacing: '1.5px', fontFamily: 'sans-serif' }}>Page {pdfCurrentPage + 2}</div>
-                      {(() => { const text = pdfPages[pdfCurrentPage+1]||'', marks = (pdfMarkers[activePdf||'']||[]).filter(m => m.page === pdfCurrentPage+1); if (!marks.length) return text; let parts: any[] = [], le = 0; [...marks].sort((a,b) => a.startIdx-b.startIdx).forEach(m => { if (m.startIdx > le) parts.push(<span key={`t${le}`}>{text.slice(le, m.startIdx)}</span>); parts.push(<span key={`m${m.startIdx}`} style={{ background: m.color, color: '#000', borderRadius: '3px', padding: '0 3px', fontWeight: 600 }}>{text.slice(m.startIdx, m.endIdx)}</span>); le = m.endIdx }); if (le < text.length) parts.push(<span key="e">{text.slice(le)}</span>); return parts })()}
+                      {(() => { const text = pdfPages[pdfCurrentPage + 1] || '', marks = (pdfMarkers[activePdf || ''] || []).filter(m => m.page === pdfCurrentPage + 1); if (!marks.length) return text; let parts: any[] = [], le = 0;[...marks].sort((a, b) => a.startIdx - b.startIdx).forEach(m => { if (m.startIdx > le) parts.push(<span key={`t${le}`}>{text.slice(le, m.startIdx)}</span>); parts.push(<span key={`m${m.startIdx}`} style={{ background: m.color, color: '#000', borderRadius: '3px', padding: '0 3px', fontWeight: 600 }}>{text.slice(m.startIdx, m.endIdx)}</span>); le = m.endIdx }); if (le < text.length) parts.push(<span key="e">{text.slice(le)}</span>); return parts })()}
                     </div>
                   )}
                 </div>
@@ -3973,6 +5271,163 @@ function SceneResourcePanel({
   )
 }
 
+/* ═══════ Crop Tool Component ═══════ */
+function CropTool({ imageUrl, onApply, onClose }: { imageUrl: string; onApply: (croppedUrl: string) => void; onClose: () => void }) {
+  const containerRef = useRef<HTMLDivElement>(null)
+  const [imgSize, setImgSize] = useState({ w: 0, h: 0, natW: 0, natH: 0 })
+  const [crop, setCrop] = useState({ x: 0.1, y: 0.1, w: 0.8, h: 0.8 })
+  const [preset, setPreset] = useState<string>('Free')
+  const [dragging, setDragging] = useState<{ type: 'move' | 'n' | 's' | 'e' | 'w' | 'nw' | 'ne' | 'sw' | 'se'; startX: number; startY: number; startCrop: typeof crop } | null>(null)
+  const [isCropping, setIsCropping] = useState(false)
+  const imgRef = useRef<HTMLImageElement>(null)
+
+  const presets: { label: string; ratio: number | null }[] = [
+    { label: '16:9', ratio: 16 / 9 },
+    { label: '1:1', ratio: 1 },
+    { label: '9:16', ratio: 9 / 16 },
+    { label: '21:9', ratio: 21 / 9 },
+    { label: 'Free', ratio: null },
+  ]
+
+  const applyPreset = (ratio: number | null, label: string) => {
+    setPreset(label)
+    if (!ratio) return
+    if (imgSize.w <= 0 || imgSize.h <= 0) return  // guard division by zero
+    const imgAspect = imgSize.w / imgSize.h
+    let cw: number, ch: number
+    if (ratio > imgAspect) {
+      cw = 0.9; ch = (cw * imgSize.w) / (ratio * imgSize.h)
+    } else {
+      ch = 0.9; cw = (ch * imgSize.h * ratio) / imgSize.w
+    }
+    cw = Math.min(cw, 0.98); ch = Math.min(ch, 0.98)
+    setCrop({ x: (1 - cw) / 2, y: (1 - ch) / 2, w: cw, h: ch })
+  }
+
+  const handleMouseDown = (e: React.MouseEvent, type: typeof dragging extends null ? never : NonNullable<typeof dragging>['type']) => {
+    e.stopPropagation(); e.preventDefault()
+    setDragging({ type, startX: e.clientX, startY: e.clientY, startCrop: { ...crop } })
+  }
+
+  useEffect(() => {
+    if (!dragging) return
+    const onMove = (e: globalThis.MouseEvent) => {
+      if (!containerRef.current) return
+      const rect = containerRef.current.getBoundingClientRect()
+      if (rect.width <= 0 || rect.height <= 0) return
+      const dx = (e.clientX - dragging.startX) / rect.width
+      const dy = (e.clientY - dragging.startY) / rect.height
+      const sc = dragging.startCrop
+      if (dragging.type === 'move') {
+        setCrop({ ...sc, x: Math.max(0, Math.min(1 - sc.w, sc.x + dx)), y: Math.max(0, Math.min(1 - sc.h, sc.y + dy)) })
+      } else {
+        let nx = sc.x, ny = sc.y, nw = sc.w, nh = sc.h
+        const t = dragging.type
+        if (t.includes('n')) { ny = sc.y + dy; nh = sc.h - dy }
+        if (t.includes('s')) { nh = sc.h + dy }
+        if (t.includes('w')) { nx = sc.x + dx; nw = sc.w - dx }
+        if (t.includes('e')) { nw = sc.w + dx }
+        // Clamp
+        if (nx < 0) { nw += nx; nx = 0 }
+        if (ny < 0) { nh += ny; ny = 0 }
+        nw = Math.max(0.03, Math.min(1 - nx, nw))
+        nh = Math.max(0.03, Math.min(1 - ny, nh))
+        setCrop({ x: nx, y: ny, w: nw, h: nh })
+      }
+    }
+    const onUp = () => setDragging(null)
+    window.addEventListener('mousemove', onMove)
+    window.addEventListener('mouseup', onUp)
+    return () => { window.removeEventListener('mousemove', onMove); window.removeEventListener('mouseup', onUp) }
+  }, [dragging])
+
+  const doCrop = async () => {
+    if (isCropping) return  // prevent double-click
+    setIsCropping(true)
+    try {
+      // Fetch the image as a blob to avoid CORS canvas tainting on local URLs
+      const resp = await fetch(imageUrl)
+      const imgBlob = await resp.blob()
+      const bmpUrl = URL.createObjectURL(imgBlob)
+      const img = new Image()
+      img.src = bmpUrl
+      await new Promise<void>((resolve, reject) => { img.onload = () => resolve(); img.onerror = reject })
+      const canvas = document.createElement('canvas')
+      const sx = Math.round(crop.x * img.naturalWidth), sy = Math.round(crop.y * img.naturalHeight)
+      const sw = Math.round(crop.w * img.naturalWidth), sh = Math.round(crop.h * img.naturalHeight)
+      if (sw <= 0 || sh <= 0) { URL.revokeObjectURL(bmpUrl); setIsCropping(false); return }
+      canvas.width = sw; canvas.height = sh
+      const ctx = canvas.getContext('2d')
+      if (!ctx) { URL.revokeObjectURL(bmpUrl); setIsCropping(false); return }
+      ctx.drawImage(img, sx, sy, sw, sh, 0, 0, sw, sh)
+      URL.revokeObjectURL(bmpUrl)  // revoke AFTER drawImage to prevent bitmap invalidation
+      const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/png'))
+      if (!blob) { setIsCropping(false); return }
+      const formData = new FormData()
+      formData.append('file', blob, `cropped-${Date.now()}.png`)
+      const res = await fetch('/api/storyboard/upload', { method: 'POST', body: formData })
+      const data = await res.json()
+      if (data.url) onApply(data.url)
+      else setIsCropping(false)
+    } catch (err) {
+      console.error('Crop failed:', err)
+      setIsCropping(false)
+    }
+  }
+
+  return (
+    <div style={{ position: 'fixed', inset: 0, zIndex: 10000, background: 'rgba(0,0,0,0.9)', backdropFilter: 'blur(16px)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '1rem', padding: '2rem' }} onClick={(e) => { if (e.target === e.currentTarget) onClose() }}>
+      <button type="button" onClick={onClose} style={{ position: 'absolute', top: '1.5rem', right: '1.5rem', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '0.5rem', color: 'rgba(255,255,255,0.5)', width: '36px', height: '36px', display: 'grid', placeItems: 'center', cursor: 'pointer', fontSize: '1.2rem' }}>✕</button>
+      
+      {/* Preset buttons on top */}
+      <div style={{ display: 'flex', gap: '0.4rem' }}>
+        {presets.map(p => (
+          <button key={p.label} type="button" onClick={() => applyPreset(p.ratio, p.label)} style={{ padding: '0.4rem 0.8rem', borderRadius: '2rem', border: preset === p.label ? '1px solid var(--gold)' : '1px solid rgba(255,255,255,0.15)', background: preset === p.label ? 'rgba(248,217,120,0.1)' : 'rgba(255,255,255,0.05)', color: preset === p.label ? 'var(--gold)' : 'rgba(255,255,255,0.6)', cursor: 'pointer', fontSize: '0.8rem', fontWeight: preset === p.label ? 700 : 400 }}>{p.label}</button>
+        ))}
+      </div>
+
+      {/* Crop area */}
+      <div ref={containerRef} style={{ position: 'relative', maxWidth: '80vw', maxHeight: '68vh', display: 'inline-block' }}>
+        <img ref={imgRef} src={imageUrl} alt="Crop" onLoad={(e) => { const img = e.currentTarget; setImgSize({ w: img.clientWidth, h: img.clientHeight, natW: img.naturalWidth, natH: img.naturalHeight }) }} style={{ maxWidth: '80vw', maxHeight: '68vh', display: 'block', borderRadius: '0.5rem' }} />
+        {/* Dark overlay outside crop */}
+        <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
+          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: `${crop.y * 100}%`, background: 'rgba(0,0,0,0.6)' }} />
+          <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: `${(1 - crop.y - crop.h) * 100}%`, background: 'rgba(0,0,0,0.6)' }} />
+          <div style={{ position: 'absolute', top: `${crop.y * 100}%`, left: 0, width: `${crop.x * 100}%`, height: `${crop.h * 100}%`, background: 'rgba(0,0,0,0.6)' }} />
+          <div style={{ position: 'absolute', top: `${crop.y * 100}%`, right: 0, width: `${(1 - crop.x - crop.w) * 100}%`, height: `${crop.h * 100}%`, background: 'rgba(0,0,0,0.6)' }} />
+        </div>
+        {/* Crop rectangle */}
+        <div onMouseDown={(e) => handleMouseDown(e, 'move')} style={{ position: 'absolute', left: `${crop.x * 100}%`, top: `${crop.y * 100}%`, width: `${crop.w * 100}%`, height: `${crop.h * 100}%`, border: '2px solid var(--gold)', cursor: 'move' }}>
+          {/* Corner handles */}
+          {(['nw', 'ne', 'sw', 'se'] as const).map(corner => (
+            <div key={corner} onMouseDown={(e) => handleMouseDown(e, corner)} style={{ position: 'absolute', width: '12px', height: '12px', background: 'var(--gold)', borderRadius: '2px', cursor: `${corner}-resize`, ...(corner.includes('n') ? { top: '-6px' } : { bottom: '-6px' }), ...(corner.includes('w') ? { left: '-6px' } : { right: '-6px' }) }} />
+          ))}
+          {/* Edge handles for free crop — wider hit areas for reliable horizontal drag */}
+          <div onMouseDown={(e) => handleMouseDown(e, 'n')} style={{ position: 'absolute', top: '-8px', left: '15%', right: '15%', height: '16px', cursor: 'n-resize', zIndex: 2 }} />
+          <div onMouseDown={(e) => handleMouseDown(e, 's')} style={{ position: 'absolute', bottom: '-8px', left: '15%', right: '15%', height: '16px', cursor: 's-resize', zIndex: 2 }} />
+          <div onMouseDown={(e) => handleMouseDown(e, 'w')} style={{ position: 'absolute', left: '-8px', top: '15%', bottom: '15%', width: '16px', cursor: 'w-resize', zIndex: 2 }} />
+          <div onMouseDown={(e) => handleMouseDown(e, 'e')} style={{ position: 'absolute', right: '-8px', top: '15%', bottom: '15%', width: '16px', cursor: 'e-resize', zIndex: 2 }} />
+          {/* Rule of thirds grid */}
+          <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
+            <div style={{ position: 'absolute', left: '33.33%', top: 0, bottom: 0, width: '1px', background: 'rgba(248,217,120,0.3)' }} />
+            <div style={{ position: 'absolute', left: '66.66%', top: 0, bottom: 0, width: '1px', background: 'rgba(248,217,120,0.3)' }} />
+            <div style={{ position: 'absolute', top: '33.33%', left: 0, right: 0, height: '1px', background: 'rgba(248,217,120,0.3)' }} />
+            <div style={{ position: 'absolute', top: '66.66%', left: 0, right: 0, height: '1px', background: 'rgba(248,217,120,0.3)' }} />
+          </div>
+        </div>
+      </div>
+
+      {/* Dimensions + Apply */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+        <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.8rem' }}>
+          {imgSize.natW > 0 ? `${Math.round(crop.w * imgSize.natW)} × ${Math.round(crop.h * imgSize.natH)} px` : ''}
+        </span>
+        <button className="tick-save-btn" style={{ width: '2.5rem', height: '2.5rem', opacity: isCropping ? 0.5 : 1 }} onClick={doCrop} disabled={isCropping} title="Apply crop">{isCropping ? <span style={{ fontSize: '0.6rem' }}>⏳</span> : <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>}</button>
+      </div>
+    </div>
+  )
+}
+
 function ShotGrid({
   actors,
   actId,
@@ -3981,10 +5436,14 @@ function ShotGrid({
   onCopyPath,
   onDeleteMedia,
   onDeleteShot,
+  onDuplicateShot,
   onLightbox,
+  onEmptyLightbox,
   onReorder,
   onShotChange,
   onUpload,
+  selectedShotId,
+  onSelectShot,
 }: {
   actors: string[]
   actId: string
@@ -3993,12 +5452,17 @@ function ShotGrid({
   onCopyPath: (media?: StoryboardMedia) => void
   onDeleteMedia: (actId: string, sceneId: string, mode: StoryboardSequenceMode, shotId: string, mediaId: string) => void
   onDeleteShot: (actId: string, sceneId: string, mode: StoryboardSequenceMode, shotId: string) => void
-  onLightbox: (media: StoryboardMedia) => void
+  onDuplicateShot: (actId: string, sceneId: string, mode: StoryboardSequenceMode, shotId: string) => void
+  onLightbox: (media: StoryboardMedia, allMedia: StoryboardMedia[], shotId: string) => void
+  onEmptyLightbox: (shotId: string) => void
   onReorder: (actId: string, sceneId: string, mode: StoryboardSequenceMode, fromId: string, toId: string) => void
   onShotChange: (actId: string, sceneId: string, mode: StoryboardSequenceMode, shotId: string, mutate: (shot: StoryboardShot) => void) => void
   onUpload: (file: File, actId: string, sceneId: string, mode: StoryboardSequenceMode, shotId: string) => void
+  selectedShotId: string | null
+  onSelectShot: (id: string | null) => void
 }) {
   const shots = getSceneShots(scene, mode)
+  const [altPage, setAltPage] = useState<Record<string, number>>({})
 
   const handleFile = (event: ChangeEvent<HTMLInputElement>, shotId: string) => {
     const file = event.target.files?.[0]
@@ -4023,72 +5487,104 @@ function ShotGrid({
         const selected = shot.media.find((media) => media.id === shot.selectedMediaId) || shot.media[0]
         const dialoguePreview = shot.actor && shot.dialogue ? `${shot.actor.toUpperCase()}: ${shot.dialogue}` : shot.dialogue
         const fileInputId = `${scene.id}-${mode}-${shot.id}`
+        const isSelected = selectedShotId === shot.id
+        const page = altPage[shot.id] || 0
+        const altPerPage = 4
+        const totalAlts = shot.media.length
+        const totalPages = Math.ceil(totalAlts / altPerPage)
+        const visibleAlts = shot.media.slice(page * altPerPage, (page + 1) * altPerPage)
 
         return (
           <article
-            className="shot-card glass"
+            className={`shot-card glass ${isSelected ? 'is-selected' : ''}`}
             draggable
             key={shot.id}
+            onClick={() => onSelectShot(isSelected ? null : shot.id)}
             onDragStart={(event) => event.dataTransfer.setData('text/storyboard-shot', shot.id)}
             onDragOver={(event) => event.preventDefault()}
             onDrop={(event) => handleDrop(event, shot.id)}
+            style={isSelected ? { outline: '1px solid rgba(248,217,120,0.4)', outlineOffset: '2px', transform: 'translateY(-4px) scale(1.02)', boxShadow: '0 12px 40px rgba(0,0,0,0.6), 0 0 20px rgba(248,217,120,0.08)', zIndex: 5 } : undefined}
           >
-            {shots.length > 1 && (
-              <button aria-label={`Delete ${shot.title}`} className="shot-delete" onClick={() => onDeleteShot(actId, scene.id, mode, shot.id)} title="Remove shot from board" type="button">×</button>
-            )}
-            <div className="shot-number">{String(index + 1).padStart(2, '0')}</div>
-            <div className="shot-media">
+            {/* Shot number — hover shows + to duplicate */}
+            <div className="shot-number" onClick={(e) => { e.stopPropagation(); onDuplicateShot(actId, scene.id, mode, shot.id) }} title="Duplicate shot" style={{ cursor: 'pointer' }}>
+              <span className="shot-number-text">{String(index + 1).padStart(2, '0')}</span>
+              <span className="shot-number-plus">+</span>
+            </div>
+            <div className="shot-media" style={{ position: 'relative' }}>
               {selected ? (
                 selected.type === 'video'
                   ? <video src={selected.url} muted playsInline />
                   : selected.type === 'audio'
                     ? <CustomAudioPlayer url={selected.url} fileName={selected.fileName} />
-                    : <img src={selected.url} alt={shot.title} />
+                    : <img src={selected.url} alt={shot.title} onDoubleClick={(e) => { e.stopPropagation(); onLightbox(selected, shot.media, shot.id) }} style={{ cursor: 'pointer' }} />
               ) : (
-                <label htmlFor={fileInputId}>＋</label>
+                <div className="empty-shot-canvas" onDoubleClick={(e) => { e.stopPropagation(); onEmptyLightbox(shot.id) }} style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', background: 'linear-gradient(135deg, rgba(248,217,120,0.02), rgba(255,255,255,0.01))', borderRadius: '0.5rem', gap: '0.5rem', minHeight: '140px', border: '1px dashed rgba(248,217,120,0.1)' }}>
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="rgba(248,217,120,0.3)" strokeWidth="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+                  <span style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.25)' }}>Double-click to create</span>
+                </div>
               )}
               <input id={fileInputId} type="file" accept={mode === 'images' ? 'image/*' : mode === 'videos' ? 'video/*' : 'audio/*'} onChange={(event) => handleFile(event, shot.id)} />
               <div className="shot-tools">
                 <label htmlFor={fileInputId} title="Upload alternative">+</label>
-                <button disabled={!selected} onClick={() => selected && onLightbox(selected)} title="Open large" type="button">⤢</button>
+                <button disabled={!selected} onClick={(e) => { e.stopPropagation(); selected && onLightbox(selected, shot.media, shot.id) }} title="Open large" type="button">⤢</button>
                 <a className={!selected ? 'is-disabled' : ''} href={selected?.url || '#'} download={selected?.fileName} title="Download original">↓</a>
-                <button disabled={!selected?.localPath} onClick={() => onCopyPath(selected)} title="Reveal in Finder and copy path" type="button">⌁</button>
-                <button onClick={() => onShotChange(actId, scene.id, mode, shot.id, (draft) => { draft.expanded = !draft.expanded })} title="Alternatives" type="button">⋯</button>
+                <button disabled={!selected?.localPath} onClick={(e) => { e.stopPropagation(); onCopyPath(selected) }} title="Reveal in Finder and copy path" type="button">⌁</button>
+                <button onClick={(e) => { e.stopPropagation(); onShotChange(actId, scene.id, mode, shot.id, (draft) => { draft.expanded = !draft.expanded }) }} title="Alternatives" type="button"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></button>
               </div>
-              {selected && (
-                <button aria-label="Remove media from board" className="media-delete" onClick={() => onDeleteMedia(actId, scene.id, mode, shot.id, selected.id)} title="Remove from board, keep file on disk" type="button">×</button>
+              {selected ? (
+                <button aria-label="Remove media from board" className="media-delete" onClick={(e) => { e.stopPropagation(); onDeleteMedia(actId, scene.id, mode, shot.id, selected.id) }} title="Remove from board, keep file on disk" type="button">×</button>
+              ) : (
+                <button aria-label="Delete empty shot" className="media-delete" onClick={(e) => { e.stopPropagation(); onDeleteShot(actId, scene.id, mode, shot.id) }} title="Delete empty shot" type="button">×</button>
+              )}
+              {/* Pagination arrows as overlays on the image */}
+              {shot.expanded && totalPages > 1 && page > 0 && (
+                <button type="button" className="shot-alt-arrow left" onClick={(e) => { e.stopPropagation(); setAltPage(prev => ({ ...prev, [shot.id]: page - 1 })) }}>‹</button>
+              )}
+              {shot.expanded && totalPages > 1 && page < totalPages - 1 && (
+                <button type="button" className="shot-alt-arrow right" onClick={(e) => { e.stopPropagation(); setAltPage(prev => ({ ...prev, [shot.id]: page + 1 })) }}>›</button>
               )}
             </div>
 
             {shot.expanded && (
               <div className="alternative-branch">
-                {shot.media.map((media, altIndex) => (
-                  <button className={media.id === selected?.id ? 'is-active' : ''} key={media.id} onClick={() => onShotChange(actId, scene.id, mode, shot.id, (draft) => { draft.selectedMediaId = media.id })} type="button">
-                    <span>{altIndex + 1}</span>
-                    {media.type === 'video' ? <video src={media.url} muted playsInline /> : media.type === 'audio' ? <div className="audio-alt">♪</div> : <img src={media.url} alt={media.fileName} />}
-                  </button>
-                ))}
+                {Array.from({ length: Math.max(4, visibleAlts.length) }).map((_, slotIdx) => {
+                  const media = visibleAlts[slotIdx]
+                  if (media) {
+                    return (
+                      <button className={media.id === selected?.id ? 'is-active' : ''} key={media.id} onClick={(e) => { e.stopPropagation(); onShotChange(actId, scene.id, mode, shot.id, (draft) => { draft.selectedMediaId = media.id }) }} type="button">
+                        <span>{page * altPerPage + slotIdx + 1}</span>
+                        {media.type === 'video' ? <video src={media.url} muted playsInline /> : media.type === 'audio' ? <div className="audio-alt">♪</div> : <img src={media.url} alt={media.fileName} />}
+                      </button>
+                    )
+                  }
+                  return (
+                    <label key={`empty-${slotIdx}`} htmlFor={fileInputId} style={{ aspectRatio: '1', display: 'grid', placeItems: 'center', border: '1px dashed rgba(248,217,120,0.2)', borderRadius: '0.7rem', background: 'rgba(248,217,120,0.02)', cursor: 'pointer', color: 'rgba(248,217,120,0.3)', fontSize: '1.2rem', fontWeight: 300, transition: 'border-color 0.2s, background 0.2s' }} onClick={(e) => e.stopPropagation()}>+</label>
+                  )
+                })}
               </div>
             )}
 
             <input
               className="shot-title-input"
               value={shot.title}
+              onClick={(e) => e.stopPropagation()}
               onChange={(event) => onShotChange(actId, scene.id, mode, shot.id, (draft) => { draft.title = event.target.value })}
             />
             <textarea
               placeholder={mode === 'images' ? 'Image prompt / shot notes' : mode === 'videos' ? 'Video prompt / animation notes' : 'Music cue / SFX notes'}
               value={shot.prompt}
+              onClick={(e) => e.stopPropagation()}
               onChange={(event) => onShotChange(actId, scene.id, mode, shot.id, (draft) => { draft.prompt = event.target.value })}
             />
             <div className="dialogue-row">
-              <select value={shot.actor} onChange={(event) => onShotChange(actId, scene.id, mode, shot.id, (draft) => { draft.actor = event.target.value })}>
+              <select value={shot.actor} onClick={(e) => e.stopPropagation()} onChange={(event) => onShotChange(actId, scene.id, mode, shot.id, (draft) => { draft.actor = event.target.value })}>
                 <option value="">Narration / action</option>
                 {actors.map((actor) => <option key={actor} value={actor}>{actor}</option>)}
               </select>
               <textarea
                 placeholder="Dialogue or action text"
                 value={shot.dialogue}
+                onClick={(e) => e.stopPropagation()}
                 onChange={(event) => onShotChange(actId, scene.id, mode, shot.id, (draft) => { draft.dialogue = event.target.value })}
               />
             </div>

@@ -1,0 +1,22 @@
+premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm morning heavy dramatic light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.
+
+CHARACTER LOCKS:
+@image1 = Sultan — face cracking with old grief, exact as reference.
+@image2 = Sultan close-up — eyes glistening, exact as reference.
+@image3 = Aisha — stunned by mother revelation, exact as reference.
+
+LOCATION REFERENCE:
+@image4 = Bedroom front view — exact unchanged.
+
+SCENE: Morning — Sultan reveals truth about Aisha's mother (extended emotional).
+The emotional core of the confrontation. The Sultan says: "Your mother. She was just like you." His mask breaks completely. For the first time, Aisha sees her father not as the Sultan but as a grieving widower. The moment changes their relationship forever.
+
+Create 2x2 grid with 4 panels with 3D animated scenes in each one:
+Panel 1: Close-up of the Sultan exact as @image2. His voice drops to almost a whisper. His eyes fill — not quite tears, but the shimmer of a grief kept behind walls for sixteen years. "Your mother..." He looks at Aisha and for a moment he doesn't see his daughter — he sees his wife. The resemblance is painful. Golden morning light catches the moisture in his eyes.
+Panel 2: Extreme close-up of the Sultan's hand. It rises slowly from his side — reaching toward Aisha then stopping halfway. He wants to hold her. He wants to protect her. But he's too afraid of losing her the way he lost her mother. The hand hovers in mid-air, trembling, then slowly lowers back. The restraint costs him everything.
+Panel 3: Medium shot of Aisha exact as @image3. She watches her father's hand reach and retreat. Her expression transforms — the anger dissolves. For the first time she sees: he's not controlling her because he doesn't trust her. He's controlling her because he's terrified. "You said she died of illness." Her voice is small.
+Panel 4: Wide shot of the bedroom exact as @image4. The Sultan retreats toward the door, his back partially turned. "And that is all you will know." His voice is final but broken. Aisha stands in the center of the room, arms at her sides, understanding flooding in. Between them: the entire space of the bedroom, filled with unsaid words, old grief, and a love too frightened to express itself.
+
+Environment: Bedroom exact as @image4, heavy dramatic lighting, emotional weight.
+
+All panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm morning heavy dramatic light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.

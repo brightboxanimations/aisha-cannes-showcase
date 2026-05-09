@@ -1,0 +1,11 @@
+{
+  "id": "task-act10-1778122971933-010",
+  "title": "10. The Dying Lantern",
+  "prompt": "premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.\n\nCHARACTER AND LOCATION LOCKS:\n@image1 = Aisha, 16-year-old human princess, curious brave beautiful, exact as the reference; no modification to looks or clothes.\n@image11 = The Hourglass, massive magical hourglass inside the majestic chamber, exact as reference.\n@image12 = Quazar al Zaman Walls, colossal majestic stone walls, exact as reference.\n\nSCENE: Daytime scene inside the broken chamber.\n\nCreate 2x2 grid with 4 panels with 3D animated scenes in each one:\nPanel 1: Cinematic wide shot inside the broken chamber. The massive Hourglass exact as @image11 glows very faintly, flickering weakly like a dying lantern.\nPanel 2: Extreme close-up on the top bulb of the Hourglass exact as @image11, showing it is nearly completely empty, only a few grains of sand remaining.\nPanel 3: Medium shot. Aisha exact as @image1 steps slowly forward into the chamber, her face bathed in the weak, flickering light of the Hourglass exact as @image11.\nPanel 4: Close-up. Aisha exact as @image1 whispering softly, deeply shaken, realizing the balance is almost entirely gone.\n\nAll panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.",
+  "status": "todo",
+  "createdAt": "2026-05-07T03:02:51.933Z",
+  "updatedAt": "2026-05-07T03:02:51.933Z",
+  "passes": [],
+  "generatedImages": [],
+  "skillHint": "skill-codex-2x2-grid-prompt"
+}

@@ -1,0 +1,71 @@
+{
+  "items": [
+    {
+      "account_id": 333449815457234,
+      "aspect_ratio": "16:9",
+      "asset_id": 401363820945270,
+      "asset_source": 1,
+      "asset_type": 0,
+      "avatar": "https://lh3.googleusercontent.com/a/ACg8ocKUs-GyHFTBNMOxuhSD8XWOlabelIRzDyclUU_WY2ruyTCH8IQ=s96-c",
+      "create_mode": "create_image",
+      "created_at": "2026-05-06T20:53:02Z",
+      "creation_type": 21,
+      "customer_img_paths": [
+        "upload/d5f95727-adce-4f4c-a8a3-aeadcd9d7dbc.png",
+        "upload/7ae6b26b-cb86-4266-a522-557ad09c89be.png",
+        "upload/ff8924af-1360-45af-87fb-0685f9d371b2.png",
+        "upload/b363f7bf-b245-49ce-b619-34f1d6596e2d.png",
+        "upload/fc6f51cb-be4f-4fa6-b550-630347612fae.png"
+      ],
+      "customer_img_urls": [
+        "https://media.pixverse.ai/upload%2Fd5f95727-adce-4f4c-a8a3-aeadcd9d7dbc.png",
+        "https://media.pixverse.ai/upload%2F7ae6b26b-cb86-4266-a522-557ad09c89be.png",
+        "https://media.pixverse.ai/upload%2Fff8924af-1360-45af-87fb-0685f9d371b2.png",
+        "https://media.pixverse.ai/upload%2Fb363f7bf-b245-49ce-b619-34f1d6596e2d.png",
+        "https://media.pixverse.ai/upload%2Ffc6f51cb-be4f-4fa6-b550-630347612fae.png"
+      ],
+      "detail_level": "",
+      "email": "brightbox.animations@gmail.com",
+      "feedback_id": 0,
+      "image_id": 401363820945270,
+      "image_name": "",
+      "image_path": "pixverse/i2i/ori/0977e0f1-0555-4f23-bdc4-20d11fed0819.png",
+      "image_status": 1,
+      "image_url": "https://media.pixverse.ai/pixverse%2Fi2i%2Fori%2F0977e0f1-0555-4f23-bdc4-20d11fed0819.png",
+      "is_collected": false,
+      "is_dislike": 0,
+      "is_hidden": 0,
+      "media_locked": 0,
+      "model": "gemini-3.1-flash",
+      "nick_name": "brightbox.animations",
+      "output_height": 3072,
+      "output_width": 5504,
+      "platform": "\u0002",
+      "priority": 0,
+      "prompt": "## Prompt 08 - The Octagonal Table Of Obsessions\n\npremium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.\n\nCHARACTER LOCKS:\n@image1 = Aisha, 16-year-old human princess, exact as on the reference. No modification allowed.\n@image2 = Dora, white panther, normal panther size, her height reaches Aisha's hip, exact as on the reference.\n\nLOCATION REFERENCE:\n@image3 = secret room main view. Image 3 is 100% unchanged.\n@image4 = table close-up. Image 4 is 100% unchanged: table shape, books, objects, and surface must remain identical.\n@image5 = table top-down close-up. Image 5 is 100% unchanged.\n\nSCENE: Interior afternoon scene.\nAisha and Dora reach the octagonal table. Different ancient books, notebooks, scrolls, sketches, and artifacts cover the table. The room and table remain exactly as references, with only small page contents emphasized for story clarity.\n\nCreate 2x2 grid with 4 panels with 3d animated scenes in each one:\nPanel 1: General shot. Aisha exact as @image1 stands on the right side of the octagonal table exact as @image4, leaning forward without touching yet. Dora exact as @image2 stands on the left side of the table, ears back, looking across the table at Aisha. Secret room remains exact as @image3.\nPanel 2: Over-the-shoulder from behind Aisha. Aisha's shoulder and hand are in the right foreground; across the table Dora is visible on the left, watching. The open books and scrolls on the table remain exact as @image4 and @image5.\nPanel 3: Insert shot. Aisha's hand exact as @image1 hovers above several old books and loose papers on the octagonal table exact as @image5: star diagrams, sand-flow sketches, anatomy notes, time spirals, and handwritten markings are visible on pages.\nPanel 4: Medium shot from Dora's side. Dora exact as @image2 stands in the left foreground beside the table, looking as if she understands this room is not just magic but obsession. Aisha exact as @image1 is opposite her on the right, beginning to open one book.\n\nEnvironment: Secret room and table remain exact as @image3, @image4, and @image5. Characters remain exact. Table content may reveal readable-looking diagrams but must not alter the table shape, layout, or room architecture.\n\nAll panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric light, little tiny dust motes,  soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.\n",
+      "quality": "2160p",
+      "queue_data": {
+        "estimated_gen_time": 57,
+        "processing_start_time": "2026-05-06T20:53:06.492712463Z",
+        "queue_count": 0,
+        "queue_time": 0
+      },
+      "seed": 0,
+      "size": 0,
+      "template_id": 0,
+      "template_model": "",
+      "template_name": "",
+      "template_paid": 0,
+      "template_transition": 0,
+      "template_type": 0,
+      "transition": null,
+      "updated_at": "2026-05-06T20:54:05Z",
+      "upscaled": 0,
+      "water_mark": false
+    }
+  ],
+  "total": 3274,
+  "page": 1,
+  "limit": 1,
+  "has_more": false
+}

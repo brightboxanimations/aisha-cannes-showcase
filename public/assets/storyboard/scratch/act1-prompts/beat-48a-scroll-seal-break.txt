@@ -1,0 +1,24 @@
+premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm golden morning light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.
+
+CHARACTER LOCKS:
+@image1 = Aisha — 16-year-old princess, determined, breaking the seal, exact as reference.
+@image2 = Dora — white panther, watching with ears perked, exact as reference.
+
+LOCATION REFERENCE:
+@image3 = Bedroom front view — rug and balcony, exact unchanged.
+
+PROPS REFERENCE:
+@image5 = Scroll — sealed parchment, exact as reference.
+
+SCENE: Morning, bedroom — breaking the seal.
+Aisha kneels on the rug with the scroll. She examines the royal seal — it's her father's insignia. For a moment she hesitates — breaking this seal is a crime. Dora watches her with concern. Then Aisha's jaw sets and she snaps the seal. The crack echoes. There's no going back now.
+
+Create 2x2 grid with 4 panels with 3D animated scenes in each one:
+Panel 1: Close-up of the scroll exact as @image5 on the rug. The red wax seal fills the center of frame — the royal insignia is deeply pressed into the wax: a hawk holding a sun. Aisha's hands hover above it on either side. Her fingers tremble slightly. This seal represents her father's authority, the palace rules, everything that keeps her contained.
+Panel 2: Close-up of Aisha exact as @image1 looking down at the seal. Her expression: determination fighting guilt. Her large dark eyes reflect the red wax. She bites her lower lip. Behind her, Dora exact as @image2 leans forward with pricked ears and wide eyes — she knows what's about to happen and she's not sure she approves.
+Panel 3: Extreme close-up insert. Aisha's thumb presses down on the edge of the seal. The wax cracks — a clean diagonal break through the hawk emblem. Red wax fragments scatter. The crack is loud in the quiet bedroom. Dust motes scatter from the impact. The seal splits in two.
+Panel 4: Medium shot. Aisha exact as @image1 unrolls the scroll across the ornate rug. Her face changes as the contents reveal themselves — the map of kingdoms, the dark markings, the urgent notes. Behind her, Dora exact as @image2 presses closer, sensing the shift in Aisha's energy. The two broken halves of the red seal lie on the rug like evidence.
+
+Environment: Bedroom exact as @image3, rug, scroll exact as @image5, morning light.
+
+All panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm golden morning light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.

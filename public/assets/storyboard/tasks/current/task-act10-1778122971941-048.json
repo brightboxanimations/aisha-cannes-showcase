@@ -1,0 +1,11 @@
+{
+  "id": "task-act10-1778122971941-048",
+  "title": "48. Floating Sand",
+  "prompt": "premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.\n\nCHARACTER AND LOCATION LOCKS:\n@image8 = Giant Sand Guardian, kinetic sand creature, flowing like liquid light, faceless hidden beneath a hood of swirling golden grains.\n@image13 = Desert Dunes, endless rolling sands beneath stormy skies, sandstorms in the distance.\n\nSCENE: Daytime scene outside the Kingdom Walls.\n\nCreate 2x2 grid with 4 panels with 3D animated scenes in each one:\nPanel 1: Low angle tracking shot. The Giant Sand Guardians exact as @image8 leap effortlessly into the air, floating gracefully despite their massive size.\nPanel 2: Wide epic shot. The six Guardians exact as @image8 suspended in the air above the Desert Dunes exact as @image13, spinning in a beautiful, slow-motion airborne ballet.\nPanel 3: Detail shot. Glowing ribbons of golden sand trailing behind the flying Guardians exact as @image8, painting massive glowing arabesque shapes in the sky.\nPanel 4: Extreme wide cinematic shot. The entire sky filled with glowing golden patterns of light, swirling around the columns of sunlight, a breathtaking visual spectacle.\n\nAll panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.",
+  "status": "todo",
+  "createdAt": "2026-05-07T03:02:51.941Z",
+  "updatedAt": "2026-05-07T03:02:51.941Z",
+  "passes": [],
+  "generatedImages": [],
+  "skillHint": "skill-codex-2x2-grid-prompt"
+}

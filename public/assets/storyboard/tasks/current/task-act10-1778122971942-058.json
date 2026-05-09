@@ -1,0 +1,11 @@
+{
+  "id": "task-act10-1778122971942-058",
+  "title": "58. The Golden Spider",
+  "prompt": "premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.\n\nCHARACTER AND LOCATION LOCKS:\n@image7 = Giant Nibzu, massive goofy spider with crossed amber eyes, huge but retaining its silly smile, exact as reference.\n\nSCENE: Daytime scene in the dunes.\n\nCreate 2x2 grid with 4 panels with 3D animated scenes in each one:\nPanel 1: Wide action shot. The liquid gold overtakes the entire massive body of the Giant Nibzu exact as @image7, freezing it perfectly in place.\nPanel 2: Cinematic detail shot. The texture of the spider's body transforming from dark hair into a massive, majestic Golden Statue, carved with delicate arabesque patterns.\nPanel 3: Extreme close-up. The sunlight hits the newly formed golden arabesque jewelry on the spider's face, catching the light beautifully.\nPanel 4: Epic master shot. The massive, beautiful Golden Statue of the spider exact as @image7 towering peacefully over the dunes, completely neutralized.\n\nAll panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.",
+  "status": "todo",
+  "createdAt": "2026-05-07T03:02:51.942Z",
+  "updatedAt": "2026-05-07T03:02:51.942Z",
+  "passes": [],
+  "generatedImages": [],
+  "skillHint": "skill-codex-2x2-grid-prompt"
+}

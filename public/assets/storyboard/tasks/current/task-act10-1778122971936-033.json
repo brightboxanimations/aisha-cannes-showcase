@@ -1,0 +1,11 @@
+{
+  "id": "task-act10-1778122971936-033",
+  "title": "33. Entering the Spirit Realm",
+  "prompt": "premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.\n\nCHARACTER AND LOCATION LOCKS:\n@image1 = Aisha, 16-year-old human princess, curious brave beautiful, exact as the reference; no modification to looks or clothes.\n@image14 = Temple of Light, breathtaking sacred hall in the Spirit Realm, quartz mosaics shimmering, floating light motes, endless walls of arabesque-laced windows.\n\nSCENE: Ethereal scene in the Spirit Realm.\n\nCreate 2x2 grid with 4 panels with 3D animated scenes in each one:\nPanel 1: Wide epic reveal. A breathtaking, ethereal sacred hall slowly materializes around Aisha exact as @image1: The Temple of Light exact as @image14.\nPanel 2: Downward angle shot. Aisha's feet exact as @image1 touch down gently onto stunning quartz mosaics that shift and shimmer beneath her like living patterns.\nPanel 3: Cinematic detail shot. Beautiful motes of light float slowly through the air of the Temple of Light exact as @image14, like drifting souls.\nPanel 4: Wide master shot of the Temple of Light exact as @image14. Endless walls of towering, arabesque-laced windows casting soft, intricate light patterns across the glimmering floor.\n\nAll panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.",
+  "status": "todo",
+  "createdAt": "2026-05-07T03:02:51.936Z",
+  "updatedAt": "2026-05-07T03:02:51.936Z",
+  "passes": [],
+  "generatedImages": [],
+  "skillHint": "skill-codex-2x2-grid-prompt"
+}

@@ -1,0 +1,23 @@
+premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm midday light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.
+
+CHARACTER LOCKS:
+@image1 = Aisha — 16-year-old princess, fire building, sly calculating expression, exact as reference.
+@image2 = Dora — white panther, dramatic slump, pupils dilating at bun scent, exact as reference.
+
+LOCATION REFERENCE:
+@image3 = View from balcony — internal patio, gate, plaza, market stalls below, exact unchanged.
+@image4 = Bedroom front view — rug, balcony entrance, exact unchanged.
+@image5 = Buns seller — panoramic patio with bun cart, exact as reference.
+
+SCENE: Late morning, bedroom — escape planning alternate.
+Same beat: Aisha plans, spots buns, tempts Dora. Focus on: Dora's comedic "absolutely not" to "I hate how well you know me" arc. The bun seller walking far below. Aisha calculating the timing like a heist movie.
+
+Create 2x2 grid with 4 panels with 3D animated scenes in each one:
+Panel 1: Medium shot of Aisha exact as @image1 at the balcony railing, looking down like a general surveying a battlefield. Her eyes track the bun seller walking below exact as @image5. She's mentally drawing lines — guard positions, gate timing, escape routes. Her fingers tap the railing rhythmically. Behind her through the curtain: Dora exact as @image2 still slumped on the floor.
+Panel 2: Comedy sequence: Close-up of Dora exact as @image2. Three expressions in one panel — left: her nose wrinkles catching the scent. Center: her eyes snap wide, pupils massive black circles. Right: she sits bolt upright, one paw raised, mouth slightly open. The transformation from lazy to obsessed in one heartbeat. "No. Absolutely not. Don't even—"
+Panel 3: Medium two-shot. Aisha exact as @image1 crouches beside Dora, whispering conspiratorially: "One bun for you, one for me." Her hand gestures elegantly toward the balcony. Dora exact as @image2 tries to look indifferent but her whole body betrays her — tail tip twitching, ears forward, whiskers trembling. The internal battle between duty and desire plays across her face.
+Panel 4: Close-up of Dora exact as @image2 collapsing into acceptance. Her whole body deflates — head drops, ears flatten, but her eyes close in blissful anticipation. "I hate how well you know me." Behind her, Aisha's feet are already moving toward the door — in the blur, her expression shifts from playful to serious. The real plan isn't about buns at all.
+
+Environment: Bedroom exact as @image4, balcony view exact as @image3, patio below exact as @image5.
+
+All panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm midday light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.

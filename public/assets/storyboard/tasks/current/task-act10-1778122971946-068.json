@@ -1,0 +1,11 @@
+{
+  "id": "task-act10-1778122971946-068",
+  "title": "68. The Hourglass Restored",
+  "prompt": "premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.\n\nCHARACTER AND LOCATION LOCKS:\n@image11 = The Hourglass, massive magical hourglass inside the majestic chamber, exact as reference.\n@image12 = Quazar al Zaman Walls, colossal majestic stone walls, exact as reference.\n\nSCENE: Daytime scene inside the chamber.\n\nCreate 2x2 grid with 4 panels with 3D animated scenes in each one:\nPanel 1: Wide cinematic shot inside the broken chamber. The massive cloud of golden sand flows smoothly into the open top bulb of the colossal Hourglass exact as @image11.\nPanel 2: Extreme close-up. The top bulb of the Hourglass exact as @image11 filling up rapidly with glowing, warm golden sand.\nPanel 3: Detail shot. The heavy, steady, perfect flow of sand restarting through the neck of the Hourglass exact as @image11, restoring the flow of time.\nPanel 4: Epic wide shot. The Hourglass exact as @image11 glowing incredibly bright and warm, illuminating the entire majestic chamber of the Quazar al Zaman Walls exact as @image12.\n\nAll panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.",
+  "status": "todo",
+  "createdAt": "2026-05-07T03:02:51.946Z",
+  "updatedAt": "2026-05-07T03:02:51.946Z",
+  "passes": [],
+  "generatedImages": [],
+  "skillHint": "skill-codex-2x2-grid-prompt"
+}

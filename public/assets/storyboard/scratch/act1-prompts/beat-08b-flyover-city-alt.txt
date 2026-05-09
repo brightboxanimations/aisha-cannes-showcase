@@ -1,0 +1,22 @@
+premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm golden morning light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.
+
+CHARACTER LOCKS:
+@image1 = Altair — royal hawk, golden-brown feathers, back view silhouette flying toward palace, exact as reference.
+
+LOCATION REFERENCE:
+@image2 = Flyover toward palace — aerial city view with palace ahead, exact unchanged.
+@image3 = Fly over toward palace variant — back view of hawk toward main palace horizon, exact unchanged.
+@image4 = Flyover city — different aerial angle, exact unchanged.
+
+SCENE: Morning, aerial — Altair flyover city alternate.
+Same beat: Altair racing over the city. Focus on: the city's market details below (colored awnings, food stalls, laundry), the wake of wind Altair leaves behind (laundry flapping, a cat startled on a rooftop), and the palace growing dramatically larger as he approaches.
+
+Create 2x2 grid with 4 panels with 3D animated scenes in each one:
+Panel 1: Low angle from a rooftop. A startled tabby cat on a sunlit roof flattens itself as Altair exact as @image1 streaks overhead at rooftop level. The cat's fur blows back from the wind. Laundry lines between buildings snap and flutter. Below: a narrow alley with a spice merchant looking up in surprise, his colorful powder-filled bowls rippling.
+Panel 2: Aerial tracking shot exact as @image2. Altair's shadow races across the rooftops below — zigzagging over domes, minarets, and flat terraces. Market awnings in red, gold, and blue fill the streets. A few citizens point upward. The palace complex grows prominently in the upper right — its main dome catching the sun.
+Panel 3: Front close-up of Altair exact as @image1 in flight, city blurred behind him. His expression has shifted from panic to focused determination. His golden eyes lock forward toward the palace. Wind streams his chest feathers backward. The scroll in his talons is clearly visible — the red seal catching light. His beak is slightly parted from exertion.
+Panel 4: Wide cinematic shot exact as @image3. Altair is a small golden figure flying toward the enormous palace complex — multiple domes, tall minarets, cascading walls and gardens. The palace fills the entire background, its scale overwhelming compared to the tiny hawk. The last stretch of city streets and rooftops separate them. The shot emphasizes: this hawk has crossed an entire city in minutes.
+
+Environment: City aerial views exact as @image2, @image3, @image4, market details, rooftops, palace ahead.
+
+All panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm golden morning light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.

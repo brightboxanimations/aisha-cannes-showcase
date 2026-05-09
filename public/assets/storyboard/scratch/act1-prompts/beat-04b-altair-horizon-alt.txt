@@ -1,0 +1,24 @@
+premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm golden morning light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.
+
+CHARACTER LOCKS:
+@image1 = First merchant — Bedouin in sand-colored robes, nervous, exact as reference.
+@image2 = Funny camel — goofy, exact as reference.
+@image3 = Clerk — bored, exact as reference.
+@image4 = Guards — armored, exact as reference.
+
+LOCATION REFERENCE:
+@image5 = Merchant line — queue, exact unchanged.
+@image6 = Altair far away — approaching from dunes, exact as reference.
+
+SCENE: Morning — Altair approaches, alternate (tired merchant notices).
+Same Altair horizon beat. Focus on: the tired merchant being ironically the first to notice Altair, the indigo Bedouin arguing too loudly to see anything, the clerk's boredom undisturbed, and the desert horizon detail.
+
+Create 2x2 grid with 4 panels with 3D animated scenes in each one:
+Panel 1: Close-up of the tired merchant at the back of line. His heavy-lidded eyes drift toward the horizon behind the queue. Something catches his attention — a glint in the sky. His eyes snap half-open. He raises one hand to shade his eyes. Behind him: the desert dunes stretch to infinity. A golden speck (Altair exact as @image6) is barely visible.
+Panel 2: Medium comedy shot. The indigo Bedouin is mid-rant at the clerk's stand, both arms waving, beetle jars wobbling dangerously. The clerk exact as @image3 has his head on the counter in boredom. The fat jade merchant watches the argument. None of them look behind. The tired merchant exact as background tries to tap the fat merchant's shoulder but gets ignored.
+Panel 3: Wide panoramic shot. The desert stretches across the entire frame — dunes, heat shimmer, endless golden sand. In the center of the sky, growing larger: Altair exact as @image6, wings catching morning light, a golden bullet against the pale blue sky. The gate and merchant queue are tiny in the bottom-right corner. The scale: a whole desert, one desperate hawk.
+Panel 4: Medium shot. The tired merchant has given up trying to alert anyone. He shrugs, yawns, and leans against his sleeping camel. His expression: "Well, whatever that flying thing is, it's someone else's problem." He closes his eyes. Altair is now clearly visible in the sky behind him — wings spread, diving toward the gate. The tired merchant: the only person who saw it coming, and the only person who doesn't care.
+
+Environment: Gate, desert exact as @image5 and @image6, golden morning.
+
+All panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm golden morning light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.

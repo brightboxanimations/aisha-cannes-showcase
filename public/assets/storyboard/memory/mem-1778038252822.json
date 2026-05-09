@@ -1,0 +1,6 @@
+{
+  "id": "mem-1778038252822",
+  "topic": "look dont fucking mess withme its a ormpt taks that shoudl have start tag end tag 4 panels description scene description character locks it all descri",
+  "summary": "The Assistant failed to correctly structure a prompt, misunderstanding the exact internal textual format required for the `prompt` string, specifically regarding \"start tag,\" \"end tag,\" and \"4 panels description.\" Despite reviewing the \"Cinematic 2x2 grid prompt craft\" skill, the Assistant interpreted the JSON output structure and elements to include, but not their specific formatting and delimitation within the `prompt` string for a 2x2 grid. The Director needs to provide an exact template or example of how the `prompt` string should be structured, detailing the delineation of \"start tag,\" \"end tag,\" \"4 panels description,\" and \"character locks.\" The Assistant committed to strict adherence to this precise template and all cinematic/technical requirements once provided.",
+  "createdAt": "2026-05-06T03:30:52.822Z"
+}

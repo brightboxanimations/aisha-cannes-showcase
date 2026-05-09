@@ -1,0 +1,23 @@
+premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm midday light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.
+
+CHARACTER LOCKS:
+@image1 = Dora — white panther, approaching bun seller, exact as reference.
+@image2 = Buns seller — carrying tray, unsuspecting, exact as reference.
+@image3 = Buns seller character — full body, exact as reference.
+
+LOCATION REFERENCE:
+@image4 = Internal patio gate — arabesque arch, market stalls, exact unchanged.
+@image5 = Internal patio guards — silly right, grumpy left, exact as reference.
+
+SCENE: Late morning — Dora stalking bun seller (approach phase).
+Before the chaos erupts: Dora stalks the bun seller like a true predator. She uses pillars and market stalls as cover. Her movements are fluid, calculated, beautiful — a white shadow against the sandstone courtyard. The bun seller is completely unaware, walking and humming. The guards don't notice either.
+
+Create 2x2 grid with 4 panels with 3D animated scenes in each one:
+Panel 1: Wide stealth shot. The palace courtyard near the gate exact as @image4. Dora exact as @image1 crouches behind a sandstone pillar on the left, body low, eyes locked on the bun seller. The bun seller exact as @image2 walks across the courtyard on the right, tray balanced on her head, humming. Between them: open courtyard tiles catching the midday sun. Dora's white fur is conspicuous against the dark pillar — she's the world's worst hidden predator.
+Panel 2: Close-up of Dora exact as @image1 in stalking mode. Her body is pressed flat against the ground behind a market stall. Her eyes are laser-focused — golden irises contracted to vertical slits, tracking the bun tray's movement. Her haunches are coiled. Her tail tip twitches once. Every muscle says: "I am a hunter and those buns are my destiny."
+Panel 3: Medium shot of the bun seller exact as @image2 walking, oblivious. Her tray is piled high with golden pistachio honey buns — steaming, glistening with honey glaze, topped with crushed pistachios. She walks with confidence through the courtyard. Guards exact as @image5 in the background by the gate — the silly one is cleaning his nails, the grumpy one stares into space. Nobody is watching.
+Panel 4: Action shot from low angle. Dora exact as @image1 makes her move — launching from behind the market stall in a white blur, paws extended, tail streaming. The bun seller hasn't turned yet — she's one step from disaster. The guards haven't reacted. Time freezes in this split second before chaos. Dora's shadow stretches dramatically across the courtyard tiles.
+
+Environment: Palace courtyard exact as @image4, market stalls, gate, guards exact as @image5, midday sun.
+
+All panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm midday light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.

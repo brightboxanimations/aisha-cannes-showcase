@@ -1,0 +1,23 @@
+premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm morning ominous light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.
+
+CHARACTER LOCKS:
+@image1 = Aisha — kneeling before map, face illuminated from below, exact as reference.
+@image2 = Dora — pressing close to Aisha, protective, exact as reference.
+@image3 = Aisha and panther — proportions reference, exact as reference.
+
+LOCATION REFERENCE:
+@image4 = Bedroom front view — exact unchanged.
+@image5 = Map of kingdoms — exact unchanged.
+
+SCENE: Morning, bedroom — map reading (low angle emotional).
+Low angle view of Aisha and Dora kneeling before the map on the rug. The map fills the foreground. Aisha reads the scrawled notes aloud, her voice trembling. Dora presses against her — not from the cold, but from something the panther senses in the map's dark markings. Something alive. Something hungry.
+
+Create 2x2 grid with 4 panels with 3D animated scenes in each one:
+Panel 1: Low angle shot from floor level. The map exact as @image5 fills the foreground, spread across the ornate rug. Beyond it: Aisha exact as @image1 kneels, her face visible above the map's edge, illuminated by morning light. Her expression is serious — no more games, no more mischief. This is real. Dora exact as @image2 sits beside her at hip height exact as @image3.
+Panel 2: Extreme close-up of Aisha's face exact as @image1 reading the map. Her lips move silently: "Shadows consume Mayala..." Her large dark eyes track across the dark markings. The map's contents reflect in her irises — dark clouds, golden borders, frantic writing. She's reading about the end of the world and she's sixteen years old.
+Panel 3: Medium shot from the side. Aisha exact as @image1 reaches out and traces a line on the map with her finger — the border of Qazar al-Zaman. Her finger follows the golden line that keeps the darkness out. It's so thin. So fragile. Dora exact as @image2 watches the finger trace with unblinking golden eyes. Her fur bristles along her spine.
+Panel 4: Wide atmospheric shot exact as @image4. The bedroom stretches behind Aisha and Dora, still beautiful, still golden with morning light. But on the rug before them: the map tells a different story. The contrast between the safe beautiful bedroom and the dangerous dark map is the contrast between Aisha's life and the world her father has hidden from her.
+
+Environment: Bedroom exact as @image4, map exact as @image5, morning with ominous undertones.
+
+All panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm morning ominous light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.

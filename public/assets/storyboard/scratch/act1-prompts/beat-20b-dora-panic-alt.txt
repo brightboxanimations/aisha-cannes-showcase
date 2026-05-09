@@ -1,0 +1,22 @@
+premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm midday light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.
+
+CHARACTER LOCKS:
+@image1 = Dora — white panther, despair turning to frantic action, exact as reference.
+@image2 = Buns seller — still nagging, blocking Dora, exact as reference.
+
+LOCATION REFERENCE:
+@image3 = Internal patio guards — silly right, grumpy left, exact as reference.
+@image4 = Buns seller inside patio — aftermath, guards behind, exact as reference.
+
+SCENE: Late morning — Dora panic alternate.
+Same beat: Dora realizes, bun seller blocks. Focus on: Dora's physical comedy (slipping, sliding), the guard comedy duo's reactions, and the emotional weight under the comedy — Dora has failed her duty to protect the princess.
+
+Create 2x2 grid with 4 panels with 3D animated scenes in each one:
+Panel 1: Action comedy medium shot. Dora exact as @image1 launches from sitting to sprint in one explosive motion — her back legs kick up bun fragments, her front paws claw at the smooth courtyard tiles for traction, her body stretches into a panther sprint. Honey glaze under her paws causes her to spin 180 degrees involuntarily. Her face: absolute panic beneath athletic grace.
+Panel 2: Comedy collision shot. The bun seller exact as @image2 plants herself in Dora's path, feet wide, arms spread like a goalkeeper, face set with righteous fury: "NOT ONE STEP UNTIL SOMEONE PAYS!" Dora exact as @image1 slides toward her on the honey glaze, eyes wide, paws braking uselessly, about to collide. The physics of the scene are pure slapstick.
+Panel 3: Close-up of the two guards exact as @image3 watching the Dora vs. bun seller standoff. The silly guard on the right has tears of laughter streaming down his face, one hand slapping his knee, helmet askew. The grumpy guard on the left has his arms crossed, head shaking slowly, mouth a thin line of absolute disgust at everyone and everything. They are the perfect comedy duo.
+Panel 4: Wide atmospheric final shot exact as @image4. Dora exact as @image1 sits in the center of the courtyard, alone in a circle of scattered buns. Her posture is defeated — shoulders slumped, head low, tail flat on the ground. But her golden eyes burn with determination — she hasn't given up, she's calculating. Behind her: the bun seller argues with guards, the gate stands between Dora and Aisha. Under the comedy: a panther who has failed her princess and won't rest until she finds her.
+
+Environment: Courtyard exact as @image4, bun debris, honey glaze, guards near gate exact as @image3.
+
+All panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm midday light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.

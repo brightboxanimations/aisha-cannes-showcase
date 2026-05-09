@@ -1,0 +1,23 @@
+premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm golden morning light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.
+
+CHARACTER LOCKS:
+@image1 = City gate clerk — bored man behind permit stand, now comically tasting a round bread, exact as reference.
+@image2 = First merchant — Bedouin in sand-colored robes, offering the bread as a bribe, exact as reference.
+@image3 = Funny camel — tall goofy camel watching the bribery with judgmental expression, exact as reference.
+
+LOCATION REFERENCE:
+@image4 = Merchant line — queue at stand, exact unchanged.
+@image5 = Clerk tasting bread — clerk's comical expression as he chews, exact as reference.
+
+SCENE: Morning, city gate — clerk bread bribery comedy.
+A comedic beat before the permit is stamped. The first merchant nervously offers a round flatbread as a subtle bribe. The clerk pretends to be offended but can't resist tasting it. His expression shifts from "how dare you" to "this is actually delicious." The camel watches with silent judgment. Behind, the indigo Bedouin takes notes.
+
+Create 2x2 grid with 4 panels with 3D animated scenes in each one:
+Panel 1: Medium two-shot. The first merchant exact as @image2 slides a round golden flatbread across the counter toward the clerk with trembling hands and an innocent "who, me?" expression. The clerk exact as @image1 stares at the bread with theatrical outrage — one eyebrow raised, mouth pursed. The funny camel exact as @image3 peeks over the merchant's shoulder, its expression clearly saying "this is beneath us."
+Panel 2: Close-up of the clerk exact as @image5. He has taken a bite. His eyes roll upward in unexpected ecstasy. Crumbs on his spectacles. One hand still holds the "REJECTED" stamp defensively, the other holds the bread. His face betrays him — the bread is magnificent and he knows it. A tiny smile fights through his professional scowl.
+Panel 3: Insert shot from below the counter. The clerk's feet visible — one tapping nervously. Above: his hands visible — one hand stamping the permit APPROVED while the other hand holds the bread below counter level, thinking no one can see. The bread has a perfect bite taken from it. Crumbs fall like tiny golden snowflakes.
+Panel 4: Wide reaction. The indigo Bedouin exact as @image4 leans far out of line, peering around the first merchant to watch the bread exchange with intense fascination. He reaches into his own bag — pulling out one of his beetle jars instead of bread. His expression says: "I too have delicacies to offer." The tired merchant at the back doesn't notice any of this. The fat jade-green merchant is mentally calculating the cost of bread bribery.
+
+Environment: Permit stand exact as @image4, morning light, desert behind.
+
+All panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm golden morning light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.

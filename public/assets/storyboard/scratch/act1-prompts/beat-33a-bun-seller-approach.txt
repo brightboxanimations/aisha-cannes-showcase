@@ -1,0 +1,22 @@
+premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm midday light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.
+
+CHARACTER LOCKS:
+@image1 = Buns seller — scandalized woman with tray of pistachio honey buns, dramatic expressions, exact as reference.
+@image2 = Buns seller character — full body isolated reference, exact as reference.
+
+LOCATION REFERENCE:
+@image3 = Internal patio gate — arabesque arch and market, exact unchanged.
+@image4 = Internal patio guards — silly right, grumpy left, exact as reference.
+
+SCENE: Late morning — bun seller character intro.
+The bun seller walks through the courtyard with her prized tray of pistachio honey buns. She's a proud, dramatic woman — these buns are her art, her livelihood, her identity. She walks like a queen carrying crown jewels. She has opinions about everyone. She side-eyes the guards. She adjusts her tray with ceremony.
+
+Create 2x2 grid with 4 panels with 3D animated scenes in each one:
+Panel 1: Medium shot of the bun seller exact as @image1 walking through the courtyard exact as @image3, tray balanced perfectly on her head. Her posture is regal — chin up, chest out, walking with deliberate grace. The golden honey buns catch the sunlight, glowing like treasure. Her expression: pride bordering on arrogance.
+Panel 2: Close-up of the bun tray. Golden pistachio honey buns piled in a perfect pyramid — each one glazed to perfection, green pistachios sprinkled artfully, honey dripping in slow golden threads. Steam rises in the midday warmth. The foreground bun is a work of art. Behind the tray: the courtyard blurs with warm light.
+Panel 3: Medium comedy shot. The bun seller exact as @image1 walks past the two guards exact as @image4 at the gate. She side-eyes the silly guard on the right with contempt — he's eyeing her buns hungrily. She pulls the tray slightly away from his side. The grumpy guard on the left doesn't react. She mutters something disapproving about guards and their appetites.
+Panel 4: Wide shot. The bun seller exact as @image1 continues through the courtyard exact as @image3, tray high, steps confident. Behind her and she doesn't see: a white shadow (Dora) darts between pillars, tracking her. The courtyard is peaceful — servants walking, a gardener tending plants, sunlight on the tiles. The calm before the storm.
+
+Environment: Palace courtyard exact as @image3, guards exact as @image4, market stalls, midday.
+
+All panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm midday light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.

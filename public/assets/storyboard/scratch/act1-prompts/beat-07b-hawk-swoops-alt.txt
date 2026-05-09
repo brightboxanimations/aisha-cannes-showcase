@@ -1,0 +1,22 @@
+premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm golden morning light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.
+
+CHARACTER LOCKS:
+@image1 = First merchant — Bedouin in sand robes, joyful, inside city, exact as reference.
+@image2 = Funny camel — goofy camel, exact as reference.
+@image3 = Altair — hawk flying over, exact as reference.
+
+LOCATION REFERENCE:
+@image4 = Merchant and camel inside city — narrow street, sandstone buildings, exact unchanged.
+
+SCENE: Morning, city street — hawk swoops merchant alternate.
+Same beat: Altair flies close to the merchant's head. Focus on: the camel's slow-motion neck-crane upward, the merchant ducking, the narrow street architecture with Altair weaving between laundry lines.
+
+Create 2x2 grid with 4 panels with 3D animated scenes in each one:
+Panel 1: Medium shot from street level. Altair exact as @image3 weaves between two laundry lines strung across the narrow street exact as @image4. A wet sheet billows in his wake. The merchant exact as @image1 below ducks instinctively. White linens and colored fabrics frame Altair's golden streak. A housewife on a second-floor balcony gasps and drops a basket.
+Panel 2: Slow-motion style close-up of the funny camel exact as @image2. Its neck extends upward in an impossibly slow crane — vertebra by vertebra. Its huge eyes roll upward, following Altair overhead. Its lower lip drops open. Its ears rotate independently. It's the most dramatic camel reaction in cinema history.
+Panel 3: Medium shot from above. Looking down the narrow street: Altair's shadow races along the stone pavement exact as @image4. The merchant and camel are tiny figures from this height. Market stalls line both sides — colorful fabrics, copper pots, spice bowls. The street creates a canyon leading toward the palace in the distance. Altair's shadow splits the market like a golden knife.
+Panel 4: Close-up of the merchant exact as @image1. He touches his head in disbelief — a golden feather from Altair has landed in his turban. He plucks it out, holds it up, and examines it with wide eyes. His camel exact as @image2 leans its head close to look at the feather too. Both stare at it. The merchant's stamped permit is forgotten in his other hand. A feather from a royal hawk — this is a story he'll tell for years.
+
+Environment: City street exact as @image4, narrow, sandstone, market stalls, laundry lines, morning light.
+
+All panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm golden morning light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.

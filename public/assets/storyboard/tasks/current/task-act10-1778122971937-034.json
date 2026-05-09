@@ -1,0 +1,11 @@
+{
+  "id": "task-act10-1778122971937-034",
+  "title": "34. Walking the Hall",
+  "prompt": "premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.\n\nCHARACTER AND LOCATION LOCKS:\n@image1 = Aisha, 16-year-old human princess, curious brave beautiful, exact as the reference; no modification to looks or clothes.\n@image14 = Temple of Light, breathtaking sacred hall in the Spirit Realm, quartz mosaics shimmering, floating light motes, endless walls of arabesque-laced windows.\n\nSCENE: Ethereal scene in the Temple of Light.\n\nCreate 2x2 grid with 4 panels with 3D animated scenes in each one:\nPanel 1: Medium tracking shot. Aisha exact as @image1 walking slowly through the vast, quiet, and peaceful hall, looking around in absolute awe.\nPanel 2: Extreme wide shot down the length of the hall. A faint ethereal melody hums in the air, the light itself seeming to sing.\nPanel 3: Tracking shot from behind Aisha exact as @image1, showing the infinite scale and beauty of the glowing quartz floor.\nPanel 4: Focus pull. In the far distance at the end of the hall, a lone figure in flowing white stands waiting.\n\nAll panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.",
+  "status": "todo",
+  "createdAt": "2026-05-07T03:02:51.937Z",
+  "updatedAt": "2026-05-07T03:02:51.937Z",
+  "passes": [],
+  "generatedImages": [],
+  "skillHint": "skill-codex-2x2-grid-prompt"
+}

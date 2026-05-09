@@ -1,0 +1,22 @@
+premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm golden morning light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.
+
+CHARACTER LOCKS:
+@image1 = Aisha — 16-year-old princess, triumphant with scroll, sneaking back, exact as reference.
+@image2 = Dora — white panther, suspicious, waiting on the balcony, exact as reference.
+
+LOCATION REFERENCE:
+@image3 = Bedroom back view — entrance door visible, exact unchanged.
+@image4 = Balcony projections — curtain entrance, exact unchanged.
+
+SCENE: Morning, bedroom — Aisha returns with scroll.
+Aisha sneaks back into her bedroom clutching the stolen scroll. She's breathless, triumphant. Dora is waiting on the balcony — she heard Aisha leave and come back. The panther's expression says: "What have you done NOW?" Aisha tries to hide the scroll behind her back. Dora is not fooled.
+
+Create 2x2 grid with 4 panels with 3D animated scenes in each one:
+Panel 1: Medium shot. Aisha exact as @image1 slips through the bedroom door exact as @image3, one hand closing it quietly behind her, the other pressing the scroll against her back. She leans against the closed door, catching her breath, eyes bright with adrenaline. Her hair is slightly disheveled from running. The bedroom is quiet and golden with morning light.
+Panel 2: Wide shot. Aisha tiptoes across the bedroom toward the rug in the center. She holds the scroll behind her back with both hands. Through the balcony entrance exact as @image4, Dora exact as @image2 is visible — sitting upright, facing the doorway, golden eyes fixed on Aisha. The panther hasn't moved but every muscle is alert. She watched the whole escape and return.
+Panel 3: Close-up two-shot. Aisha exact as @image1 freezes mid-step — she's been caught. She attempts her innocent face but it crumbles into a guilty grin. Dora exact as @image2 approaches from the balcony, head low, eyes narrow, one paw placed deliberately in front of the other. Her expression: "I can literally smell that scroll. Who do you think you're fooling?"
+Panel 4: Comedy shot. Aisha exact as @image1 gives up hiding and dramatically reveals the scroll from behind her back like a magician. "Ta-da!" Her face beams with reckless pride. Dora exact as @image2 looks at the scroll, then at Aisha, then at the scroll again. Her expression cycles through: suspicion, concern, disapproval, and finally — reluctant curiosity. Her ears perk forward despite herself.
+
+Environment: Bedroom exact as @image3, balcony entrance exact as @image4, morning light.
+
+All panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm golden morning light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.

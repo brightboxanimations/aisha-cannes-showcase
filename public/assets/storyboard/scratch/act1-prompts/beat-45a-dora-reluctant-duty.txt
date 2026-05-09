@@ -1,0 +1,22 @@
+premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm midday light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.
+
+CHARACTER LOCKS:
+@image1 = Dora — white panther, resigned but obedient, getting up from cushion, exact as reference.
+@image2 = Aisha — beckoning Dora from the balcony entrance, exact as reference.
+
+LOCATION REFERENCE:
+@image3 = Balcony projections — exact unchanged.
+@image4 = Bedroom front view — exact unchanged.
+
+SCENE: Late morning — Dora accepts the bun mission.
+Dora dramatically accepts her role in Aisha's plan. She rises from the cushion with exaggerated reluctance. "I hate how well you know me." She shakes herself, checks her reflection in a polished surface, and prepares to descend to the courtyard. She has a job to do.
+
+Create 2x2 grid with 4 panels with 3D animated scenes in each one:
+Panel 1: Medium shot. Dora exact as @image1 rises from the pink cushion on the balcony exact as @image3 with exaggerated reluctance — each muscle fighting the movement. Her expression: the deep suffering of a creature asked to do something she wants to do anyway. Behind her, Aisha exact as @image2 watches from the curtain entrance with a barely-suppressed grin.
+Panel 2: Close-up of Dora exact as @image1 shaking herself — a full-body panther shake starting from her head and rippling to her tail. Fur flying, ears flopping. She transforms from lazy to ready. Her golden eyes sharpen. Her muscles tense. The pink cushion is left with a Dora-shaped impression.
+Panel 3: Comedy shot. Dora exact as @image1 catches her reflection in a polished copper tray near the balcony. She pauses, tilts her head, examines herself. She's gorgeous and she knows it. She adjusts her golden collar with one paw. She is about to commit bun theft and she wants to look good doing it.
+Panel 4: Wide shot from the bedroom exact as @image4. Dora exact as @image1 walks purposefully toward the bedroom door — head low, tail swishing, body language pure predator. Aisha exact as @image2 holds the door open. They exchange a look: "You know what to do." Dora's reply is a slow blink of determination. The mission begins.
+
+Environment: Balcony exact as @image3, bedroom exact as @image4, midday light.
+
+All panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm midday light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.

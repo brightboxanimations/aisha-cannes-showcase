@@ -1,0 +1,23 @@
+premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm golden morning light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.
+
+CHARACTER LOCKS:
+@image1 = Aisha — silhouetted on the balcony, exact as reference.
+
+LOCATION REFERENCE:
+@image2 = Balcony exterior front — ornate railing and architecture from outside, exact unchanged.
+@image3 = Balcony left side — exact unchanged.
+@image4 = Balcony right side — exact unchanged.
+@image5 = Low angle toward balcony — looking up at balcony from garden below, exact unchanged.
+
+SCENE: Morning — balcony exterior establishing (architecture beat).
+The balcony itself as a character: its ornate railing, hanging plants, cushions, the view it commands. Shot from outside — from the gardens below looking up. The balcony is Aisha's world: beautiful, elevated, and completely isolated. A gilded cage with the best view in the kingdom.
+
+Create 2x2 grid with 4 panels with 3D animated scenes in each one:
+Panel 1: Wide front view exact as @image2. The balcony seen from outside at the same level — ornate railing with arabesque patterns, hanging plants with colorful flowers, soft cushions and silk drapes. Through the curtained entrance: the warm glow of the bedroom behind. The architecture is stunning — carved stone, painted tiles, golden accents.
+Panel 2: Side view exact as @image3. The balcony from the left — showing its depth, the cushioned seating area, the railing curves. The city panorama stretches behind the railing. The morning light creates warm shadows through the railings onto the floor. Hanging plants create a natural canopy.
+Panel 3: Low angle exact as @image5 from the garden below looking up. The balcony is high above — two stories. The palace wall rises with ornate windows below, and the balcony crowns the top. Aisha exact as @image1 is a tiny silhouette at the railing, looking out. She's elevated and isolated — a princess in her tower. The garden below is lush but she can't reach it.
+Panel 4: Wide establishing. The entire palace facade with the balcony visible as one element among many — but it glows slightly brighter, the eye is drawn to it. It's where our story's heart lives. The palace is magnificent but the balcony is home. Morning light picks it out from the surrounding architecture like a spotlight.
+
+Environment: Palace exterior, balcony exact as @image2, @image3, @image4, @image5, morning golden light.
+
+All panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm golden morning light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.

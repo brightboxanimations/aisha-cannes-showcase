@@ -1,0 +1,23 @@
+premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm midday light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.
+
+CHARACTER LOCKS:
+@image1 = Aisha — 16-year-old princess, now pretending to be casual, wearing her palace outfit with a simple light beige headscarf draped over her hair, tiara subtly visible underneath, exact as reference.
+@image2 = Aisha peeks out — Aisha at the palace exit door, looking for the scarf seller, exact as reference.
+
+LOCATION REFERENCE:
+@image3 = Palace exit internal door — the service exit from inside the palace, narrow corridor leading to the courtyard, exact unchanged.
+@image4 = Aisha picking headscarf — Aisha trying on a simple headscarf while the servant/seller looks distressed, exact as reference.
+@image5 = Aisha in simple headscarf — Aisha with the beige soft headscarf over her own style, tiara still visible, exact as reference.
+
+SCENE: Late morning, palace service exit.
+While Dora creates chaos with the buns, Aisha sneaks to the palace service exit. She peeks through the door and spots a scarf seller. She approaches with warm charm: "These are lovely. May I try one?" The seller is overwhelmed by royalty. Aisha dramatically poses in the sand-colored scarf. "I'm magnificent." She buys everything and offers to help carry the basket.
+
+Create 2x2 grid with 4 panels with 3D animated scenes in each one:
+Panel 1: Medium shot from inside the palace exit exact as @image3. Aisha exact as @image2 peeks through the narrow door, body half-hidden, one eye visible, scanning the courtyard for the scarf seller. The corridor behind her is dim, cool. Through the door: bright sunlight, the courtyard bustling with the distant bun chaos (tiny Dora and bun seller visible far away on the left).
+Panel 2: Medium two-shot. Aisha exact as @image1 stands before the scarf seller — a humble, tired-looking woman carrying unsold simple scarves draped over both arms. Aisha's expression is warm and genuine. The seller looks frozen — wide eyes, mouth slightly open, completely unprepared for royalty to approach her. A pile of plain sand-colored scarves between them.
+Panel 3: Medium close-up exact as @image4. Aisha drapes the sand-colored headscarf around her head with dramatic theatrical flair, then strikes a full regal pose — chin up, one hand on hip, eyes bright with playful pride. "I'm magnificent." The seller blinks, utterly confused but unable to argue. The simple scarf contrasts beautifully with Aisha's fine palace outfit. Her tiara peeks out subtly from beneath the scarf.
+Panel 4: Wide shot. Aisha exact as @image5 walks alongside the scarf seller toward the service gate, carrying the seller's basket full of scarves. Her beige headscarf exact as @image5 covers most of her hair but her tiara is still subtly visible. The seller walks beside her, bewildered but grateful. In the background: guards are still distracted by the bun chaos. Dora is visible far away still sitting with her stolen bun. The gate ahead is unguarded.
+
+Environment: Palace service exit exact as @image3, courtyard, service gate, midday light.
+
+All panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm midday light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.

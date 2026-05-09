@@ -47,5 +47,6 @@
     "check_auth": "npx pixverse account --json",
     "paginate": "Add --page 2, --page 3 etc. for next pages"
   },
-  "createdAt": "2026-05-06T00:01:00Z"
+  "createdAt": "2026-05-06T00:01:00Z",
+  "iconIdx": 6
 }

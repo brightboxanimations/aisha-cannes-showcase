@@ -1,0 +1,11 @@
+{
+  "id": "task-act10-1778122971942-057",
+  "title": "57. The Transformation Begins",
+  "prompt": "premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.\n\nCHARACTER AND LOCATION LOCKS:\n@image7 = Giant Nibzu, massive goofy spider with crossed amber eyes, huge but retaining its silly smile, exact as reference.\n@image8 = Giant Sand Guardian, kinetic sand creature, flowing like liquid light, faceless hidden beneath a hood of swirling golden grains.\n\nSCENE: Daytime scene in the dunes.\n\nCreate 2x2 grid with 4 panels with 3D animated scenes in each one:\nPanel 1: Medium tracking shot. The Giant Sand Guardians exact as @image8 move with fluid grace around the spider, flicking bright sparks of golden sand from their fingertips.\nPanel 2: Macro detail shot. The golden sparks land on the hairy leg of the Giant Nibzu exact as @image7. Instantly, 'liquid warp gold' begins flowing across its leg like reverse lava.\nPanel 3: Medium shot. The liquid gold crawls rapidly upward in shimmering streams, solidifying the spider's dark leg into polished gold.\nPanel 4: Reaction shot. The Giant Nibzu exact as @image7 looking down at its own legs with its crossed amber eyes, looking deeply confused but still smiling goofy.\n\nAll panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.",
+  "status": "todo",
+  "createdAt": "2026-05-07T03:02:51.942Z",
+  "updatedAt": "2026-05-07T03:02:51.942Z",
+  "passes": [],
+  "generatedImages": [],
+  "skillHint": "skill-codex-2x2-grid-prompt"
+}

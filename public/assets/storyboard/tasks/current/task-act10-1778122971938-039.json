@@ -1,0 +1,11 @@
+{
+  "id": "task-act10-1778122971938-039",
+  "title": "39. The Reassurance",
+  "prompt": "premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.\n\nCHARACTER AND LOCATION LOCKS:\n@image1 = Aisha, 16-year-old human princess, curious brave beautiful, exact as the reference; no modification to looks or clothes.\n@image9 = Zahra, Aisha's mother, beautiful woman in flowing white dress adorned with pearls and a silky headscarf, exact as reference.\n@image14 = Temple of Light, breathtaking sacred hall in the Spirit Realm, quartz mosaics shimmering, floating light motes, endless walls of arabesque-laced windows.\n\nSCENE: Ethereal scene in the Temple of Light.\n\nCreate 2x2 grid with 4 panels with 3D animated scenes in each one:\nPanel 1: Tight two-shot. Zahra exact as @image9 cups Aisha's tear-streaked face exact as @image1 in both of her hands, lifting her gaze gently.\nPanel 2: Close-up. Zahra exact as @image9 looking deeply into Aisha's eyes exact as @image1, speaking with profound maternal warmth.\nPanel 3: Medium shot. Zahra exact as @image9 telling Aisha that her memories are coming back, and the ancestors are connected through them.\nPanel 4: Extreme close-up. Zahra exact as @image9 smiles with radiant, divine warmth, declaring that it's time for the ancestors to wake up.\n\nAll panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.",
+  "status": "todo",
+  "createdAt": "2026-05-07T03:02:51.938Z",
+  "updatedAt": "2026-05-07T03:02:51.938Z",
+  "passes": [],
+  "generatedImages": [],
+  "skillHint": "skill-codex-2x2-grid-prompt"
+}

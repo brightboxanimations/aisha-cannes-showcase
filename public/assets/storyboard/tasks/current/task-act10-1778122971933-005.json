@@ -1,0 +1,11 @@
+{
+  "id": "task-act10-1778122971933-005",
+  "title": "5. Dora's Protection",
+  "prompt": "premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.\n\nCHARACTER AND LOCATION LOCKS:\n@image1 = Aisha, 16-year-old human princess, curious brave beautiful, exact as the reference; no modification to looks or clothes.\n@image2 = Dora, white panther, normal panther size, her height reaches Aisha's hip, exact as the reference.\n@image13 = Desert Dunes, endless rolling sands beneath stormy skies, sandstorms in the distance.\n\nSCENE: Daytime scene in the dunes. Dora comforts Aisha.\n\nCreate 2x2 grid with 4 panels with 3D animated scenes in each one:\nPanel 1: Medium shot. Dora exact as @image2 steps firmly in front of Aisha exact as @image1, using her body to block the view of the ruined palace.\nPanel 2: Low angle shot. Dora exact as @image2 stands tall and protective over the weeping Aisha exact as @image1, her expression serious and encouraging.\nPanel 3: Close-up. Aisha exact as @image1 lifts her face toward Dora, tear-streaked, guilty, and incredibly fragile.\nPanel 4: OTS shot over Dora exact as @image2. She looks down at Aisha exact as @image1, speaking firmly, telling her she didn't destroy the balance on purpose.\n\nAll panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.",
+  "status": "todo",
+  "createdAt": "2026-05-07T03:02:51.933Z",
+  "updatedAt": "2026-05-07T03:02:51.933Z",
+  "passes": [],
+  "generatedImages": [],
+  "skillHint": "skill-codex-2x2-grid-prompt"
+}

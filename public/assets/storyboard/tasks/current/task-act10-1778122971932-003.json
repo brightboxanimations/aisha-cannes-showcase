@@ -1,0 +1,11 @@
+{
+  "id": "task-act10-1778122971932-003",
+  "title": "3. Reviving Niura",
+  "prompt": "premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.\n\nCHARACTER AND LOCATION LOCKS:\n@image1 = Aisha, 16-year-old human princess, curious brave beautiful, exact as the reference; no modification to looks or clothes.\n@image3 = Niura, tiny delicate snake, beautiful intricate scales, exact as reference.\n@image2 = Dora, white panther, normal panther size, her height reaches Aisha's hip, exact as the reference.\n@image13 = Desert Dunes, endless rolling sands beneath stormy skies, sandstorms in the distance.\n\nSCENE: Daytime scene in the dunes.\n\nCreate 2x2 grid with 4 panels with 3D animated scenes in each one:\nPanel 1: Insert shot. The tiny snake Niura exact as @image3 slides weakly out of Aisha's scarf, looking dizzy and barely conscious.\nPanel 2: Extreme close-up. Aisha exact as @image1 gently lifts Niura exact as @image3 with both hands, tears in her eyes.\nPanel 3: Emotional close-up. Aisha exact as @image1 presses Niura's cold intricate scales exact as @image3 against her own cheek, her voice cracking with relief.\nPanel 4: Medium shot. Dora exact as @image2 limps closer, looking at the tiny snake exact as @image3 with genuine, sincere concern, all her jealousy gone.\n\nAll panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.",
+  "status": "todo",
+  "createdAt": "2026-05-07T03:02:51.932Z",
+  "updatedAt": "2026-05-07T03:02:51.932Z",
+  "passes": [],
+  "generatedImages": [],
+  "skillHint": "skill-codex-2x2-grid-prompt"
+}

@@ -1,0 +1,24 @@
+premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm golden morning light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.
+
+CHARACTER LOCKS:
+@image1 = First merchant — Bedouin in sand-colored robes, panicked joy, squeezing through gate, exact as reference.
+@image2 = Funny camel — goofy camel trying to fit through narrow gate gap, ears flat, exact as reference.
+@image3 = Gate guards — pushing massive wooden doors shut, straining, exact as reference.
+@image4 = Altair — hawk overhead, exact as reference.
+
+LOCATION REFERENCE:
+@image5 = Merchants before gate — full queue, exact unchanged.
+@image6 = Gate entrance — massive sandstone arch, exact unchanged.
+
+SCENE: Morning — Gate closing alternate angles.
+Same beat: gates closing, merchant + camel squeeze through, indigo sneaks in. Focus on: the gap narrowing, the camel's humps barely fitting, the indigo merchant's belly-slide, the outside merchants' despair through a barred window.
+
+Create 2x2 grid with 4 panels with 3D animated scenes in each one:
+Panel 1: Close-up of the narrowing gap between the two gate doors exact as @image6. The funny camel exact as @image2 is mid-squeeze — one hump through, the other stuck, its face is pure panic with eyes bulging and tongue slightly out. The merchant exact as @image1 pushes from behind. A guard's armored hands are visible on each door, pushing hard. Light streams through the shrinking gap.
+Panel 2: Wide overhead shot looking down. The gate courtyard from above: two guard figures pushing the doors, the camel half-in half-out creating a comical bottleneck, the merchant flattened against the camel. Behind them: the indigo Bedouin sprinting with robes flying. Further back: the fat and tired merchants standing still, mouths open. The geometry of the scene is comedic.
+Panel 3: Medium shot from outside. The gate exact as @image6 slams shut with a massive BOOM — dust explodes from the base. Through a small barred window in the left door: a tiny face appears — it's the clerk, peering out with petty satisfaction. The fat jade-green merchant pounds the door with both fists, his turban askew. The tired merchant has already sat down on the ground, leaning against his camel, resigned to waiting.
+Panel 4: Close-up comedy shot of the two camels locked outside. They stand side by side — the fat merchant's camel and the tired merchant's camel. One looks at the other. They both slowly sit down on the sand in perfect synchronization, as if they've agreed: "We're done." Their expressions mirror their owners' despair — one angry, one resigned.
+
+Environment: Gate exact as @image6, merchant queue exact as @image5, dust, golden morning light.
+
+All panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm golden morning light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.

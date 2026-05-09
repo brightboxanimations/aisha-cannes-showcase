@@ -1,0 +1,7 @@
+{
+  "id": "skill-pixverse-image-models",
+  "name": "PixVerse Image Models & CLI Syntax",
+  "description": "Correct model names, quality settings, and CLI syntax for pixverse-cli image generation. Default 3 models: gemini-3.1-flash (4K), gemini-3.0 (2K), gpt-image-2.0 (2K medium detail). Includes --images plural syntax for multiple inputs.",
+  "file": "skill-pixverse-image-models.md",
+  "tags": ["pixverse", "cli", "image-generation", "models", "syntax"]
+}

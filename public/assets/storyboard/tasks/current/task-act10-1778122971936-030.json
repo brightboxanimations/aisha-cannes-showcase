@@ -1,0 +1,11 @@
+{
+  "id": "task-act10-1778122971936-030",
+  "title": "30. Dora Returns",
+  "prompt": "premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.\n\nCHARACTER AND LOCATION LOCKS:\n@image2 = Dora, white panther, normal panther size, her height reaches Aisha's hip, exact as the reference.\n\nSCENE: Daytime scene just outside the sand wall.\n\nCreate 2x2 grid with 4 panels with 3D animated scenes in each one:\nPanel 1: Action tracking shot. Dora exact as @image2 running back toward the chamber, skidding to a violent halt in the sand just outside the rapidly closing golden sand wall.\nPanel 2: Medium shot. Dora exact as @image2 violently throws her head, tossing the fake talisman as far away into the dunes as she possibly can.\nPanel 3: Slow-motion epic shot. Dora exact as @image2 sprints back and executes a massive, desperate dive directly toward the shrinking opening of the golden sand wall.\nPanel 4: Insert shot. Dora's tail exact as @image2 slipping through the gap just a microsecond before the golden wall of sand completely seals shut.\n\nAll panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.",
+  "status": "todo",
+  "createdAt": "2026-05-07T03:02:51.936Z",
+  "updatedAt": "2026-05-07T03:02:51.936Z",
+  "passes": [],
+  "generatedImages": [],
+  "skillHint": "skill-codex-2x2-grid-prompt"
+}

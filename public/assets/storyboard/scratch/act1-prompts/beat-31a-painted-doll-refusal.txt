@@ -1,0 +1,21 @@
+premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm morning light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.
+
+CHARACTER LOCKS:
+@image1 = Aisha — 16-year-old princess, pacing furiously, then sly and calculating, exact as reference.
+@image2 = Dora — white panther, dramatic slump then resigned, exact as reference.
+
+LOCATION REFERENCE:
+@image3 = Bedroom front view — exact unchanged.
+
+SCENE: Morning — Aisha refuses to be contained (aftermath beat).
+Dora slumps dramatically: "Well. That went well." Aisha paces with fire in her chest. "He lied to me about everything." She won't sit and smile like a painted doll. Her decision crystallizes: she will find out the truth, even if it means leaving the palace.
+
+Create 2x2 grid with 4 panels with 3D animated scenes in each one:
+Panel 1: Medium shot. Dora exact as @image2 collapses dramatically onto the cushioned bench — legs splayed, head back, one paw over her eyes. "Well. That went well." Her whole body radiates theatrical exhaustion. Behind her, Aisha exact as @image1 paces in a tight circle on the rug, fists clenched.
+Panel 2: Close-up of Aisha exact as @image1 mid-pace. Her face burns with righteous anger: "He lied to me. About everything." Her jaw is set, brow furrowed, but her eyes — those large dark eyes — show something beyond anger: determination. She's no longer just a frustrated teenager. Something fundamental has shifted.
+Panel 3: Medium shot. Aisha exact as @image1 stops pacing and turns to Dora. Her expression transforms — the anger channels into something sharper: a plan. "If something threatens the kingdom, I won't sit and smile like a painted doll." She says it to Dora but she's making a promise to herself. Her fists unclench — her fingers spread with new purpose.
+Panel 4: Wide atmospheric shot of the bedroom exact as @image3. Aisha exact as @image1 stands at the balcony entrance, silhouetted against the bright outside world. Her posture has changed — she stands taller, shoulders back. She's made her decision. Dora exact as @image2 watches from the bench, one eye open — she knows that posture. That's the posture of Aisha about to do something catastrophically brave.
+
+Environment: Bedroom exact as @image3, morning light, emotional aftermath.
+
+All panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm morning light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.

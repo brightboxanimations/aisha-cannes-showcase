@@ -1,0 +1,23 @@
+premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm golden morning light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.
+
+CHARACTER LOCKS:
+@image1 = First merchant — Bedouin man in sand-colored robes, nervous joyful expression, exact as reference.
+@image2 = Funny camel — tall goofy camel, exact as reference.
+@image3 = City gate clerk — bored man behind permit stand, exact as reference.
+
+LOCATION REFERENCE:
+@image4 = Merchant line — queue of merchants approaching clerk stand, exact unchanged.
+@image5 = Clerk scandalized — clerk front view recoiling at strange jars with conserved lizards and green beetles, exact expression and staging.
+
+SCENE: Morning, city gate permit stand.
+The indigo Bedouin merchant steps up with his strange collection of jars filled with preserved green beetles and small lizards floating in murky liquid. The clerk is horrified. The first merchant and his camel are stepping aside happily. The fat jade-green merchant watches with growing envy at the first merchant's success.
+
+Create 2x2 grid with 4 panels with 3D animated scenes in each one:
+Panel 1: Medium shot. The indigo Bedouin merchant — tall, thin, elaborate indigo-blue robes, turban with a golden pin, his face locked in an overly sweet false grin — steps forward to the stand. He places three glass jars on the counter. Inside the jars: green beetles suspended in cloudy amber liquid, a small preserved lizard with its tiny claws spread. The clerk exact as @image3 leans back in his chair, spectacles sliding down his nose, mouth open in horror.
+Panel 2: Close-up insert shot exact as @image5. The clerk's face fills the left half — eyes bulging behind spectacles, one hand raised in a "stop" gesture. The three jars fill the right half, lit from behind by morning sun making the beetle specimens glow a sickly green. One jar has a lizard pressed against the glass as if trying to escape even in death.
+Panel 3: Medium wide shot. First merchant exact as @image1 walks away happily on the left holding his stamped permit above his head, funny camel exact as @image2 trotting behind him with its goofy proud expression. At the stand on the right, the clerk recoils from the indigo merchant's jars. The fat jade-green merchant watches the departing first merchant with intensified envy — his false smile twitching.
+Panel 4: Close-up two-shot from low angle. The indigo Bedouin leans over the stand with his exaggerated false-sweet smile, presenting a jar closer to the clerk's face. The clerk exact as @image3 presses backward in his chair, both hands up defensively, disgust and confusion battling on his face. The jar between them catches the light — the beetles inside almost seem to move.
+
+Environment: Permit stand exact as @image4, morning golden light streaming through dusty air, sandstone gate behind.
+
+All panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm golden morning light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.

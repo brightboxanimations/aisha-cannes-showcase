@@ -1,0 +1,27 @@
+premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm golden morning light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.
+
+CHARACTER LOCKS:
+@image1 = First merchant — Bedouin man in sun-bleached sand-colored robes, nervous smile, wiry build, holding a rolled permit scroll, exact as reference.
+@image2 = Funny camel — tall, goofy, expressive big dark eyes, long lashes, always looking slightly confused, exact as reference.
+@image3 = City gate clerk — bored middle-aged man behind wooden permit stand, ink-stained fingers, small round spectacles, exact as reference.
+@image4 = Gate guards — two armored guards flanking the gate, stern but slightly distracted, exact as reference.
+
+LOCATION REFERENCE:
+@image5 = Caravan approach — wide desert dunes leading to massive sandstone city gate, morning golden hour, 100% unchanged architecture, scale, dune positions, gate design.
+@image6 = Merchant line — queue of merchants approaching the clerk's permit stand just outside the gate, exact positioning of stand, awning, and queue markers, 100% unchanged.
+
+PROPS REFERENCE:
+@image7 = Permit scroll — unstamped parchment with Arabic calligraphy, wax seal holder, exact as reference.
+
+SCENE: Early morning desert scene.
+A caravan of merchants approaches the city gate of Qazar al-Zaman. The first merchant with his ridiculous camel nervously awaits his permit. Behind him in line: a grinning Bedouin in indigo robes carrying suspicious jars, a fat merchant in jade green who keeps peeking enviously, and a fourth merchant who is simply exhausted. The clerk is magnificently bored.
+
+Create 2x2 grid with 4 panels with 3D animated scenes in each one:
+Panel 1: Wide establishing master shot. Desert dunes exact as @image5 fill the background, golden morning sun low on horizon casting long warm shadows. A line of 6-7 camels and merchants winds from the dunes toward the massive sandstone gate. Dust catches the light. The gate towers in the right third of frame. Scale: merchants are small figures against the vast desert.
+Panel 2: Medium shot of the merchant line exact as @image6. First merchant exact as @image1 stands at the front, nervously clutching his documents, funny camel exact as @image2 behind him with its head tilted sideways in confusion. Behind: Bedouin in indigo robes grinning with false sweetness, peering around the first merchant; fat merchant in jade green robes peeking enviously from behind the indigo one; tired merchant slumping at the back barely staying upright.
+Panel 3: Close-up two-shot of the clerk exact as @image3 behind his permit stand, examining the first merchant's documents with exaggerated boredom. Ink bottle on left, stamp on right, stack of rejected permits behind. The first merchant exact as @image1 leans forward nervously across the stand. Guards exact as @image4 visible in background flanking the gate.
+Panel 4: Medium close-up reaction shot. The Bedouin in indigo robes stands behind the first merchant, his face in a comically exaggerated false-sweet grin — overly curious, peering sideways. The fat merchant in jade green leans out from behind him with a false envious smile, one hand on his enormous belly. Behind them both, the tired merchant has his eyes half-closed, chin dropping.
+
+Environment: Desert setting exact as @image5 — sandstone gate architecture, golden morning light, dust-filled air, permit stand exact as @image6 with its wooden awning and documents.
+
+All panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm golden morning light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.

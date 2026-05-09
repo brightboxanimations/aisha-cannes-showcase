@@ -1,0 +1,11 @@
+{
+  "id": "task-act10-1778122971936-027",
+  "title": "27. The Talisman Awakens",
+  "prompt": "premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.\n\nCHARACTER AND LOCATION LOCKS:\n@image1 = Aisha, 16-year-old human princess, curious brave beautiful, exact as the reference; no modification to looks or clothes.\n@image11 = The Hourglass, massive magical hourglass inside the majestic chamber, exact as reference.\n@image3 = Niura, tiny delicate snake, beautiful intricate scales, exact as reference.\n\nSCENE: Daytime scene inside the chamber.\n\nCreate 2x2 grid with 4 panels with 3D animated scenes in each one:\nPanel 1: Insert shot. The true Talisman on Aisha's chest exact as @image1 begins to glow intensely, shifting from warm to hot, emitting a brilliant luminous light.\nPanel 2: Close-up. The tiny snake Niura exact as @image3 lifting her head weakly, looking up at Aisha with awe, bathed in the talisman's light.\nPanel 3: Tight two-shot. Niura exact as @image3 whispering to Aisha exact as @image1, asking if she is remembering, or if the ancient magic is remembering her.\nPanel 4: Extreme close-up. Aisha's eyes exact as @image1 suddenly unfocus, glowing faintly as if something ancient and powerful is rising from deep within her soul.\n\nAll panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.",
+  "status": "todo",
+  "createdAt": "2026-05-07T03:02:51.936Z",
+  "updatedAt": "2026-05-07T03:02:51.936Z",
+  "passes": [],
+  "generatedImages": [],
+  "skillHint": "skill-codex-2x2-grid-prompt"
+}

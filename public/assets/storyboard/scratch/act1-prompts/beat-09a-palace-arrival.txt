@@ -1,0 +1,23 @@
+premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm golden morning light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.
+
+CHARACTER LOCKS:
+@image1 = Altair — royal hawk, golden-brown feathers, wings spread, exact as reference.
+
+LOCATION REFERENCE:
+@image2 = Palace patio flyover — Altair approaches the palace internal patio from above, Aisha's balcony visible, exact as reference.
+@image3 = Internal palace patio gates — tall ornate arabesque arch connecting the outer palace to the inner patio, gardens visible through the arch, exact as reference.
+@image4 = Balcony projections — 4-angle view of Aisha's balcony with ornate railing, cushions, hanging plants, 100% unchanged.
+@image5 = Aisha on balcony — Aisha standing at railing, dreamy, panther lying on cushion to the right, master shot, exact as reference.
+
+SCENE: Morning, palace approach.
+Altair arrives at the palace. He dives through the tall internal patio gate arch and flies over the palace gardens toward Aisha's balcony. On the balcony, far away, tiny Aisha is visible standing at the railing looking out at the city. Dora the panther lies lazily on her pink cushion. Neither knows what's coming.
+
+Create 2x2 grid with 4 panels with 3D animated scenes in each one:
+Panel 1: Front view from inside the patio gate arch exact as @image3. Altair exact as @image1 flies through the tall arabesque arch, his wings tucked to fit, scroll in talons. The arch frames the palace gardens and courtyard beyond. Morning light streams through the arch creating dramatic light beams. The ornate stonework of the arch glows warmly.
+Panel 2: Wide aerial shot exact as @image2. Altair exact as @image1 descends over the palace's internal patio — ornate gardens with fountains, tiled walkways, palm trees. In the distance, the balcony exact as @image4 is visible — a tiny figure (Aisha) stands at the railing. The scale shows the vast beauty of the palace complex.
+Panel 3: Medium long shot from below. Looking up at the balcony exact as @image4 from the garden level. Aisha exact as @image5 is small but visible at the ornate railing, her hair catching morning wind. To her right on the balcony floor, Dora the white panther is a blur of white fur on a pink cushion. Altair approaches from above and behind them, still unnoticed.
+Panel 4: Close-up of Aisha exact as @image5 at the balcony railing. She gazes dreamily at the city below with large expressive dark brown eyes, chin resting on her hand. Her long wavy dark hair flows in a soft breeze. Behind her on the right, Dora sleeps peacefully on the pink cushion, one paw dangling over the edge. In the far sky behind and above them, Altair is a tiny approaching speck — neither has noticed yet.
+
+Environment: Palace patio exact as @image3, gardens, balcony exact as @image4 and @image5, golden morning light, ornate arabesque architecture.
+
+All panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm golden morning light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.

@@ -1,0 +1,6 @@
+{
+  "id": "mem-1778037428112",
+  "topic": "what skills i attached? what is inside the exact text",
+  "summary": "The user has attached two skills: \"Split Grid + Improve Quality\" and \"Download from PixVerse.\" The \"Split Grid + Improve Quality\" skill splits a 2x2 grid image into four individual 16:9 panels, then sends each to PixVerse for quality improvement using three models: Seedream 4.5 4K, GPT-2 2K, and Nano Banana 2 4K.\n\nThe \"Download from PixVerse\" skill requires the user to be logged into PixVerse (pixverse.ai) in their browser with the `pixverse` CLI available via `npx pixverse`, sharing authentication via cookies. Step 1 lists saved/favorited images using `npx pixverse saved items --type image --limit 100 --json`, returning a JSON array with `asset_id`, `created_at`, `image_url`, `model` (e.g., `gemini-3.1-flash`), and `quality` (e.g., `2160p`). Pagination is supported with `--page` flag. Step 2 filters these images by a specific date and time range using the `created_at` UTC timestamp.",
+  "createdAt": "2026-05-06T03:17:08.112Z"
+}

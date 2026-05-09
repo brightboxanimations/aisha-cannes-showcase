@@ -1,0 +1,11 @@
+{
+  "id": "task-act10-1778122971941-055",
+  "title": "55. The Panic",
+  "prompt": "premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.\n\nCHARACTER AND LOCATION LOCKS:\n@image5 = Sharak, shadow king with magic powers, fierce and insane, exact as reference.\n@image13 = Desert Dunes, endless rolling sands beneath stormy skies, sandstorms in the distance.\n\nSCENE: Daytime scene in the dunes.\n\nCreate 2x2 grid with 4 panels with 3D animated scenes in each one:\nPanel 1: Wide shot. Small, roaring tornadoes of sand form all around Sharak exact as @image5 in the Desert Dunes exact as @image13, each rising higher and wider.\nPanel 2: Medium shot. Sharak exact as @image5 screams in terror, throwing the useless Fake Talisman away and trying to run.\nPanel 3: Slow-motion detail shot. Sharak's legs exact as @image5 sinking deeply into the shifting sand, struggling forward as if the dunes are pulling him down.\nPanel 4: Action shot. Sharak exact as @image5 falling hard onto his back in the sand, breathless and completely defeated.\n\nAll panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.",
+  "status": "todo",
+  "createdAt": "2026-05-07T03:02:51.941Z",
+  "updatedAt": "2026-05-07T03:02:51.941Z",
+  "passes": [],
+  "generatedImages": [],
+  "skillHint": "skill-codex-2x2-grid-prompt"
+}

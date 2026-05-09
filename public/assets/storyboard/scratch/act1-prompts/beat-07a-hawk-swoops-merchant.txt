@@ -1,0 +1,22 @@
+premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm golden morning light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.
+
+CHARACTER LOCKS:
+@image1 = Merchant inside city — Bedouin in sand-colored robes, now joyful and relieved inside the city, with his permit, exact as reference.
+@image2 = Funny camel — on the city street now, exact as reference.
+@image3 = Altair — royal hawk, golden-brown feathers, flying close overhead, exact as reference.
+
+LOCATION REFERENCE:
+@image4 = Merchant and camel inside the gate on street — narrow city street with sandstone buildings, market stalls, exact unchanged.
+
+SCENE: Morning, just inside the city gate.
+The happy merchant and his camel walk down the narrow city street just inside the gate, still giddy from barely making it through. Altair swoops close to their heads, making the merchant look up in astonishment and the camel freeze with its neck stretched upward, eyes comically wide.
+
+Create 2x2 grid with 4 panels with 3D animated scenes in each one:
+Panel 1: Medium wide shot. Merchant exact as @image1 walks down the narrow city street exact as @image4, hugging his stamped permit and grinning with pure relief. His funny camel exact as @image2 trots behind, head bobbing happily. Market stalls line both sides. Sandstone buildings with arabesque windows rise above. Morning light filters between buildings creating golden streaks.
+Panel 2: Action shot from low angle. Altair exact as @image3 swoops down the narrow street at head height, wings tucked back for speed. The merchant exact as @image1 looks up in shock, mouth open, eyes wide, one hand raising the permit as if to shield himself. Camel exact as @image2 behind freezes mid-step.
+Panel 3: Close-up two-shot. The merchant's face fills the left — eyes stretched impossibly wide, jaw dropped, staring upward. The camel's face on the right — neck craned straight up, huge eyes even bigger than normal, nostrils flared, ears splayed. Both watching Altair pass overhead. The light catches their synchronized astonishment.
+Panel 4: Wide shot from above, bird's-eye view. Altair exact as @image3 races forward up the street exact as @image4 toward the palace in the distance. Below, the merchant and camel are tiny figures looking up. The street leads through a market area toward the inner city. The shadow of the hawk streaks across the stone street.
+
+Environment: City street exact as @image4, narrow with sandstone walls, market stalls, golden morning light between buildings.
+
+All panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm golden morning light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.

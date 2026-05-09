@@ -1,0 +1,21 @@
+premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm golden morning light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.
+
+CHARACTER LOCKS:
+@image3 = Gate guards — straining to close the massive doors, exact as reference.
+
+LOCATION REFERENCE:
+@image4 = Gate entrance — massive sandstone arch, exact unchanged.
+@image5 = Gate prop — empty gate reference showing the mechanism, exact as reference.
+
+SCENE: Morning, city gate — gate mechanism detail.
+The massive gate's closing mechanism: huge wooden beams, iron brackets, chains, pulleys. Guards strain against the weight. The gate is ancient — centuries of use have worn the wood smooth. The closing is dramatic: dust falls, hinges groan, the ground shakes. A dedicated prop/environment beat.
+
+Create 2x2 grid with 4 panels with 3D animated scenes in each one:
+Panel 1: Wide shot of the gate exact as @image4 from inside. The two massive wooden doors fill the frame — each one three stories tall, thick oak reinforced with iron bands and rivets. Guards exact as @image3 push from both sides, their small figures emphasizing the gate's massive scale. Dust cascades from the hinges.
+Panel 2: Close-up of the gate mechanism. Huge iron chains connect to a central pulley system above the arch. As the doors close, the chains tighten with metallic groaning sounds. Ancient wood slides in ancient grooves — smooth from centuries of use. A guard pulls a heavy lever. Iron brackets clank into place.
+Panel 3: Low angle looking up at the gate arch as the doors close. The arabesque carvings on the arch are visible — centuries old, depicting the founding of Qazar al-Zaman. Light streams through the narrowing gap between the doors, creating a shrinking beam across the ground. The last sliver of desert is visible.
+Panel 4: Insert shot. The final locking mechanism: a massive wooden beam drops into iron brackets across both doors. The BOOM echoes. Dust settles. The beam has notches from decades of daily use. Beside it: a small barred window through which the clerk peers out smugly at the locked-out merchants.
+
+Environment: Gate exact as @image4 and @image5, morning light, dust.
+
+All panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm golden morning light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.

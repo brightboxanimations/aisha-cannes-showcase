@@ -1,0 +1,23 @@
+premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm golden morning light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.
+
+CHARACTER LOCKS:
+@image1 = Aisha — 16-year-old human princess, olive skin, large expressive dark brown eyes, long wavy dark hair, curious brave beautiful, wearing her elegant palace outfit, exact as reference.
+@image2 = Dora — white panther with golden collar, normal panther size (height reaches Aisha's hip), lazily stretched on her pink cushion, exact as reference.
+
+LOCATION REFERENCE:
+@image3 = Aisha on balcony — master shot of Aisha standing at railing, Dora on cushion, exact as reference.
+@image4 = Balcony projections — 4-angle view showing front, left, right, and curtain entrance, exact unchanged.
+@image5 = View from inside balcony — looking out over the internal patio gate and plaza, city below, exact unchanged.
+
+SCENE: Morning, Aisha's balcony.
+Aisha and Dora on the balcony. Aisha is dreamy and restless, longing for the world beyond the palace walls. She watches traders arriving below with exotic goods. Dora is luxuriously lazy on her pink silk cushion, happily dismissive of Aisha's wanderlust. The dialogue: Aisha talks about the traders' wonders — indigo, star-fruit, glowing shells — and Dora tells her to eat grapes and nap.
+
+Create 2x2 grid with 4 panels with 3D animated scenes in each one:
+Panel 1: Wide master shot exact as @image3. Aisha exact as @image1 stands at the balcony railing on the left, leaning forward with sparkling eyes, chin resting on both hands. Her body language says "longing." Dora exact as @image2 is stretched out on the pink cushion on the right, one paw draped over the edge, tail curled around her body, the picture of feline indolence. Hanging plants frame both sides.
+Panel 2: Medium close-up of Aisha exact as @image1. She looks outward past the camera, face lit by warm morning sun, her large dark eyes reflecting the city lights below. Her expression mixes wonder with frustration — she wants what she can't have. The ornate railing is visible at the bottom of frame. Wind plays with her hair.
+Panel 3: View from balcony looking out exact as @image5. Aisha exact as @image1 stands at the railing in the foreground right, silhouetted against the panoramic view. Below: the internal patio gate, plaza, tiny figures of merchants arriving with carts, colored awnings, a caravan entering the distant outer gate. The whole world she cannot reach spreads before her.
+Panel 4: Close-up two-shot. Dora exact as @image2 lies on the pink cushion looking up at Aisha with half-closed eyes and a smug, lazy expression — her face says "why bother?" Aisha exact as @image1 sits on the railing edge near Dora, shooting her panther a withering but affectionate look. Between them: a plate of untouched grapes.
+
+Environment: Balcony exact as @image4, ornate railing, hanging plants, cushions, view exact as @image5, warm morning light.
+
+All panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm golden morning light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.

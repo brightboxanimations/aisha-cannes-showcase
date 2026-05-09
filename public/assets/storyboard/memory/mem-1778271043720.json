@@ -1,0 +1,6 @@
+{
+  "id": "mem-1778271043720",
+  "topic": "you need to generate it to be able to send to pixverse CLI as per 2x2 instuctions int he skil!!",
+  "summary": "The Director instructed the Assistant to generate the output using the PixVerse CLI wrapper, specifically mentioning \"2x2 instructions.\" The Assistant acknowledged the directive and provided the complete command, ready for terminal execution. The command utilizes the `Nano Banana 2` model to ensure 4K quality for the image generation.\n\nThe detailed prompt aims for a \"premium luminous 3D animated feature-film\" aesthetic, emphasizing true 3D depth, cinematic camera angles, volumetric light, soft depth of field, and expressive 3D eyes. Five specific image references are used for visual control: `@image1` sets the merchant background and general style, `@image2` informs the Beduin merchant's attire, `@image3` dictates the guards' appearance, `@image4` controls the Altair Royal Hawk's comical distress and open wings, and `@image5` provides a general character style guide. This setup ensures precise visual elements, character styles, and emotional staging.",
+  "createdAt": "2026-05-08T20:10:43.720Z"
+}

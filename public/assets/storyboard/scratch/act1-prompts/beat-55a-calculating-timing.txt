@@ -1,0 +1,20 @@
+premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm midday light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.
+
+CHARACTER LOCKS:
+@image1 = Aisha — eyes sharp, calculating guard movements, exact as reference.
+
+LOCATION REFERENCE:
+@image3 = View from inside balcony — city, gate, courtyard below, exact unchanged.
+
+SCENE: Late morning, balcony — Aisha calculates escape timing.
+Aisha watches the courtyard below from the balcony with the sharp focus of a military strategist. She counts guard patrol cycles. She times the gate openings. She identifies the service exit. She watches the bun seller's route and the scarf seller's approach. Every piece falls into place.
+
+Create 2x2 grid with 4 panels with 3D animated scenes in each one:
+Panel 1: Medium shot of Aisha exact as @image1 at the balcony railing, eyes narrowed, counting under her breath. Her fingers tap rhythmically on the railing — "one, two, three, turn, four, five, six, new route." She's timing the guards' patrol below. Her expression has the intensity of a chess grandmaster.
+Panel 2: Aisha's POV looking down exact as @image3. The courtyard below with Aisha's mental annotations: guard paths marked as invisible lines, the gate opening timing noted, the bun seller's route crossing the guards' blind spot, the scarf seller near the service exit. Every piece of the plan visible from above.
+Panel 3: Close-up of Aisha's face exact as @image1. She spots something — her eyebrows rise. The scarf seller is walking toward the service exit at exactly the right moment. The bun seller crosses the courtyard at exactly the right time. The guards turn their backs at exactly the right angle. It's now or never.
+Panel 4: Medium shot. Aisha exact as @image1 pushes off the railing and turns toward the bedroom with purpose. Her face is set — the decision is made. She snaps her fingers once: the signal. From inside the bedroom, Dora's golden eyes appear in the curtained entrance. The plan activates.
+
+Environment: Balcony exact as @image3, courtyard below, midday light.
+
+All panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm midday light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.

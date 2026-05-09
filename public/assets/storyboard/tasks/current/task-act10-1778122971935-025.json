@@ -1,0 +1,11 @@
+{
+  "id": "task-act10-1778122971935-025",
+  "title": "25. Aisha Runs to the Hourglass",
+  "prompt": "premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.\n\nCHARACTER AND LOCATION LOCKS:\n@image1 = Aisha, 16-year-old human princess, curious brave beautiful, exact as the reference; no modification to looks or clothes.\n@image12 = Quazar al Zaman Walls, colossal majestic stone walls, exact as reference.\n@image11 = The Hourglass, massive magical hourglass inside the majestic chamber, exact as reference.\n\nSCENE: Daytime scene at the broken walls.\n\nCreate 2x2 grid with 4 panels with 3D animated scenes in each one:\nPanel 1: Wide shot. While the chase happens in the distance, Aisha exact as @image1 turns and sprints toward the massive break in the Quazar al Zaman Walls exact as @image12.\nPanel 2: Tracking shot. Aisha exact as @image1 running desperately into the Majestic Chamber, the dying Hourglass exact as @image11 towering above her.\nPanel 3: Low angle shot. Aisha exact as @image1 falling hard to her knees directly beneath the massive glass bulb of the Hourglass exact as @image11.\nPanel 4: Extreme close-up. Aisha's small, trembling hand exact as @image1 reaching out and pressing flat against the cold, colossal glass of the Hourglass exact as @image11.\n\nAll panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.",
+  "status": "todo",
+  "createdAt": "2026-05-07T03:02:51.935Z",
+  "updatedAt": "2026-05-07T03:02:51.935Z",
+  "passes": [],
+  "generatedImages": [],
+  "skillHint": "skill-codex-2x2-grid-prompt"
+}

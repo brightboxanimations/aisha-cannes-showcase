@@ -1,0 +1,22 @@
+premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm golden morning light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.
+
+CHARACTER LOCKS:
+@image1 = Aisha — 16-year-old princess, running, slightly breathless, mischievous expression, exact as reference.
+@image2 = Aisha in corridor — running down the palace corridor, exact as reference.
+
+LOCATION REFERENCE:
+@image3 = Bedroom back view — Aisha's bedroom seen from inside, the entrance door visible on the back wall, ornate but warm interior, exact unchanged.
+@image4 = Balcony projections — showing the balcony entrance/curtain side, exact unchanged.
+
+SCENE: Morning, Aisha's bedroom to corridor.
+Aisha sprints through her bedroom toward the door, out into the palace corridor, and down toward the messenger hall. She's slightly breathless but exhilarated — this is her first taste of rebellion today. Dora is not following yet. The corridor has stairs visible in the background.
+
+Create 2x2 grid with 4 panels with 3D animated scenes in each one:
+Panel 1: Medium shot from inside the bedroom exact as @image3. Aisha exact as @image1 dashes through the room from the balcony entrance toward the bedroom door on the back wall. Her hair streams behind her. Cushions and rugs are visible on the floor. The ornate bed is on the left. Morning light pours in from the balcony behind her, casting her running shadow long across the carpet.
+Panel 2: Close-up of Aisha exact as @image1 as she grabs the bedroom door handle — her face is lit with determination and mischief, eyes sparkling, a quick grin. Her hand wraps around the ornate golden handle. The detailed carved wooden door fills the background.
+Panel 3: Wide shot of the corridor exact as @image2. Aisha exact as @image1 runs down the long palace corridor — tall arabesque arches on both sides, tapestries on the walls, floor tiles in geometric patterns. In the background, a staircase curves downward. Her footsteps echo. She's small against the grand architecture.
+Panel 4: Low angle from the bottom of the stairs looking up. Aisha exact as @image1 descends the curved staircase, one hand on the ornate railing, body leaning forward with momentum. Her expression is eager — she can hear activity in the rooms below. The staircase's spiral creates a dramatic composition. Morning light enters through a high window, illuminating dust motes around her.
+
+Environment: Bedroom exact as @image3, corridor exact as @image2, ornate palace architecture, morning light.
+
+All panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm golden morning light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.

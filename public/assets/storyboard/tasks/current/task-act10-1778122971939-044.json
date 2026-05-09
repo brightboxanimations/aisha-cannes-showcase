@@ -1,0 +1,11 @@
+{
+  "id": "task-act10-1778122971939-044",
+  "title": "44. The Circle Forms",
+  "prompt": "premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.\n\nCHARACTER AND LOCATION LOCKS:\n@image1 = Aisha, 16-year-old human princess, curious brave beautiful, exact as the reference; no modification to looks or clothes.\n@image8 = Giant Sand Guardian, kinetic sand creature, flowing like liquid light, faceless hidden beneath a hood of swirling golden grains.\n\nSCENE: Daytime scene outside the Kingdom Walls.\n\nCreate 2x2 grid with 4 panels with 3D animated scenes in each one:\nPanel 1: Epic high-angle aerial shot. The six Giant Sand Guardians exact as @image8 walk gracefully toward the center, forming a massive perfect circle around the tiny, glowing figure of Aisha exact as @image1.\nPanel 2: Low angle shot from behind Aisha. The colossal, towering legs of the Giant Sand Guardians exact as @image8 dwarfing Aisha exact as @image1 as they encircle her.\nPanel 3: Medium close-up. Aisha exact as @image1 singing passionately, her voice guiding the massive beings, her Talisman glowing brightly on her chest.\nPanel 4: Wide cinematic shot. The Giant Sand Guardians exact as @image8 begin to move in unison, executing the first step of an incredibly beautiful, slow-motion ancient dance.\n\nAll panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.",
+  "status": "todo",
+  "createdAt": "2026-05-07T03:02:51.939Z",
+  "updatedAt": "2026-05-07T03:02:51.939Z",
+  "passes": [],
+  "generatedImages": [],
+  "skillHint": "skill-codex-2x2-grid-prompt"
+}

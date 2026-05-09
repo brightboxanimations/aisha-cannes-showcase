@@ -1,0 +1,6 @@
+{
+  "id": "mem-1778270483035",
+  "topic": "make the  promopt i attached it ",
+  "summary": "The user requested a prompt be generated, specifying \"the gate behind and the wall exact background as on the image 6\" and \"all the merchants visible on the image 6.\" However, `@image6` is `beduin merchant full size.png`, which is a single character sheet and not a scene reference for a city gate, wall, or multiple merchants. Using `beduin merchant full size.png` for architectural background would force PixVerse to invent these elements, compromising \"100% unchanged architecture\" consistency. The Assistant's strong recommendation is to provide a dedicated image for the city gate and wall; failing that, it will proceed by generating a generic \"desert city gate and wall.\"",
+  "createdAt": "2026-05-08T20:01:23.035Z"
+}

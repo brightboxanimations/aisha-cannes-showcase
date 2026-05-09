@@ -1,0 +1,11 @@
+{
+  "id": "task-act10-1778122971935-026",
+  "title": "26. The Whispered Plea",
+  "prompt": "premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.\n\nCHARACTER AND LOCATION LOCKS:\n@image1 = Aisha, 16-year-old human princess, curious brave beautiful, exact as the reference; no modification to looks or clothes.\n@image11 = The Hourglass, massive magical hourglass inside the majestic chamber, exact as reference.\n\nSCENE: Daytime scene inside the chamber.\n\nCreate 2x2 grid with 4 panels with 3D animated scenes in each one:\nPanel 1: Emotional close-up. Aisha exact as @image1 resting her forehead against the glass of the Hourglass exact as @image11, her eyes closed, whispering a plea.\nPanel 2: Extreme close-up on Aisha's lips exact as @image1. Whispering the words 'Mother... Forgive me. Please... guide me.'\nPanel 3: Insert shot. The true Talisman on Aisha's chest exact as @image1 resting perfectly still, glowing faintly in the dim chamber.\nPanel 4: Medium shot. Aisha exact as @image1 kneeling completely still, a moment of profound, sacred silence inside the majestic chamber.\n\nAll panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.",
+  "status": "todo",
+  "createdAt": "2026-05-07T03:02:51.935Z",
+  "updatedAt": "2026-05-07T03:02:51.935Z",
+  "passes": [],
+  "generatedImages": [],
+  "skillHint": "skill-codex-2x2-grid-prompt"
+}

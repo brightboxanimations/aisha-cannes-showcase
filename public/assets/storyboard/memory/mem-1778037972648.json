@@ -1,0 +1,6 @@
+{
+  "id": "mem-1778037972648",
+  "topic": "pleas ebased on his write fully cinematic text batch long file  we take each 2-3 phrases and convert them in one prompt . so there will be a lot of pr",
+  "summary": "The project involves breaking down a long cinematic script into approximately 50 individual prompts, each covering 2-3 phrases, to generate a detailed visual narrative using PixVerse. Each prompt will be executed via the `pixverse create image --prompt \"...\" --model \"MODEL_NAME\" --resolution \"RESOLUTION\" --grid \"2x2\" --json` command. For comparative analysis, every prompt must be run across three distinct models: \"nano-banana-2\" at 4K resolution, and \"Nano Banana Pro\" and \"GPT2 Medium\" both at 2K resolution. This workflow aligns with the \"Batch 2x2 Grid Prompt Writing & Generation\" skill. The assistant initiated the process by providing the first prompt, \"The Ignition of Qazar Al-Zaman,\" based on the text \"The sun does not rise over the Kingdom of QAZAR AL-ZAMAN. It ignites it.\" This initial prompt specifies an epic, ultra-wide establishing shot using a 16mm lens, depicting a dramatic dawn igniting the desert landscape and silhouetting QAZAR AL-ZAMAN's ancient ring-wall.",
+  "createdAt": "2026-05-06T03:26:12.649Z"
+}

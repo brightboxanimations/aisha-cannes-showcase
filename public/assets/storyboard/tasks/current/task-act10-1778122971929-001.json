@@ -1,0 +1,11 @@
+{
+  "id": "task-act10-1778122971929-001",
+  "title": "1. Aftermath in the Dunes",
+  "prompt": "premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.\n\nCHARACTER AND LOCATION LOCKS:\n@image1 = Aisha, 16-year-old human princess, curious brave beautiful, exact as the reference; no modification to looks or clothes.\n@image4 = Altair, majestic giant eagle, exact as reference.\n@image13 = Desert Dunes, endless rolling sands beneath stormy skies, sandstorms in the distance.\n\nSCENE: Daytime scene in the desert dunes. The ruins of the palace in the distance.\n\nCreate 2x2 grid with 4 panels with 3D animated scenes in each one:\nPanel 1: Wide cinematic shot. Aisha exact as @image1 lies still in the rolling Desert Dunes exact as @image13, breathless, sand covering her clothes.\nPanel 2: Extreme wide shot. In the distance, the colossal palace groans and collapses inward like a dying titan, dust clouds billowing.\nPanel 3: Medium tracking shot. Altair exact as @image4 lands heavily beside Aisha exact as @image1, his massive wings beating dust into spirals.\nPanel 4: Tight two-shot. Altair exact as @image4 looks at Aisha exact as @image1 with urgency, breathless, telling her to run to the Hourglass.\n\nAll panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.",
+  "status": "todo",
+  "createdAt": "2026-05-07T03:02:51.929Z",
+  "updatedAt": "2026-05-07T03:02:51.930Z",
+  "passes": [],
+  "generatedImages": [],
+  "skillHint": "skill-codex-2x2-grid-prompt"
+}

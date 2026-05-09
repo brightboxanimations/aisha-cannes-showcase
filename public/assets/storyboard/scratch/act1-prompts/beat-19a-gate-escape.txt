@@ -1,0 +1,22 @@
+premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm midday light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.
+
+CHARACTER LOCKS:
+@image1 = Aisha in headscarf — 16-year-old princess in simple beige headscarf, carrying basket alongside the scarf seller, tiara subtly visible, exact as reference.
+@image2 = Aisha walking with servant — Aisha helping carry the basket, talking to the perplexed scarf seller, exact as reference.
+
+LOCATION REFERENCE:
+@image3 = Internal patio gate — ornate arabesque arch, the gate separating the palace from the outer courtyard, exact unchanged.
+@image4 = Internal patio guards — two guards: silly/amused on right, grumpy/annoyed on left, distracted by the bun chaos, exact as reference.
+
+SCENE: Late morning, service gate escape.
+Aisha walks with the scarf seller toward the service gate, helping carry her basket as if she's just a friendly assistant. The guards — still busy arguing with the bun seller about Dora's theft — wave them through without even looking. Aisha steps through the gate into the outer world. From far away, Dora finally sees what happened and gasps: "AISHA—?! NOOO!"
+
+Create 2x2 grid with 4 panels with 3D animated scenes in each one:
+Panel 1: Medium wide shot. Aisha exact as @image1 walks alongside the scarf seller through the courtyard toward the gate exact as @image3. She carries the basket of scarves with ease, chatting warmly. She carefully times her approach — glancing sideways at the guards exact as @image4 who are completely distracted. The silly guard is laughing at something. The grumpy guard is arguing with the bun seller about damages.
+Panel 2: Medium shot at the gate exact as @image3. Aisha exact as @image2 and the scarf seller walk through the arabesque arch. The guards exact as @image4 stand aside, one waves them through without looking — his head turned toward the bun argument. The other guard doesn't even notice them. Aisha walks with casual confidence but her eyes glance forward with barely-contained excitement.
+Panel 3: Wide shot from outside the gate looking in. Aisha exact as @image1 steps through into the bright sunshine of the outer marketplace. Her first step outside the palace. Light blazes around her. Behind through the gate arch: the palace courtyard with its chaos — guards, bun seller, market stalls. The scarf seller walks beside her, oblivious to the princess's escape.
+Panel 4: Wide dramatic reaction shot. Far in the background through the gate: Dora the white panther sits bolt upright, bun forgotten, golden eyes enormous, jaw dropped in absolute horror as she spots Aisha outside the gate. "AISHA—?! NOOO—!" In the foreground: Aisha's back, her simple headscarf catching the wind, already walking into the marketplace. Between them: the gate, the guards, the chaos — everything that was supposed to keep Aisha in.
+
+Environment: Courtyard near gate exact as @image3, guards exact as @image4, marketplace beyond, bright midday sunlight.
+
+All panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm midday light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.

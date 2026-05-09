@@ -335,6 +335,115 @@ function storyboardApiPlugin() {
         }
       })
 
+      // GENERATE PIXVERSE — Automates the CLI from the UI
+      server.middlewares.use('/api/tasks/generate-pixverse', async (req, res) => {
+        if (req.method !== 'POST') return sendJson(res, { error: 'Method not allowed' }, 405)
+        try {
+          const body = await collectBody(req)
+          const { taskId, prompt, sceneHint, skillHint, model, quality, aspectRatio } = JSON.parse(body.toString() || '{}')
+
+          if (!prompt) return sendJson(res, { error: 'Missing prompt' }, 400)
+
+          // 1. Extract image paths from sceneHint
+          const attachedPaths: string[] = []
+          if (sceneHint) {
+            const matches = sceneHint.match(/\/assets\/storyboard\/uploads\/[a-zA-Z0-9_.-]+/g)
+            if (matches) {
+              matches.forEach((m: string) => attachedPaths.push(path.join(process.cwd(), 'public', m)))
+            }
+          }
+
+          // 2. Parse @imageX from prompt to establish order
+          const imageRegex = /@image\d+\s*=\s*([^—\n]+)/g
+          let match
+          const orderedImages: string[] = []
+
+          while ((match = imageRegex.exec(prompt)) !== null) {
+            const requestedName = match[1].trim().toLowerCase()
+            let bestMatch = ''
+            for (const p of attachedPaths) {
+              const basename = path.basename(p).toLowerCase()
+              const cleanBase = basename.replace(/-\d{13}\.png$/, '')
+
+              const simplifiedRequest = requestedName.replace(/[^a-z0-9]/g, '')
+              const simplifiedBase = cleanBase.replace(/[^a-z0-9]/g, '')
+
+              if (simplifiedBase && simplifiedRequest && (simplifiedBase.includes(simplifiedRequest) || simplifiedRequest.includes(simplifiedBase))) {
+                bestMatch = p
+                break
+              }
+            }
+            if (bestMatch) {
+              orderedImages.push(bestMatch)
+            }
+          }
+
+          const { spawn } = require('node:child_process')
+          const child = spawn('node', ['generate-pixverse.mjs', taskId, prompt, tasksCurrentDir, sceneHint || '', skillHint || ''], {
+            detached: true,
+            stdio: 'ignore',
+            cwd: process.cwd()
+          })
+          child.unref()
+
+          sendJson(res, { ok: true, message: 'PixVerse generation started in background' })
+        } catch (error) {
+          sendJson(res, { error: error instanceof Error ? error.message : 'Generate failed' }, 500)
+        }
+      })
+
+      // ═══════════════════════════════════════════
+      // DOWNLOAD PIXVERSE — Agentic skill execution
+      // ═══════════════════════════════════════════
+      server.middlewares.use('/api/tasks/download-pixverse', async (req, res) => {
+        if (req.method !== 'POST') return sendJson(res, { error: 'Method not allowed' }, 405)
+        try {
+          const body = await collectBody(req)
+          const { taskId, prompt } = JSON.parse(body.toString() || '{}')
+
+          if (!taskId || !prompt) return sendJson(res, { error: 'Missing taskId or prompt' }, 400)
+
+          const { spawn } = require('node:child_process')
+          // Spawn the node script detached
+          const child = spawn('node', ['download-pixverse.mjs', taskId, prompt, tasksCurrentDir], {
+            detached: true,
+            stdio: 'ignore',
+            cwd: process.cwd()
+          })
+          child.unref()
+
+          sendJson(res, { ok: true, message: 'PixVerse download started in background' })
+        } catch (error) {
+          sendJson(res, { error: error instanceof Error ? error.message : 'Download failed' }, 500)
+        }
+      })
+
+      // ═══════════════════════════════════════════
+      // IMPROVE PIXVERSE — Agentic skill execution
+      // ═══════════════════════════════════════════
+      server.middlewares.use('/api/tasks/improve-pixverse', async (req, res) => {
+        if (req.method !== 'POST') return sendJson(res, { error: 'Method not allowed' }, 405)
+        try {
+          const body = await collectBody(req)
+          const { taskId, imageId, imagePath, prompt } = JSON.parse(body.toString() || '{}')
+
+          if (!taskId || !imagePath || !prompt) return sendJson(res, { error: 'Missing required fields' }, 400)
+
+          const { spawn } = require('node:child_process')
+          // Spawn the node script detached
+          const child = spawn('node', ['improve-pixverse.mjs', taskId, imageId, imagePath, prompt, tasksCurrentDir], {
+            detached: true,
+            stdio: 'ignore',
+            cwd: process.cwd()
+          })
+          child.unref()
+
+          sendJson(res, { ok: true, message: 'PixVerse improvement started in background' })
+        } catch (error) {
+          sendJson(res, { error: error instanceof Error ? error.message : 'Improve failed' }, 500)
+        }
+      })
+
       // ═══════════════════════════════════════════
       // SKILLS API — Reusable skill definitions
       // ═══════════════════════════════════════════
@@ -531,6 +640,86 @@ function storyboardApiPlugin() {
         }
       })
 
+      // BLUEPRINTS — Persist to disk
+      const blueprintsPath = path.join(storyboardRoot, 'blueprints.json')
+      const loadBlueprints = () => {
+        try { return fs.existsSync(blueprintsPath) ? JSON.parse(fs.readFileSync(blueprintsPath, 'utf8')) : [] } catch { return [] }
+      }
+      const saveBlueprints = (bps: any[]) => fs.writeFileSync(blueprintsPath, JSON.stringify(bps, null, 2))
+
+      server.middlewares.use('/api/blueprints/list', async (_req, res) => {
+        sendJson(res, { blueprints: loadBlueprints() })
+      })
+
+      server.middlewares.use('/api/blueprints/save', async (req, res) => {
+        if (req.method !== 'POST') return sendJson(res, { error: 'Method not allowed' }, 405)
+        try {
+          const body = await collectBody(req)
+          const bp = JSON.parse(body.toString() || '{}')
+          if (!bp.id) return sendJson(res, { error: 'No blueprint id' }, 400)
+          const all = loadBlueprints()
+          all.unshift(bp)
+          saveBlueprints(all)
+          sendJson(res, { ok: true })
+        } catch (error) {
+          sendJson(res, { error: error instanceof Error ? error.message : 'Save failed' }, 500)
+        }
+      })
+
+      server.middlewares.use('/api/blueprints/delete', async (req, res) => {
+        if (req.method !== 'POST') return sendJson(res, { error: 'Method not allowed' }, 405)
+        try {
+          const body = await collectBody(req)
+          const { id } = JSON.parse(body.toString() || '{}')
+          if (!id) return sendJson(res, { error: 'No blueprint id' }, 400)
+          const all = loadBlueprints().filter((b: any) => b.id !== id)
+          saveBlueprints(all)
+          sendJson(res, { ok: true })
+        } catch (error) {
+          sendJson(res, { error: error instanceof Error ? error.message : 'Delete failed' }, 500)
+        }
+      })
+
+      // RUN BATCH — Handles multiple asynchronous edits (Splits, Improves, etc.)
+      server.middlewares.use('/api/tasks/run-batch', async (req, res) => {
+        if (req.method !== 'POST') return sendJson(res, { error: 'Method not allowed' }, 405)
+        try {
+          const body = await collectBody(req)
+          const { taskId, activePassId, passes, payload } = JSON.parse(body.toString() || '{}')
+          if (!taskId || !activePassId || !payload) return sendJson(res, { error: 'Missing required fields' }, 400)
+
+          // Persist the passes first
+          const taskPath = path.join(tasksCurrentDir, `${taskId}.json`)
+          if (fs.existsSync(taskPath)) {
+            const taskData = JSON.parse(fs.readFileSync(taskPath, 'utf8'))
+            taskData.passes = passes
+            taskData.activePassId = activePassId
+            taskData.status = 'pass_working'
+            taskData.updatedAt = new Date().toISOString()
+            fs.writeFileSync(taskPath, JSON.stringify(taskData, null, 2))
+          }
+
+          // Write payload to scratch dir
+          const publicDir = path.join(process.cwd(), 'public')
+          const scratchDir = path.join(publicDir, 'assets', 'storyboard', 'scratch')
+          if (!fs.existsSync(scratchDir)) fs.mkdirSync(scratchDir, { recursive: true })
+          const payloadPath = path.join(scratchDir, `batch-${taskId}.json`)
+          fs.writeFileSync(payloadPath, JSON.stringify(payload, null, 2))
+
+          const { spawn } = require('node:child_process')
+          const child = spawn('node', ['run-batch.mjs', taskId, activePassId, tasksCurrentDir], {
+            detached: true,
+            stdio: 'ignore',
+            cwd: process.cwd()
+          })
+          child.unref()
+
+          sendJson(res, { ok: true, message: 'Batch processing started in background' })
+        } catch (error) {
+          sendJson(res, { error: error instanceof Error ? error.message : 'Batch failed' }, 500)
+        }
+      })
+
       // SPLIT GRID — Batch: splits ALL images in ONE Python call (fast!)
       server.middlewares.use('/api/skills/split-grid-batch', async (req, res) => {
         if (req.method !== 'POST') return sendJson(res, { error: 'Method not allowed' }, 405)
@@ -542,13 +731,13 @@ function storyboardApiPlugin() {
           const { execFileSync } = require('child_process')
           const publicDir = path.join(process.cwd(), 'public')
           const batchScript = path.join(process.cwd(), 'tools', 'batch_split.py')
-          
+
           const output = execFileSync('python3', [batchScript, publicDir, storyboardUploads], {
             input: JSON.stringify({ images }),
             timeout: 600000,
             maxBuffer: 50 * 1024 * 1024,
           }).toString()
-          
+
           const panels = JSON.parse(output)
           const formattedPanels = panels.map((p: any) => ({
             id: `split-${p.imgId}-r${p.row}c${p.col}-${Date.now()}`,
@@ -592,10 +781,10 @@ function storyboardApiPlugin() {
           const { imagePath, prompt, model, quality, aspectRatio } = JSON.parse(body.toString() || '{}')
           if (!imagePath) return sendJson(res, { error: 'Missing imagePath' }, 400)
 
-          const fullPath = imagePath.startsWith('/') 
-            ? path.join(process.cwd(), 'public', imagePath) 
+          const fullPath = imagePath.startsWith('/')
+            ? path.join(process.cwd(), 'public', imagePath)
             : path.resolve(imagePath)
-          
+
           if (!fs.existsSync(fullPath)) return sendJson(res, { error: `Image not found` }, 404)
 
           const defaultPrompt = 'Use exact @img1 image 1 but improve quality of character(s), objects and resolution. Do not change camera angle, composition, architecture or objects. The characters should remain in same poses and all objects in the same places. Camera should remain same angle exact the same as @img1 only improve quality. Style: 3d animated movie, cinematic AAA level 3d animation'
@@ -620,9 +809,9 @@ function storyboardApiPlugin() {
             const outName = `${(model || 'seedream-4.5').replace(/\./g, '-')}_${quality || '2160p'}.png`
             const outPath = path.join(outDir, outName)
             execSync(`curl -sL "${result.image_url}" -o "${outPath}"`)
-            
-            sendJson(res, { 
-              ok: true, 
+
+            sendJson(res, {
+              ok: true,
               url: `/assets/storyboard/uploads/${path.basename(outDir)}/${outName}`,
               model: model || 'seedream-4.5',
               quality: quality || '2160p',
@@ -633,6 +822,175 @@ function storyboardApiPlugin() {
           }
         } catch (error) {
           sendJson(res, { error: error instanceof Error ? error.message : 'Enhance failed' }, 500)
+        }
+      })
+      // ═══════════════════════════════════════════
+      // LIGHTBOX EDIT — process edits from the storyboard expanded view
+      // Receives: imageUrl, note?, attachments[], shotId, actId, sceneId, mode, type
+      // Results are written back to the shot as new alternative media
+      // ═══════════════════════════════════════════
+      server.middlewares.use('/api/tasks/edit-from-lightbox', async (req, res) => {
+        if (req.method !== 'POST') return sendJson(res, { error: 'Method not allowed' }, 405)
+        try {
+          const body = await collectBody(req)
+          const { imageUrl, note, attachments, shotId, actId, sceneId, mode, type, splitSize, model, quality, aspectRatio, detailLevel } = JSON.parse(body.toString() || '{}')
+          console.log('[edit-from-lightbox]', { type, model, shotId, imageUrl: imageUrl?.substring(0, 60), attachmentCount: (attachments || []).length, noteLen: (note || '').length, aspectRatio })
+          if (!shotId) return sendJson(res, { error: 'Missing shotId' }, 400)
+
+          const publicDir = path.join(process.cwd(), 'public')
+          // Strip cache-busting query params (e.g. ?t=12345) from URLs before resolving as file paths
+          const cleanUrl = (u: string) => u ? u.replace(/\?.*$/, '') : ''
+          const cleanedImageUrl = cleanUrl(imageUrl || '')
+          const imagePath = cleanedImageUrl ? (cleanedImageUrl.startsWith('/') ? path.join(publicDir, cleanedImageUrl) : path.resolve(cleanedImageUrl)) : ''
+          const cleanedAttachments = (attachments || []).map((u: string) => cleanUrl(u))
+
+          if (type === 'split') {
+            // Split grid — use existing tool
+            const outputDir = path.join(storyboardUploads, `split-${Date.now()}`)
+            const toolPath = path.join(process.cwd(), 'tools', 'split_grid.py')
+            const { execSync } = require('child_process')
+            try {
+              const result = JSON.parse(execSync(`python3 "${toolPath}" "${imagePath}" "${outputDir}" "${splitSize || '2x2'}"`, { timeout: 30000 }).toString())
+              if (result.ok) {
+                const panels = result.panels.map((p: any) => ({
+                  id: `media-split-${Date.now()}-r${p.row}c${p.col}`,
+                  type: 'image',
+                  url: `/assets/storyboard/uploads/${path.basename(outputDir)}/${p.filename}`,
+                  fileName: p.filename,
+                }))
+                // Write panels back to storyboard data
+                const data = JSON.parse(fs.readFileSync(storyboardDataFile, 'utf8'))
+                const act = data.acts?.find((a: any) => a.id === actId)
+                const scene = act?.scenes?.find((s: any) => s.id === sceneId)
+                const shotsKey = mode === 'video' ? 'videoShots' : 'imageShots'
+                const shot = scene?.[shotsKey]?.find((s: any) => s.id === shotId)
+                if (shot) {
+                  shot.media = [...(shot.media || []), ...panels]
+                  fs.writeFileSync(storyboardDataFile, JSON.stringify(data, null, 2))
+                }
+                return sendJson(res, { ok: true, panels, count: panels.length })
+              }
+            } catch (err) {
+              return sendJson(res, { error: 'Split failed' }, 500)
+            }
+          }
+
+          if (type === 'enhance') {
+            const imagePaths = [imagePath, ...cleanedAttachments.map((u: string) => u.startsWith('/') ? path.join(publicDir, u) : path.resolve(u))]
+            const defaultPrompt = 'Use exact @img1 but improve quality of character(s) and resolution. Do not change composition, camera angle or objects. Style: 3d animated movie, cinematic AAA level 3d animation'
+            const imageArgs = imagePaths.length === 1 ? ['--image', `"${imagePaths[0]}"`] : ['--images', ...imagePaths.map(p => `"${p}"`)]
+            const args = ['npx', 'pixverse-cli', 'create', 'image', '--prompt', JSON.stringify(note || defaultPrompt), ...imageArgs, '--model', model || 'seedream-4.5', '--quality', quality || '2160p', '--aspect-ratio', '16:9', '--json']
+            try {
+              const { exec } = require('child_process')
+              const result: any = await new Promise((resolve, reject) => {
+                exec(args.join(' '), { timeout: 300000, cwd: process.cwd(), maxBuffer: 10 * 1024 * 1024 }, (err: any, stdout: string) => {
+                  if (err) return reject(err)
+                  try { resolve(JSON.parse(stdout)) } catch { reject(new Error('Invalid JSON: ' + stdout.substring(0, 200))) }
+                })
+              })
+              if (result.image_url) {
+                const outName = `enhanced-${(model || 'seedream').replace(/\./g, '-')}-${Date.now()}.png`
+                const outPath = path.join(storyboardUploads, outName)
+                await new Promise((resolve, reject) => {
+                  exec(`curl -sL "${result.image_url}" -o "${outPath}"`, { timeout: 60000 }, (err: any) => err ? reject(err) : resolve(null))
+                })
+                return sendJson(res, { ok: true, url: `/assets/storyboard/uploads/${outName}`, localPath: outPath })
+              }
+              return sendJson(res, { error: 'No image returned' }, 500)
+            } catch (err) {
+              return sendJson(res, { error: 'Enhancement failed: ' + (err instanceof Error ? err.message : String(err)) }, 500)
+            }
+          }
+
+          if (type === 'note') {
+            const imagePaths = cleanedImageUrl ? [imagePath, ...cleanedAttachments.map((u: string) => u.startsWith('/') ? path.join(publicDir, u) : path.resolve(u))] : cleanedAttachments.map((u: string) => u.startsWith('/') ? path.join(publicDir, u) : path.resolve(u))
+            const imageArgs = imagePaths.length === 1 ? ['--image', `"${imagePaths[0]}"`] : imagePaths.length > 1 ? ['--images', ...imagePaths.map(p => `"${p}"`)] : []
+            const args = ['npx', 'pixverse-cli', 'create', 'image', '--prompt', JSON.stringify(note || ''), ...imageArgs, '--model', model || 'gemini-3.1-flash', '--quality', quality || '1440p', '--aspect-ratio', aspectRatio || '16:9', ...(detailLevel ? ['--detail-level', detailLevel] : []), '--json']
+            console.log('[note] CLI cmd:', args.join(' ').substring(0, 200))
+            try {
+              console.log('[note] Executing async...')
+              const { exec } = require('child_process')
+              const result: any = await new Promise((resolve, reject) => {
+                exec(args.join(' '), { timeout: 300000, cwd: process.cwd(), maxBuffer: 10 * 1024 * 1024 }, (err: any, stdout: string, stderr: string) => {
+                  if (err) return reject(err)
+                  try { resolve(JSON.parse(stdout)) } catch { reject(new Error('Invalid JSON: ' + stdout.substring(0, 200))) }
+                })
+              })
+              console.log('[note] Result:', JSON.stringify(result).substring(0, 200))
+              if (result.image_url) {
+                const outName = `note-edit-${Date.now()}.png`
+                const outPath = path.join(storyboardUploads, outName)
+                await new Promise((resolve, reject) => {
+                  exec(`curl -sL "${result.image_url}" -o "${outPath}"`, { timeout: 60000 }, (err: any) => err ? reject(err) : resolve(null))
+                })
+                return sendJson(res, { ok: true, url: `/assets/storyboard/uploads/${outName}`, localPath: outPath })
+              }
+              return sendJson(res, { error: 'No image returned' }, 500)
+            } catch (err) {
+              console.error('[note] Error:', err instanceof Error ? err.message : String(err))
+              return sendJson(res, { error: 'Note edit failed: ' + (err instanceof Error ? err.message : String(err)) }, 500)
+            }
+          }
+
+          if (type === 'generate') {
+            // Generate from scratch — no main image, just prompt + attachments
+            const attachPaths = cleanedAttachments.map((u: string) => u.startsWith('/') ? path.join(publicDir, u) : path.resolve(u))
+            const imageArgs = attachPaths.length === 1 ? ['--image', `"${attachPaths[0]}"`] : attachPaths.length > 1 ? ['--images', ...attachPaths.map(p => `"${p}"`)] : []
+            const args = ['npx', 'pixverse-cli', 'create', 'image', '--prompt', JSON.stringify(note || ''), ...imageArgs, '--model', model || 'gemini-3.1-flash', '--quality', quality || '1440p', '--aspect-ratio', aspectRatio || '16:9', ...(detailLevel ? ['--detail-level', detailLevel] : []), '--json']
+            console.log('[generate] CLI cmd:', args.join(' ').substring(0, 200))
+            try {
+              console.log('[generate] Executing async...')
+              const { exec } = require('child_process')
+              const result: any = await new Promise((resolve, reject) => {
+                exec(args.join(' '), { timeout: 300000, cwd: process.cwd(), maxBuffer: 10 * 1024 * 1024 }, (err: any, stdout: string, stderr: string) => {
+                  if (err) return reject(err)
+                  try { resolve(JSON.parse(stdout)) } catch { reject(new Error('Invalid JSON: ' + stdout.substring(0, 200))) }
+                })
+              })
+              console.log('[generate] Result:', JSON.stringify(result).substring(0, 200))
+              if (result.image_url) {
+                const outName = `gen-${(model || 'seedream').replace(/\./g, '-')}-${Date.now()}.png`
+                const outPath = path.join(storyboardUploads, outName)
+                await new Promise((resolve, reject) => {
+                  exec(`curl -sL "${result.image_url}" -o "${outPath}"`, { timeout: 60000 }, (err: any) => err ? reject(err) : resolve(null))
+                })
+                return sendJson(res, { ok: true, url: `/assets/storyboard/uploads/${outName}`, localPath: outPath })
+              }
+              return sendJson(res, { error: 'No image returned' }, 500)
+            } catch (err) {
+              console.error('[generate] Error:', err instanceof Error ? err.message : String(err))
+              return sendJson(res, { error: 'Generation failed: ' + (err instanceof Error ? err.message : String(err)) }, 500)
+            }
+          }
+
+          sendJson(res, { error: `Unknown type: ${type}` }, 400)
+        } catch (error) {
+          sendJson(res, { error: error instanceof Error ? error.message : 'Edit failed' }, 500)
+        }
+      })
+
+      // ASSIGN ASSET — copy image to resources
+      server.middlewares.use('/api/tasks/assign-asset', async (req, res) => {
+        if (req.method !== 'POST') return sendJson(res, { error: 'Method not allowed' }, 405)
+        try {
+          const body = await collectBody(req)
+          const { type, url, shotId, name } = JSON.parse(body.toString() || '{}')
+          if (!url || !type) return sendJson(res, { error: 'Missing url or type' }, 400)
+
+          const publicDir = path.join(process.cwd(), 'public')
+          const srcPath = url.startsWith('/') ? path.join(publicDir, url) : path.resolve(url)
+          if (!fs.existsSync(srcPath)) return sendJson(res, { error: 'Source not found' }, 404)
+
+          // Copy to resources folder
+          const resourceDir = path.join(storyboardUploads, type + 's')
+          fs.mkdirSync(resourceDir, { recursive: true })
+          const destName = `${type}-${name || Date.now()}-${path.basename(srcPath)}`
+          const destPath = path.join(resourceDir, destName)
+          fs.copyFileSync(srcPath, destPath)
+
+          sendJson(res, { ok: true, url: `/assets/storyboard/uploads/${type}s/${destName}`, type })
+        } catch (error) {
+          sendJson(res, { error: error instanceof Error ? error.message : 'Assign failed' }, 500)
         }
       })
     },

@@ -1,0 +1,20 @@
+premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm golden morning light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.
+
+CHARACTER LOCKS:
+@image1 = Bedouin merchant in indigo robes — diving through closing gate, robes billowing, exact as reference.
+
+LOCATION REFERENCE:
+@image4 = Gate entrance — massive sandstone arch, doors closing, exact unchanged.
+
+SCENE: Morning — indigo Bedouin sneaks through the closing gate (dedicated comedy beat).
+The indigo Bedouin sees the gates closing and makes a desperate, comedic sprint. His beetle jars wobble dangerously. His turban unravels. He dives through the shrinking gap in a belly-slide worthy of an action movie. One jar breaks — beetles scatter. He doesn't care. He's IN.
+
+Create 2x2 grid with 4 panels with 3D animated scenes in each one:
+Panel 1: Wide action shot. The gate doors exact as @image4 are half-closed. The indigo Bedouin exact as @image1 sprints from the queue toward the gap, robes flying behind him like a cape, turban unraveling in a trail of fabric. His three beetle jars bounce in his arms. Guards strain to close the doors. The gap narrows with every frame.
+Panel 2: Action close-up. The Bedouin dives — full horizontal belly-slide across the dusty stone threshold. His indigo robes billow around him like a parachute. One beetle jar tumbles from his grasp — he catches it mid-air with his free hand in a moment of improbable athleticism. His face: pure desperate determination, false sweet grin replaced by survival instinct.
+Panel 3: Comedy aftermath. The Bedouin lies on the inside of the gate, face-down, covered in dust, one jar cracked — green beetles scatter across the stone in every direction, legs wiggling. The guards stare down at him. He looks up with his false sweet grin restored: "Made it." A beetle crawls across his turban.
+Panel 4: Medium shot from inside the city. The Bedouin picks himself up, dusts off his indigo robes with wounded dignity, adjusts his remaining turban fabric, and collects his two surviving jars. One beetle is still on his shoulder — he regards it, shrugs, and walks into the city. Behind him: the gate slams shut. Outside: muffled pounding from the locked-out merchants.
+
+Environment: Gate exact as @image4, dust, morning light, beetles.
+
+All panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm golden morning light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.

@@ -1,0 +1,6 @@
+{
+  "id": "mem-1778100335934",
+  "topic": "i need a prompt 2x2 grid like 2 prompts but clearly showing that they are 2 prompts one after another for the pixverse cli terminal",
+  "summary": "The user requested two distinct 2x2 grid prompts, formatted sequentially for the PixVerse CLI terminal. The assistant agreed, focusing on a \"Throne Room\" scene involving Sharak and the Djinn, centered on themes of deception and betrayal. Prior to use, specific reference images must be prepared: `Djinn.png`, `Sharak.png`, `Nibzu.png` for the `characters/` subdirectory; `throne_room_4projection_grid.png`, `throne_room_front_view.png` for `locations/`; and `talisman_fake.png` for `props/`, with placeholder paths requiring replacement. The first prompt, titled \"The Deceptive Exchange,\" is provided in JSON format. Its creative direction specifies a \"premium luminous 3D animated feature-film\" style with \"volumetric ominous green light,\" soft depth of field, and a high-quality 4K animated movie look. Character locks include `@image1` for a human-like plasma character (described as leaving plasma trails, having flowing plasma hair with a subtle glow, and matching the reference image) and `@image2` for Sharak, both requiring corresponding reference files.",
+  "createdAt": "2026-05-06T20:45:35.935Z"
+}

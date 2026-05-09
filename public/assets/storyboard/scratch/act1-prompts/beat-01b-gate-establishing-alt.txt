@@ -1,0 +1,27 @@
+premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm golden morning light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.
+
+CHARACTER LOCKS:
+@image1 = First merchant — Bedouin man in sun-bleached sand-colored robes, nervous smile, wiry build, holding a rolled permit scroll, exact as reference.
+@image2 = Funny camel — tall, goofy, expressive big dark eyes, long lashes, always looking slightly confused, exact as reference.
+@image3 = City gate clerk — bored middle-aged man behind wooden permit stand, ink-stained fingers, small round spectacles, exact as reference.
+@image4 = Gate guards — two armored guards flanking the gate, stern but slightly distracted, exact as reference.
+
+LOCATION REFERENCE:
+@image5 = Caravan approach — wide desert dunes leading to massive sandstone city gate, morning golden hour, 100% unchanged.
+@image6 = Merchant line — queue of merchants at the clerk's permit stand, exact positioning, 100% unchanged.
+
+PROPS REFERENCE:
+@image7 = Permit scroll — unstamped parchment, exact as reference.
+
+SCENE: Early morning desert scene, alternate angle.
+Same beat as establishing shot but with different camera positions — tighter on comedy, wider on landscape, emphasis on the character dynamics in the queue.
+
+Create 2x2 grid with 4 panels with 3D animated scenes in each one:
+Panel 1: High angle crane shot looking down at the merchant queue exact as @image6. The clerk's stand is center-bottom frame. First merchant exact as @image1 and funny camel exact as @image2 are at the front. The queue stretches back toward the dunes. The indigo Bedouin is third in line craning his neck. Morning shadow patterns cast dramatic stripes across the sand.
+Panel 2: Low angle shot from ground level looking up at the gate. Guards exact as @image4 tower in the foreground left and right. Between them, the permit stand is visible with the clerk exact as @image3 sitting behind it. The first merchant exact as @image1 approaches with his camel, both looking tiny against the massive gate architecture exact as @image5.
+Panel 3: OTS (over-the-shoulder) from behind the fat jade-green merchant. His enormous shoulder and turban fill the left foreground. Through the gap we see the indigo Bedouin's false sweet grin in the middle ground, and the first merchant exact as @image1 anxiously handing documents to the clerk exact as @image3 in the background.
+Panel 4: Wide panoramic shot. Desert dunes exact as @image5 dominate the left two-thirds. The gate and merchant line exact as @image6 occupy the right third. A single bird (not Altair) circles high above. The scale emphasizes how small and comical the merchant drama is against the vast ancient landscape. Golden light bathes everything.
+
+Environment: Desert exact as @image5, gate architecture unchanged, permit stand exact as @image6, golden morning volumetric light with dust motes.
+
+All panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm golden morning light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.

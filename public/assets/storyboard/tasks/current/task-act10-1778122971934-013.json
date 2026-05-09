@@ -1,0 +1,11 @@
+{
+  "id": "task-act10-1778122971934-013",
+  "title": "13. Arrival of the Spider",
+  "prompt": "premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.\n\nCHARACTER AND LOCATION LOCKS:\n@image5 = Sharak, shadow king with magic powers, fierce and insane, exact as reference.\n@image7 = Giant Nibzu, massive goofy spider with crossed amber eyes, huge but retaining its silly smile, exact as reference.\n@image13 = Desert Dunes, endless rolling sands beneath stormy skies, sandstorms in the distance.\n\nSCENE: Daytime scene just outside the walls.\n\nCreate 2x2 grid with 4 panels with 3D animated scenes in each one:\nPanel 1: Epic low angle shot. Sharak exact as @image5 bursts through the dust cloud, riding atop the back of the massive Giant Nibzu exact as @image7.\nPanel 2: Tracking wide shot. The Giant Nibzu exact as @image7 lumbering heavily across the Desert Dunes exact as @image13 like an excited, clumsy warhorse.\nPanel 3: Medium shot. Sharak exact as @image5 holding the reins, his posture arrogant and triumphant as he rides the giant beast.\nPanel 4: Close-up on the Giant Nibzu's face exact as @image7. Despite being enormous, it still has goofy, crossed amber eyes and a very silly smile.\n\nAll panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.",
+  "status": "todo",
+  "createdAt": "2026-05-07T03:02:51.934Z",
+  "updatedAt": "2026-05-07T03:02:51.934Z",
+  "passes": [],
+  "generatedImages": [],
+  "skillHint": "skill-codex-2x2-grid-prompt"
+}

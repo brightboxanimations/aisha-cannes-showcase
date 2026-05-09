@@ -1,0 +1,11 @@
+{
+  "id": "task-act10-1778122971934-016",
+  "title": "16. Ignored Guardian",
+  "prompt": "premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.\n\nCHARACTER AND LOCATION LOCKS:\n@image5 = Sharak, shadow king with magic powers, fierce and insane, exact as reference.\n@image2 = Dora, white panther, normal panther size, her height reaches Aisha's hip, exact as the reference.\n@image1 = Aisha, 16-year-old human princess, curious brave beautiful, exact as the reference; no modification to looks or clothes.\n\nSCENE: Daytime scene outside the walls.\n\nCreate 2x2 grid with 4 panels with 3D animated scenes in each one:\nPanel 1: Medium shot. Sharak exact as @image5 walks forward, barely glancing down at the furiously roaring white panther Dora exact as @image2.\nPanel 2: Action close-up. Sharak's hand exact as @image5 shoots out with incredible speed, grabbing Dora exact as @image2 roughly by the scruff of her neck.\nPanel 3: Medium wide shot. Sharak exact as @image5 lifts Dora exact as @image2 completely off the ground with one hand effortlessly, Dora struggling wildly in the air.\nPanel 4: Reaction shot. Aisha exact as @image1 screaming and stepping forward to help, horrified as Sharak laughs.\n\nAll panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.",
+  "status": "todo",
+  "createdAt": "2026-05-07T03:02:51.934Z",
+  "updatedAt": "2026-05-07T03:02:51.934Z",
+  "passes": [],
+  "generatedImages": [],
+  "skillHint": "skill-codex-2x2-grid-prompt"
+}

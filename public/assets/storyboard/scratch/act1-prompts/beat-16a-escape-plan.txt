@@ -1,0 +1,23 @@
+premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm midday light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.
+
+CHARACTER LOCKS:
+@image1 = Aisha — 16-year-old princess, fire in her chest, calculating, rebellious, exact as reference.
+@image2 = Dora — white panther, slumped dramatically on cushion, resigned but loyal, exact as reference.
+
+LOCATION REFERENCE:
+@image3 = View from inside balcony — looking out over internal patio, gate, and plaza, market stalls visible far below, exact unchanged.
+@image4 = Bedroom front view — showing the rug and balcony entrance, exact unchanged.
+@image5 = Buns seller and patio — panoramic view of internal patio with gate, bun seller's cart, market stalls, exact as reference.
+
+SCENE: Late morning, Aisha's bedroom and balcony.
+After the Sultan leaves, Aisha paces furiously. She refuses to be a "painted doll." She steps onto the balcony and spots the bun seller walking far below in the service courtyard. Dora sniffs the air — her pupils dilate. Aisha hatches her plan: use the buns as a distraction for Dora while she slips out. She knows Dora's weakness.
+
+Create 2x2 grid with 4 panels with 3D animated scenes in each one:
+Panel 1: Medium shot of bedroom exact as @image4. Aisha exact as @image1 paces across the rug, fists clenched, fire in her eyes. Dora exact as @image2 is slumped dramatically on the cushioned bench on the right, watching Aisha with resigned but concerned eyes. The unrolled scroll has been taken away. The room feels emptier now — the aftermath of the confrontation.
+Panel 2: Wide shot from inside the balcony looking out exact as @image3. Aisha exact as @image1 stands at the railing, chin up, looking down at the courtyard below. In the distance: the internal patio gate, a woman carrying a tray of fresh pistachio honey buns walks past market stalls exact as @image5. Aisha's body language shifts from angry to calculating — she sees opportunity.
+Panel 3: Close-up of Dora exact as @image2. Her nose twitches — she catches the scent of buns from below. Her pupils dilate to enormous black circles. Her body tenses from lazy to predatory. One ear swivels toward the balcony edge. Her expression says: "I will not... I cannot... I MUST."
+Panel 4: Close-up two-shot. Aisha exact as @image1 turns from the railing with a sly, knowing grin. She leans down toward Dora with conspiratorial whisper pose. Dora exact as @image2 tries to look indifferent but her huge dilated pupils betray her. "One bun for you, one bun for me..." The chemistry between princess and panther is palpable — Aisha knows exactly which buttons to press.
+
+Environment: Bedroom exact as @image4, balcony with view exact as @image3, patio below exact as @image5, late morning light.
+
+All panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm midday light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.

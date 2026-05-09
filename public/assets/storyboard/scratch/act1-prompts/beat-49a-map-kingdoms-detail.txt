@@ -1,0 +1,24 @@
+premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm morning ominous light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.
+
+CHARACTER LOCKS:
+@image1 = Aisha — kneeling, face illuminated by map, exact as reference.
+
+LOCATION REFERENCE:
+@image3 = Bedroom front view — exact unchanged.
+
+PROPS REFERENCE:
+@image4 = Map of kingdoms — dark ink clouds, golden Qazar, exact as reference.
+@image5 = Scroll — unrolled, exact as reference.
+
+SCENE: Morning — map detail beats.
+Extreme close-ups of the map itself — the dark ink clouds consuming kingdoms, the scrawled urgent messages, the golden dot of Qazar al-Zaman still intact. The artistry of the map: it's a work of cartographic beauty that tells a story of destruction.
+
+Create 2x2 grid with 4 panels with 3D animated scenes in each one:
+Panel 1: Extreme close-up of the map exact as @image4. The kingdom of Mayala is shown in detail — once-beautiful calligraphy for the name, now violently crossed out with dark ink. Around it: black ink clouds spreading like spilled poison, consuming borders. Small illustrated castles and towers are drowned in darkness. The cartographer's grief is visible in the shaking hand of the notes.
+Panel 2: Close-up of the map's golden center exact as @image4. Qazar al-Zaman — drawn in luminous gold leaf, intricate detail of the city walls, minarets, the palace. It glows against the surrounding darkness. Around its borders: thin dark lines probing inward like fingers of shadow, not yet reaching the golden city but approaching. The threat is visible.
+Panel 3: Insert of handwritten notes on the map margin. Urgent scrawl in red ink: "Borders collapsing — Royal armies required — URGENT." The handwriting deteriorates from neat to frantic, as if the writer was running out of time. Below: a wax stamp from "Vizier of Outer Lands, Al-Raki Ibn Sharif." The stamp is partially smudged — the letter was sealed in haste.
+Panel 4: Wide shot from above looking down at the map exact as @image4 spread across the rug. Aisha's hands are visible on either side. Dora's white paw touches the edge of the map. The map fills the frame — a beautiful, terrifying document showing a world in crisis. The golden Qazar al-Zaman in the center: the last light in a darkening world. Aisha's shadow falls across the dark kingdoms.
+
+Environment: Bedroom exact as @image3, rug, map exact as @image4, morning light shifting ominous.
+
+All panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm morning ominous light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.

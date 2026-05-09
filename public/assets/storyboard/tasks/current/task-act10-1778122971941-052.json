@@ -1,0 +1,11 @@
+{
+  "id": "task-act10-1778122971941-052",
+  "title": "52. The Beautiful Silence",
+  "prompt": "premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.\n\nCHARACTER AND LOCATION LOCKS:\n@image1 = Aisha, 16-year-old human princess, curious brave beautiful, exact as the reference; no modification to looks or clothes.\n@image8 = Giant Sand Guardian, kinetic sand creature, flowing like liquid light, faceless hidden beneath a hood of swirling golden grains.\n\nSCENE: Daytime scene outside the Kingdom Walls.\n\nCreate 2x2 grid with 4 panels with 3D animated scenes in each one:\nPanel 1: Medium shot. Aisha exact as @image1 standing peacefully in the glowing circle, the magical sand wall around her dissolving into calm breeze.\nPanel 2: Wide shot. The kneeling Giant Sand Guardians exact as @image8 remaining perfectly still like majestic statues of golden sand.\nPanel 3: High angle shot. The glowing mandalas on the ground slowly fading from burning bright to a soft, pulsing golden glow.\nPanel 4: Close-up. Aisha exact as @image1 opening her eyes, her face serene, filled with the strength of her ancestors.\n\nAll panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.",
+  "status": "todo",
+  "createdAt": "2026-05-07T03:02:51.941Z",
+  "updatedAt": "2026-05-07T03:02:51.941Z",
+  "passes": [],
+  "generatedImages": [],
+  "skillHint": "skill-codex-2x2-grid-prompt"
+}

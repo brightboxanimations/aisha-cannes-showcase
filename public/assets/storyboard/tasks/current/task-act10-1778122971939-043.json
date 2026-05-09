@@ -1,0 +1,11 @@
+{
+  "id": "task-act10-1778122971939-043",
+  "title": "43. Birth of the Guardians",
+  "prompt": "premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.\n\nCHARACTER AND LOCATION LOCKS:\n@image8 = Giant Sand Guardian, kinetic sand creature, flowing like liquid light, faceless hidden beneath a hood of swirling golden grains.\n@image13 = Desert Dunes, endless rolling sands beneath stormy skies, sandstorms in the distance.\n\nSCENE: Daytime scene outside the Kingdom Walls.\n\nCreate 2x2 grid with 4 panels with 3D animated scenes in each one:\nPanel 1: Wide epic reveal. Six colossal Giant Sand Guardians exact as @image8 stand fully formed across the Desert Dunes exact as @image13.\nPanel 2: Close-up detail shot. The body of a Giant Sand Guardian exact as @image8, made of kinetic sand, with golden arabesque patterns flowing across its chest like liquid light.\nPanel 3: Extreme close-up. The head of a Giant Sand Guardian exact as @image8, faceless, hidden beneath a majestic hood of swirling, glowing golden grains.\nPanel 4: Wide master shot. The six Giant Sand Guardians exact as @image8 turning their massive heads simultaneously toward the center where Aisha is singing.\n\nAll panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.",
+  "status": "todo",
+  "createdAt": "2026-05-07T03:02:51.939Z",
+  "updatedAt": "2026-05-07T03:02:51.939Z",
+  "passes": [],
+  "generatedImages": [],
+  "skillHint": "skill-codex-2x2-grid-prompt"
+}

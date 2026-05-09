@@ -1,0 +1,22 @@
+premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm golden morning light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.
+
+CHARACTER LOCKS:
+@image1 = Aisha — 16-year-old princess, breathless, switching between running and innocent mode, exact as reference.
+@image2 = Altair — royal hawk on golden perch, torn between duty and pity, exact as reference.
+
+LOCATION REFERENCE:
+@image3 = Messenger hall — arabesque arches, scroll shelves, tapestries, golden perch, exact unchanged.
+@image4 = Aisha grabs scroll — Aisha receiving scroll from Altair, exact as reference.
+
+SCENE: Morning, messenger hall — scroll heist alternate.
+Same beat: Aisha deceives Altair. Focus on: Altair's internal struggle (torn close-ups), the scroll handoff in slow-motion detail, Aisha's barely-suppressed triumphant exit, and the messenger hall's rich interior details.
+
+Create 2x2 grid with 4 panels with 3D animated scenes in each one:
+Panel 1: Close-up of Altair exact as @image2 on his golden perch. His face shows the internal war — one eye squints with suspicion, the other softens with pity. His head tilts. His chest feathers puff and deflate with a sigh. He wants to be dutiful but he's been outmaneuvered by a teenager. The golden perch ornaments reflect in his conflicted eyes.
+Panel 2: Slow-motion style close-up of the scroll handoff exact as @image4. Altair's talon opens, releasing the scroll. It falls in perfect detail — the aged parchment, the red royal seal (cracked), the ribbon wrapped around it. Below, Aisha's two hands reach up with eager fingers spread. The scroll catches a beam of morning light from the patio door.
+Panel 3: Medium shot from behind. Aisha exact as @image1 walks toward the messenger hall door, scroll tucked under one arm, her back to Altair. Her posture is casual, unhurried — but the camera catches her face in a three-quarter turn: her expression is pure victory. Her eyes blaze with triumph. One corner of her mouth curls. Altair on his perch behind watches her leave with dawning regret.
+Panel 4: Wide shot of the empty messenger hall exact as @image3 after Aisha leaves. Altair sits alone on his golden perch, feathers slightly deflated, staring at the open door through which Aisha vanished. The room's magnificent scroll shelves, tapestries, and arabesque arches dwarf him. A single golden sunbeam cuts across the room. The door to the patio is ajar. The silence says everything.
+
+Environment: Messenger hall exact as @image3, golden perch, scroll shelves, morning light through patio door.
+
+All panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm golden morning light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.

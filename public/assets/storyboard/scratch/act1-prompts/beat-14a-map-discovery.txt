@@ -1,0 +1,25 @@
+premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm golden morning light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.
+
+CHARACTER LOCKS:
+@image1 = Aisha — 16-year-old princess, kneeling on the rug, expression shifting from curiosity to shock, exact as reference.
+@image2 = Dora — white panther with golden collar, sitting beside Aisha on the carpet, looking at the map, exact as reference.
+
+LOCATION REFERENCE:
+@image3 = Bedroom day toward balcony — front view of Aisha's bedroom with the ornate rug, balcony visible in the background through the curtained entrance, exact unchanged.
+
+PROPS REFERENCE:
+@image4 = Map of kingdoms — large parchment map showing Qazar al-Zaman glowing gold, neighboring kingdoms swallowed by dark ink clouds, names crossed and scarred, urgent notes scrawled, exact as reference.
+@image5 = Scroll — the sealed scroll that contained the map, now unrolled, exact as reference.
+
+SCENE: Morning, Aisha's bedroom.
+Aisha unrolls the stolen scroll across her bedroom carpet. The map reveals devastating news: neighboring kingdoms consumed by darkness, borders collapsing, urgent pleas for military help. Aisha and Dora kneel before it in growing horror. This is the moment Aisha's world expands beyond palace walls — and she realizes how serious the threat is.
+
+Create 2x2 grid with 4 panels with 3D animated scenes in each one:
+Panel 1: Wide shot of bedroom exact as @image3. Aisha exact as @image1 kneels on the ornate rug in the center, the scroll exact as @image5 unrolled before her revealing the map exact as @image4. Dora exact as @image2 sits beside her on the left, both looking down at the map. The balcony entrance glows with morning light behind them. The map is large — spreading across most of the rug.
+Panel 2: Low angle close-up of the map exact as @image4, angled so that it fills the foreground and Aisha's face is visible above it in the background. The map shows: Qazar al-Zaman drawn in golden ink, still intact. Neighboring kingdoms marked with dark spreading ink clouds. "Mayala" and "Ramlat al-Jawhar" are crossed out, scarred. Scrawled urgent notes: "Shadows consume Mayala." Aisha's eyes widen as she reads.
+Panel 3: Medium close-up of Aisha exact as @image1. Her expression shifts from curiosity to genuine fear. Her hand hovers over the map, trembling slightly. "What happened out there?" — her lips part, eyes glistening. Dora exact as @image2 leans closer, pressing her flank against Aisha's knee protectively, sensing the danger in the parchment.
+Panel 4: Close-up two-shot from the side. Aisha on the right kneels with the map, one hand pressed flat against it. Dora on the left presses close, her golden eyes reflecting the map's dark markings. The contrast: a bright-eyed princess and her white panther against the spreading darkness on the parchment before them.
+
+Environment: Bedroom exact as @image3, ornate rug, balcony entrance behind, warm but increasingly ominous morning light.
+
+All panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm golden morning light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.

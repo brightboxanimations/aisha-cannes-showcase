@@ -1,0 +1,23 @@
+premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm golden morning light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.
+
+CHARACTER LOCKS:
+@image1 = Altair — royal hawk, perched in patio, wings folded, catching breath, exact as reference.
+
+LOCATION REFERENCE:
+@image2 = Palace patio flyover — the internal palace patio gardens, fountains, paths, exact as reference.
+@image3 = Internal palace patio gates — tall arabesque arch, exact unchanged.
+@image4 = Balcony projections — Aisha's balcony from different angles, exact unchanged.
+@image5 = Aisha on balcony — Aisha and Dora on balcony, exact unchanged.
+
+SCENE: Morning — palace arrival alternate.
+Same beat: Altair arrives at the palace. Focus on: the transition from frantic flight to cautious landing, the palace gardens' beauty contrasting with Altair's urgency, and Aisha and Dora as tiny figures on the balcony — not yet aware of the incoming storm.
+
+Create 2x2 grid with 4 panels with 3D animated scenes in each one:
+Panel 1: Medium shot from inside the patio gate arch exact as @image3. The tall arabesque arch frames the scene. Altair exact as @image1 has just swooped through — his wingtip nearly clips an ornate column. Inside the arch, the morning sun creates dramatic light beams. Rose petals from garden vines swirl in his wake. The arch carvings are intricate, centuries old.
+Panel 2: Wide shot of the palace patio gardens exact as @image2. Altair's tiny form races across the top of the frame. Below: manicured gardens with geometric paths, a central fountain spraying water that catches light, orange trees lining walkways, tiled mosaics on the ground. Palace servants below look up startled. The beauty of the gardens contrasts with Altair's desperate speed.
+Panel 3: Medium shot from the side of the balcony exact as @image4. Looking toward the balcony at an angle. Through the railing and hanging plants: Aisha is visible, chin on hands, dreaming. Dora is a white blur on the cushion. Below and approaching from the left: Altair's shadow races across the garden tiles toward them. They don't see him yet — the moment before everything changes.
+Panel 4: Split shot. Top half: Altair exact as @image1 banks hard, adjusting his flight path upward toward the balcony, wings spread against the sky. Bottom half: on the balcony exact as @image5, Aisha and Dora in their lazy morning positions, utterly unaware. The two halves are about to collide — urgency and peace on a collision course.
+
+Environment: Palace patio exact as @image2, gate arch exact as @image3, gardens, balcony exact as @image4 and @image5.
+
+All panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm golden morning light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.

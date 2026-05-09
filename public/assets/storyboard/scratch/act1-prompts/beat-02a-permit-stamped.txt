@@ -1,0 +1,26 @@
+premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm golden morning light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.
+
+CHARACTER LOCKS:
+@image1 = First merchant — Bedouin man in sand-colored robes, nervous smile, exact as reference.
+@image2 = Funny camel — tall goofy camel with big dark expressive eyes, exact as reference.
+@image3 = City gate clerk — bored man behind permit stand, spectacles, ink-stained fingers, exact as reference.
+
+LOCATION REFERENCE:
+@image4 = Merchant line — queue of merchants at clerk's permit stand, exact as reference.
+@image5 = Clerk and stamped permit — clerk holding the stamped permit, exact positioning.
+
+PROPS REFERENCE:
+@image6 = Permit close-up — unstamped parchment with wax seal area, exact as reference.
+
+SCENE: Morning, city gate permit stand.
+The first merchant receives his stamped permit. His face shifts from anxiety to disbelief to joy. The camel watches with comically exaggerated pride. Behind, the indigo Bedouin peers around trying to see the stamp, the fat jade-green merchant's envious smile intensifies, and the tired one doesn't even notice.
+
+Create 2x2 grid with 4 panels with 3D animated scenes in each one:
+Panel 1: Medium shot. The clerk exact as @image3 extends the stamped permit across the stand toward the first merchant exact as @image1. The merchant's hand is reaching, trembling slightly. His face shows nervous anticipation — mouth slightly open, eyebrows raised. Funny camel exact as @image2 behind him has its neck stretched forward, one big eye peering at the permit.
+Panel 2: Close-up insert shot of the permit exact as @image6, now with a fresh red stamp on it. The clerk's ink-stained fingers hold the bottom edge, the merchant's weathered hand reaches from the right side. The stamp is large, ornate, official. Light catches the wet ink.
+Panel 3: Medium close-up reaction shot. First merchant exact as @image1 holds the stamped permit to his chest, face showing pure disbelief turning to joy — eyes wide, mouth stretching into an incredulous grin. Funny camel exact as @image2 behind him lifts its chin proudly, nostrils flared, as if the camel personally earned this permit.
+Panel 4: OTS from behind the first merchant. He holds the permit up triumphantly. In the background, the indigo Bedouin in his blue robes leans sideways trying to peek at the stamp with his false curious grin intensified. The fat jade-green merchant's envious smile stretches wider, one eye squinting. The tired merchant at the back has his eyes fully closed, leaning on his camel.
+
+Environment: Permit stand exact as @image4, sandstone gate architecture behind, warm golden light, dust motes in the air.
+
+All panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm golden morning light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.

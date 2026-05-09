@@ -1,0 +1,11 @@
+{
+  "id": "task-act10-1778122971940-045",
+  "title": "45. The Dance of Wind and Sand",
+  "prompt": "premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.\n\nCHARACTER AND LOCATION LOCKS:\n@image8 = Giant Sand Guardian, kinetic sand creature, flowing like liquid light, faceless hidden beneath a hood of swirling golden grains.\n@image13 = Desert Dunes, endless rolling sands beneath stormy skies, sandstorms in the distance.\n\nSCENE: Daytime scene outside the Kingdom Walls.\n\nCreate 2x2 grid with 4 panels with 3D animated scenes in each one:\nPanel 1: Dynamic action shot. The Giant Sand Guardians exact as @image8 gracefully sweep their massive arms through the air, moving like dancers made of wind.\nPanel 2: Close detail shot. As a Giant Sand Guardian exact as @image8 waves its hand, a cascade of shimmering golden sand streams down from its fingertips like a waterfall of light.\nPanel 3: Wide tracking shot. The six Giant Sand Guardians exact as @image8 gliding smoothly across the Desert Dunes exact as @image13 in a synchronized, circular choreography.\nPanel 4: Extreme wide shot. The sheer scale and beauty of the dance making the violent storms in the background seem insignificant and small.\n\nAll panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.",
+  "status": "todo",
+  "createdAt": "2026-05-07T03:02:51.940Z",
+  "updatedAt": "2026-05-07T03:02:51.940Z",
+  "passes": [],
+  "generatedImages": [],
+  "skillHint": "skill-codex-2x2-grid-prompt"
+}

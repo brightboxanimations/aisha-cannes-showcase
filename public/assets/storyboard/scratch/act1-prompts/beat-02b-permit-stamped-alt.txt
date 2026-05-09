@@ -1,0 +1,26 @@
+premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm golden morning light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.
+
+CHARACTER LOCKS:
+@image1 = First merchant — Bedouin in sand-colored robes, holding stamped permit with trembling joy, exact as reference.
+@image2 = Funny camel — tall goofy camel, nostrils flared with pride, exact as reference.
+@image3 = City gate clerk — bored man, spectacles, exact as reference.
+
+LOCATION REFERENCE:
+@image4 = Merchant line at stand — exact positioning, 100% unchanged.
+@image5 = Clerk and stamped permit — exact as reference.
+
+PROPS REFERENCE:
+@image6 = Permit close-up — parchment with fresh red stamp, exact as reference.
+
+SCENE: Morning, city gate — permit stamped, alternate angles.
+Same beat: the first merchant receives his stamped permit. Focus on different camera positions — extreme close-ups of the ink stamp, the camel's comedic reaction, and the indigo Bedouin's peeking body language from further back in the line.
+
+Create 2x2 grid with 4 panels with 3D animated scenes in each one:
+Panel 1: Extreme close-up insert of the clerk's hand exact as @image3 pressing the heavy ornate stamp down onto the permit exact as @image6. Red ink splatters slightly at the edges. The wooden stamp makes an impression on the thick parchment. The clerk's ink-stained fingers wrap around the handle with practiced boredom. Dust motes float in the golden sunbeam that falls across the document.
+Panel 2: Low angle close-up from below the camel exact as @image2. The camel's enormous head fills the top half — its jaw is slightly open in what can only be described as a camel grin, long lashes fluttering, nostrils wide. Below it, the first merchant exact as @image1 is visible between the camel's legs, jumping with joy, permit held high. The gate arch frames them from behind.
+Panel 3: Dutch angle medium shot. The indigo Bedouin in his blue robes dominates the foreground right — his whole body is tilted sideways trying to see around the first merchant. His false-sweet expression has shifted to naked curiosity. Behind him, the fat jade-green merchant stretches up on tiptoes, one hand shading his eyes. The tired merchant in the back has his head on his camel's neck, sleeping.
+Panel 4: Wide shot from behind the clerk's stand looking out. The clerk exact as @image3 sits in the foreground — only his back and spectacles visible. Through the gap: the first merchant exact as @image1 doing a little victory dance, funny camel exact as @image2 bobbing its head in rhythm. The queue stretches behind with the three remaining merchants. The desert dunes glow golden in the distance.
+
+Environment: Permit stand exact as @image4, morning golden light, desert behind.
+
+All panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm golden morning light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.

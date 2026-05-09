@@ -1,0 +1,22 @@
+premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm midday light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.
+
+CHARACTER LOCKS:
+@image1 = Aisha — 16-year-old princess, furious, pacing, transitioning to sly planning, exact as reference.
+@image2 = Dora — white panther, watching Aisha with concern, exact as reference.
+
+LOCATION REFERENCE:
+@image3 = View from inside balcony — city panorama, gate, plaza below, exact unchanged.
+@image4 = Bedroom front view — exact unchanged.
+
+SCENE: Late morning — Aisha pacing on the balcony.
+Aisha steps onto the balcony after the confrontation. She looks down at the world below — the world she's forbidden from entering. She spots things: guards' patrol patterns, gate timing, the service exit, merchant traffic. She's not dreaming now — she's planning. Her mind works like a strategist.
+
+Create 2x2 grid with 4 panels with 3D animated scenes in each one:
+Panel 1: Medium shot. Aisha exact as @image1 steps through the balcony curtains onto the balcony. The morning light hits her face. But her expression isn't dreamy anymore — it's sharp, focused, calculating. She grips the railing with both hands and leans forward, scanning the courtyard below exact as @image3 with tactical precision.
+Panel 2: POV shot — Aisha's view looking down exact as @image3. The courtyard below with annotations of her analysis: guard patrol routes (two guards walking left), gate timing (the gate opens for a delivery cart), service exit position (a small door on the far left), the bun seller's path (crossing from right). Aisha is mapping her escape in real time.
+Panel 3: Close-up of Aisha exact as @image1. Her eyes track left to right, following something below. Her expression is intense — lips pressed together, brow slightly furrowed, chin forward. This is not a child looking at the world with wonder. This is a princess calculating escape vectors. Wind plays with her hair but she doesn't notice.
+Panel 4: Medium shot from outside looking in. Aisha exact as @image1 at the railing, body leaning forward, one hand pointing down at something specific. Behind her through the balcony curtains: Dora exact as @image2 watches from the bedroom with worried golden eyes. Dora knows that expression. Dora knows what's coming. Dora is not happy about it.
+
+Environment: Balcony exact as @image3, bedroom exact as @image4, midday light.
+
+All panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm midday light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.

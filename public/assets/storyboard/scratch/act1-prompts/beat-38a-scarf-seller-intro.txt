@@ -1,0 +1,21 @@
+premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm midday light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.
+
+CHARACTER LOCKS:
+@image1 = Aisha — approaching the scarf seller with warm charm, exact as reference.
+@image2 = Aisha picking headscarf — trying on scarf with seller distressed, exact as reference.
+
+LOCATION REFERENCE:
+@image3 = Palace exit internal door — service exit, exact unchanged.
+
+SCENE: Late morning — scarf seller character intro.
+The scarf seller is a humble, tired woman who has had a terrible sales day. She carries unsold simple scarves — nothing fancy, nothing royal. She's defeated, shoulders slumped, ready to go home. Then Aisha appears. The seller freezes — royalty talking to her? Buying HER scarves? She can't compute.
+
+Create 2x2 grid with 4 panels with 3D animated scenes in each one:
+Panel 1: Medium shot. The scarf seller walks near the service exit — shoulders slumped, unsold scarves draped over both arms like colorful burdens. Her expression: defeat. Her feet drag. Behind her: the bustling courtyard where other sellers are doing better. She's invisible to everyone.
+Panel 2: Medium shot. Aisha exact as @image1 appears beside her — materializing with casual elegance. "These are lovely. May I try one?" Her voice is warm, genuine, not condescending. The seller freezes mid-step. Her jaw drops. Her eyes go wide. She wasn't prepared for this encounter in any dimension of reality.
+Panel 3: Close-up of the scarf seller's face. She stammers: "P-Princess... these are very simple scarves... not fitting for royalty..." Her expression cycles through: terror, disbelief, confusion, and a tiny flickering hope that maybe — just maybe — she might sell something today. Her hands clutch the scarves tighter.
+Panel 4: Medium shot exact as @image2. Aisha takes a sand-colored scarf and drapes it over her head with exaggerated theatrical grace. She turns with a pose: "Not fitting? Look at me. I'm magnificent." The seller stares. The scarf IS simple. But somehow on Aisha it looks... magnificent. The seller blinks twice, unable to argue with a princess who is also right.
+
+Environment: Service area near exit exact as @image3, courtyard background, midday.
+
+All panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm midday light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.

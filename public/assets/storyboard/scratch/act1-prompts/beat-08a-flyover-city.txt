@@ -1,0 +1,22 @@
+premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm golden morning light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.
+
+CHARACTER LOCKS:
+@image1 = Altair — royal hawk, golden-brown feathers, wings fully spread, front view flying toward camera then back view flying away, exact as reference.
+
+LOCATION REFERENCE:
+@image2 = Flyover from gate — high angle cityscape view with gate far below and behind, city spreading out, exact as reference.
+@image3 = Flyover toward palace — aerial city view with palace domes and minarets ahead, exact as reference.
+@image4 = Back view toward palace — Altair's silhouette flying toward the main palace on the far horizon, exact as reference.
+
+SCENE: Morning, aerial flight over city.
+Altair flies from the gate over the entire city of Qazar al-Zaman at high speed toward the palace. The camera follows him from multiple angles showing the spectacular city below — bustling markets, sandstone rooftops, courtyards, domes, and minarets. The palace grows larger ahead.
+
+Create 2x2 grid with 4 panels with 3D animated scenes in each one:
+Panel 1: High front view. Altair exact as @image1 flies directly toward camera, wings fully spread, golden eyes locked forward in determination, scroll in talons. Below and behind him: the city gate exact as @image2 is now small in the distance, the desert dunes beyond. The city's rooftops, alleyways, and market canopies spread out below like a tapestry.
+Panel 2: Side tracking shot. Altair exact as @image1 races from left to right at rooftop level. Below, a market square with colorful awnings, merchants looking up, laundry lines between buildings. His shadow streaks across the rooftops. A flock of pigeons scatters from a minaret as he passes. The palace visible ahead in the distance.
+Panel 3: Back view. Altair exact as @image1 silhouetted against the bright morning sky exact as @image4. His wings catch golden backlighting, feather details visible as translucent edges. The main palace complex exact as @image3 is now prominent ahead — massive domes, tall minarets, ornate walls. The scale of the palace compared to the city below is impressive.
+Panel 4: Wide aerial panoramic. The entire city of Qazar al-Zaman spreads below — from the gate on the far left to the palace on the far right. Altair is a tiny golden streak in the center racing toward the palace. The city glows with morning light, thin smoke from cooking fires rising, shadows long. The palace complex dominates the right with its cascading domes and gardens.
+
+Environment: Aerial city view exact as @image2 and @image3, sandstone architecture, colorful markets below, palace ahead, golden morning volumetric light.
+
+All panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm golden morning light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.

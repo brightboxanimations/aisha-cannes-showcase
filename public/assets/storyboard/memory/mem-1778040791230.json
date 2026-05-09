@@ -1,0 +1,6 @@
+{
+  "id": "mem-1778040791230",
+  "topic": "give me now exampleonluy of one promt",
+  "summary": "The Director requested a single, comprehensive example of a fully structured 2x2 grid prompt to serve as a template for future prompts, adhering to \"Batch 2x2 Grid Prompt Writing & Generation\" skill requirements. The Assistant provided a detailed JSON-formatted example for an \"Exploration in an Ancient Chamber\" scene. The main `prompt` field specifies a premium luminous 3D animated feature-film style, including true 3D depth, cinematic camera angles, volumetric warm candlelight, dust motes, shallow depth of field focusing on foreground elements, expressive 3D eyes, realistic textures, and a high-quality 4K look. `CHARACTER LOCKS` define Aisha (@image1, 16-year-old human princess), Dora (@image2, white panther with golden collar), and Niura (@image3, tiny white snake), each with specific traits. `LOCATION REFERENCE` includes an \"Ancient Chamber\" shown via a 4-projection grid (@image4) with Nabatean carvings, and a front view with a central pedestal and glowing relic (@image5). `PROPS REFERENCE` specifies an \"Ancient Relic\" as an intricately carved, glowing crystal orb on a stone pedestal (@image6). This example illustrates all necessary components for future prompt construction.",
+  "createdAt": "2026-05-06T04:13:11.230Z"
+}

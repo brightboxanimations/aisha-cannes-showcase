@@ -1,0 +1,21 @@
+premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm golden morning light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.
+
+CHARACTER LOCKS:
+@image1 = Funny camel — tall, goofy, expressive big dark eyes, long lashes, slightly confused expression, exact as reference.
+@image2 = Merchant on camel — merchant riding the camel, exact as reference.
+
+LOCATION REFERENCE:
+@image3 = Merchant line — queue at gate, exact unchanged.
+
+SCENE: Morning, desert approach — funny camel character study.
+A dedicated beat for the funniest character: the camel. This camel has more personality than most humans in the queue. He judges everyone. He has opinions about the weather, the queue, the other camels, and especially about his owner's nervous habits. He is the silent comedic genius of the gate sequence.
+
+Create 2x2 grid with 4 panels with 3D animated scenes in each one:
+Panel 1: Close-up of the funny camel exact as @image1. His enormous dark eyes fill half the frame — expressive, judging, slightly confused. His long lashes flutter. His nostrils twitch as he smells something in the desert air. His lower lip hangs slightly open. He looks directly at camera as if to say: "Can you believe what I have to deal with?"
+Panel 2: Medium shot exact as @image2. The camel walks behind his merchant owner in the queue exact as @image3. The merchant nervously rehearses his permit speech, gesturing with his hands. The camel watches with an expression of patient exasperation — head tilted, one ear forward, one ear back. He's heard this speech thirty times already.
+Panel 3: Comedy shot. The camel exact as @image1 catches another camel in the queue looking at him. They lock eyes. A moment of camel-to-camel communication passes between them — a shared look of "these humans, am I right?" The other camel nods imperceptibly. The merchant notices nothing.
+Panel 4: Close-up of the camel exact as @image1 chewing. He has found a small desert plant growing between queue stones and is methodically eating it with enormous satisfaction. His jaw moves in slow circles. His eyes are half-closed with pleasure. The merchant is in full panic about his permit documents. The camel chews. The world is fine.
+
+Environment: Queue at gate exact as @image3, desert, morning light.
+
+All panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm golden morning light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.

@@ -1,0 +1,11 @@
+{
+  "id": "task-act10-1778122971938-042",
+  "title": "42. The Song Resumes",
+  "prompt": "premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.\n\nCHARACTER AND LOCATION LOCKS:\n@image1 = Aisha, 16-year-old human princess, curious brave beautiful, exact as the reference; no modification to looks or clothes.\n@image13 = Desert Dunes, endless rolling sands beneath stormy skies, sandstorms in the distance.\n\nSCENE: Daytime scene outside the Kingdom Walls.\n\nCreate 2x2 grid with 4 panels with 3D animated scenes in each one:\nPanel 1: Wide shot. Back in reality, Aisha exact as @image1 stands perfectly still within the swirling golden protective sands, her eyes closed, singing the ancient anthem with immense power.\nPanel 2: Extreme wide epic shot. In the vast Desert Dunes exact as @image13 surrounding the Kingdom Walls, the ground begins to violently tremble and glow with golden light.\nPanel 3: Cinematic low angle shot. The sand from the dunes suddenly erupts upward in massive, elegant geysers, like dancers emerging from water.\nPanel 4: Medium tracking shot. The erupting sand begins to solidify in mid-air, taking on towering, humanoid forms made entirely of kinetic, flowing sand.\n\nAll panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.",
+  "status": "todo",
+  "createdAt": "2026-05-07T03:02:51.938Z",
+  "updatedAt": "2026-05-07T03:02:51.938Z",
+  "passes": [],
+  "generatedImages": [],
+  "skillHint": "skill-codex-2x2-grid-prompt"
+}

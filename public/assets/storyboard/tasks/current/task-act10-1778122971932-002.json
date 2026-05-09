@@ -1,0 +1,11 @@
+{
+  "id": "task-act10-1778122971932-002",
+  "title": "2. Altair Departs",
+  "prompt": "premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.\n\nCHARACTER AND LOCATION LOCKS:\n@image1 = Aisha, 16-year-old human princess, curious brave beautiful, exact as the reference; no modification to looks or clothes.\n@image4 = Altair, majestic giant eagle, exact as reference.\n@image2 = Dora, white panther, normal panther size, her height reaches Aisha's hip, exact as the reference.\n@image13 = Desert Dunes, endless rolling sands beneath stormy skies, sandstorms in the distance.\n\nSCENE: Daytime scene in the dunes.\n\nCreate 2x2 grid with 4 panels with 3D animated scenes in each one:\nPanel 1: Low angle action shot. Altair exact as @image4 launches violently into the stormy sky, wings fully spread, leaving Aisha behind.\nPanel 2: Medium shot. Dora exact as @image2 drops heavily into the sand beside Aisha exact as @image1, sand spraying from her paws.\nPanel 3: Close-up. Dora exact as @image2 stumbles, shaking her fur vigorously, trying to hide her exhaustion and pain.\nPanel 4: Close-up. Aisha exact as @image1 frantically clutches her scarf, her eyes wide with panic as she searches for something.\n\nAll panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.",
+  "status": "todo",
+  "createdAt": "2026-05-07T03:02:51.932Z",
+  "updatedAt": "2026-05-07T03:02:51.932Z",
+  "passes": [],
+  "generatedImages": [],
+  "skillHint": "skill-codex-2x2-grid-prompt"
+}

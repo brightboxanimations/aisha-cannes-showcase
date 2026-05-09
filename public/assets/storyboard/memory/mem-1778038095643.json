@@ -1,0 +1,6 @@
+{
+  "id": "mem-1778038095643",
+  "topic": "what are you doing do u see rthe skill i atahced how to write those 2x2 grid promtps/? and also do you see what i marked ? i maket pages started form ",
+  "summary": "The conversation confirmed the assistant's previous deviation from the \"Cinematic 2x2 grid prompt craft\" skill and the user's script page markings. The \"Cinematic 2x2 grid prompt craft\" skill mandates generating 2x2 grid prompts for PixVerse, incorporating cinematic beats, character emotions, camera language (lens, focal length, DOF), precise lighting, emotional tone, cinematographic techniques, and quality boosters. For locations, `SET GEOMETRY LAW` and `CAMERA LOCK` sections are crucial. Output must be a JSON string for the `pixverse create image` CLI command, with prompts run across Nano Banana 2 (4K), Nano Banana Pro (2K), and GPT2 Medium (2K) models. The project focus shifts from previous Act 1 content to pages 90-108 of \"FULL SCRIPT Aisha ACTS 1-11.pdf,\" specifically targeting the transition into Act 8. The next prompt will depict the \"desolate beauty of Ramhat Al Jawhar\" and \"desolated remains,\" meticulously following all defined skill requirements. The assistant has begun generating this first, re-aligned prompt.",
+  "createdAt": "2026-05-06T03:28:15.643Z"
+}

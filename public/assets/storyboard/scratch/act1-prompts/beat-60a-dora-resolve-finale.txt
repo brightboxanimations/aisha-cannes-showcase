@@ -1,0 +1,23 @@
+premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm midday light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.
+
+CHARACTER LOCKS:
+@image1 = Dora — white panther, despair, looking at the closed gate, calculating escape, exact as reference.
+@image2 = Buns seller — still nagging in background, exact as reference.
+@image3 = Internal patio guards — silly right, grumpy left, both exhausted from bun chaos, exact as reference.
+
+LOCATION REFERENCE:
+@image4 = Internal patio gate — arabesque arch, now the barrier between Dora and Aisha, exact unchanged.
+@image5 = Buns seller inside patio — aftermath chaos scene, exact as reference.
+
+SCENE: Late morning — Dora's resolve (ACT 1 final Dora beat).
+Dora sits in the courtyard, surrounded by bun chaos aftermath. She stares at the closed gate — behind it, Aisha is gone. The comedy drains away. Beneath all the slapstick, this is a panther who has failed her sacred duty. She rises. She will find a way. She always does. This is the setup for Dora's own escape in ACT 2.
+
+Create 2x2 grid with 4 panels with 3D animated scenes in each one:
+Panel 1: Wide establishing shot exact as @image5. The courtyard aftermath: scattered buns, honey glaze on tiles, the bun seller exact as @image2 in the far background still arguing with a servant about compensation. The two guards exact as @image3 have returned to their posts, disheveled and defeated. In the center: Dora exact as @image1 sits alone, facing the closed gate exact as @image4. Her back is straight. Her tail is still.
+Panel 2: Close-up of Dora exact as @image1. Her golden eyes are fixed on the gate with absolute intensity. The comedy is gone from her expression. What remains is: guilt, fear for Aisha, and a cold determination that says "I will get through that gate." Her whiskers are still — no trembling, no twitching. She is calculating.
+Panel 3: Medium shot from Dora's POV toward the gate exact as @image4. The arabesque arch frames the closed doors. Through the bars of a small window: the bright marketplace beyond, where Aisha has vanished. The gate is the obstacle. Dora studies it — the hinges, the lock mechanism, the guard positions. She is a predator analyzing her next hunt.
+Panel 4: Wide cinematic final shot. Dora exact as @image1 rises to her feet. She stands in the center of the courtyard, white fur glowing in the midday sun, golden collar catching light. Behind her: the chaos, the guards, the palace. Ahead: the gate. She takes one slow, deliberate step toward it. Her expression: "I'm coming, Aisha." End of Dora's Chapter 1.
+
+Environment: Palace courtyard exact as @image5, gate exact as @image4, scattered buns, midday light, emotional weight beneath comedy.
+
+All panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm midday light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.

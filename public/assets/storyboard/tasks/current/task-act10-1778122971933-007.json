@@ -1,0 +1,11 @@
+{
+  "id": "task-act10-1778122971933-007",
+  "title": "7. Resolve",
+  "prompt": "premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.\n\nCHARACTER AND LOCATION LOCKS:\n@image1 = Aisha, 16-year-old human princess, curious brave beautiful, exact as the reference; no modification to looks or clothes.\n@image2 = Dora, white panther, normal panther size, her height reaches Aisha's hip, exact as the reference.\n@image13 = Desert Dunes, endless rolling sands beneath stormy skies, sandstorms in the distance.\n\nSCENE: Daytime scene in the dunes.\n\nCreate 2x2 grid with 4 panels with 3D animated scenes in each one:\nPanel 1: Medium wide shot. Aisha exact as @image1 pushes herself fully off the ground, standing up with determination in the Desert Dunes exact as @image13.\nPanel 2: Tight shot. Aisha exact as @image1 looking into the distance with fierce resolve, stating they must reach the Hourglass before the Shadow King.\nPanel 3: Close-up. Dora exact as @image2 gives a sharp, determined nod.\nPanel 4: Wide epic shot. Aisha exact as @image1 and Dora exact as @image2 turn and begin sprinting together across the endless Desert Dunes exact as @image13.\n\nAll panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.",
+  "status": "todo",
+  "createdAt": "2026-05-07T03:02:51.933Z",
+  "updatedAt": "2026-05-07T03:02:51.933Z",
+  "passes": [],
+  "generatedImages": [],
+  "skillHint": "skill-codex-2x2-grid-prompt"
+}

@@ -1,0 +1,22 @@
+premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm midday light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.
+
+CHARACTER LOCKS:
+@image1 = Internal patio guards — silly right amused, grumpy left annoyed, exact as reference.
+@image2 = Buns seller — nags guards about buns, exact as reference.
+
+LOCATION REFERENCE:
+@image3 = Internal patio gate — exact unchanged.
+@image4 = Buns seller inside patio — aftermath scene, exact as reference.
+
+SCENE: Late morning — guards react to bun chaos (extended comedy).
+Extended comedy beat of the guards dealing with the bun chaos aftermath. The silly guard tries to help the bun seller pick up buns while eating them. The grumpy guard files a mental complaint about his entire life. They argue about whose fault this is. Neither notices Aisha walking past.
+
+Create 2x2 grid with 4 panels with 3D animated scenes in each one:
+Panel 1: Medium comedy shot. The silly guard exact as @image1 on the right kneels to help the bun seller exact as @image2 pick up scattered buns — but he keeps eating them while pretending to collect them. His cheeks are stuffed. The seller smacks his hand. He looks wounded. Behind: the grumpy guard stands motionless, watching this with the expression of a man considering career changes.
+Panel 2: Close-up two-shot of the guards exact as @image1. Face to face: the silly guard (right) has honey on his chin and a guilty grin. The grumpy guard (left) stares at him with the intensity of a thousand disapproving mothers. "This is your fault." "How is a PANTHER my fault?" Their helmets nearly touch as they argue.
+Panel 3: Wide comedy shot. Both guards exact as @image1 are now helping — the silly one stacking buns back on the tray while the seller swats at him, the grumpy one sweeping honey with his boot, making it worse. The courtyard is a mess. In the extreme background, barely visible: Aisha walks past with the scarf seller toward the gate. Nobody looks.
+Panel 4: Medium shot at the gate exact as @image3. The guards have returned to their posts, bun-smeared and disheveled. The silly guard has a bun stuck to his armor. The grumpy guard pretends nothing happened. Between them, the gate stands open — and through it, Aisha has already vanished. They have failed their one job and they don't even know it.
+
+Environment: Courtyard exact as @image4, gate exact as @image3, scattered buns, midday.
+
+All panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm midday light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.

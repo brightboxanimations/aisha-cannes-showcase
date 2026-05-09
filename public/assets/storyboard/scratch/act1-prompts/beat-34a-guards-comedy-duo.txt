@@ -1,0 +1,21 @@
+premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm midday light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.
+
+CHARACTER LOCKS:
+@image1 = Internal patio guards — two guards: silly amused one on right, grumpy annoyed one on left, both in ornate palace armor, exact as reference.
+@image2 = Patio guards alternate — same two guards from different angle, exact as reference.
+
+LOCATION REFERENCE:
+@image3 = Internal patio gate — arabesque arch, exact unchanged.
+
+SCENE: Late morning — palace guards comedy duo character beat.
+A dedicated beat establishing the two internal patio guards as a comedy duo. The silly one on the right is easily distracted, always grinning, loves animals and food. The grumpy one on the left takes everything too seriously, hates fun, treats guard duty like a sacred calling. They've been standing at this gate together for years and drive each other crazy.
+
+Create 2x2 grid with 4 panels with 3D animated scenes in each one:
+Panel 1: Medium two-shot of the guards exact as @image1 standing at the gate exact as @image3. The silly guard on the right leans against the arch, helmet tilted back, grinning at a passing butterfly. The grumpy guard on the left stands ramrod straight, jaw clenched, staring forward with military precision. Between them: the contrast defines their characters.
+Panel 2: Close-up comedy beat. The silly guard nudges the grumpy guard with his elbow and points at something funny off-screen. The grumpy guard's eye twitches. His nostrils flare. He refuses to look. The silly guard nudges again. The grumpy guard's hand grips his spear until his knuckles whiten.
+Panel 3: Medium shot. The silly guard has produced a small piece of bread and is breaking it into crumbs, scattering them for pigeons near the gate. Three pigeons gather at his feet. The grumpy guard stares at the pigeons with undisguised hatred. One pigeon hops toward his boot. He doesn't move but his expression promises violence.
+Panel 4: Wide shot of the gate exact as @image3. Both guards are back in position — but the silly one is secretly feeding a pigeon behind his back while the grumpy one pretends not to see. The gate arch frames them perfectly — a portrait of mismatched partnership. The courtyard stretches behind them. Neither knows the chaos that's coming.
+
+Environment: Palace gate exact as @image3, courtyard, midday sun.
+
+All panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm midday light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.

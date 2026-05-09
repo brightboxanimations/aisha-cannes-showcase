@@ -1,0 +1,22 @@
+premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm midday light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.
+
+CHARACTER LOCKS:
+@image1 = Aisha — sneaking out, barefoot, carrying shoes, exact as reference.
+@image2 = Aisha peeks — at the palace exit door, exact as reference.
+
+LOCATION REFERENCE:
+@image3 = Bedroom back view — entrance door, exact unchanged.
+@image4 = Palace exit internal door — service corridor, exact unchanged.
+
+SCENE: Late morning — Aisha sneaks from bedroom to service exit.
+While Dora heads to the courtyard for buns, Aisha takes a different route — through the back corridors to the service exit. She carries her shoes to be silent on the marble. She peeks around corners. She avoids servants. She reaches the service exit and peers through the door.
+
+Create 2x2 grid with 4 panels with 3D animated scenes in each one:
+Panel 1: Medium shot at the bedroom door exact as @image3. Aisha pulls it open carefully, peeking both ways down the corridor. She holds her shoes in one hand — barefoot on the cool marble for silence. Her expression is alert, excited, slightly nervous. The bedroom behind her is bright. The corridor ahead is dim.
+Panel 2: Wide shot of a palace corridor. Aisha tiptoes down the grand hallway, pressing against the wall. A servant walks across the far end — Aisha freezes, holding her breath. The servant passes without noticing. Aisha exhales. The marble floor is cold under her bare feet. Arabesque arches repeat into the distance.
+Panel 3: Medium shot exact as @image2. Aisha reaches the service exit exact as @image4 and presses her ear against the door. She listens for guards. Her face is pressed sideways against the carved wood, one eye peeking through the gap. Through the crack: a sliver of bright courtyard is visible. She can hear the distant sounds of the market.
+Panel 4: Close-up of Aisha at the door exact as @image2. She pushes it open slowly — daylight streams in, illuminating her face. Her eyes adjust. Through the door: the courtyard, the service path, and far away — the scarf seller walking with her unsold scarves. Aisha's expression: "Target acquired." She slides her shoes back on. Time to move.
+
+Environment: Bedroom exact as @image3, corridor, service exit exact as @image4, midday.
+
+All panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm midday light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.

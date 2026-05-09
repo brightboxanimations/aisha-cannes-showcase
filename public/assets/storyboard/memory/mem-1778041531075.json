@@ -1,0 +1,6 @@
+{
+  "id": "mem-1778041531075",
+  "topic": "do u see it can you use chart refernces and the prompt jsut 2 prompts as per skill so then we cna run it through pixverse cli  ?",
+  "summary": "The \"Batch 2x2 Grid Prompt Writing & Generation\" skill was used to craft two distinct prompts based on script excerpts focusing on Aisha's realization about the Djinn and her resolve. These prompts, formatted with chart references, are ready for the Director's review and subsequent batch generation via the PixVerse CLI across three models. For CLI execution, the user must ensure specific image files are locally available and correctly referenced in the batch script's `--image` flags. Prompt 1 requires `Aisha-and-Sands-of-Destiny-70-1778041121249.png` (Aisha), `panther-1778041127791.png` (Dora), `Plasma-character-1778041170397.png` (Djinn card), plus user-provided images for \"Desolate City Ruins\" (4-projection grid, front view) and \"House in the Rocks\" (exterior staircase). Prompt 2 requires the same Aisha, Dora, and Djinn card images, describes Niura without an image, and needs a user-provided image for \"House in the Rocks\".",
+  "createdAt": "2026-05-06T04:25:31.075Z"
+}

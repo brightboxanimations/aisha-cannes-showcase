@@ -1,0 +1,23 @@
+premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm morning light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.
+
+CHARACTER LOCKS:
+@image1 = Sultan — tall, turning to leave, grief in his profile, exact as reference.
+@image2 = Sultan close-up — stern, exact as reference.
+@image3 = Dora — white panther, shrinking under direct scolding, exact as reference.
+
+LOCATION REFERENCE:
+@image4 = Bedroom front view — exact unchanged.
+@image5 = Sultan and Aisha confrontation — exact as reference.
+
+SCENE: Morning — Sultan scolds Dora and exits.
+The Sultan turns to leave but pauses to address Dora directly: "Your duty is to guard her, not entertain her mischief." Dora visibly shrinks. He delivers his final warning: "One step outside your bounds, and I will lock your chambers." He storms out. The door closes. Silence.
+
+Create 2x2 grid with 4 panels with 3D animated scenes in each one:
+Panel 1: Medium shot. The Sultan exact as @image1 turns from Aisha and faces Dora exact as @image3 directly. He points at the panther — his finger is steady, his voice controlled: "And you, panther of the royal line..." Dora sits on the floor, her whole body compressing smaller and smaller with each word. Her golden eyes stare at the floor. Her ears are completely flat.
+Panel 2: Close-up of Dora exact as @image3. The scolding hits her like physical weight. She is a royal guardian who has failed her primary duty. Her eyes are downcast, whiskers drooping, tail wrapped tight around her body. A single tear-like glisten in her golden eye — not quite a tear, but the animal equivalent. She feels the shame deeply.
+Panel 3: Wide shot from behind. The Sultan exact as @image1 walks toward the bedroom door exact as @image4, his back to the camera. His posture is rigid — the weight of the scene still on his shoulders. Over his shoulder without turning: "One step outside your bounds today, and I will lock your chambers." His shadow stretches long behind him across the rug. The door is open — the dark corridor beckons.
+Panel 4: Medium shot. The door closes behind the Sultan. The bedroom exact as @image4 falls into silence. The closed door fills the left of frame. On the right: the room — morning light still streaming from the balcony, but everything feels different now. On the rug: the faint shadow where the scroll was. On the floor: Dora hasn't moved. The silence after a storm.
+
+Environment: Bedroom exact as @image4, door, corridor, heavy emotional atmosphere.
+
+All panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm morning light with emotional weight, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.

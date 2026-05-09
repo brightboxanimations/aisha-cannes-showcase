@@ -1,0 +1,23 @@
+premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm golden morning light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.
+
+CHARACTER LOCKS:
+@image1 = Aisha — 16-year-old princess, dreamy then stunned, exact as reference.
+@image2 = Dora — white panther on pink cushion, lazy then alert, exact as reference.
+@image3 = Altair — royal hawk in frantic flight, feathers wild, exact as reference.
+
+LOCATION REFERENCE:
+@image4 = Aisha on balcony — master shot, exact unchanged.
+@image5 = Balcony projections — all angles, exact unchanged.
+
+SCENE: Morning, balcony — Altair interruption alternate.
+Same beat: Altair streaks past. Focus on: the hanging plants shaking from Altair's speed, Dora's slow-motion reaction from lazy to battle-ready, a feather left behind floating, Aisha's expression transition from dreamy to scheming.
+
+Create 2x2 grid with 4 panels with 3D animated scenes in each one:
+Panel 1: Close-up of the hanging plants on the balcony exact as @image5. They sway violently from the wind of Altair's pass — leaves scatter, a small flower pot rocks dangerously. Through the swaying greenery, Altair exact as @image3 is a golden-brown blur streaking past. Aisha's silhouette is visible behind the plants, head turning in shock.
+Panel 2: Slow-motion style close-up of Dora exact as @image2. Her transformation from lazy to alert in a single frame: her eyes snap from half-closed to fully open, pupils contracting to vertical slits. Her ears rotate forward like radar dishes. Her body shifts from puddle-on-cushion to coiled spring. The pink cushion deforms under her suddenly tense muscles.
+Panel 3: Insert shot. A single golden-brown feather from Altair drifts slowly downward through the sunlight, spinning gently. Below it: Aisha's upturned face exact as @image1, her expression transitioning — mouth open in surprise is closing into a knowing smirk. The feather catches golden light. The moment between shock and scheme.
+Panel 4: Medium shot of Aisha exact as @image1 from the side. She stands at the railing, body already pivoting toward the bedroom door. Her eyes are narrowed with the spark of rebellion. One hand grips the railing — about to push off. Behind her, Dora exact as @image2 is mid-rise from the cushion, one paw extended, expression screaming "don't you DARE." Between them: Altair's disappearing trail in the sky.
+
+Environment: Balcony exact as @image5, hanging plants, cushions, morning light, city panorama behind.
+
+All panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm golden morning light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.

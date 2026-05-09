@@ -1,0 +1,23 @@
+premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm midday light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.
+
+CHARACTER LOCKS:
+@image1 = Aisha in headscarf — disguised princess, basket in hand, exact as reference.
+@image2 = Dora — white panther, horror and despair, exact as reference.
+
+LOCATION REFERENCE:
+@image3 = Internal patio gate — ornate arabesque arch, exact unchanged.
+@image4 = Internal patio guards — silly right, grumpy left, distracted, exact as reference.
+@image5 = Aisha walking with servant — carrying basket, exact as reference.
+
+SCENE: Late morning — gate escape alternate.
+Same beat: Aisha slips through, Dora sees. Focus on: the guard's wave-through without looking (comedy of security failure), Aisha's first step into sunlight (emotional), Dora's POV through the gate (heartbreaking comedy).
+
+Create 2x2 grid with 4 panels with 3D animated scenes in each one:
+Panel 1: Close-up of the grumpy guard exact as @image4 on the left waving Aisha through without looking. His head is turned fully toward the bun argument, mouth open mid-shout, hand waving backward dismissively toward the gate. His armored hand waves exactly at Aisha and the seller walking past. His eyes never leave the bun chaos. The ultimate security failure.
+Panel 2: Cinematic medium shot from outside. Aisha exact as @image1 steps through the gate arch exact as @image3 into the bright marketplace beyond. The arch frames her — dark palace behind, blazing bright world ahead. Her face is lit by full sunlight for the first time. She squints slightly, then her eyes widen with wonder. Her first step outside. The basket of scarves weighs nothing compared to the freedom she feels.
+Panel 3: Dora's POV. Shot from Dora's low eye level — through the crowd, through the chaos, through the gap between guards and bun seller, directly at the gate exact as @image3 in the distance. Through the gate arch: Aisha's receding back is visible, walking into light, headscarf catching the wind. Everything between Dora and Aisha is an obstacle course of scattered buns, arguing humans, and palace rules.
+Panel 4: Split emotion shot. Left half: Aisha exact as @image1 from behind, walking into the bright bustling marketplace, her headscarf billowing, basket on her arm, stepping into a new world. Right half: Dora exact as @image2 in the courtyard, standing rigid, mouth open in a silent "NOOOO", surrounded by bun chaos, separated from her princess by one closed gate. The left is light and freedom. The right is chaos and captivity.
+
+Environment: Gate exact as @image3, courtyard, marketplace, guards exact as @image4, midday sun.
+
+All panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm midday light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.

@@ -192,6 +192,96 @@ def process_improve_quality(task):
     
     return all_results
 
+def process_general_task(task):
+    """Run general prompt generation."""
+    prompt_text = task.get('prompt', '').strip()
+    if not prompt_text:
+        return None
+        
+    import re
+    # Extract images from sceneHint
+    scene_hint = task.get('sceneHint', '')
+    image_paths = []
+    if scene_hint:
+        parts = scene_hint.split('|')
+        for p in parts:
+            match = re.search(r'(/assets/[^\s\]]+)', p)
+            if match:
+                full_path = str(PUBLIC_DIR / match.group(1).lstrip('/'))
+                if os.path.exists(full_path):
+                    image_paths.append(full_path)
+    
+    # Model limits to 9 images as per constraints
+    image_paths = image_paths[:9]
+    
+    # Intelligently extract prompts (looks for opening and closing tags of the prompt)
+    prompts = []
+    matches = re.finditer(r'(premium luminous 3D animated feature-film.*?high-quality 4K animated movie look\.)', prompt_text, re.DOTALL | re.IGNORECASE)
+    for m in matches:
+        prompts.append(m.group(1).strip())
+        
+    # Fallback to basic splitting if no exact matches found
+    if not prompts:
+        prompts = [p.strip() for p in prompt_text.split('---') if len(p.strip()) > 10]
+    if not prompts:
+        prompts = [prompt_text]
+        
+    all_results = []
+    
+    models_to_run = [
+        ('gemini-3.1-flash', '2160p'),
+        ('gemini-3.0', '1440p'),
+        ('gpt-image-2.0', '1440p')
+    ]
+    
+    for idx, p in enumerate(prompts):
+        print(f'  🚀 Launching generation {idx+1}/{len(prompts)} for: {task["id"]}')
+        
+        # Clean up prompt slightly if it has markdown formatting
+        p = re.sub(r'^```[\w]*\s*', '', p) # remove starting code block
+        p = re.sub(r'\s*```$', '', p)      # remove ending code block
+        
+        for model_name, quality in models_to_run:
+            cmd = ['npx', 'pixverse-cli', 'create', 'image', '--prompt', p, '--model', model_name, '--quality', quality, '--aspect-ratio', '16:9', '--json']
+            if image_paths:
+                cmd.extend(['--images'] + image_paths)
+                
+            try:
+                print(f'  ⏳ Running PixVerse CLI with {model_name} ({quality})...')
+                result = subprocess.run(cmd, capture_output=True, text=True, timeout=300)
+                
+                if result.returncode == 0:
+                    try:
+                        json_start = result.stdout.find('{')
+                        if json_start >= 0:
+                            data = json.loads(result.stdout[json_start:])
+                            if data.get('image_url'):
+                                out_dir = str(UPLOADS_DIR / f'gen-{task["id"]}')
+                                os.makedirs(out_dir, exist_ok=True)
+                                out_name = f'gen_{idx}_{model_name}_{int(time.time())}.png'
+                                out_path = os.path.join(out_dir, out_name)
+                                
+                                subprocess.run(['curl', '-sL', data['image_url'], '-o', out_path])
+                                
+                                rel_url = f'/assets/storyboard/uploads/gen-{task["id"]}/{out_name}'
+                                all_results.append({
+                                    'id': f'gen-{task["id"]}-{idx}-{model_name}',
+                                    'url': rel_url,
+                                    'note': f'Generated image {idx+1} ({model_name})',
+                                    'selected': False,
+                                    'improve4k': False,
+                                    'splitGrid': False,
+                                })
+                                print(f'    ✅ Downloaded: {out_name}')
+                    except Exception as e:
+                        print(f'    ⚠ JSON parse error: {e}')
+                else:
+                    print(f'    ⚠ PixVerse error: {result.stderr[:200]}')
+            except Exception as e:
+                print(f'    ⚠ Error: {e}')
+            
+    return all_results
+
 
 def update_task_with_new_pass(task, pass_name, images):
     """Add a new pass to the task with the given images."""
@@ -263,9 +353,16 @@ def process_task(task):
             print(f'  ✅ Pass created with {len(results)} enhanced images')
     
     else:
-        # No specific skill flags — just a general task for Theo
-        print(f'  📋 General task — waiting for manual processing')
-        # Don't change status, let the polling continue
+        # General task: Generate images from prompt
+        print(f'  📋 General task — running generation')
+        results = process_general_task(task)
+        if results:
+            task = update_task_with_new_pass(task, f'Generated ({len(results)} images)', results)
+            save_task(task)
+            sync_task_to_storyboard(task)
+            print(f'  ✅ Pass created with {len(results)} generated images')
+        else:
+            print(f'  ⚠ Generation failed or no prompt.')
 
 
 def main():

@@ -1,0 +1,20 @@
+premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric golden dawn light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.
+
+CHARACTER LOCKS:
+@image1 = First merchant on camel — merchant riding his funny camel across desert at dawn, exact as reference.
+
+LOCATION REFERENCE:
+@image5 = Caravans approaching — wide desert with caravans heading toward gate, exact unchanged.
+
+SCENE: Dawn, desert — opening sequence.
+The very first beat of ACT 1. Before anything happens: dawn breaks over the desert outside Qazar al-Zaman. The sun rises behind the distant city gate. Caravans begin to move from desert camps toward the city. The first merchant and his camel set out. The world is golden, vast, and ancient.
+
+Create 2x2 grid with 4 panels with 3D animated scenes in each one:
+Panel 1: Ultra-wide establishing shot. Desert at dawn exact as @image5. The sun rises on the horizon behind the distant city gate — its silhouette is massive, ancient, impressive. Long golden shadows stretch across the dunes. A caravan of 8-10 camels and merchants begins to form a line, emerging from desert camps with tents and fires.
+Panel 2: Medium shot. The first merchant exact as @image1 rides his funny camel across a dune crest. They're silhouetted against the golden dawn sky. The camel walks with its goofy sway. The merchant adjusts his turban nervously. Behind them: the desert stretches endlessly. Ahead: the gate grows as they approach.
+Panel 3: Low angle shot from the sand level. Camel hooves step across the golden desert sand — foreground filled with prints, tiny dust clouds at each step. Above: the merchant and camel are framed against the rising sun. The scale emphasizes the journey — they've been walking since before dawn.
+Panel 4: Wide panoramic. The caravan line stretches across the dunes exact as @image5 — a snake of merchants, camels, and carts winding toward the city gate. The gate catches the first rays of dawn, its sandstone glowing orange-gold. Birds circle the towers. Smoke rises from the city behind the walls. A new day in Qazar al-Zaman begins.
+
+Environment: Desert dunes exact as @image5, dawn light, city gate silhouette.
+
+All panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric golden dawn light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.

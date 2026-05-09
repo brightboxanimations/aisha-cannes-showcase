@@ -2309,7 +2309,7 @@ p {
   position: absolute;
   top: 0.9rem;
   left: 0.9rem;
-  z-index: 3;
+  z-index: 6;
   display: grid;
   place-items: center;
   min-width: 2rem;
@@ -2320,6 +2320,40 @@ p {
   background: rgba(248, 217, 120, 0.92);
   font-size: 0.72rem;
   font-weight: 950;
+  transition: background 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.shot-number-text,
+.shot-number-plus {
+  grid-area: 1 / 1;
+  transition: opacity 180ms ease, transform 180ms ease;
+}
+
+.shot-number-plus {
+  opacity: 0;
+  transform: scale(0.6);
+  font-size: 1.1rem;
+}
+
+.shot-card:hover .shot-number .shot-number-text {
+  opacity: 0;
+  transform: scale(0.6);
+}
+
+.shot-card:hover .shot-number .shot-number-plus {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.shot-card:hover .shot-number {
+  background: rgba(248, 217, 120, 1);
+  border-color: rgba(248, 217, 120, 0.8);
+  box-shadow: 0 0 12px rgba(248, 217, 120, 0.3);
+}
+
+.shot-number:hover {
+  background: rgba(248, 217, 120, 1) !important;
+  box-shadow: 0 0 20px rgba(248, 217, 120, 0.5) !important;
 }
 
 .shot-media {
@@ -2485,51 +2519,42 @@ p {
   line-height: 1.42;
 }
 
+/* Storyboard Lightbox — full popup overlay (inline styles handle layout) */
 .storyboard-lightbox {
-  position: fixed;
-  inset: 0;
-  z-index: 100;
-  display: grid;
-  place-items: center;
-  padding: 2rem;
-  background: rgba(1, 5, 12, 0.88);
-  backdrop-filter: blur(20px);
+  /* Base is set via inline styles in JSX — this just provides defaults */
 }
 
 .storyboard-lightbox img,
 .storyboard-lightbox video {
-  max-width: min(94vw, 1500px);
-  max-height: 84svh;
+  /* Let inline styles control dimensions, just add polish */
   object-fit: contain;
-  border: 1px solid rgba(248, 217, 120, 0.28);
-  border-radius: 1rem;
-  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.58);
 }
 
-.storyboard-lightbox button,
-.storyboard-lightbox a {
-  position: fixed;
-  top: 1rem;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 999px;
-  color: var(--cream);
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(18px);
-  cursor: pointer;
-  font-weight: 950;
-  text-decoration: none;
+/* Tool pill buttons inside lightbox */
+.storyboard-lightbox .lightbox-tool-btn {
+  transition: all 0.2s;
+}
+.storyboard-lightbox .lightbox-tool-btn:hover {
+  background: rgba(255, 255, 255, 0.12) !important;
+  transform: translateY(-1px);
 }
 
-.storyboard-lightbox button {
-  right: 1rem;
-  width: 3rem;
-  height: 3rem;
-  font-size: 1.8rem;
+/* Alt thumbnails in lightbox */
+.storyboard-lightbox .lightbox-alt-btn:hover {
+  opacity: 1 !important;
+  border-color: rgba(248, 217, 120, 0.5) !important;
 }
 
-.storyboard-lightbox a {
-  left: 1rem;
-  padding: 0.8rem 1rem;
+/* Delete cross on alt thumbnails — show on hover */
+.lb-alt-delete { display: none !important; }
+button:hover > .lb-alt-delete { display: grid !important; }
+
+/* Plus button in lightbox — keep visible on hover */
+.lb-plus-btn:hover {
+  background: rgba(248, 217, 120, 0.12) !important;
+  border-color: rgba(248, 217, 120, 0.6) !important;
+  color: var(--gold) !important;
+  transform: scale(1.08);
 }
 
 @media (max-width: 1120px) {
@@ -3042,6 +3067,136 @@ p {
   filter: brightness(1.5);
 }
 
+/* Pass tab close — hidden, appears on hover */
+.task-passes-subtabs > div:hover .pass-tab-close {
+  opacity: 1 !important;
+}
+.pass-tab-close:hover {
+  color: rgba(255,255,255,0.7) !important;
+  background: rgba(255,255,255,0.1) !important;
+}
+
+/* Selected shot card in storyboard */
+.shot-card.is-selected {
+  outline: 1px solid rgba(248, 217, 120, 0.4);
+  outline-offset: 2px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6), 0 0 20px rgba(248, 217, 120, 0.08);
+  transform: translateY(-4px) scale(1.02);
+  z-index: 5;
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.25s;
+}
+
+.shot-card.is-selected .shot-number {
+  color: var(--gold);
+}
+
+/* Arrow overlays on shot images */
+.shot-alt-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.85);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  font-size: 1.1rem;
+  font-weight: 700;
+  z-index: 5;
+  opacity: 0;
+  transition: all 0.25s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  pointer-events: none;
+}
+
+.shot-alt-arrow.left { left: 4px; }
+.shot-alt-arrow.right { right: 4px; }
+
+.shot-media:hover .shot-alt-arrow {
+  opacity: 0.85;
+  pointer-events: auto;
+}
+
+.shot-alt-arrow:hover {
+  background: rgba(248, 217, 120, 0.2);
+  border-color: rgba(248, 217, 120, 0.4);
+  color: var(--gold);
+  transform: translateY(-50%) scale(1.1);
+  box-shadow: 0 4px 16px rgba(248, 217, 120, 0.15);
+}
+
+/* Note area glass panel in lightbox */
+.floating-note-area.glass {
+  background: rgba(10, 15, 25, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(248, 217, 120, 0.2);
+  border-radius: 0.75rem;
+  padding: 0.8rem 1rem;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+  animation: fadeIn 0.2s ease-out;
+}
+
+.floating-note-area.glass textarea::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.tick-save-btn {
+  width: 2.6rem;
+  height: 2.6rem;
+  border-radius: 50%;
+  border: 1px solid rgba(248, 217, 120, 0.5);
+  background: rgba(248, 217, 120, 0.15);
+  color: var(--gold);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  transition: all 0.2s;
+  box-shadow: 0 0 12px rgba(248, 217, 120, 0.1);
+}
+
+.tick-save-btn:hover {
+  background: rgba(248, 217, 120, 0.25);
+  border-color: var(--gold);
+}
+
+/* Enhance popup selectors */
+.enhance-options-row {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.enhance-select {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 0.6rem;
+  color: rgba(255, 255, 255, 0.8);
+  padding: 0.65rem 0.9rem;
+  font-size: 1rem;
+  cursor: pointer;
+  outline: none;
+  flex: 1;
+}
+
+.enhance-select:hover {
+  border-color: rgba(248, 217, 120, 0.3);
+}
+
+.enhance-select:focus {
+  border-color: var(--gold);
+}
+
+.enhance-select option {
+  background: #1a1a2e;
+  color: rgba(255, 255, 255, 0.8);
+}
 
 
 .pipeline-tab:hover {
@@ -3190,6 +3345,8 @@ p {
   object-fit: cover;
   aspect-ratio: 16 / 9;
   display: block;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 
 .gallery-item.is-selected {
@@ -3215,11 +3372,11 @@ p {
 .gallery-item.is-expanded {
   grid-column: span 2;
   grid-row: span 2;
-  transform: scale(1.02);
-  z-index: 10;
+  margin-top: -8px;
+  z-index: 100;
   background: transparent;
-  border-color: rgba(255, 255, 255, 0.2);
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 25px 70px rgba(0, 0, 0, 0.95), 0 8px 30px rgba(0, 0, 0, 0.6);
   overflow: visible;
 }
 
@@ -3307,8 +3464,9 @@ p {
   border-radius: 1rem;
   padding: 1rem;
   display: flex;
-  align-items: flex-start;
-  gap: 1rem;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.5rem;
   animation: fadeIn 0.2s ease-out;
 }
 
@@ -3337,6 +3495,11 @@ p {
   to {
     opacity: 1;
   }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 .mindtree-overlay {
@@ -3893,26 +4056,7 @@ p {
   transform: scale(1.15);
 }
 
-.tick-save-btn {
-  position: absolute;
-  bottom: 0.5rem;
-  right: 0.5rem;
-  background: rgba(99, 238, 177, 0.2);
-  border: 1px solid rgba(99, 238, 177, 0.5);
-  border-radius: 50%;
-  width: 2rem;
-  height: 2rem;
-  color: #fff;
-  display: grid;
-  place-items: center;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.tick-save-btn:hover {
-  background: rgba(99, 238, 177, 0.4);
-  transform: scale(1.1);
-}
+/* tick-save-btn is defined above — this duplicate was removed to prevent position:absolute override */
 
 .assign-menu-glass {
   position: fixed;
@@ -4213,21 +4357,21 @@ p {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 90%;
-  max-width: 520px;
-  background: rgba(10, 15, 25, 0.95);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  width: 92%;
+  max-width: 680px;
+  background: rgba(10, 15, 25, 0.97);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
   border: 1px solid rgba(248, 217, 120, 0.3);
-  border-radius: 1rem;
-  padding: 2rem;
+  border-radius: 1.2rem;
+  padding: 2.5rem;
   display: flex;
   flex-direction: column;
-  gap: 1.2rem;
+  gap: 1.5rem;
   z-index: 1000;
   max-height: 85vh;
   overflow-y: auto;
-  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.8), 0 0 30px rgba(248, 217, 120, 0.1);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.85), 0 0 40px rgba(248, 217, 120, 0.12);
   animation: fadeIn 0.2s ease-out;
 }
 
@@ -4255,8 +4399,9 @@ p {
   background: rgba(0, 0, 0, 0.4);
   border: 1px solid rgba(255, 255, 255, 0.1);
   color: white;
-  padding: 0.6rem;
-  border-radius: 0.5rem;
+  padding: 0.65rem 0.9rem;
+  border-radius: 0.6rem;
+  font-size: 1rem;
   outline: none;
 }
 
@@ -4306,7 +4451,11 @@ p {
 .generated-gallery-wrapper {
   position: relative;
   width: 100%;
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
+  max-height: 80vh;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
 }
 
 .processing-overlay {

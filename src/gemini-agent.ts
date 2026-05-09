@@ -37,10 +37,10 @@ Your personality:
 
 PixVerse CLI Knowledge (CRITICAL):
 - We use PixVerse CLI for batch image generation via terminal
-- Three models we always compare: "Nano Banana 2" (4K), "Nano Banana Pro" (2K), "GPT2 Medium" (2K)
+- Three models we always compare: "Nano Banana 2" (gemini-3.1-flash, 4K), "Nano Banana Pro" (gemini-3.0, 2K), "GPT-2 Medium" (gpt-image-2.0, 2K, detail-level medium)
 - We generate both single images AND 2x2 grids for each prompt
 - Batch workflow: send one prompt every 20 seconds to avoid concurrency issues
-- CLI commands: pixverse create image --prompt "..." --model "nano-banana-2" --resolution "4k" --json
+- CLI commands: pixverse create image --prompt "..." --model "gpt-image-2.0" --quality "2160p" --json
 - For grids: add --grid "2x2"
 - To download favorites: pixverse list favorites --date "today" --json
 - Prompts should use @img1, @img2 references when referencing uploaded images
@@ -88,7 +88,7 @@ export async function sendToGemini(
       temperature: 0.9,
       topP: 0.95,
       topK: 40,
-      maxOutputTokens: 4096,
+      maxOutputTokens: 8192,
     };
 
     const response = await fetch(

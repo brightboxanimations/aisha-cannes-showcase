@@ -1,0 +1,21 @@
+premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm midday light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.
+
+CHARACTER LOCKS:
+@image1 = Aisha in headscarf — disguised with beige scarf, carrying basket, exact as reference.
+@image2 = Aisha walking with servant — helping carry scarves, exact as reference.
+
+LOCATION REFERENCE:
+@image3 = Internal patio gate — arabesque arch, exact unchanged.
+
+SCENE: Late morning — Aisha buys all scarves and offers to help carry.
+Aisha leans in conspiratorially: "I'll take them all. And I'll even help you carry them out." The seller's jaw drops. Aisha picks up the basket like she's done this her whole life. The two walk together toward the service gate — princess disguised as a helpful market girl, seller in a daze of good fortune.
+
+Create 2x2 grid with 4 panels with 3D animated scenes in each one:
+Panel 1: Close-up of Aisha exact as @image1 leaning toward the seller, voice dropped to a whisper: "I'll take them. All of them." Her eyes flick sideways toward the gate exact as @image3 — calculating the timing. The seller's eyes go enormous with disbelief. Behind them: distant bun chaos is about to start.
+Panel 2: Medium shot. Aisha exact as @image1 picks up the seller's heavy basket of scarves with surprising ease — she lifts it onto one arm like she's been a market porter her whole life. The seller reaches to help but Aisha waves her off with a warm smile: "Royal favor." The seller squeaks instead of speaking.
+Panel 3: Wide shot exact as @image2. Aisha and the scarf seller walk together toward the gate exact as @image3. Aisha matches the seller's pace, chatting warmly, asking about fabrics and dyes. She looks completely natural — a young woman helping a merchant. Her headscarf covers her hair. From behind, you'd never guess she was a princess.
+Panel 4: Medium shot from the gate looking toward them. Aisha exact as @image1 and the seller approach the gate exact as @image3. The guards are visible at the gate — but they're turning toward the courtyard. In the far background: the first signs of bun chaos — a shriek, a white blur, buns flying. The timing is perfect. Aisha's plan is working.
+
+Environment: Courtyard near gate exact as @image3, market area, midday.
+
+All panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm midday light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.

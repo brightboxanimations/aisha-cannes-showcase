@@ -1,0 +1,23 @@
+premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm golden morning light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.
+
+CHARACTER LOCKS:
+@image1 = Altair — royal hawk, golden-brown feathers with white chest markings, fierce golden eyes, wings fully spread in distressed flight, carrying a scroll in talons, exact as reference.
+@image2 = Altair close-up — front view of hawk in distress, dunes behind, exact as reference.
+@image3 = Gate guards — two armored guards, exact as reference.
+
+LOCATION REFERENCE:
+@image4 = Merchants waiting before gate — merchant line with camels, clerk stand, gate behind, exact positioning, 100% unchanged.
+@image5 = Hawk approaching from dunes — medium distance, dunes background, gate ahead, exact as reference.
+
+SCENE: Morning, city gate — Altair emergency approach.
+Altair the royal hawk rockets toward the gate in visible distress. He carries an urgent scroll. Merchants scatter. Guards look up alarmed. The gate is about to close. This is a frantic, urgent, action-filled beat. Before Altair, the gate and the merchants waiting in line with camels. Clerks and guards scramble.
+
+Create 2x2 grid with 4 panels with 3D animated scenes in each one:
+Panel 1: Wide dramatic shot. Altair exact as @image1 streaks across the sky from left, wings fully spread, a tiny scroll clutched in his talons. Below him, the merchant line exact as @image4 scatters — merchants duck, camels stumble sideways, the fat jade-green merchant falls backward onto a sack. Guards exact as @image3 shout upward, hands on sword hilts. Desert dunes and gate fill the background.
+Panel 2: Close-up front view of Altair exact as @image2. His golden eyes are wide with urgency, beak slightly open, feathers ruffled from speed. Dunes behind him blur with motion. The scroll in his talons has a broken red royal seal. His wings catch golden morning light, individual feathers visible.
+Panel 3: Low angle looking up at Altair exact as @image1 swooping down toward the gate. The two guards exact as @image3 are in foreground left and right, looking up with alarm, hands raised. Between them, the gate arch frames the sky. Altair fills the upper frame, enormous from this angle, shadow falling across the guards.
+Panel 4: Medium reaction shot from behind the clerk's stand. The clerk has ducked under his table. Documents fly everywhere. The indigo Bedouin uses one of his beetle jars to shield his face. The tired merchant in the back just watches with resignation. Altair's shadow sweeps across them all. Merchants before the gate exact as @image4 scramble.
+
+Environment: Gate exact as @image4, dunes, golden morning light, urgent dust cloud kicked up by Altair's speed.
+
+All panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm golden morning light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.

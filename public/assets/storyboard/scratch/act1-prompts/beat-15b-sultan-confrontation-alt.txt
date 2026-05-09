@@ -1,0 +1,24 @@
+premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm morning light with heavy dramatic weight, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.
+
+CHARACTER LOCKS:
+@image1 = Aisha — 16-year-old princess, defiant, shaken, frustrated, exact as reference.
+@image2 = Dora — white panther, head lowered, ears flat, shrinking, exact as reference.
+@image3 = Sultan close-up — stern face with grief underneath, tired eyes, weight of loss, exact as reference.
+@image4 = Sultan full body — tall dignified man in royal robes, exact as reference.
+
+LOCATION REFERENCE:
+@image5 = Sultan and Aisha confrontation — facing each other, tension, exact as reference.
+@image6 = Bedroom front view — rug and balcony, exact unchanged.
+
+SCENE: Morning, bedroom — Sultan confrontation alternate.
+Same beat: the father-daughter confrontation. Focus on: the Sultan's exit (turning away with grief), Dora being scolded directly (she shrinks), the scroll seal on the rug as a symbol, and the aftermath — Aisha alone with fury building.
+
+Create 2x2 grid with 4 panels with 3D animated scenes in each one:
+Panel 1: Medium close-up. The Sultan exact as @image3 turns to address Dora exact as @image2 directly. He points at the panther with controlled anger: "Your duty is to guard her, not entertain her mischief." Dora shrinks — her whole body compresses, ears flat, tail curled under, golden eyes looking away in shame. The ornate bedroom door is behind the Sultan.
+Panel 2: Insert shot. The broken red wax seal lies on the ornate rug in the center of frame. The scroll, now confiscated, is gone — only the seal fragment remains like evidence at a crime scene. Beside it: two shadows — the Sultan's tall shadow on the left, Aisha's smaller shadow on the right. The shadows tell the story of the power imbalance.
+Panel 3: Medium shot of the Sultan exact as @image4 at the bedroom door, pausing with one hand on the frame. He's half-turned — profile view. His expression in profile reveals what he hides when facing Aisha: fear, grief, love he can't express. "One step outside your bounds today, and I will lock your chambers." The door frame outlines him. The hallway beyond is dark compared to the bright bedroom.
+Panel 4: Wide shot of the bedroom exact as @image6 after the Sultan has left. Aisha exact as @image1 stands alone in the center of the room, fists clenched at her sides, shoulders rigid, jaw set. Dora exact as @image2 lies flat on the ground near her feet, head between paws, still processing the scolding. The bedroom feels larger and emptier without the Sultan's presence. Morning light pours in from the balcony but neither of them is looking at it.
+
+Environment: Bedroom exact as @image6, dramatic light and shadow, emotional weight in the architecture.
+
+All panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm morning light with heavy emotional shadows, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.

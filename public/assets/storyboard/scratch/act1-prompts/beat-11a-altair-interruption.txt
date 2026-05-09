@@ -1,0 +1,23 @@
+premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm golden morning light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.
+
+CHARACTER LOCKS:
+@image1 = Aisha — 16-year-old princess, olive skin, large expressive dark brown eyes, long wavy dark hair, exact as reference.
+@image2 = Dora — white panther with golden collar, normal panther size, exact as reference.
+@image3 = Altair — royal hawk, golden-brown feathers, wild frantic expression, wings flapping awkwardly, exact as reference.
+
+LOCATION REFERENCE:
+@image4 = Aisha on balcony — master shot, exact as reference.
+@image5 = Balcony projections — 4-angle view, exact unchanged.
+
+SCENE: Morning, Aisha's balcony — Altair interruption.
+Aisha and Dora's lazy morning is shattered when Altair rockets past the balcony, feathers wild, expression frantic. "Royal business! Urgent!" he screams before darting away. Aisha and Dora share a stunned look. Aisha's mischief activates — this is her chance. She takes off running. Dora screams after her.
+
+Create 2x2 grid with 4 panels with 3D animated scenes in each one:
+Panel 1: Wide action shot exact as @image4. Aisha exact as @image1 stands at the railing startled, head turned sharply right. Dora exact as @image2 has sprung up from her cushion, ears forward, body tense. Between them, just past the railing, Altair exact as @image3 streaks past in a blur of feathers and panic — wings chaotically flapping, head turned back toward Aisha as he shouts. Motion blur on Altair.
+Panel 2: Medium close-up of Altair exact as @image3 frozen mid-air for a split second. His wings flap awkwardly, feathers disheveled from his long flight. His golden eyes are wide with urgency. His beak is open: "Royal business! Urgent! Sorry, Princess!" He's framed against the balcony railing with Aisha's stunned face behind.
+Panel 3: Tight two-shot reaction. Aisha exact as @image1 and Dora exact as @image2 exchange a stunned look. Aisha's mouth hangs open, then starts curling into a sly grin. Her eyes narrow with the spark of rebellion. Dora's expression shifts from shock to suspicion — she's seen this look before and she doesn't like it.
+Panel 4: Dynamic action shot. Aisha exact as @image1 spins on her heel and sprints toward the balcony entrance/bedroom door, her hair and dress flowing behind her. Dora exact as @image2 rises in alarm on the cushion, jaw dropped, one paw raised as if to stop her. Dora's expression is pure "NO NO NO." Aisha's expression is pure "YES YES YES."
+
+Environment: Balcony exact as @image5, morning light, cushions, railing, view of city behind.
+
+All panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm golden morning light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.

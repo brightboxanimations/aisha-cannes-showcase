@@ -1,0 +1,23 @@
+premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm midday light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.
+
+CHARACTER LOCKS:
+@image1 = Aisha in headscarf — princess disguised in simple beige headscarf, tiara peeking, exact as reference.
+@image2 = Aisha picking headscarf — trying on scarf, seller distressed, exact as reference.
+
+LOCATION REFERENCE:
+@image3 = Palace exit internal door — service exit corridor, exact unchanged.
+@image4 = Aisha and servant walking — Aisha carrying basket, exact as reference.
+@image5 = Aisha simple headscarf — beige scarf over hair, exact as reference.
+
+SCENE: Late morning — headscarf disguise alternate.
+Same beat: Aisha disguises. Focus on: the tiara peeking from under the scarf (a detail that could expose her), the scarf seller's journey from terror to bewildered gratitude, and Aisha's theatrical "I'm magnificent" pose from different angles.
+
+Create 2x2 grid with 4 panels with 3D animated scenes in each one:
+Panel 1: Extreme close-up of the headscarf on Aisha's head exact as @image5. The simple sand-colored fabric drapes softly, but underneath — a gleam of gold. Her tiara peeks out from under the scarf's edge, catching a single beam of sunlight. A delicate danger: one wrong gust of wind and her disguise fails. Aisha's ear and jawline visible, her expression focused.
+Panel 2: Medium shot — Aisha exact as @image2 strikes her "I'm magnificent" regal pose. Full body. One hand on hip, chin raised, eyes bright, the simple scarf draped like a couture gown. The scarf seller stands behind her, both hands over her mouth, torn between admiration and horror. Other scarves hang from the seller's arms like defeated flags.
+Panel 3: OTS from behind the scarf seller. Her back and draped scarves fill the foreground. Beyond: Aisha exact as @image1 leans in with a conspiratorial whisper — "I'll take them all." Her eyes dart sideways toward the distracted guards. The seller's body language shifts from frozen terror to cautious hope — maybe she'll actually sell something today.
+Panel 4: Wide shot exact as @image4. Aisha exact as @image1 and the scarf seller walk together toward the service gate, Aisha carrying the basket easily. She's chatting warmly, completely natural, as if she's been a market helper her whole life. The seller walks beside her still bewildered but beginning to smile. In the deep background: Dora is a white dot near the bun chaos. The gate ahead is tantalizingly close.
+
+Environment: Courtyard near service exit exact as @image3, market atmosphere, midday light.
+
+All panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm midday light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.

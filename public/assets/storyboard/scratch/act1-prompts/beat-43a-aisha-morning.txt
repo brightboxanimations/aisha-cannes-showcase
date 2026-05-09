@@ -1,0 +1,22 @@
+premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm golden morning light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.
+
+CHARACTER LOCKS:
+@image1 = Aisha — 16-year-old princess, waking up, stretching, looking at the world, exact as reference.
+@image2 = Dora — white panther, still sleeping on cushion, exact as reference.
+
+LOCATION REFERENCE:
+@image3 = Bedroom front view — toward balcony, exact unchanged.
+@image4 = Balcony projections — 4 angles, exact unchanged.
+
+SCENE: Early morning, Aisha's bedroom — morning routine opening.
+Aisha wakes up before Dora. She stretches, walks to the balcony in morning light. She's been having the same dream again — of the world outside. She leans on the railing and watches the city wake up. Dora sleeps through all of it.
+
+Create 2x2 grid with 4 panels with 3D animated scenes in each one:
+Panel 1: Medium shot of the bedroom exact as @image3. Morning light streams through the balcony curtains. Aisha exact as @image1 sits up in her ornate bed, stretching, hair tousled from sleep. Dora exact as @image2 is curled on the pink cushion at the foot of the bed, completely unconscious, one paw twitching in a dream.
+Panel 2: Wide shot. Aisha exact as @image1 walks barefoot across the bedroom toward the balcony, trailing her fingers along the carved furniture. The room is beautiful — but she doesn't see it anymore. She's lived here her whole life. Her eyes are already fixed on the balcony and the world beyond.
+Panel 3: Medium shot at the balcony exact as @image4. Aisha steps through the curtains into fresh morning air. She breathes deep — filling her lungs with the scent of the city waking up. Below: the first sounds of merchants arriving, guards changing shifts, birds circling minarets. Her face is peaceful but restless.
+Panel 4: Close-up of Aisha exact as @image1 at the railing. First light catches her face. Her dark eyes reflect the city below — tiny gold lights from market fires, the pink dawn sky. She rests her chin on her hands. A dreamer trapped in a gilded cage. This is the girl who will, by noon, escape everything she's ever known.
+
+Environment: Bedroom exact as @image3, balcony exact as @image4, early morning golden light.
+
+All panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm golden morning light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.

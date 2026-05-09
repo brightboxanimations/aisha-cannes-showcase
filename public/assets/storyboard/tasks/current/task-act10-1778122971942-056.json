@@ -1,0 +1,11 @@
+{
+  "id": "task-act10-1778122971942-056",
+  "title": "56. Nibzu Surrounded",
+  "prompt": "premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.\n\nCHARACTER AND LOCATION LOCKS:\n@image7 = Giant Nibzu, massive goofy spider with crossed amber eyes, huge but retaining its silly smile, exact as reference.\n@image8 = Giant Sand Guardian, kinetic sand creature, flowing like liquid light, faceless hidden beneath a hood of swirling golden grains.\n@image5 = Sharak, shadow king with magic powers, fierce and insane, exact as reference.\n\nSCENE: Daytime scene in the dunes.\n\nCreate 2x2 grid with 4 panels with 3D animated scenes in each one:\nPanel 1: POV shot from Sharak on the ground. Looking up in terror at the massive, glowing forms of the Giant Sand Guardians exact as @image8 approaching.\nPanel 2: Wide shot. The Giant Nibzu spider exact as @image7 pauses, tilting its head to watch its master flee, maintaining its goofy, amused smile.\nPanel 3: Epic wide shot. The six Giant Sand Guardians exact as @image8 silently and gracefully form a massive circle around the Giant Nibzu exact as @image7.\nPanel 4: Action shot. The Giant Nibzu exact as @image7 snaps its huge fangs at one of the Guardians, but the Guardian exact as @image8 effortlessly glides backward like wind, dodging the attack.\n\nAll panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.",
+  "status": "todo",
+  "createdAt": "2026-05-07T03:02:51.942Z",
+  "updatedAt": "2026-05-07T03:02:51.942Z",
+  "passes": [],
+  "generatedImages": [],
+  "skillHint": "skill-codex-2x2-grid-prompt"
+}

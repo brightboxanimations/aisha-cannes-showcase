@@ -1,0 +1,22 @@
+premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm morning light with heavy dramatic undertones, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.
+
+CHARACTER LOCKS:
+@image1 = Sultan — tall dignified man, heavy with grief, royal robes, exact as reference.
+@image2 = Sultan close-up — tired eyes, sadness beneath authority, exact as reference.
+
+LOCATION REFERENCE:
+@image3 = Bedroom front view — rug, balcony entrance, exact unchanged.
+@image4 = Bedroom back view — entrance door, exact unchanged.
+
+SCENE: Morning, bedroom — Sultan entrance and grief.
+The Sultan enters Aisha's bedroom. This dedicated beat focuses on his character — the weight of leadership, the grief of losing his wife, the fear of losing his daughter. Before he sees the broken seal, he pauses at the door, composing himself. He carries the burden of a man who knows the darkness outside and cannot tell his daughter why she must stay.
+
+Create 2x2 grid with 4 panels with 3D animated scenes in each one:
+Panel 1: Medium shot at the door exact as @image4. The Sultan exact as @image1 stands in the doorway, one hand on the frame. He hasn't entered yet. His face in the dim hallway light: exhaustion, the weight of the scroll's contents heavy on his mind. He takes a breath, composing the stern face he needs. Behind him, the dark corridor. Ahead, the bright bedroom.
+Panel 2: Close-up of the Sultan exact as @image2. His face fills the frame. His eyes — tired, shadowed, haunted. For a moment before entering, his guard drops: we see the grief for his dead wife, the terror of raising a daughter alone in a kingdom surrounded by darkness. A single bead of sweat on his temple. Then his jaw sets — the Sultan mask goes back on.
+Panel 3: Wide shot from inside the bedroom exact as @image3. The Sultan exact as @image1 enters — his tall figure filling the doorway. Morning light from the balcony illuminates the room. On the rug: the scroll with its broken seal, evidence of Aisha's transgression. The Sultan's shadow falls across the rug, reaching the scroll before his hand does. The visual metaphor: his authority arrives before his person.
+Panel 4: Medium shot. The Sultan stands over the scroll on the rug. He doesn't pick it up yet. He stares down at it — the broken seal, the unrolled map. His hands clench at his sides. His expression shifts from stern authority to genuine pain — this scroll contains news of death, destruction, and the approach of something he has fought to keep away from his daughter. Now she has read it.
+
+Environment: Bedroom exact as @image3 and @image4, heavy dramatic light, long shadows.
+
+All panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm morning light with heavy dramatic shadows, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.

@@ -1,0 +1,22 @@
+premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm golden morning light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.
+
+CHARACTER LOCKS:
+@image1 = Bedouin merchant in indigo robes — tall thin man, indigo-blue robes, turban with golden pin, false curious grin now cracking to frustration, exact as reference.
+@image2 = City gate clerk — behind permit stand, horrified but recovering his bored authority, exact as reference.
+
+LOCATION REFERENCE:
+@image3 = Merchant line — queue at stand, exact unchanged.
+@image4 = Stunned clerk — clerk's shocked expression, exact as reference.
+
+SCENE: Morning, city gate — fat jade merchant's turn.
+The fat jade-green merchant steps forward. He's been watching and learning — he slides a pouch of gold coins across the counter with practiced subtlety, unlike the first merchant's nervous bread bribe. The clerk examines the coins, weighs them, debates, and ultimately stamps the permit with mercenary efficiency. The indigo Bedouin in the back watches this with outraged disbelief — his exotic goods were rejected but simple gold works.
+
+Create 2x2 grid with 4 panels with 3D animated scenes in each one:
+Panel 1: Medium shot. The fat merchant in jade-green robes steps to the counter — enormous belly pressing against the wooden stand, his turban slightly too large. He places both palms flat and smiles — not the false envious smile from before but a businessman's confident "let's deal" expression. The clerk exact as @image2 regards him with the wariness of a man who just survived beetle jars.
+Panel 2: Close-up insert shot. Under the counter, barely visible: the fat merchant's pudgy hand slides a small leather pouch across the wood toward the clerk. The pouch is slightly open — three gold coins glint inside. The clerk's hand hesitates above it, fingers twitching. Above the counter: both men maintain innocent expressions for the queue.
+Panel 3: Medium shot. The clerk stamps the permit with one swift motion — APPROVED. He simultaneously sweeps the coin pouch into his robe sleeve with practiced sleight-of-hand. The fat jade merchant beams, taking his stamped permit with both hands and bowing theatrically. The clerk has already returned to looking bored. Behind: the tired merchant yawns.
+Panel 4: Close-up reaction. The indigo Bedouin exact as @image1 in the queue watches the fat merchant waddle happily toward the gate with his stamped permit. The Bedouin's face is a masterpiece of injustice — mouth agape, eyes bulging, one hand pointing at the departing merchant, the other clutching his rejected beetle jars. "HE gets in with GOLD but my RARE SPECIMENS are refused?!" The tired merchant behind him pats his shoulder sympathetically without looking.
+
+Environment: Permit stand exact as @image3, morning light.
+
+All panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm golden morning light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.

@@ -1,0 +1,11 @@
+{
+  "id": "task-act10-1778122971936-031",
+  "title": "31. The Calm Inside",
+  "prompt": "premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.\n\nCHARACTER AND LOCATION LOCKS:\n@image1 = Aisha, 16-year-old human princess, curious brave beautiful, exact as the reference; no modification to looks or clothes.\n@image2 = Dora, white panther, normal panther size, her height reaches Aisha's hip, exact as the reference.\n\nSCENE: Daytime scene inside the sand shield.\n\nCreate 2x2 grid with 4 panels with 3D animated scenes in each one:\nPanel 1: Wide shot inside the sand cylinder. Absolute peace and silence. The roaring storms outside are completely muffled. Aisha exact as @image1 stands in the center singing.\nPanel 2: Medium shot. Dora exact as @image2 panting heavily on the ground, looking up in awe at the peaceful, glowing interior of the sand shield.\nPanel 3: Close-up. Aisha exact as @image1 lifting her glowing eyes, looking upward as her song reaches a crescendo.\nPanel 4: Cinematic detail shot. The floating, glowing grains of sand swirling gently around Aisha exact as @image1 in the peaceful interior.\n\nAll panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.",
+  "status": "todo",
+  "createdAt": "2026-05-07T03:02:51.936Z",
+  "updatedAt": "2026-05-07T03:02:51.936Z",
+  "passes": [],
+  "generatedImages": [],
+  "skillHint": "skill-codex-2x2-grid-prompt"
+}

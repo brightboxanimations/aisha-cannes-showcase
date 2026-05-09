@@ -1732,6 +1732,10 @@ p {
   --launcher-glow: rgba(255, 111, 196, 0.45);
 }
 
+.library-launcher.canvas {
+  --launcher-glow: rgba(96, 165, 250, 0.58);
+}
+
 .library-launcher.agent {
   --launcher-glow: rgba(183, 142, 255, 0.5);
 }
@@ -4351,26 +4355,31 @@ button:hover > .lb-alt-delete { display: grid !important; }
   color: var(--gold);
 }
 
+/* Prompt card edit icon — visible on hover */
+button:hover > .prompt-edit-icon {
+  opacity: 1 !important;
+}
+
 /* Enhancements Popups */
 .enhance-menu-glass {
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 92%;
-  max-width: 680px;
+  width: 90%;
+  max-width: 640px;
   background: rgba(10, 15, 25, 0.97);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
   border: 1px solid rgba(248, 217, 120, 0.3);
   border-radius: 1.2rem;
-  padding: 2.5rem;
+  padding: 2rem;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1.2rem;
   z-index: 1000;
-  max-height: 85vh;
-  overflow-y: auto;
+  max-height: 90vh;
+  overflow: visible;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.85), 0 0 40px rgba(248, 217, 120, 0.12);
   animation: fadeIn 0.2s ease-out;
 }
@@ -4399,10 +4408,12 @@ button:hover > .lb-alt-delete { display: grid !important; }
   background: rgba(0, 0, 0, 0.4);
   border: 1px solid rgba(255, 255, 255, 0.1);
   color: white;
-  padding: 0.65rem 0.9rem;
+  padding: 0.75rem 1rem;
   border-radius: 0.6rem;
-  font-size: 1rem;
+  font-size: 1.05rem;
   outline: none;
+  cursor: pointer;
+  min-width: 0;
 }
 
 .enhance-select:focus {

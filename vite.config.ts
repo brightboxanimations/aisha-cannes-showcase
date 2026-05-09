@@ -347,9 +347,22 @@ function storyboardApiPlugin() {
           // 1. Extract image paths from sceneHint
           const attachedPaths: string[] = []
           if (sceneHint) {
-            const matches = sceneHint.match(/\/assets\/storyboard\/uploads\/[a-zA-Z0-9_.-]+/g)
+            // Full URL paths
+            const matches = sceneHint.match(/\/assets\/storyboard\/[^\s|]+/g)
             if (matches) {
-              matches.forEach((m: string) => attachedPaths.push(path.join(process.cwd(), 'public', m)))
+              matches.forEach((m: string) => {
+                const fullPath = path.join(process.cwd(), 'public', m.replace(/[?#].*$/, ''))
+                if (fs.existsSync(fullPath) && !attachedPaths.includes(fullPath)) attachedPaths.push(fullPath)
+              })
+            }
+            // Bare filenames in brackets [filename.png]
+            const bracketMatches = sceneHint.match(/\[([^\]]+\.(png|jpg|jpeg|webp))\]/gi)
+            if (bracketMatches) {
+              bracketMatches.forEach((bm: string) => {
+                const filename = bm.replace(/^\[|\]$/g, '')
+                const fullPath = path.join(process.cwd(), 'public', 'assets', 'storyboard', 'uploads', filename)
+                if (fs.existsSync(fullPath) && !attachedPaths.includes(fullPath)) attachedPaths.push(fullPath)
+              })
             }
           }
 

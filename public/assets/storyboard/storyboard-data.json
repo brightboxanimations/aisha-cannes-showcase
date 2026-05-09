@@ -422,14 +422,24 @@
   },
   "agentTasks": [
     {
+      "id": "task-akduzmi-moxpi7xx",
+      "title": "Task 40",
+      "prompt": "### **Prompt 1/5: \"Desolate Approaches to Shelter\"**\n*(Capturing Aisha, Djinn, and Dora's journey towards the House in the Rocks, with the vast ruins and carved cliff dwellings.)*\n\n```\npremium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric golden hour light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.\n\nCHARACTER LOCKS:\n@image1 = Aisha, 16-year-old human princess, showing a mix of fatigue, wonder, and dawning resolve.\n@image2 = Dora, white panther with golden collar — normal panther size, her height reaches an adult human's hip, displaying wariness and protectiveness.\n@image3 = Djinn, a plasma-form being, ethereal and shimmering, with a sorrowful and guiding demeanor.\n\nLOCATION REFERENCE:\n@image4 = Desolate City Ruins - Overview — (User-provided: A 4-projection grid showing vast, eroded Nabatean-style architecture, sand-swept streets, broken minarets, and towering cliff formations with carved dwellings. References like 395.png and 396.png for visual style, emphasizing the 'rock holes for homes').\n@image5 = House in the Rocks - Exterior Approach — (User-provided: A front view of a winding, eroded staircase carved into a dramatic cliff face, leading up to a \"Second Layer\" dwelling entrance. Reference image 396.png for visual style, focusing on the entrance and the carved steps).\n@image6 = Desolate City Ruins - Midground — (User-provided: A medium wide shot of eroded sandstone structures and distant, rounded, natural rock formations, hinting at ancient habitations and the desolate beauty of the land).\n\nSCENE: Golden hour scene — vast, desolate desert landscape under a fading golden sun.\nAisha, Dora, and the Djinn are navigating the desolate landscape of the city ruins, making their way towards a \"Second Layer\" dwelling in the canyon wall. Aisha is tired but resolute, Dora is suspicious of the unconventional shelter, and the Djinn, burdened by memories, guides them to safety before nightfall.\n\nCreate 2x2 cinematic grid with 4 panels with 3d animated scenes in each one:\n\nPanel 1: Ultra-wide establishing shot (18mm lens, deep DOF). The vast, desolate ruins stretch into the distance, rock formations like fossilized waves under the golden hour light. Aisha (small, center-left) walks with a determined stride, brushing sand from her knees. Dora (right behind her) glances warily at the surroundings, her ears slightly flattened. The Djinn (far right, slightly ahead) floats low, his plasma form shimmering as he leads them up a winding, eroded path towards distant cliff dwellings that look like carved holes in the rock. Long, dramatic shadows emphasize the scale and solitude.\n\nPanel 2: Medium shot (50mm lens, shallow DOF on characters). Aisha is center-frame, pausing on the winding path, her face showing a pensive wonder mixed with fatigue as she scans the horizon towards the ancient, carved rock homes. Dora is close beside her, gently nuzzling Aisha's arm, her golden collar visible, sensing Aisha's mood. The Djinn is slightly behind them, left, his gaze fixed on the desolate landscape, a deep sorrow in his posture. Golden light illuminates their figures against the eroded rock face.\n\nPanel 3: Low-angle medium shot (35mm lens, focus on ascent). The Djinn, still with a sorrowful demeanor, floats slightly above the ground, leading Aisha and Dora up a winding, eroded staircase carved into the rugged, golden cliff face on the left side of the frame. Aisha follows closely, looking up at the ascent towards the 'hole in the rock' dwelling, her determination visible. Dora walks behind Aisha, her head low, sniffing the ancient stone steps suspiciously. The rock formations loom overhead, casting dramatic shadows from the fading sun.\n\nPanel 4: Medium shot (85mm lens, shallow DOF on Dora). Dora stands in the foreground, center-right, ears slightly flattened, her nose to the doorway of the \"House in the Rocks\" dwelling (a carved rock hole), sniffing suspiciously. Her fur bristles slightly. Aisha is in the background, left, entering the doorway, smiling softly, reassuring Dora (\"It's not a hole, Dora. It's a house.\"). The Djinn is visible in the distance, further up the path, looking back at them, his plasma form slightly dimmed in the fading golden light. Detailed rock textures and the carved entrance are prominent.\n\nEnvironment: The vast, desolate ruins of Ramhat Al Jawhar, with eroded Nabatean architecture and towering cliff faces containing carved rock dwellings. A winding, carved sandstone staircase leading up a cliff face to a \"Second Layer\" dwelling entrance. Golden late afternoon light fading into twilight, emphasizing textures and shadows.\n\nAll panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric golden hour light, little tiny dust motes, soft sunrays, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.\n```\n\n---\n\n### **Prompt 2/5: \"Cozy Sanctuary, Lingering Doubts\"**\n*(Capturing Aisha's reflections inside the House in the Rocks, with the starry night view and Niura's concerns.)*\n\n```\npremium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm candlelight and arabesque lamp glow, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.\n\nCHARACTER LOCKS:\n@image1 = Aisha, 16-year-old human princess, displaying a mix of newfound peace, pensive reflection, and growing determination.\n@image2 = Dora, white panther with golden collar — normal panther size, her height reaches an adult human's hip, sleeping peacefully in a corner.\n@image3 = Niura, tiny white snake — small, cute, harmless, witty, curls onto a warm rug, then looks up with concern.\n@image4 = Djinn, a plasma-form being, ethereal and shimmering, implied presence (perhaps as a soft glow) but not central to the shot.\n\nLOCATION REFERENCE:\n@image5 = House in the Rocks - Interior — (User-provided: A 4-projection grid showing the cozy, magically softened interior of a carved rock dwelling: thick woven Bedouin rugs, a small clay fire pit flickering with orange glow, desert plants in clay pots, semi-transparent white curtains in the doorway, and a large opening or window revealing a breathtaking starry night sky).\n@image6 = Starry Night View — (Reference image 401.png: A breathtaking view of real dunes and a semi-dried lake glistening beneath real stars, as seen from the dwelling's opening).\n\nSCENE: Night scene — warm candlelight, shadows dancing on woven rugs, a cool desert breeze drifts through a curtained doorway.\nInside the \"House in the Rocks,\" Aisha finds a moment of peace, gazing at the starry night sky. Niura, initially cozy, voices concerns about the Shadow King and suggests returning home. Aisha, however, feels a fierce resolve and a need to uncover her father's secrets, rejecting fear.\n\nCreate 2x2 cinematic grid with 4 panels with 3d animated scenes in each one:\n\nPanel 1: Medium wide interior shot (35mm lens, shallow DOF on Aisha). Aisha sits cross-legged by a small clay fire pit, hugging her knees, center-left. Her face is illuminated by the flickering orange glow, showing a sense of peace as she looks out through a large opening/window on the right, towards the vast, starry night sky. Thick woven Bedouin rugs cover the stone floor. Dora is curled up, sleeping peacefully, in a corner in the background, far left. Niura is a small curl on the rug near Aisha's feet. Warm candlelight fills the space.\n\nPanel 2: Close-up on Aisha's face (100mm lens, extremely shallow DOF). Her eyes are focused on the constellation of The Hunter visible through the window. Her expression transitions from peaceful admiration to pensive thought, a subtle sadness touching her lips. The faint glow of the fire pit is reflected in her eyes. The blurry background hints at the starry night sky. Soft, warm light from the fire pit highlights her features.\n\nPanel 3: Medium shot with Niura in foreground (85mm lens, focus on Niura). Niura uncoils from the warm rug in the foreground, center-right, her tiny head lifting, looking directly at Aisha with a concerned expression. Aisha is in the mid-ground, left, still by the fire, her hand touching her talisman pensively, her expression darkening slightly as Niura speaks. The background shows the cozy interior with desert plants in clay pots and a soft glow from the fire.\n\nPanel 4: Tight two-shot (50mm lens). Aisha is center-left, her head slightly turned, a fierce spark igniting in her eyes as she looks away from Niura, resolute. Her hand rests firmly on her Talisman. Niura is in the foreground, right, looking up at Aisha with worry, her small body slightly coiled. The warm glow of the fire pit illuminates Aisha's determined expression, casting subtle shadows on Niura. The semi-transparent white curtains are visible in the background doorway, gently drifting, with the breathtaking starry night scene beyond.\n\nEnvironment: Cozy interior of the \"House in the Rocks\" carved dwelling. Thick woven Bedouin rugs, a small clay fire pit with orange glow, desert plants in clay pots. Semi-transparent white curtains in the doorway. A large opening/window revealing a breathtaking starry night scene with dunes and a glistering semi-dried lake. Warm candlelight and arabesque lamp glow, with deep shadows enhancing coziness.\n\nAll panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm candlelight and arabesque lamp glow, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.",
+      "sceneHint": "Act 6 - Scene 1 [396-1778040971164.png] | Act 6 - Scene 1 [397-1778040973670.png] | Act 6 - Scene 1 [401-1778040955251.png] | Act 6 - Scene 1 [PixVerse_Image_Effect_prompt_se-exact-img1-im-1778041061397.png] | Act 6 - Scene 1 [PixVerse_Image_Effect_prompt_se-exact-img1-im-2-1778041068133.png] | Act 6 - Scene 1 [PixVerse_Image_Effect_prompt_change-the-tiny-f-1778041091960.png] | characters: Aisha [card] /assets/storyboard/uploads/Aisha-and-Sands-of-Destiny-70-1778041121249.png | characters: Djinn [card] /assets/storyboard/uploads/Plasma-character-1778041170397.png | characters: Djinn [projection] /assets/storyboard/uploads/Plasma-character-Djinn-close-up-1778041175715.png",
+      "skillHint": "",
+      "status": "todo_working",
+      "createdAt": "2026-05-09T02:10:10.485Z",
+      "updatedAt": "2026-05-09T03:13:13.353Z"
+    },
+    {
       "id": "task-nu1odr8-moxcou2q",
       "title": "Task 51",
       "prompt": "```bash\npixverse create image \\\n  --prompt \"premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.\n\nCHARACTER LOCKS:\n@image1 = Merchants in a line before the gate: the exact background, city gate, wall, and merchant crowd for 100% unchanged architecture, lighting, and scale. This image also sets the visual style for the general merchant population.\n@image2 = Beduin merchant full size: informs the style, attire, and details for the other merchants, specifically including an indigo-robed Beduin merchant.\n@image3 = Guards: stern, grumpy, comically alert guards, exact as reference.\n@image4 = Altair Royal Hawk open wings: the hawk in hilarious comical distress, exact as reference, with open wings, frantically flapping.\n@image5 = Character sheet: general character style guide, ensuring all characters (merchants, guards) have a consistent premium animated look.\n\nPROPS REFERENCE:\n@image6 = Funny camel: a large, comically surprised camel, exact as reference.\n\nSET GEOMETRY LAW: The city gate, ancient wall, and the general layout of the merchant line exact as @image1 are paramount. All structures, textures, and scale must be 100% unchanged. No deviations in architecture or background environment.\nCAMERA LOCK: For the overall scene, the general perspective and camera height of the establishing shot in @image1 should be maintained as a reference point for continuity, adjusting for panel-specific angles.\n\nSCENE: Morning scene.\nA hilarious comical distress dynamic action scene unfolds as an Altair Royal Hawk in comical distress, clumsily carrying a rolled ancient scroll, approaches a bustling desert city gate. Merchants below react with a mix of comical awe, distress, and mild boredom, while stern guards look up, comically alert to the chaos above. Bright desert morning light, strong directional key light from above-left, soft fill light, subtle rim lighting on characters, 35mm lens for wide shots, 85mm for close-ups, shallow depth of field.\n\nCreate 2x2 grid with 4 panels with 3D animated scenes in each one:\nPanel 1: Wide Master Shot, low angle POV towards the sky. The majestic city gate and ancient wall from @image1 dominate the mid-ground. Above, the Altair Royal Hawk exact as @image4 is in full, hilarious distress, wings flailing, head comically twisted, barely clutching a rolled, parchment scroll with a royal seal. Below, the initial crowd of merchants (styled on @image2) and several stern guards (exact as @image3) are visible near the gate, their gazes beginning to turn upwards. A large, surprised camel exact as @image6 stands near a merchant.\nPanel 2: Medium Shot, low angle. Focus tight on the Altair Royal Hawk exact as @image4, mid-air, a bead of sweat comically dripping from its brow. Its talons are barely holding onto the rolled ancient scroll, which threatens to unspool. Its eyes are wide with exaggerated panic. The top of the city gate from @image1 is blurred in the background, implying its proximity.\nPanel 3: Medium Shot, eye-level. A small group of merchants (styled on @image2, including an indigo-robed Beduin merchant in the foreground) are clustered, looking up. One merchant has dropped a basket of dates, another points with wide eyes, a third yawns with comical indifference. The camel exact as @image6 has its head comically tilted upwards, one ear twitching. The lower part of the city wall from @image1 is visible behind them.\nPanel 4: Tight Two-Shot, low angle. Two stern guards exact as @image3 stand at the gate entrance, looking up with comically exaggerated vigilance. One guard has his hand on his scimitar, eyes squinted in confused alertness. The other has his mouth slightly agape, pointing skyward with a mix of duty and bewilderment. Their faces are lit by the morning sun, revealing every detailed wrinkle and furrow. The arch of the gate from @image1 frames them in the background.\n\nEnvironment: Bustling desert city gate and ancient wall, exact as @image1. All architecture, background objects, lighting, and scale, as well as character designs for merchants and guards, remain consistent and unchanged from references.\n\nAll panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.\" \\\n  --model \"Nano Banana 2\" \\\n  --quality \"2160p\" \\\n  --grid \"2x2\" \\\n  --json \\\n  --image \"locations/merchants in a line before the gate.jpg\" \\\n  --image \"characters/beduin merchant full size.png\" \\\n  --image \"characters/guards.jpeg\" \\\n  --image \"characters/altair-royal-hawk open wings.png\" \\\n  --image \"characters/freepik__a-3d-digital-art-character-sheet-on-a-pure-white-b__22405.png\" \\\n  --image \"props/funny camel.png\"\n```",
       "sceneHint": "",
       "skillHint": "",
-      "status": "pass",
+      "status": "archived",
       "createdAt": "2026-05-08T20:11:24.098Z",
-      "updatedAt": "2026-05-08T20:14:03.938Z"
+      "updatedAt": "2026-05-09T02:39:25.913Z"
     },
     {
       "id": "task-jyb7bt5-moxcmb2d",
@@ -447,9 +457,9 @@
       "prompt": "download the pixverse images  from today 7th May but only created between 12:07 and 12:09 pm  time",
       "sceneHint": "",
       "skillHint": "Download from PixVerse",
-      "status": "pass",
+      "status": "archived",
       "createdAt": "2026-05-07T12:59:20.026Z",
-      "updatedAt": "2026-05-08T23:12:18.737Z",
+      "updatedAt": "2026-05-09T02:41:27.083Z",
       "passes": [
         {
           "id": "pass-1778160308589",
@@ -822,7 +832,8 @@
               "splitMenuOpen": false,
               "assignMenuOpen": false,
               "improveRes": "2K Res",
-              "improveModel": "GPT-2 Medium"
+              "improveModel": "GPT-2 Medium",
+              "note": ""
             },
             {
               "id": "split-img-1778160269866-0-r1c2-1778161276475",
@@ -835,9 +846,9 @@
               "selected": false,
               "improve4k": false,
               "splitGrid": false,
-              "noteActive": false,
-              "note": "delete the tears and leave exact the image 1 as it is ",
-              "assignMenuOpen": true
+              "noteActive": true,
+              "note": "",
+              "assignMenuOpen": false
             },
             {
               "id": "split-img-1778160269866-0-r2c1-1778161276475",
@@ -853,7 +864,7 @@
               "doodleActive": false,
               "doodleDataUrl": "data:image/png;base64,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",
               "noteActive": false,
-              "note": "delete the snake and change the white panther to the exact panther formt ht erefernce image  attached , change also the  look of the far awaya  wall tht should look like ont he backgrounf image attached. the expression of panther shoudl be lookin  at the far away awall in comical distress . use same quality  depth of field and 3d animation as this image "
+              "note": ""
             },
             {
               "id": "split-img-1778160269866-0-r2c2-1778161276475",
@@ -865,7 +876,8 @@
               "height": 1536,
               "selected": false,
               "improve4k": false,
-              "splitGrid": false
+              "splitGrid": false,
+              "note": ""
             }
           ],
           "batchStats": {
@@ -1345,8 +1357,12 @@
               "improve4k": false,
               "splitGrid": false,
               "splitMenuOpen": false,
-              "improveMenuOpen": true,
-              "assignMenuOpen": false
+              "improveMenuOpen": false,
+              "assignMenuOpen": false,
+              "doodleActive": false,
+              "doodleDataUrl": "data:image/png;base64,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",
+              "noteActive": false,
+              "note": "use thsi image nad zoom out to show hte made of whte sparklign sand totlaly made of san d like the giant dadn figure with. aflowin made of sand roe with hre sparkolign in silver glow arabesque ribls with inricate f madala lika d myerio sdesing and a head scarf mad of sanc fsce mad e of sand and the villain that repend sharak fortm he reference picture wh o is neeling beofr the figue. the bigure is 3 times bugger than him , he is normal man size.  arond tham are amal sand  storm and god rayn throu gthe rounded partinf otf sotrmy skies  symbolizing redemption . ont he background of the sharak ont he right far strching waal of the kinfgdom as on refentce wih broken hole and gian hourglass exposed  and still a bit of storms and dunes. behind the figure is sand dunes \nimprove quality and cinemtic depth of field \nStyle: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric morning light, soft depth of field, expressive animated 3D eyes, realistic textures, detailed clear emotional staging, high-quality 4K animated movie look"
             },
             {
               "id": "split-img-1778160305587-11-r2c1-1778188636648",
@@ -1388,75 +1404,22 @@
           "batchStats": {
             "splits": 0,
             "improves": 0,
-            "notes": 1
+            "notes": 2
+          }
+        },
+        {
+          "id": "pass-7",
+          "name": "Pass 7 — AI Notes",
+          "images": [],
+          "batchStats": {
+            "splits": 0,
+            "improves": 0,
+            "notes": 2
           }
         }
       ],
-      "generatedImages": [
-        {
-          "id": "split-img-1778160269866-0-r1c1-1778161276475",
-          "url": "/assets/storyboard/uploads/split-batch-img-1778160269866-0/panel_r1_c1.png",
-          "path": "/assets/storyboard/uploads/split-batch-img-1778160269866-0/panel_r1_c1.png",
-          "row": 1,
-          "col": 1,
-          "width": 2752,
-          "height": 1536,
-          "selected": false,
-          "improve4k": false,
-          "splitGrid": false,
-          "improveMenuOpen": false,
-          "splitMenuOpen": false,
-          "assignMenuOpen": false,
-          "improveRes": "2K Res",
-          "improveModel": "GPT-2 Medium"
-        },
-        {
-          "id": "split-img-1778160269866-0-r1c2-1778161276475",
-          "url": "/assets/storyboard/uploads/split-batch-img-1778160269866-0/panel_r1_c2.png",
-          "path": "/assets/storyboard/uploads/split-batch-img-1778160269866-0/panel_r1_c2.png",
-          "row": 1,
-          "col": 2,
-          "width": 2752,
-          "height": 1536,
-          "selected": true,
-          "improve4k": false,
-          "splitGrid": false,
-          "noteActive": false,
-          "note": "delete the tears and leave exact the image 1 as it is ",
-          "assignMenuOpen": false,
-          "assignedType": "image",
-          "assignedName": "Assigned Asset"
-        },
-        {
-          "id": "split-img-1778160269866-0-r2c1-1778161276475",
-          "url": "/assets/storyboard/uploads/split-batch-img-1778160269866-0/panel_r2_c1.png",
-          "path": "/assets/storyboard/uploads/split-batch-img-1778160269866-0/panel_r2_c1.png",
-          "row": 2,
-          "col": 1,
-          "width": 2752,
-          "height": 1536,
-          "selected": false,
-          "improve4k": false,
-          "splitGrid": false,
-          "doodleActive": false,
-          "doodleDataUrl": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAoMAAAFqCAYAAABhzVBZAAAQAElEQVR4AezWWXIbSRIEUNrc/9BjopamIACsJZdYXps1RRJVmeEv+OH/+/AfAQIECBAgQIBAWwFlsO3qBSdAoJ+AxAQIEPhXQBn818RvCBAgQIAAAQJtBJTBoqsWiwABAgQIECBwREAZPKLkGQIECBAgEFfAZARuCSiDt/i8TIAAAQIECBDILaAM5t6f6bsJyEuAAAECBAYLKIODQR1HgAABAgQIEBghsOoMZXCVtHsIECBAgAABAgEFlMGASzESAQLdBOQlQIDAPgFlcJ+9mwkQIECAAAEC2wWUwcUrcB0BAgQIECBAIJKAMhhpG2YhQIAAgUoCshBIIaAMpliTIQkQIECAAAECcwSUwTmuTu0mIC8BAgQIEEgqoAwmXZyxCRAgQIAAgT0C1W5VBqttVB4CBAgQIECAwAkBZfAElkcJEOgmIC8BAgTqCyiD9XcsIQECBAgQIEDgpYAy+IvGPwQIECBAgACBjgLKYMety0yAAIHeAtITIPBFQBn8guFbAgQIECBAgEA3AWWw28a75ZWXAAECBAgQeCugDL7l8SEBAgQIECCQRcCc1wSUwWtu3iJAgAABAgQIlBBQBkusUQgC3QTkJUCAAIFRAsrgKEnnECBAgAABAgQSCoQvgwlNjUyAAAECBAgQSCOgDKZZlUEJECBQXkBAAgQ2CCiDG9BdSYAAAQIECBCIIqAMRtlEtznkJUCAAAECBEIIKIMh1mAIAgQIECBQV0Cy2ALKYOz9mI4AAQIECBAgMFVAGZzK63AC3QTkJUCAAIFsAspgto2ZlwABAgQIECAwUOByGRw4g6MIECBAgAABAgQ2CSiDm+BdS4AAgUQCRiVAoLCAMlh4uaIRIECAAAECBL4TUAa/E+r2ubwECBAgQIBAKwFlsNW6hSVAgAABAv8J+I7ADwFl8IeC/wkQIECAAAECTQWUwaaLF7ubgLwECBAgQOC5gDL43MVvCRAgQIAAAQI5BU5OrQyeBPM4AQIECBAgQKCSgDJYaZuyECDQTUBeAgQI3BZQBm8TOoAAAQIECBAgkFdAGcyyO3MSIECAAAECBCYIKIMTUB1JgAABAgTuCHiXwEoBZXCltrsIECBAgAABAsEElMFgCzFONwF5CRAgQIDAXgFlcK+/2wkQIECAAIEuAkFzKoNBF2MsAgQIECBAgMAKAWVwhbI7CBDoJiAvAQIE0ggog2lWZVACBAgQIECAwHgBZfCuqfcJECBAgAABAokFlMHEyzM6AQIECKwVcBuBigLKYMWtykSAAAECBAgQOCigDB6E8lg3AXkJECBAgEAPAWWwx56lJECAAAECBF4JNP+9Mtj8D0B8AgQIECBAoLeAMth7/9IT6CYgLwECBAg8CCiDDyB+JECAAAECBAh0EqhbBjttUVYCBAgQIECAwEUBZfAinNcIECBAII6ASQgQuC6gDF638yYBAgQIECBAIL2AMph+hd0CyEuAAAECBAiMFFAGR2o6iwABAgQIEBgn4KQlAsrgEmaXECBAgAABAgRiCiiDMfdiKgLdBOQlQIAAgU0CyuAmeNcSIECAAAECBCIIrC+DEVKbgQABAgQIECBA4FNAGfxk8IUAAQIEZgg4kwCB+ALKYPwdmZAAAQIECBAgME1AGZxG2+1geQkQIECAAIGMAspgxq2ZmQABAgQI7BRwdykBZbDUOoUhQIAAAQIECJwTUAbPeXmaQDcBeQkQIECguIAyWHzB4hEgQIAAAQIE3gn8VwbfPeUzAgQIECBAgACBkgLKYMm1CkWAAIH3Aj4lQIDAbwFl8LeEfwkQIECAAAECDQWUwfJLF5AAAQIECBAg8FpAGXxt4xMCBAgQIJBLwLQELggogxfQvEKAAAECBAgQqCKgDFbZpBzdBOQlQIAAAQJDBJTBIYwOIUCAAAECBAjMEph7rjI419fpBAgQIECAAIHQAspg6PUYjgCBbgLyEiBAYLWAMrha3H0ECBAgQIAAgUACyuC2ZbiYAAECBAgQILBfQBncvwMTECBAgEB1AfkIBBZQBgMvx2gECBAgQIAAgdkCyuBsYed3E5CXAAECBAikElAGU63LsAQIECBAgEAcgRqTKIM19igFAQIECBAgQOCSgDJ4ic1LBAh0E5CXAAECVQWUwaqblYsAAQIECBAgcEBAGfwHyS8IECBAgAABAn0ElME+u5aUAAECBB4F/EyAwIcy6I+AAAECBAgQINBYQBlsvPxm0cUlQIAAAQIEnggog09Q/IoAAQIECBDILGD2MwLK4BktzxIgQIAAAQIEigkog8UWKg6BbgLyEiBAgMA9AWXwnp+3CRAgQIAAAQKpBRKVwdTOhidAgAABAgQIhBRQBkOuxVAECBBoLiA+AQLLBJTBZdQuIkCAAAECBAjEE1AG4+2k20TyEiBAgAABAhsFlMGN+K4mQIAAAQK9BKSNKKAMRtyKmQgQIECAAAECiwSUwUXQriHQTUBeAgQIEMghoAzm2JMpCRAgQIAAAQJTBAaUwSlzOZQAAQIECBAgQGCBgDK4ANkVBAgQKCMgCAEC5QSUwXIrFYgAAQIECBAgcFxAGTxu1e1JeQkQIECAAIEGAspggyWLSIAAAQIE3gv4tLOAMth5+7ITIECAAAEC7QWUwfZ/AgC6CchLgAABAgS+CiiDXzV8T4AAAQIECBCoI3AoiTJ4iMlDBAgQIECAAIGaAspgzb1KRYBANwF5CRAgcFFAGbwI5zUCBAgQIECAQAUBZTDfFk1MgAABAgQIEBgmoAwOo3QQAQIECBAYLeA8AvMFlMH5xm4gQIAAAQIECIQVUAbDrsZg3QTkJUCAAAECOwSUwR3q7iRAgAABAgQ6C4TKrgyGWodhCBAgQIAAAQJrBZTBtd5uI0Cgm4C8BAgQCC6gDAZfkPEIECBAgAABAjMFlMFxuk4iQIAAAQIECKQTUAbTrczABAgQILBfwAQE6ggog3V2KQkBAgQIECBA4LSAMniazAvdBOQlQIAAAQKVBZTBytuVjQABAgQIEDgj0PJZZbDl2oUmQIAAAQIECPwUUAZ/OvhKgEA3AXkJECBA4FNAGfxk8IUAAQIECBAg0FOgQxnsuVmpCRAgQIAAAQIHBJTBA0geIUCAAIEsAuYkQOCsgDJ4VszzBAgQIECAAIFCAspgoWV2iyIvAQIECBAgcF9AGbxv6AQCBAgQIEBgroDTJwoogxNxHU2AAAECBAgQiC6gDEbfkPkIdBOQlwABAgSWCiiDS7ldRoAAAQIECBCIJbCzDMaSMA0BAgQIECBAoKGAMthw6SITIEBgvYAbCRCIKqAMRt2MuQgQIECAAAECCwSUwQXI3a6QlwABAgQIEMgjoAzm2ZVJCRAgQIBANAHzFBBQBgssUQQCBAgQIECAwFUBZfCqnPcIdBOQlwABAgRKCiiDJdcqFAECBAgQIEDgmMCzMnjsTU8RIECAAAECBAikF1AG069QAAIECNwR8C4BAt0FlMHufwHyEyBAgAABAq0FlMFG6xeVAAECBAgQIPAooAw+iviZAAECBAjkF5CAwGEBZfAwlQcJECBAgAABAvUElMF6O5Wom4C8BAgQIEDghoAyeAPPqwQIECBAgACBlQIz7lIGZ6g6kwABAgQIECCQREAZTLIoYxIg0E1AXgIECKwRUAbXOLuFAAECBAgQIBBSQBkMsBYjECBAgAABAgR2CSiDu+TdS4AAAQIdBWQmEE5AGQy3EgMRIECAAAECBNYJKIPrrN3UTUBeAgQIECCQQEAZTLAkIxIgQIAAAQKxBTJPpwxm3p7ZCRAgQIAAAQI3BZTBm4BeJ0Cgm4C8BAgQqCWgDNbapzQECBAgQIAAgVMCyuAbLh8RIECAAAECBKoLKIPVNywfAQIECBwR8AyBtgLKYNvVC06AAAECBAgQ+PhQBv0V9BOQmAABAgQIEPgjoAz+ofANAQIECBAgUE1Anu8FlMHvjTxBgAABAgQIECgroAyWXa1gBLoJyEuAAAECVwSUwStq3iFAgAABAgQIFBFIWQaL2ItBgAABAgQIENguoAxuX4EBCBAgQOCNgI8IEJgsoAxOBnY8AQIECBAgQCCygDIYeTvdZpOXAAECBAgQWC6gDC4ndyEBAgQIECBAII6AMhhnFyYhQIAAAQIECCwXUAaXk7uQQDcBeQkQIEAgsoAyGHk7ZiNAgAABAgQITBYYWgYnz+p4AgQIECBAgACBwQLK4GBQxxEgQKCJgJgECBQRUAaLLFIMAgQIECBAgMAVAWXwilq3d+QlQIAAAQIEygoog2VXKxgBAgQIEDgv4I1+Aspgv51LTIAAAQIECBD4I6AM/qHwDYFuAvISIECAAIGPD2XQXwEBAgQIECBAoLrAm3zK4BscHxEgQIAAAQIEqgsog9U3LB8BAt0E5CVAgMApAWXwFJeHCRAgQIAAAQK1BJTBzPs0OwECBAgQIEDgpoAyeBPQ6wQIECBAYIWAOwjMElAGZ8k6lwABAgQIECCQQEAZTLAkI3YTkJcAAQIECKwTUAbXWbuJAAECBAgQIPC3QICflMEASzACAQIECBAgQGCXgDK4S969BAh0E5CXAAECIQWUwZBrMRQBAgQIECBAYI2AMjjD2ZkECBAgQIAAgSQCymCSRRmTAAECBGIKmIpAdgFlMPsGzU+AAAECBAgQuCGgDN7A82o3AXkJECBAgEA9AWWw3k4lIkCAAAECBO4KNHpfGWy0bFEJECBAgAABAo8CyuCjiJ8JEOgmIC8BAgRaCyiDrdcvPAECBAgQINBdoFcZ7L5t+QkQIECAAAECDwLK4AOIHwkQIECghoAUBAgcE1AGjzl5igABAgQIECBQUkAZLLnWbqHkJUCAAAECBK4KKINX5bxHgAABAgQIrBdw43ABZXA4qQMJECBAgAABAnkElME8uzIpgW4C8hIgQIDAAgFlcAGyKwgQIECAAAECUQVilMGoOuYiQIAAAQIECBQXUAaLL1g8AgQIRBMwDwECsQSUwVj7MA0BAgQIECBAYKmAMriUu9tl8hIgQIAAAQLRBZTB6BsyHwECBAgQyCBgxrQCymDa1RmcAAECBAgQIHBfQBm8b+gEAt0E5CVAgACBQgLKYKFlikKAAAECBAgQOCvwvgyePc3zBAgQIECAAAECqQSUwVTrMiwBAgTmCTiZAIGeAspgz71LTYAAAQIECBD4FFAGPxm6fZGXAAECBAgQIPBTQBn86eArAQIECBCoKSAVgW8ElMFvgHxMgAABAgQIEKgsoAxW3q5s3QTkJUCAAAECpwWUwdNkXiBAgAABAgQI7BYYd78yOM7SSQQIECBAgACBdALKYLqVGZgAgW4C8hIgQGCmgDI4U9fZBAgQIECAAIHgAspgqAUZhgABAgQIECCwVkAZXOvtNgIECBAg8FPAVwJBBJTBIIswBgECBAgQIEBgh4AyuEPdnd0E5CVAgAABAmEFlMGwqzEYAQIECBAgkE8g38TKYL6dmZgAAQIEMUtVIAAABxlJREFUCBAgMExAGRxG6SACBLoJyEuAAIEKAspghS3KQIAAAQIECBC4KKAMHoLzEAECBAgQIECgpoAyWHOvUhEgQIDAVQHvEWgmoAw2W7i4BAgQIECAAIGvAsrgVw3fdxOQlwABAgQItBdQBtv/CQAgQIAAAQIdBGR8JaAMvpLxewIECBAgQIBAAwFlsMGSRSTQTUBeAgQIEDguoAwet/IkAQIECBAgQKCcQPIyWG4fAhEgQIAAAQIElgoog0u5XUaAAAEClwW8SIDAFAFlcAqrQwkQIECAAAECOQSUwRx76jalvAQIECBAgMAiAWVwEbRrCBAgQIAAgWcCfrdbQBncvQH3EyBAgAABAgQ2CiiDG/FdTaCbgLwECBAgEE9AGYy3ExMRIECAAAECBJYJTCqDy+Z3EQECBAgQIECAwA0BZfAGnlcJECBA4OPjAwIBAqkFlMHU6zM8AQIECBAgQOCegDJ4z6/b2/ISIECAAAECxQSUwWILFYcAAQIECIwRcEoXAWWwy6blJECAAAECBAg8EVAGn6D4FYFuAvISIECAQF8BZbDv7iUnQIAAAQIE+gn8k1gZ/IfELwgQIECAAAECfQSUwT67lpQAgW4C8hIgQOCAgDJ4AMkjBAgQIECAAIGqAspgjc1KQYAAAQIECBC4JKAMXmLzEgECBAgQ2CXgXgJjBZTBsZ5OI0CAAAECBAikElAGU63LsN0E5CVAgAABArMFlMHZws4nQIAAAQIECHwvsO0JZXAbvYsJECBAgAABAvsFlMH9OzABAQLdBOQlQIBAIAFlMNAyjEKAAAECBAgQWC2gDM4VdzoBAgQIECBAILSAMhh6PYYjQIAAgTwCJiWQU0AZzLk3UxMgQIAAAQIEhggog0MYHdJNQF4CBAgQIFBFQBmsskk5CBAgQIAAgRkC5c9UBsuvWEACBAgQIECAwGsBZfC1jU8IEOgmIC8BAgQaCiiDDZcuMgECBAgQIEDgt0DXMvg7v38JECBAgAABAq0FlMHW6xeeAAECHQRkJEDgnYAy+E7HZwQIECBAgACB4gLKYPEFd4snLwECBAgQIHBOQBk85+VpAgQIECBAIIaAKQYJKIODIB1DgAABAgQIEMgooAxm3JqZCXQTkJcAAQIEpgkog9NoHUyAAAECBAgQiC8QrQzGFzMhAQIECBAgQKCQgDJYaJmiECBAIJeAaQkQiCCgDEbYghkIECBAgAABApsElMFN8N2ulZcAAQIECBCIKaAMxtyLqQgQIECAQFYBcycTUAaTLcy4BAgQIECAAIGRAsrgSE1nEegmIC8BAgQIpBdQBtOvUAACBAgQIECAwHWBo2Xw+g3eJECAAAECBAgQCCugDIZdjcEIECCwS8C9BAh0ElAGO21bVgIECBAgQIDAg4Ay+ADS7Ud5CRAgQIAAgd4CymDv/UtPgAABAn0EJCXwVEAZfMrilwQIECBAgACBHgLKYI89S9lNQF4CBAgQIHBQQBk8COUxAgQIECBAgEBEgbszKYN3Bb1PgAABAgQIEEgsoAwmXp7RCRDoJiAvAQIExgsog+NNnUiAAAECBAgQSCOgDAZdlbEIECBAgAABAisElMEVyu4gQIAAAQKvBXxCYKuAMriV3+UECBAgQIAAgb0CyuBef7d3E5CXAAECBAgEE1AGgy3EOAQIECBAgEANgSwplMEsmzInAQIECBAgQGCCgDI4AdWRBAh0E5CXAAECeQWUwby7MzkBAgQIECBA4LaAMniS0OMECBAgQIAAgUoCymClbcpCgAABAiMFnEWghYAy2GLNQhIgQIAAAQIEngsog89d/LabgLwECBAgQKCpgDLYdPFiEyBAgACBrgJy/y2gDP7t4ScCBAgQIECAQCsBZbDVuoUl0E1AXgIECBD4TkAZ/E7I5wQIECBAgACBwgJlymDhHYlGgAABAgQIEJgmoAxOo3UwAQIECEwScCwBAgMFlMGBmI4iQIAAAQIECGQTUAazbazbvPISIECAAAECUwWUwam8DidAgAABAgSOCnhuj4AyuMfdrQQIECBAgACBEALKYIg1GIJANwF5CRAgQCCKgDIYZRPmIECAAAECBAhsEJheBjdkciUBAgQIECBAgMBBAWXwIJTHCBAgQOBbAQ8QIJBQQBlMuDQjEyBAgAABAgRGCSiDoyS7nSMvAQIECBAgUEJAGSyxRiEIECBAgMA8ASfXFlAGa+9XOgIECBAgQIDAWwFl8C2PDwl0E5CXAAECBLoJKIPdNi4vAQIECBAgQOCHwK//lcFfEP4hQIAAAQIECHQUUAY7bl1mAgS6CchLgACBlwLK4EsaHxAgQIAAAQIE6gsog9V2LA8BAgQIECBA4ISAMngCy6MECBAgQCCSgFkIjBBQBkcoOoMAAQIECBAgkFRAGUy6OGN3E5CXAAECBAjMEfg/AAAA//+41hWuAAAABklEQVQDAIKCAtXXDJ7pAAAAAElFTkSuQmCC",
-          "noteActive": false,
-          "note": "delete the snake and change the white panther to the exact panther formt ht erefernce image  attached , change also the  look of the far awaya  wall tht should look like ont he backgrounf image attached. the expression of panther shoudl be lookin  at the far away awall in comical distress . use same quality  depth of field and 3d animation as this image "
-        },
-        {
-          "id": "split-img-1778160269866-0-r2c2-1778161276475",
-          "url": "/assets/storyboard/uploads/split-batch-img-1778160269866-0/panel_r2_c2.png",
-          "path": "/assets/storyboard/uploads/split-batch-img-1778160269866-0/panel_r2_c2.png",
-          "row": 2,
-          "col": 2,
-          "width": 2752,
-          "height": 1536,
-          "selected": false,
-          "improve4k": false,
-          "splitGrid": false
-        }
-      ],
-      "activePassId": "pass-3"
+      "generatedImages": [],
+      "activePassId": "pass-6"
     },
     {
       "id": "task-xt2zatf-movgp5wo",
@@ -1466,543 +1429,8 @@
       "skillHint": "Download from PixVerse",
       "status": "pass",
       "createdAt": "2026-05-07T12:28:05.544Z",
-      "updatedAt": "2026-05-08T19:51:48.068Z",
+      "updatedAt": "2026-05-09T03:03:15.913Z",
       "passes": [
-        {
-          "id": "pass-1778157117024",
-          "name": "PixVerse Download",
-          "timestamp": "2026-05-07T12:31:57.024Z",
-          "images": [
-            {
-              "id": "img-1778156920371-0",
-              "url": "/assets/storyboard/uploads/task-xt2zatf-movgp5wo/pixverse_image_401461980574484_1778156918246.png",
-              "note": "",
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false,
-              "pixverseId": 401461980574484,
-              "splitMenuOpen": false,
-              "improveMenuOpen": false,
-              "assignMenuOpen": false
-            },
-            {
-              "id": "img-1778156923840-1",
-              "url": "/assets/storyboard/uploads/task-xt2zatf-movgp5wo/pixverse_image_401461965372947_1778156921511.png",
-              "note": "",
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false,
-              "pixverseId": 401461965372947,
-              "splitMenuOpen": false,
-              "improveMenuOpen": false,
-              "assignMenuOpen": false
-            },
-            {
-              "id": "img-1778156927012-2",
-              "url": "/assets/storyboard/uploads/task-xt2zatf-movgp5wo/pixverse_image_401461935164480_1778156925020.png",
-              "note": "",
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false,
-              "pixverseId": 401461935164480
-            },
-            {
-              "id": "img-1778156930180-3",
-              "url": "/assets/storyboard/uploads/task-xt2zatf-movgp5wo/pixverse_image_401461825887543_1778156928180.png",
-              "note": "",
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false,
-              "pixverseId": 401461825887543
-            },
-            {
-              "id": "img-1778156933421-4",
-              "url": "/assets/storyboard/uploads/task-xt2zatf-movgp5wo/pixverse_image_401461735493258_1778156931291.png",
-              "note": "",
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false,
-              "pixverseId": 401461735493258
-            },
-            {
-              "id": "img-1778156936866-5",
-              "url": "/assets/storyboard/uploads/task-xt2zatf-movgp5wo/pixverse_image_401461692920012_1778156934727.png",
-              "note": "",
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false,
-              "pixverseId": 401461692920012
-            },
-            {
-              "id": "img-1778156941183-6",
-              "url": "/assets/storyboard/uploads/task-xt2zatf-movgp5wo/pixverse_image_401461669594555_1778156938063.png",
-              "note": "",
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false,
-              "pixverseId": 401461669594555
-            },
-            {
-              "id": "img-1778156944533-7",
-              "url": "/assets/storyboard/uploads/task-xt2zatf-movgp5wo/pixverse_image_401461668334374_1778156942427.png",
-              "note": "",
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false,
-              "pixverseId": 401461668334374
-            },
-            {
-              "id": "img-1778156947889-8",
-              "url": "/assets/storyboard/uploads/task-xt2zatf-movgp5wo/pixverse_image_401461620322343_1778156945633.png",
-              "note": "",
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false,
-              "pixverseId": 401461620322343
-            },
-            {
-              "id": "img-1778156951182-9",
-              "url": "/assets/storyboard/uploads/task-xt2zatf-movgp5wo/pixverse_image_401461565623998_1778156949074.png",
-              "note": "",
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false,
-              "pixverseId": 401461565623998
-            },
-            {
-              "id": "img-1778156954340-10",
-              "url": "/assets/storyboard/uploads/task-xt2zatf-movgp5wo/pixverse_image_401461561347656_1778156952280.png",
-              "note": "",
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false,
-              "pixverseId": 401461561347656
-            },
-            {
-              "id": "img-1778156957464-11",
-              "url": "/assets/storyboard/uploads/task-xt2zatf-movgp5wo/pixverse_image_401461477772958_1778156955554.png",
-              "note": "",
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false,
-              "pixverseId": 401461477772958
-            },
-            {
-              "id": "img-1778156961009-12",
-              "url": "/assets/storyboard/uploads/task-xt2zatf-movgp5wo/pixverse_image_401461468487781_1778156958843.png",
-              "note": "",
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false,
-              "pixverseId": 401461468487781
-            },
-            {
-              "id": "img-1778156964512-13",
-              "url": "/assets/storyboard/uploads/task-xt2zatf-movgp5wo/pixverse_image_401461444359279_1778156962240.png",
-              "note": "",
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false,
-              "pixverseId": 401461444359279
-            },
-            {
-              "id": "img-1778156968177-14",
-              "url": "/assets/storyboard/uploads/task-xt2zatf-movgp5wo/pixverse_image_401461413607477_1778156965857.png",
-              "note": "",
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false,
-              "pixverseId": 401461413607477
-            },
-            {
-              "id": "img-1778156971473-15",
-              "url": "/assets/storyboard/uploads/task-xt2zatf-movgp5wo/pixverse_image_401461401374276_1778156969329.png",
-              "note": "",
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false,
-              "pixverseId": 401461401374276
-            },
-            {
-              "id": "img-1778156974644-16",
-              "url": "/assets/storyboard/uploads/task-xt2zatf-movgp5wo/pixverse_image_401461397243261_1778156972559.png",
-              "note": "",
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false,
-              "pixverseId": 401461397243261
-            },
-            {
-              "id": "img-1778156978268-17",
-              "url": "/assets/storyboard/uploads/task-xt2zatf-movgp5wo/pixverse_image_401461380360390_1778156976014.png",
-              "note": "",
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false,
-              "pixverseId": 401461380360390
-            },
-            {
-              "id": "img-1778156981927-18",
-              "url": "/assets/storyboard/uploads/task-xt2zatf-movgp5wo/pixverse_image_401461371721434_1778156979478.png",
-              "note": "",
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false,
-              "pixverseId": 401461371721434
-            },
-            {
-              "id": "img-1778156985437-19",
-              "url": "/assets/storyboard/uploads/task-xt2zatf-movgp5wo/pixverse_image_401461340549171_1778156983359.png",
-              "note": "",
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false,
-              "pixverseId": 401461340549171
-            },
-            {
-              "id": "img-1778156989812-20",
-              "url": "/assets/storyboard/uploads/task-xt2zatf-movgp5wo/pixverse_image_401461331013187_1778156986857.png",
-              "note": "",
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false,
-              "pixverseId": 401461331013187
-            },
-            {
-              "id": "img-1778156993043-21",
-              "url": "/assets/storyboard/uploads/task-xt2zatf-movgp5wo/pixverse_image_401461288604968_1778156990995.png",
-              "note": "",
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false,
-              "pixverseId": 401461288604968
-            },
-            {
-              "id": "img-1778156996261-22",
-              "url": "/assets/storyboard/uploads/task-xt2zatf-movgp5wo/pixverse_image_401461258213492_1778156994207.png",
-              "note": "",
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false,
-              "pixverseId": 401461258213492
-            },
-            {
-              "id": "img-1778156999444-23",
-              "url": "/assets/storyboard/uploads/task-xt2zatf-movgp5wo/pixverse_image_401461255163540_1778156997507.png",
-              "note": "",
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false,
-              "pixverseId": 401461255163540
-            },
-            {
-              "id": "img-1778157002775-24",
-              "url": "/assets/storyboard/uploads/task-xt2zatf-movgp5wo/pixverse_image_401461246137089_1778157000666.png",
-              "note": "",
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false,
-              "pixverseId": 401461246137089
-            },
-            {
-              "id": "img-1778157006044-25",
-              "url": "/assets/storyboard/uploads/task-xt2zatf-movgp5wo/pixverse_image_401461228564700_1778157003930.png",
-              "note": "",
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false,
-              "pixverseId": 401461228564700
-            },
-            {
-              "id": "img-1778157009379-26",
-              "url": "/assets/storyboard/uploads/task-xt2zatf-movgp5wo/pixverse_image_401461207637659_1778157007137.png",
-              "note": "",
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false,
-              "pixverseId": 401461207637659
-            },
-            {
-              "id": "img-1778157012900-27",
-              "url": "/assets/storyboard/uploads/task-xt2zatf-movgp5wo/pixverse_image_401461171615296_1778157010626.png",
-              "note": "",
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false,
-              "pixverseId": 401461171615296
-            },
-            {
-              "id": "img-1778157016177-28",
-              "url": "/assets/storyboard/uploads/task-xt2zatf-movgp5wo/pixverse_image_401461162936438_1778157014126.png",
-              "note": "",
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false,
-              "pixverseId": 401461162936438
-            },
-            {
-              "id": "img-1778157020752-29",
-              "url": "/assets/storyboard/uploads/task-xt2zatf-movgp5wo/pixverse_image_401461134023798_1778157017572.png",
-              "note": "",
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false,
-              "pixverseId": 401461134023798
-            },
-            {
-              "id": "img-1778157023975-30",
-              "url": "/assets/storyboard/uploads/task-xt2zatf-movgp5wo/pixverse_image_401461086734427_1778157021939.png",
-              "note": "",
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false,
-              "pixverseId": 401461086734427
-            },
-            {
-              "id": "img-1778157027582-31",
-              "url": "/assets/storyboard/uploads/task-xt2zatf-movgp5wo/pixverse_image_401461084663890_1778157025151.png",
-              "note": "",
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false,
-              "pixverseId": 401461084663890
-            },
-            {
-              "id": "img-1778157031541-32",
-              "url": "/assets/storyboard/uploads/task-xt2zatf-movgp5wo/pixverse_image_401461080782513_1778157028806.png",
-              "note": "",
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false,
-              "pixverseId": 401461080782513
-            },
-            {
-              "id": "img-1778157034909-33",
-              "url": "/assets/storyboard/uploads/task-xt2zatf-movgp5wo/pixverse_image_401461064070736_1778157032637.png",
-              "note": "",
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false,
-              "pixverseId": 401461064070736
-            },
-            {
-              "id": "img-1778157038571-34",
-              "url": "/assets/storyboard/uploads/task-xt2zatf-movgp5wo/pixverse_image_401461048698438_1778157036293.png",
-              "note": "",
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false,
-              "pixverseId": 401461048698438
-            },
-            {
-              "id": "img-1778157041851-35",
-              "url": "/assets/storyboard/uploads/task-xt2zatf-movgp5wo/pixverse_image_401460981446035_1778157039796.png",
-              "note": "",
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false,
-              "pixverseId": 401460981446035
-            },
-            {
-              "id": "img-1778157045449-36",
-              "url": "/assets/storyboard/uploads/task-xt2zatf-movgp5wo/pixverse_image_401460974175773_1778157043251.png",
-              "note": "",
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false,
-              "pixverseId": 401460974175773
-            },
-            {
-              "id": "img-1778157049782-37",
-              "url": "/assets/storyboard/uploads/task-xt2zatf-movgp5wo/pixverse_image_401460955938603_1778157046619.png",
-              "note": "",
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false,
-              "pixverseId": 401460955938603
-            },
-            {
-              "id": "img-1778157052958-38",
-              "url": "/assets/storyboard/uploads/task-xt2zatf-movgp5wo/pixverse_image_401460938871928_1778157050970.png",
-              "note": "",
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false,
-              "pixverseId": 401460938871928
-            },
-            {
-              "id": "img-1778157056415-39",
-              "url": "/assets/storyboard/uploads/task-xt2zatf-movgp5wo/pixverse_image_401460934999795_1778157054146.png",
-              "note": "",
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false,
-              "pixverseId": 401460934999795
-            },
-            {
-              "id": "img-1778157059757-40",
-              "url": "/assets/storyboard/uploads/task-xt2zatf-movgp5wo/pixverse_image_401460911025561_1778157057614.png",
-              "note": "",
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false,
-              "pixverseId": 401460911025561
-            },
-            {
-              "id": "img-1778157063191-41",
-              "url": "/assets/storyboard/uploads/task-xt2zatf-movgp5wo/pixverse_image_401460896408997_1778157060972.png",
-              "note": "",
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false,
-              "pixverseId": 401460896408997
-            },
-            {
-              "id": "img-1778157066502-42",
-              "url": "/assets/storyboard/uploads/task-xt2zatf-movgp5wo/pixverse_image_401460884310775_1778157064293.png",
-              "note": "",
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false,
-              "pixverseId": 401460884310775
-            },
-            {
-              "id": "img-1778157069758-43",
-              "url": "/assets/storyboard/uploads/task-xt2zatf-movgp5wo/pixverse_image_401460808919125_1778157067645.png",
-              "note": "",
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false,
-              "pixverseId": 401460808919125
-            },
-            {
-              "id": "img-1778157073029-44",
-              "url": "/assets/storyboard/uploads/task-xt2zatf-movgp5wo/pixverse_image_401460807585995_1778157071238.png",
-              "note": "",
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false,
-              "pixverseId": 401460807585995
-            },
-            {
-              "id": "img-1778157076184-45",
-              "url": "/assets/storyboard/uploads/task-xt2zatf-movgp5wo/pixverse_image_401460786006744_1778157074184.png",
-              "note": "",
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false,
-              "pixverseId": 401460786006744
-            },
-            {
-              "id": "img-1778157079662-46",
-              "url": "/assets/storyboard/uploads/task-xt2zatf-movgp5wo/pixverse_image_401460766906405_1778157077519.png",
-              "note": "",
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false,
-              "pixverseId": 401460766906405
-            },
-            {
-              "id": "img-1778157082864-47",
-              "url": "/assets/storyboard/uploads/task-xt2zatf-movgp5wo/pixverse_image_401460752793669_1778157080853.png",
-              "note": "",
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false,
-              "pixverseId": 401460752793669
-            },
-            {
-              "id": "img-1778157086094-48",
-              "url": "/assets/storyboard/uploads/task-xt2zatf-movgp5wo/pixverse_image_401460726376071_1778157084024.png",
-              "note": "",
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false,
-              "pixverseId": 401460726376071
-            },
-            {
-              "id": "img-1778157089289-49",
-              "url": "/assets/storyboard/uploads/task-xt2zatf-movgp5wo/pixverse_image_401460725964193_1778157087478.png",
-              "note": "",
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false,
-              "pixverseId": 401460725964193
-            },
-            {
-              "id": "img-1778157092785-50",
-              "url": "/assets/storyboard/uploads/task-xt2zatf-movgp5wo/pixverse_image_401460712655053_1778157090436.png",
-              "note": "",
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false,
-              "pixverseId": 401460712655053
-            },
-            {
-              "id": "img-1778157095952-51",
-              "url": "/assets/storyboard/uploads/task-xt2zatf-movgp5wo/pixverse_image_401460623728137_1778157093965.png",
-              "note": "",
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false,
-              "pixverseId": 401460623728137
-            },
-            {
-              "id": "img-1778157099415-52",
-              "url": "/assets/storyboard/uploads/task-xt2zatf-movgp5wo/pixverse_image_401460618621158_1778157097135.png",
-              "note": "",
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false,
-              "pixverseId": 401460618621158
-            },
-            {
-              "id": "img-1778157102676-53",
-              "url": "/assets/storyboard/uploads/task-xt2zatf-movgp5wo/pixverse_image_401460594595192_1778157100673.png",
-              "note": "",
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false,
-              "pixverseId": 401460594595192
-            },
-            {
-              "id": "img-1778157106963-54",
-              "url": "/assets/storyboard/uploads/task-xt2zatf-movgp5wo/pixverse_image_401460564207317_1778157103781.png",
-              "note": "",
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false,
-              "pixverseId": 401460564207317
-            },
-            {
-              "id": "img-1778157110402-55",
-              "url": "/assets/storyboard/uploads/task-xt2zatf-movgp5wo/pixverse_image_401460542411527_1778157108261.png",
-              "note": "",
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false,
-              "pixverseId": 401460542411527
-            },
-            {
-              "id": "img-1778157113671-56",
-              "url": "/assets/storyboard/uploads/task-xt2zatf-movgp5wo/pixverse_image_401460528150165_1778157111588.png",
-              "note": "",
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false,
-              "pixverseId": 401460528150165
-            },
-            {
-              "id": "img-1778157117024-57",
-              "url": "/assets/storyboard/uploads/task-xt2zatf-movgp5wo/pixverse_image_401460527968324_1778157114799.png",
-              "note": "",
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false,
-              "pixverseId": 401460527968324
-            }
-          ]
-        },
         {
           "id": "pass-1778158232101",
           "name": "PixVerse Download",
@@ -2015,7 +1443,8 @@
               "selected": false,
               "improve4k": false,
               "splitGrid": false,
-              "pixverseId": 401461980574484
+              "pixverseId": 401461980574484,
+              "noteActive": true
             },
             {
               "id": "img-1778158052726-1",
@@ -2132,7 +1561,10 @@
               "selected": false,
               "improve4k": false,
               "splitGrid": false,
-              "pixverseId": 401461444359279
+              "pixverseId": 401461444359279,
+              "splitMenuOpen": false,
+              "improveMenuOpen": false,
+              "assignMenuOpen": false
             },
             {
               "id": "img-1778158095336-14",
@@ -2533,690 +1965,6 @@
           ]
         },
         {
-          "id": "pass-5",
-          "name": "Pass 5 — Split Grid",
-          "images": [
-            {
-              "id": "split-img-1778156920371-0-r1c1-1778158756602",
-              "url": "/assets/storyboard/uploads/split-batch-img-1778156920371-0/panel_r1_c1.png",
-              "path": "/assets/storyboard/uploads/split-batch-img-1778156920371-0/panel_r1_c1.png",
-              "row": 1,
-              "col": 1,
-              "width": 2752,
-              "height": 1536,
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false
-            },
-            {
-              "id": "split-img-1778156920371-0-r1c2-1778158756602",
-              "url": "/assets/storyboard/uploads/split-batch-img-1778156920371-0/panel_r1_c2.png",
-              "path": "/assets/storyboard/uploads/split-batch-img-1778156920371-0/panel_r1_c2.png",
-              "row": 1,
-              "col": 2,
-              "width": 2752,
-              "height": 1536,
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false
-            },
-            {
-              "id": "split-img-1778156920371-0-r2c1-1778158756602",
-              "url": "/assets/storyboard/uploads/split-batch-img-1778156920371-0/panel_r2_c1.png",
-              "path": "/assets/storyboard/uploads/split-batch-img-1778156920371-0/panel_r2_c1.png",
-              "row": 2,
-              "col": 1,
-              "width": 2752,
-              "height": 1536,
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false
-            },
-            {
-              "id": "split-img-1778156920371-0-r2c2-1778158756602",
-              "url": "/assets/storyboard/uploads/split-batch-img-1778156920371-0/panel_r2_c2.png",
-              "path": "/assets/storyboard/uploads/split-batch-img-1778156920371-0/panel_r2_c2.png",
-              "row": 2,
-              "col": 2,
-              "width": 2752,
-              "height": 1536,
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false
-            },
-            {
-              "id": "split-img-1778156923840-1-r1c1-1778158756602",
-              "url": "/assets/storyboard/uploads/split-batch-img-1778156923840-1/panel_r1_c1.png",
-              "path": "/assets/storyboard/uploads/split-batch-img-1778156923840-1/panel_r1_c1.png",
-              "row": 1,
-              "col": 1,
-              "width": 2752,
-              "height": 1536,
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false
-            },
-            {
-              "id": "split-img-1778156923840-1-r1c2-1778158756602",
-              "url": "/assets/storyboard/uploads/split-batch-img-1778156923840-1/panel_r1_c2.png",
-              "path": "/assets/storyboard/uploads/split-batch-img-1778156923840-1/panel_r1_c2.png",
-              "row": 1,
-              "col": 2,
-              "width": 2752,
-              "height": 1536,
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false
-            },
-            {
-              "id": "split-img-1778156923840-1-r2c1-1778158756602",
-              "url": "/assets/storyboard/uploads/split-batch-img-1778156923840-1/panel_r2_c1.png",
-              "path": "/assets/storyboard/uploads/split-batch-img-1778156923840-1/panel_r2_c1.png",
-              "row": 2,
-              "col": 1,
-              "width": 2752,
-              "height": 1536,
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false
-            },
-            {
-              "id": "split-img-1778156923840-1-r2c2-1778158756602",
-              "url": "/assets/storyboard/uploads/split-batch-img-1778156923840-1/panel_r2_c2.png",
-              "path": "/assets/storyboard/uploads/split-batch-img-1778156923840-1/panel_r2_c2.png",
-              "row": 2,
-              "col": 2,
-              "width": 2752,
-              "height": 1536,
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false
-            },
-            {
-              "id": "split-img-1778156927012-2-r1c1-1778158756602",
-              "url": "/assets/storyboard/uploads/split-batch-img-1778156927012-2/panel_r1_c1.png",
-              "path": "/assets/storyboard/uploads/split-batch-img-1778156927012-2/panel_r1_c1.png",
-              "row": 1,
-              "col": 1,
-              "width": 2752,
-              "height": 1536,
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false
-            },
-            {
-              "id": "split-img-1778156927012-2-r1c2-1778158756602",
-              "url": "/assets/storyboard/uploads/split-batch-img-1778156927012-2/panel_r1_c2.png",
-              "path": "/assets/storyboard/uploads/split-batch-img-1778156927012-2/panel_r1_c2.png",
-              "row": 1,
-              "col": 2,
-              "width": 2752,
-              "height": 1536,
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false
-            },
-            {
-              "id": "split-img-1778156927012-2-r2c1-1778158756602",
-              "url": "/assets/storyboard/uploads/split-batch-img-1778156927012-2/panel_r2_c1.png",
-              "path": "/assets/storyboard/uploads/split-batch-img-1778156927012-2/panel_r2_c1.png",
-              "row": 2,
-              "col": 1,
-              "width": 2752,
-              "height": 1536,
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false
-            },
-            {
-              "id": "split-img-1778156927012-2-r2c2-1778158756602",
-              "url": "/assets/storyboard/uploads/split-batch-img-1778156927012-2/panel_r2_c2.png",
-              "path": "/assets/storyboard/uploads/split-batch-img-1778156927012-2/panel_r2_c2.png",
-              "row": 2,
-              "col": 2,
-              "width": 2752,
-              "height": 1536,
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false
-            },
-            {
-              "id": "split-img-1778156930180-3-r1c1-1778158756602",
-              "url": "/assets/storyboard/uploads/split-batch-img-1778156930180-3/panel_r1_c1.png",
-              "path": "/assets/storyboard/uploads/split-batch-img-1778156930180-3/panel_r1_c1.png",
-              "row": 1,
-              "col": 1,
-              "width": 2752,
-              "height": 1536,
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false
-            },
-            {
-              "id": "split-img-1778156930180-3-r1c2-1778158756602",
-              "url": "/assets/storyboard/uploads/split-batch-img-1778156930180-3/panel_r1_c2.png",
-              "path": "/assets/storyboard/uploads/split-batch-img-1778156930180-3/panel_r1_c2.png",
-              "row": 1,
-              "col": 2,
-              "width": 2752,
-              "height": 1536,
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false
-            },
-            {
-              "id": "split-img-1778156930180-3-r2c1-1778158756602",
-              "url": "/assets/storyboard/uploads/split-batch-img-1778156930180-3/panel_r2_c1.png",
-              "path": "/assets/storyboard/uploads/split-batch-img-1778156930180-3/panel_r2_c1.png",
-              "row": 2,
-              "col": 1,
-              "width": 2752,
-              "height": 1536,
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false
-            },
-            {
-              "id": "split-img-1778156930180-3-r2c2-1778158756602",
-              "url": "/assets/storyboard/uploads/split-batch-img-1778156930180-3/panel_r2_c2.png",
-              "path": "/assets/storyboard/uploads/split-batch-img-1778156930180-3/panel_r2_c2.png",
-              "row": 2,
-              "col": 2,
-              "width": 2752,
-              "height": 1536,
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false
-            },
-            {
-              "id": "split-img-1778156933421-4-r1c1-1778158756602",
-              "url": "/assets/storyboard/uploads/split-batch-img-1778156933421-4/panel_r1_c1.png",
-              "path": "/assets/storyboard/uploads/split-batch-img-1778156933421-4/panel_r1_c1.png",
-              "row": 1,
-              "col": 1,
-              "width": 2752,
-              "height": 1536,
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false
-            },
-            {
-              "id": "split-img-1778156933421-4-r1c2-1778158756602",
-              "url": "/assets/storyboard/uploads/split-batch-img-1778156933421-4/panel_r1_c2.png",
-              "path": "/assets/storyboard/uploads/split-batch-img-1778156933421-4/panel_r1_c2.png",
-              "row": 1,
-              "col": 2,
-              "width": 2752,
-              "height": 1536,
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false
-            },
-            {
-              "id": "split-img-1778156933421-4-r2c1-1778158756602",
-              "url": "/assets/storyboard/uploads/split-batch-img-1778156933421-4/panel_r2_c1.png",
-              "path": "/assets/storyboard/uploads/split-batch-img-1778156933421-4/panel_r2_c1.png",
-              "row": 2,
-              "col": 1,
-              "width": 2752,
-              "height": 1536,
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false
-            },
-            {
-              "id": "split-img-1778156933421-4-r2c2-1778158756602",
-              "url": "/assets/storyboard/uploads/split-batch-img-1778156933421-4/panel_r2_c2.png",
-              "path": "/assets/storyboard/uploads/split-batch-img-1778156933421-4/panel_r2_c2.png",
-              "row": 2,
-              "col": 2,
-              "width": 2752,
-              "height": 1536,
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false
-            },
-            {
-              "id": "split-img-1778156941183-6-r1c1-1778158756602",
-              "url": "/assets/storyboard/uploads/split-batch-img-1778156941183-6/panel_r1_c1.png",
-              "path": "/assets/storyboard/uploads/split-batch-img-1778156941183-6/panel_r1_c1.png",
-              "row": 1,
-              "col": 1,
-              "width": 2752,
-              "height": 1536,
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false
-            },
-            {
-              "id": "split-img-1778156941183-6-r1c2-1778158756602",
-              "url": "/assets/storyboard/uploads/split-batch-img-1778156941183-6/panel_r1_c2.png",
-              "path": "/assets/storyboard/uploads/split-batch-img-1778156941183-6/panel_r1_c2.png",
-              "row": 1,
-              "col": 2,
-              "width": 2752,
-              "height": 1536,
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false
-            },
-            {
-              "id": "split-img-1778156941183-6-r2c1-1778158756602",
-              "url": "/assets/storyboard/uploads/split-batch-img-1778156941183-6/panel_r2_c1.png",
-              "path": "/assets/storyboard/uploads/split-batch-img-1778156941183-6/panel_r2_c1.png",
-              "row": 2,
-              "col": 1,
-              "width": 2752,
-              "height": 1536,
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false
-            },
-            {
-              "id": "split-img-1778156941183-6-r2c2-1778158756602",
-              "url": "/assets/storyboard/uploads/split-batch-img-1778156941183-6/panel_r2_c2.png",
-              "path": "/assets/storyboard/uploads/split-batch-img-1778156941183-6/panel_r2_c2.png",
-              "row": 2,
-              "col": 2,
-              "width": 2752,
-              "height": 1536,
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false
-            },
-            {
-              "id": "split-img-1778156944533-7-r1c1-1778158756602",
-              "url": "/assets/storyboard/uploads/split-batch-img-1778156944533-7/panel_r1_c1.png",
-              "path": "/assets/storyboard/uploads/split-batch-img-1778156944533-7/panel_r1_c1.png",
-              "row": 1,
-              "col": 1,
-              "width": 2752,
-              "height": 1536,
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false
-            },
-            {
-              "id": "split-img-1778156944533-7-r1c2-1778158756602",
-              "url": "/assets/storyboard/uploads/split-batch-img-1778156944533-7/panel_r1_c2.png",
-              "path": "/assets/storyboard/uploads/split-batch-img-1778156944533-7/panel_r1_c2.png",
-              "row": 1,
-              "col": 2,
-              "width": 2752,
-              "height": 1536,
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false
-            },
-            {
-              "id": "split-img-1778156944533-7-r2c1-1778158756602",
-              "url": "/assets/storyboard/uploads/split-batch-img-1778156944533-7/panel_r2_c1.png",
-              "path": "/assets/storyboard/uploads/split-batch-img-1778156944533-7/panel_r2_c1.png",
-              "row": 2,
-              "col": 1,
-              "width": 2752,
-              "height": 1536,
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false
-            },
-            {
-              "id": "split-img-1778156944533-7-r2c2-1778158756602",
-              "url": "/assets/storyboard/uploads/split-batch-img-1778156944533-7/panel_r2_c2.png",
-              "path": "/assets/storyboard/uploads/split-batch-img-1778156944533-7/panel_r2_c2.png",
-              "row": 2,
-              "col": 2,
-              "width": 2752,
-              "height": 1536,
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false
-            },
-            {
-              "id": "split-img-1778156947889-8-r1c1-1778158756602",
-              "url": "/assets/storyboard/uploads/split-batch-img-1778156947889-8/panel_r1_c1.png",
-              "path": "/assets/storyboard/uploads/split-batch-img-1778156947889-8/panel_r1_c1.png",
-              "row": 1,
-              "col": 1,
-              "width": 2752,
-              "height": 1536,
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false
-            },
-            {
-              "id": "split-img-1778156947889-8-r1c2-1778158756602",
-              "url": "/assets/storyboard/uploads/split-batch-img-1778156947889-8/panel_r1_c2.png",
-              "path": "/assets/storyboard/uploads/split-batch-img-1778156947889-8/panel_r1_c2.png",
-              "row": 1,
-              "col": 2,
-              "width": 2752,
-              "height": 1536,
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false
-            },
-            {
-              "id": "split-img-1778156947889-8-r2c1-1778158756602",
-              "url": "/assets/storyboard/uploads/split-batch-img-1778156947889-8/panel_r2_c1.png",
-              "path": "/assets/storyboard/uploads/split-batch-img-1778156947889-8/panel_r2_c1.png",
-              "row": 2,
-              "col": 1,
-              "width": 2752,
-              "height": 1536,
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false
-            },
-            {
-              "id": "split-img-1778156947889-8-r2c2-1778158756602",
-              "url": "/assets/storyboard/uploads/split-batch-img-1778156947889-8/panel_r2_c2.png",
-              "path": "/assets/storyboard/uploads/split-batch-img-1778156947889-8/panel_r2_c2.png",
-              "row": 2,
-              "col": 2,
-              "width": 2752,
-              "height": 1536,
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false
-            },
-            {
-              "id": "split-img-1778156951182-9-r1c1-1778158756602",
-              "url": "/assets/storyboard/uploads/split-batch-img-1778156951182-9/panel_r1_c1.png",
-              "path": "/assets/storyboard/uploads/split-batch-img-1778156951182-9/panel_r1_c1.png",
-              "row": 1,
-              "col": 1,
-              "width": 2752,
-              "height": 1536,
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false
-            },
-            {
-              "id": "split-img-1778156951182-9-r1c2-1778158756602",
-              "url": "/assets/storyboard/uploads/split-batch-img-1778156951182-9/panel_r1_c2.png",
-              "path": "/assets/storyboard/uploads/split-batch-img-1778156951182-9/panel_r1_c2.png",
-              "row": 1,
-              "col": 2,
-              "width": 2752,
-              "height": 1536,
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false
-            },
-            {
-              "id": "split-img-1778156951182-9-r2c1-1778158756602",
-              "url": "/assets/storyboard/uploads/split-batch-img-1778156951182-9/panel_r2_c1.png",
-              "path": "/assets/storyboard/uploads/split-batch-img-1778156951182-9/panel_r2_c1.png",
-              "row": 2,
-              "col": 1,
-              "width": 2752,
-              "height": 1536,
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false
-            },
-            {
-              "id": "split-img-1778156951182-9-r2c2-1778158756602",
-              "url": "/assets/storyboard/uploads/split-batch-img-1778156951182-9/panel_r2_c2.png",
-              "path": "/assets/storyboard/uploads/split-batch-img-1778156951182-9/panel_r2_c2.png",
-              "row": 2,
-              "col": 2,
-              "width": 2752,
-              "height": 1536,
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false
-            },
-            {
-              "id": "split-img-1778156957464-11-r1c1-1778158756602",
-              "url": "/assets/storyboard/uploads/split-batch-img-1778156957464-11/panel_r1_c1.png",
-              "path": "/assets/storyboard/uploads/split-batch-img-1778156957464-11/panel_r1_c1.png",
-              "row": 1,
-              "col": 1,
-              "width": 2752,
-              "height": 1536,
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false
-            },
-            {
-              "id": "split-img-1778156957464-11-r1c2-1778158756602",
-              "url": "/assets/storyboard/uploads/split-batch-img-1778156957464-11/panel_r1_c2.png",
-              "path": "/assets/storyboard/uploads/split-batch-img-1778156957464-11/panel_r1_c2.png",
-              "row": 1,
-              "col": 2,
-              "width": 2752,
-              "height": 1536,
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false
-            },
-            {
-              "id": "split-img-1778156957464-11-r2c1-1778158756602",
-              "url": "/assets/storyboard/uploads/split-batch-img-1778156957464-11/panel_r2_c1.png",
-              "path": "/assets/storyboard/uploads/split-batch-img-1778156957464-11/panel_r2_c1.png",
-              "row": 2,
-              "col": 1,
-              "width": 2752,
-              "height": 1536,
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false
-            },
-            {
-              "id": "split-img-1778156957464-11-r2c2-1778158756602",
-              "url": "/assets/storyboard/uploads/split-batch-img-1778156957464-11/panel_r2_c2.png",
-              "path": "/assets/storyboard/uploads/split-batch-img-1778156957464-11/panel_r2_c2.png",
-              "row": 2,
-              "col": 2,
-              "width": 2752,
-              "height": 1536,
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false
-            },
-            {
-              "id": "split-img-1778156961009-12-r1c1-1778158756602",
-              "url": "/assets/storyboard/uploads/split-batch-img-1778156961009-12/panel_r1_c1.png",
-              "path": "/assets/storyboard/uploads/split-batch-img-1778156961009-12/panel_r1_c1.png",
-              "row": 1,
-              "col": 1,
-              "width": 2752,
-              "height": 1536,
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false
-            },
-            {
-              "id": "split-img-1778156961009-12-r1c2-1778158756602",
-              "url": "/assets/storyboard/uploads/split-batch-img-1778156961009-12/panel_r1_c2.png",
-              "path": "/assets/storyboard/uploads/split-batch-img-1778156961009-12/panel_r1_c2.png",
-              "row": 1,
-              "col": 2,
-              "width": 2752,
-              "height": 1536,
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false
-            },
-            {
-              "id": "split-img-1778156961009-12-r2c1-1778158756602",
-              "url": "/assets/storyboard/uploads/split-batch-img-1778156961009-12/panel_r2_c1.png",
-              "path": "/assets/storyboard/uploads/split-batch-img-1778156961009-12/panel_r2_c1.png",
-              "row": 2,
-              "col": 1,
-              "width": 2752,
-              "height": 1536,
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false
-            },
-            {
-              "id": "split-img-1778156961009-12-r2c2-1778158756602",
-              "url": "/assets/storyboard/uploads/split-batch-img-1778156961009-12/panel_r2_c2.png",
-              "path": "/assets/storyboard/uploads/split-batch-img-1778156961009-12/panel_r2_c2.png",
-              "row": 2,
-              "col": 2,
-              "width": 2752,
-              "height": 1536,
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false
-            },
-            {
-              "id": "split-img-1778156964512-13-r1c1-1778158756602",
-              "url": "/assets/storyboard/uploads/split-batch-img-1778156964512-13/panel_r1_c1.png",
-              "path": "/assets/storyboard/uploads/split-batch-img-1778156964512-13/panel_r1_c1.png",
-              "row": 1,
-              "col": 1,
-              "width": 2752,
-              "height": 1536,
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false
-            },
-            {
-              "id": "split-img-1778156964512-13-r1c2-1778158756602",
-              "url": "/assets/storyboard/uploads/split-batch-img-1778156964512-13/panel_r1_c2.png",
-              "path": "/assets/storyboard/uploads/split-batch-img-1778156964512-13/panel_r1_c2.png",
-              "row": 1,
-              "col": 2,
-              "width": 2752,
-              "height": 1536,
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false,
-              "assignMenuOpen": true
-            },
-            {
-              "id": "split-img-1778156964512-13-r2c1-1778158756602",
-              "url": "/assets/storyboard/uploads/split-batch-img-1778156964512-13/panel_r2_c1.png",
-              "path": "/assets/storyboard/uploads/split-batch-img-1778156964512-13/panel_r2_c1.png",
-              "row": 2,
-              "col": 1,
-              "width": 2752,
-              "height": 1536,
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false
-            },
-            {
-              "id": "split-img-1778156964512-13-r2c2-1778158756602",
-              "url": "/assets/storyboard/uploads/split-batch-img-1778156964512-13/panel_r2_c2.png",
-              "path": "/assets/storyboard/uploads/split-batch-img-1778156964512-13/panel_r2_c2.png",
-              "row": 2,
-              "col": 2,
-              "width": 2752,
-              "height": 1536,
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false
-            },
-            {
-              "id": "split-img-1778156968177-14-r1c1-1778158756602",
-              "url": "/assets/storyboard/uploads/split-batch-img-1778156968177-14/panel_r1_c1.png",
-              "path": "/assets/storyboard/uploads/split-batch-img-1778156968177-14/panel_r1_c1.png",
-              "row": 1,
-              "col": 1,
-              "width": 2752,
-              "height": 1536,
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false
-            },
-            {
-              "id": "split-img-1778156968177-14-r1c2-1778158756602",
-              "url": "/assets/storyboard/uploads/split-batch-img-1778156968177-14/panel_r1_c2.png",
-              "path": "/assets/storyboard/uploads/split-batch-img-1778156968177-14/panel_r1_c2.png",
-              "row": 1,
-              "col": 2,
-              "width": 2752,
-              "height": 1536,
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false
-            },
-            {
-              "id": "split-img-1778156968177-14-r2c1-1778158756602",
-              "url": "/assets/storyboard/uploads/split-batch-img-1778156968177-14/panel_r2_c1.png",
-              "path": "/assets/storyboard/uploads/split-batch-img-1778156968177-14/panel_r2_c1.png",
-              "row": 2,
-              "col": 1,
-              "width": 2752,
-              "height": 1536,
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false
-            },
-            {
-              "id": "split-img-1778156968177-14-r2c2-1778158756602",
-              "url": "/assets/storyboard/uploads/split-batch-img-1778156968177-14/panel_r2_c2.png",
-              "path": "/assets/storyboard/uploads/split-batch-img-1778156968177-14/panel_r2_c2.png",
-              "row": 2,
-              "col": 2,
-              "width": 2752,
-              "height": 1536,
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false
-            },
-            {
-              "id": "split-img-1778156923840-1-r1c1-1778160236191",
-              "url": "/assets/storyboard/uploads/split-batch-img-1778156923840-1/panel_r1_c1.png",
-              "path": "/assets/storyboard/uploads/split-batch-img-1778156923840-1/panel_r1_c1.png",
-              "row": 1,
-              "col": 1,
-              "width": 2752,
-              "height": 1536,
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false
-            },
-            {
-              "id": "split-img-1778156923840-1-r1c2-1778160236191",
-              "url": "/assets/storyboard/uploads/split-batch-img-1778156923840-1/panel_r1_c2.png",
-              "path": "/assets/storyboard/uploads/split-batch-img-1778156923840-1/panel_r1_c2.png",
-              "row": 1,
-              "col": 2,
-              "width": 2752,
-              "height": 1536,
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false
-            },
-            {
-              "id": "split-img-1778156923840-1-r2c1-1778160236191",
-              "url": "/assets/storyboard/uploads/split-batch-img-1778156923840-1/panel_r2_c1.png",
-              "path": "/assets/storyboard/uploads/split-batch-img-1778156923840-1/panel_r2_c1.png",
-              "row": 2,
-              "col": 1,
-              "width": 2752,
-              "height": 1536,
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false
-            },
-            {
-              "id": "split-img-1778156923840-1-r2c2-1778160236191",
-              "url": "/assets/storyboard/uploads/split-batch-img-1778156923840-1/panel_r2_c2.png",
-              "path": "/assets/storyboard/uploads/split-batch-img-1778156923840-1/panel_r2_c2.png",
-              "row": 2,
-              "col": 2,
-              "width": 2752,
-              "height": 1536,
-              "selected": false,
-              "improve4k": false,
-              "splitGrid": false
-            }
-          ],
-          "batchStats": {
-            "splits": 13,
-            "improves": 0,
-            "notes": 0
-          }
-        },
-        {
           "id": "pass-4",
           "name": "Pass 4 — Split Grid",
           "images": [
@@ -3471,694 +2219,10 @@
             "improves": 0,
             "notes": 0
           }
-        },
-        {
-          "id": "pass-5",
-          "name": "Pass 5 — Split Grid",
-          "images": [],
-          "batchStats": {
-            "splits": 1,
-            "improves": 0,
-            "notes": 0
-          }
         }
       ],
       "activePassId": "pass-5",
-      "generatedImages": [
-        {
-          "id": "split-img-1778156920371-0-r1c1-1778158756602",
-          "url": "/assets/storyboard/uploads/split-batch-img-1778156920371-0/panel_r1_c1.png",
-          "path": "/assets/storyboard/uploads/split-batch-img-1778156920371-0/panel_r1_c1.png",
-          "row": 1,
-          "col": 1,
-          "width": 2752,
-          "height": 1536,
-          "selected": false,
-          "improve4k": false,
-          "splitGrid": false
-        },
-        {
-          "id": "split-img-1778156920371-0-r1c2-1778158756602",
-          "url": "/assets/storyboard/uploads/split-batch-img-1778156920371-0/panel_r1_c2.png",
-          "path": "/assets/storyboard/uploads/split-batch-img-1778156920371-0/panel_r1_c2.png",
-          "row": 1,
-          "col": 2,
-          "width": 2752,
-          "height": 1536,
-          "selected": false,
-          "improve4k": false,
-          "splitGrid": false
-        },
-        {
-          "id": "split-img-1778156920371-0-r2c1-1778158756602",
-          "url": "/assets/storyboard/uploads/split-batch-img-1778156920371-0/panel_r2_c1.png",
-          "path": "/assets/storyboard/uploads/split-batch-img-1778156920371-0/panel_r2_c1.png",
-          "row": 2,
-          "col": 1,
-          "width": 2752,
-          "height": 1536,
-          "selected": false,
-          "improve4k": false,
-          "splitGrid": false
-        },
-        {
-          "id": "split-img-1778156920371-0-r2c2-1778158756602",
-          "url": "/assets/storyboard/uploads/split-batch-img-1778156920371-0/panel_r2_c2.png",
-          "path": "/assets/storyboard/uploads/split-batch-img-1778156920371-0/panel_r2_c2.png",
-          "row": 2,
-          "col": 2,
-          "width": 2752,
-          "height": 1536,
-          "selected": false,
-          "improve4k": false,
-          "splitGrid": false
-        },
-        {
-          "id": "split-img-1778156923840-1-r1c1-1778158756602",
-          "url": "/assets/storyboard/uploads/split-batch-img-1778156923840-1/panel_r1_c1.png",
-          "path": "/assets/storyboard/uploads/split-batch-img-1778156923840-1/panel_r1_c1.png",
-          "row": 1,
-          "col": 1,
-          "width": 2752,
-          "height": 1536,
-          "selected": false,
-          "improve4k": false,
-          "splitGrid": false
-        },
-        {
-          "id": "split-img-1778156923840-1-r1c2-1778158756602",
-          "url": "/assets/storyboard/uploads/split-batch-img-1778156923840-1/panel_r1_c2.png",
-          "path": "/assets/storyboard/uploads/split-batch-img-1778156923840-1/panel_r1_c2.png",
-          "row": 1,
-          "col": 2,
-          "width": 2752,
-          "height": 1536,
-          "selected": false,
-          "improve4k": false,
-          "splitGrid": false
-        },
-        {
-          "id": "split-img-1778156923840-1-r2c1-1778158756602",
-          "url": "/assets/storyboard/uploads/split-batch-img-1778156923840-1/panel_r2_c1.png",
-          "path": "/assets/storyboard/uploads/split-batch-img-1778156923840-1/panel_r2_c1.png",
-          "row": 2,
-          "col": 1,
-          "width": 2752,
-          "height": 1536,
-          "selected": false,
-          "improve4k": false,
-          "splitGrid": false
-        },
-        {
-          "id": "split-img-1778156923840-1-r2c2-1778158756602",
-          "url": "/assets/storyboard/uploads/split-batch-img-1778156923840-1/panel_r2_c2.png",
-          "path": "/assets/storyboard/uploads/split-batch-img-1778156923840-1/panel_r2_c2.png",
-          "row": 2,
-          "col": 2,
-          "width": 2752,
-          "height": 1536,
-          "selected": false,
-          "improve4k": false,
-          "splitGrid": false
-        },
-        {
-          "id": "split-img-1778156927012-2-r1c1-1778158756602",
-          "url": "/assets/storyboard/uploads/split-batch-img-1778156927012-2/panel_r1_c1.png",
-          "path": "/assets/storyboard/uploads/split-batch-img-1778156927012-2/panel_r1_c1.png",
-          "row": 1,
-          "col": 1,
-          "width": 2752,
-          "height": 1536,
-          "selected": false,
-          "improve4k": false,
-          "splitGrid": false
-        },
-        {
-          "id": "split-img-1778156927012-2-r1c2-1778158756602",
-          "url": "/assets/storyboard/uploads/split-batch-img-1778156927012-2/panel_r1_c2.png",
-          "path": "/assets/storyboard/uploads/split-batch-img-1778156927012-2/panel_r1_c2.png",
-          "row": 1,
-          "col": 2,
-          "width": 2752,
-          "height": 1536,
-          "selected": false,
-          "improve4k": false,
-          "splitGrid": false
-        },
-        {
-          "id": "split-img-1778156927012-2-r2c1-1778158756602",
-          "url": "/assets/storyboard/uploads/split-batch-img-1778156927012-2/panel_r2_c1.png",
-          "path": "/assets/storyboard/uploads/split-batch-img-1778156927012-2/panel_r2_c1.png",
-          "row": 2,
-          "col": 1,
-          "width": 2752,
-          "height": 1536,
-          "selected": false,
-          "improve4k": false,
-          "splitGrid": false
-        },
-        {
-          "id": "split-img-1778156927012-2-r2c2-1778158756602",
-          "url": "/assets/storyboard/uploads/split-batch-img-1778156927012-2/panel_r2_c2.png",
-          "path": "/assets/storyboard/uploads/split-batch-img-1778156927012-2/panel_r2_c2.png",
-          "row": 2,
-          "col": 2,
-          "width": 2752,
-          "height": 1536,
-          "selected": false,
-          "improve4k": false,
-          "splitGrid": false
-        },
-        {
-          "id": "split-img-1778156930180-3-r1c1-1778158756602",
-          "url": "/assets/storyboard/uploads/split-batch-img-1778156930180-3/panel_r1_c1.png",
-          "path": "/assets/storyboard/uploads/split-batch-img-1778156930180-3/panel_r1_c1.png",
-          "row": 1,
-          "col": 1,
-          "width": 2752,
-          "height": 1536,
-          "selected": false,
-          "improve4k": false,
-          "splitGrid": false
-        },
-        {
-          "id": "split-img-1778156930180-3-r1c2-1778158756602",
-          "url": "/assets/storyboard/uploads/split-batch-img-1778156930180-3/panel_r1_c2.png",
-          "path": "/assets/storyboard/uploads/split-batch-img-1778156930180-3/panel_r1_c2.png",
-          "row": 1,
-          "col": 2,
-          "width": 2752,
-          "height": 1536,
-          "selected": false,
-          "improve4k": false,
-          "splitGrid": false
-        },
-        {
-          "id": "split-img-1778156930180-3-r2c1-1778158756602",
-          "url": "/assets/storyboard/uploads/split-batch-img-1778156930180-3/panel_r2_c1.png",
-          "path": "/assets/storyboard/uploads/split-batch-img-1778156930180-3/panel_r2_c1.png",
-          "row": 2,
-          "col": 1,
-          "width": 2752,
-          "height": 1536,
-          "selected": false,
-          "improve4k": false,
-          "splitGrid": false
-        },
-        {
-          "id": "split-img-1778156930180-3-r2c2-1778158756602",
-          "url": "/assets/storyboard/uploads/split-batch-img-1778156930180-3/panel_r2_c2.png",
-          "path": "/assets/storyboard/uploads/split-batch-img-1778156930180-3/panel_r2_c2.png",
-          "row": 2,
-          "col": 2,
-          "width": 2752,
-          "height": 1536,
-          "selected": false,
-          "improve4k": false,
-          "splitGrid": false
-        },
-        {
-          "id": "split-img-1778156933421-4-r1c1-1778158756602",
-          "url": "/assets/storyboard/uploads/split-batch-img-1778156933421-4/panel_r1_c1.png",
-          "path": "/assets/storyboard/uploads/split-batch-img-1778156933421-4/panel_r1_c1.png",
-          "row": 1,
-          "col": 1,
-          "width": 2752,
-          "height": 1536,
-          "selected": false,
-          "improve4k": false,
-          "splitGrid": false
-        },
-        {
-          "id": "split-img-1778156933421-4-r1c2-1778158756602",
-          "url": "/assets/storyboard/uploads/split-batch-img-1778156933421-4/panel_r1_c2.png",
-          "path": "/assets/storyboard/uploads/split-batch-img-1778156933421-4/panel_r1_c2.png",
-          "row": 1,
-          "col": 2,
-          "width": 2752,
-          "height": 1536,
-          "selected": false,
-          "improve4k": false,
-          "splitGrid": false
-        },
-        {
-          "id": "split-img-1778156933421-4-r2c1-1778158756602",
-          "url": "/assets/storyboard/uploads/split-batch-img-1778156933421-4/panel_r2_c1.png",
-          "path": "/assets/storyboard/uploads/split-batch-img-1778156933421-4/panel_r2_c1.png",
-          "row": 2,
-          "col": 1,
-          "width": 2752,
-          "height": 1536,
-          "selected": false,
-          "improve4k": false,
-          "splitGrid": false
-        },
-        {
-          "id": "split-img-1778156933421-4-r2c2-1778158756602",
-          "url": "/assets/storyboard/uploads/split-batch-img-1778156933421-4/panel_r2_c2.png",
-          "path": "/assets/storyboard/uploads/split-batch-img-1778156933421-4/panel_r2_c2.png",
-          "row": 2,
-          "col": 2,
-          "width": 2752,
-          "height": 1536,
-          "selected": false,
-          "improve4k": false,
-          "splitGrid": false
-        },
-        {
-          "id": "split-img-1778156941183-6-r1c1-1778158756602",
-          "url": "/assets/storyboard/uploads/split-batch-img-1778156941183-6/panel_r1_c1.png",
-          "path": "/assets/storyboard/uploads/split-batch-img-1778156941183-6/panel_r1_c1.png",
-          "row": 1,
-          "col": 1,
-          "width": 2752,
-          "height": 1536,
-          "selected": false,
-          "improve4k": false,
-          "splitGrid": false
-        },
-        {
-          "id": "split-img-1778156941183-6-r1c2-1778158756602",
-          "url": "/assets/storyboard/uploads/split-batch-img-1778156941183-6/panel_r1_c2.png",
-          "path": "/assets/storyboard/uploads/split-batch-img-1778156941183-6/panel_r1_c2.png",
-          "row": 1,
-          "col": 2,
-          "width": 2752,
-          "height": 1536,
-          "selected": false,
-          "improve4k": false,
-          "splitGrid": false
-        },
-        {
-          "id": "split-img-1778156941183-6-r2c1-1778158756602",
-          "url": "/assets/storyboard/uploads/split-batch-img-1778156941183-6/panel_r2_c1.png",
-          "path": "/assets/storyboard/uploads/split-batch-img-1778156941183-6/panel_r2_c1.png",
-          "row": 2,
-          "col": 1,
-          "width": 2752,
-          "height": 1536,
-          "selected": false,
-          "improve4k": false,
-          "splitGrid": false
-        },
-        {
-          "id": "split-img-1778156941183-6-r2c2-1778158756602",
-          "url": "/assets/storyboard/uploads/split-batch-img-1778156941183-6/panel_r2_c2.png",
-          "path": "/assets/storyboard/uploads/split-batch-img-1778156941183-6/panel_r2_c2.png",
-          "row": 2,
-          "col": 2,
-          "width": 2752,
-          "height": 1536,
-          "selected": false,
-          "improve4k": false,
-          "splitGrid": false
-        },
-        {
-          "id": "split-img-1778156944533-7-r1c1-1778158756602",
-          "url": "/assets/storyboard/uploads/split-batch-img-1778156944533-7/panel_r1_c1.png",
-          "path": "/assets/storyboard/uploads/split-batch-img-1778156944533-7/panel_r1_c1.png",
-          "row": 1,
-          "col": 1,
-          "width": 2752,
-          "height": 1536,
-          "selected": false,
-          "improve4k": false,
-          "splitGrid": false
-        },
-        {
-          "id": "split-img-1778156944533-7-r1c2-1778158756602",
-          "url": "/assets/storyboard/uploads/split-batch-img-1778156944533-7/panel_r1_c2.png",
-          "path": "/assets/storyboard/uploads/split-batch-img-1778156944533-7/panel_r1_c2.png",
-          "row": 1,
-          "col": 2,
-          "width": 2752,
-          "height": 1536,
-          "selected": false,
-          "improve4k": false,
-          "splitGrid": false
-        },
-        {
-          "id": "split-img-1778156944533-7-r2c1-1778158756602",
-          "url": "/assets/storyboard/uploads/split-batch-img-1778156944533-7/panel_r2_c1.png",
-          "path": "/assets/storyboard/uploads/split-batch-img-1778156944533-7/panel_r2_c1.png",
-          "row": 2,
-          "col": 1,
-          "width": 2752,
-          "height": 1536,
-          "selected": false,
-          "improve4k": false,
-          "splitGrid": false
-        },
-        {
-          "id": "split-img-1778156944533-7-r2c2-1778158756602",
-          "url": "/assets/storyboard/uploads/split-batch-img-1778156944533-7/panel_r2_c2.png",
-          "path": "/assets/storyboard/uploads/split-batch-img-1778156944533-7/panel_r2_c2.png",
-          "row": 2,
-          "col": 2,
-          "width": 2752,
-          "height": 1536,
-          "selected": false,
-          "improve4k": false,
-          "splitGrid": false
-        },
-        {
-          "id": "split-img-1778156947889-8-r1c1-1778158756602",
-          "url": "/assets/storyboard/uploads/split-batch-img-1778156947889-8/panel_r1_c1.png",
-          "path": "/assets/storyboard/uploads/split-batch-img-1778156947889-8/panel_r1_c1.png",
-          "row": 1,
-          "col": 1,
-          "width": 2752,
-          "height": 1536,
-          "selected": false,
-          "improve4k": false,
-          "splitGrid": false
-        },
-        {
-          "id": "split-img-1778156947889-8-r1c2-1778158756602",
-          "url": "/assets/storyboard/uploads/split-batch-img-1778156947889-8/panel_r1_c2.png",
-          "path": "/assets/storyboard/uploads/split-batch-img-1778156947889-8/panel_r1_c2.png",
-          "row": 1,
-          "col": 2,
-          "width": 2752,
-          "height": 1536,
-          "selected": false,
-          "improve4k": false,
-          "splitGrid": false
-        },
-        {
-          "id": "split-img-1778156947889-8-r2c1-1778158756602",
-          "url": "/assets/storyboard/uploads/split-batch-img-1778156947889-8/panel_r2_c1.png",
-          "path": "/assets/storyboard/uploads/split-batch-img-1778156947889-8/panel_r2_c1.png",
-          "row": 2,
-          "col": 1,
-          "width": 2752,
-          "height": 1536,
-          "selected": false,
-          "improve4k": false,
-          "splitGrid": false
-        },
-        {
-          "id": "split-img-1778156947889-8-r2c2-1778158756602",
-          "url": "/assets/storyboard/uploads/split-batch-img-1778156947889-8/panel_r2_c2.png",
-          "path": "/assets/storyboard/uploads/split-batch-img-1778156947889-8/panel_r2_c2.png",
-          "row": 2,
-          "col": 2,
-          "width": 2752,
-          "height": 1536,
-          "selected": false,
-          "improve4k": false,
-          "splitGrid": false
-        },
-        {
-          "id": "split-img-1778156951182-9-r1c1-1778158756602",
-          "url": "/assets/storyboard/uploads/split-batch-img-1778156951182-9/panel_r1_c1.png",
-          "path": "/assets/storyboard/uploads/split-batch-img-1778156951182-9/panel_r1_c1.png",
-          "row": 1,
-          "col": 1,
-          "width": 2752,
-          "height": 1536,
-          "selected": false,
-          "improve4k": false,
-          "splitGrid": false
-        },
-        {
-          "id": "split-img-1778156951182-9-r1c2-1778158756602",
-          "url": "/assets/storyboard/uploads/split-batch-img-1778156951182-9/panel_r1_c2.png",
-          "path": "/assets/storyboard/uploads/split-batch-img-1778156951182-9/panel_r1_c2.png",
-          "row": 1,
-          "col": 2,
-          "width": 2752,
-          "height": 1536,
-          "selected": false,
-          "improve4k": false,
-          "splitGrid": false
-        },
-        {
-          "id": "split-img-1778156951182-9-r2c1-1778158756602",
-          "url": "/assets/storyboard/uploads/split-batch-img-1778156951182-9/panel_r2_c1.png",
-          "path": "/assets/storyboard/uploads/split-batch-img-1778156951182-9/panel_r2_c1.png",
-          "row": 2,
-          "col": 1,
-          "width": 2752,
-          "height": 1536,
-          "selected": false,
-          "improve4k": false,
-          "splitGrid": false
-        },
-        {
-          "id": "split-img-1778156951182-9-r2c2-1778158756602",
-          "url": "/assets/storyboard/uploads/split-batch-img-1778156951182-9/panel_r2_c2.png",
-          "path": "/assets/storyboard/uploads/split-batch-img-1778156951182-9/panel_r2_c2.png",
-          "row": 2,
-          "col": 2,
-          "width": 2752,
-          "height": 1536,
-          "selected": false,
-          "improve4k": false,
-          "splitGrid": false
-        },
-        {
-          "id": "split-img-1778156957464-11-r1c1-1778158756602",
-          "url": "/assets/storyboard/uploads/split-batch-img-1778156957464-11/panel_r1_c1.png",
-          "path": "/assets/storyboard/uploads/split-batch-img-1778156957464-11/panel_r1_c1.png",
-          "row": 1,
-          "col": 1,
-          "width": 2752,
-          "height": 1536,
-          "selected": false,
-          "improve4k": false,
-          "splitGrid": false
-        },
-        {
-          "id": "split-img-1778156957464-11-r1c2-1778158756602",
-          "url": "/assets/storyboard/uploads/split-batch-img-1778156957464-11/panel_r1_c2.png",
-          "path": "/assets/storyboard/uploads/split-batch-img-1778156957464-11/panel_r1_c2.png",
-          "row": 1,
-          "col": 2,
-          "width": 2752,
-          "height": 1536,
-          "selected": false,
-          "improve4k": false,
-          "splitGrid": false
-        },
-        {
-          "id": "split-img-1778156957464-11-r2c1-1778158756602",
-          "url": "/assets/storyboard/uploads/split-batch-img-1778156957464-11/panel_r2_c1.png",
-          "path": "/assets/storyboard/uploads/split-batch-img-1778156957464-11/panel_r2_c1.png",
-          "row": 2,
-          "col": 1,
-          "width": 2752,
-          "height": 1536,
-          "selected": false,
-          "improve4k": false,
-          "splitGrid": false
-        },
-        {
-          "id": "split-img-1778156957464-11-r2c2-1778158756602",
-          "url": "/assets/storyboard/uploads/split-batch-img-1778156957464-11/panel_r2_c2.png",
-          "path": "/assets/storyboard/uploads/split-batch-img-1778156957464-11/panel_r2_c2.png",
-          "row": 2,
-          "col": 2,
-          "width": 2752,
-          "height": 1536,
-          "selected": false,
-          "improve4k": false,
-          "splitGrid": false
-        },
-        {
-          "id": "split-img-1778156961009-12-r1c1-1778158756602",
-          "url": "/assets/storyboard/uploads/split-batch-img-1778156961009-12/panel_r1_c1.png",
-          "path": "/assets/storyboard/uploads/split-batch-img-1778156961009-12/panel_r1_c1.png",
-          "row": 1,
-          "col": 1,
-          "width": 2752,
-          "height": 1536,
-          "selected": false,
-          "improve4k": false,
-          "splitGrid": false
-        },
-        {
-          "id": "split-img-1778156961009-12-r1c2-1778158756602",
-          "url": "/assets/storyboard/uploads/split-batch-img-1778156961009-12/panel_r1_c2.png",
-          "path": "/assets/storyboard/uploads/split-batch-img-1778156961009-12/panel_r1_c2.png",
-          "row": 1,
-          "col": 2,
-          "width": 2752,
-          "height": 1536,
-          "selected": false,
-          "improve4k": false,
-          "splitGrid": false
-        },
-        {
-          "id": "split-img-1778156961009-12-r2c1-1778158756602",
-          "url": "/assets/storyboard/uploads/split-batch-img-1778156961009-12/panel_r2_c1.png",
-          "path": "/assets/storyboard/uploads/split-batch-img-1778156961009-12/panel_r2_c1.png",
-          "row": 2,
-          "col": 1,
-          "width": 2752,
-          "height": 1536,
-          "selected": false,
-          "improve4k": false,
-          "splitGrid": false
-        },
-        {
-          "id": "split-img-1778156961009-12-r2c2-1778158756602",
-          "url": "/assets/storyboard/uploads/split-batch-img-1778156961009-12/panel_r2_c2.png",
-          "path": "/assets/storyboard/uploads/split-batch-img-1778156961009-12/panel_r2_c2.png",
-          "row": 2,
-          "col": 2,
-          "width": 2752,
-          "height": 1536,
-          "selected": false,
-          "improve4k": false,
-          "splitGrid": false
-        },
-        {
-          "id": "split-img-1778156964512-13-r1c1-1778158756602",
-          "url": "/assets/storyboard/uploads/split-batch-img-1778156964512-13/panel_r1_c1.png",
-          "path": "/assets/storyboard/uploads/split-batch-img-1778156964512-13/panel_r1_c1.png",
-          "row": 1,
-          "col": 1,
-          "width": 2752,
-          "height": 1536,
-          "selected": false,
-          "improve4k": false,
-          "splitGrid": false
-        },
-        {
-          "id": "split-img-1778156964512-13-r1c2-1778158756602",
-          "url": "/assets/storyboard/uploads/split-batch-img-1778156964512-13/panel_r1_c2.png",
-          "path": "/assets/storyboard/uploads/split-batch-img-1778156964512-13/panel_r1_c2.png",
-          "row": 1,
-          "col": 2,
-          "width": 2752,
-          "height": 1536,
-          "selected": false,
-          "improve4k": false,
-          "splitGrid": false,
-          "assignMenuOpen": true
-        },
-        {
-          "id": "split-img-1778156964512-13-r2c1-1778158756602",
-          "url": "/assets/storyboard/uploads/split-batch-img-1778156964512-13/panel_r2_c1.png",
-          "path": "/assets/storyboard/uploads/split-batch-img-1778156964512-13/panel_r2_c1.png",
-          "row": 2,
-          "col": 1,
-          "width": 2752,
-          "height": 1536,
-          "selected": false,
-          "improve4k": false,
-          "splitGrid": false
-        },
-        {
-          "id": "split-img-1778156964512-13-r2c2-1778158756602",
-          "url": "/assets/storyboard/uploads/split-batch-img-1778156964512-13/panel_r2_c2.png",
-          "path": "/assets/storyboard/uploads/split-batch-img-1778156964512-13/panel_r2_c2.png",
-          "row": 2,
-          "col": 2,
-          "width": 2752,
-          "height": 1536,
-          "selected": false,
-          "improve4k": false,
-          "splitGrid": false
-        },
-        {
-          "id": "split-img-1778156968177-14-r1c1-1778158756602",
-          "url": "/assets/storyboard/uploads/split-batch-img-1778156968177-14/panel_r1_c1.png",
-          "path": "/assets/storyboard/uploads/split-batch-img-1778156968177-14/panel_r1_c1.png",
-          "row": 1,
-          "col": 1,
-          "width": 2752,
-          "height": 1536,
-          "selected": false,
-          "improve4k": false,
-          "splitGrid": false
-        },
-        {
-          "id": "split-img-1778156968177-14-r1c2-1778158756602",
-          "url": "/assets/storyboard/uploads/split-batch-img-1778156968177-14/panel_r1_c2.png",
-          "path": "/assets/storyboard/uploads/split-batch-img-1778156968177-14/panel_r1_c2.png",
-          "row": 1,
-          "col": 2,
-          "width": 2752,
-          "height": 1536,
-          "selected": false,
-          "improve4k": false,
-          "splitGrid": false
-        },
-        {
-          "id": "split-img-1778156968177-14-r2c1-1778158756602",
-          "url": "/assets/storyboard/uploads/split-batch-img-1778156968177-14/panel_r2_c1.png",
-          "path": "/assets/storyboard/uploads/split-batch-img-1778156968177-14/panel_r2_c1.png",
-          "row": 2,
-          "col": 1,
-          "width": 2752,
-          "height": 1536,
-          "selected": false,
-          "improve4k": false,
-          "splitGrid": false
-        },
-        {
-          "id": "split-img-1778156968177-14-r2c2-1778158756602",
-          "url": "/assets/storyboard/uploads/split-batch-img-1778156968177-14/panel_r2_c2.png",
-          "path": "/assets/storyboard/uploads/split-batch-img-1778156968177-14/panel_r2_c2.png",
-          "row": 2,
-          "col": 2,
-          "width": 2752,
-          "height": 1536,
-          "selected": false,
-          "improve4k": false,
-          "splitGrid": false
-        },
-        {
-          "id": "split-img-1778156923840-1-r1c1-1778160236191",
-          "url": "/assets/storyboard/uploads/split-batch-img-1778156923840-1/panel_r1_c1.png",
-          "path": "/assets/storyboard/uploads/split-batch-img-1778156923840-1/panel_r1_c1.png",
-          "row": 1,
-          "col": 1,
-          "width": 2752,
-          "height": 1536,
-          "selected": false,
-          "improve4k": false,
-          "splitGrid": false
-        },
-        {
-          "id": "split-img-1778156923840-1-r1c2-1778160236191",
-          "url": "/assets/storyboard/uploads/split-batch-img-1778156923840-1/panel_r1_c2.png",
-          "path": "/assets/storyboard/uploads/split-batch-img-1778156923840-1/panel_r1_c2.png",
-          "row": 1,
-          "col": 2,
-          "width": 2752,
-          "height": 1536,
-          "selected": false,
-          "improve4k": false,
-          "splitGrid": false
-        },
-        {
-          "id": "split-img-1778156923840-1-r2c1-1778160236191",
-          "url": "/assets/storyboard/uploads/split-batch-img-1778156923840-1/panel_r2_c1.png",
-          "path": "/assets/storyboard/uploads/split-batch-img-1778156923840-1/panel_r2_c1.png",
-          "row": 2,
-          "col": 1,
-          "width": 2752,
-          "height": 1536,
-          "selected": false,
-          "improve4k": false,
-          "splitGrid": false
-        },
-        {
-          "id": "split-img-1778156923840-1-r2c2-1778160236191",
-          "url": "/assets/storyboard/uploads/split-batch-img-1778156923840-1/panel_r2_c2.png",
-          "path": "/assets/storyboard/uploads/split-batch-img-1778156923840-1/panel_r2_c2.png",
-          "row": 2,
-          "col": 2,
-          "width": 2752,
-          "height": 1536,
-          "selected": false,
-          "improve4k": false,
-          "splitGrid": false
-        }
-      ]
+      "generatedImages": []
     },
     {
       "id": "task-lsijmtc-mouvksj1",
@@ -5091,7 +3155,7 @@
       "skillHint": "Download from PixVerse",
       "status": "pass",
       "createdAt": "2026-05-06T21:24:56.447Z",
-      "updatedAt": "2026-05-06T21:28:15.109Z",
+      "updatedAt": "2026-05-09T02:12:04.199Z",
       "passes": [
         {
           "id": "pass-1778102870631",
@@ -5649,8 +3713,12 @@
           "note": "Downloaded from PixVerse (2026-05-06T21:01:50Z)",
           "selected": false,
           "improve4k": false,
-          "splitGrid": false,
-          "pixverseId": 401364902224341
+          "splitGrid": true,
+          "pixverseId": 401364902224341,
+          "splitMenuOpen": false,
+          "improveMenuOpen": false,
+          "assignMenuOpen": false,
+          "noteActive": false
         },
         {
           "id": "img-1778102715120-3",
@@ -5696,15 +3764,6 @@
           "improve4k": false,
           "splitGrid": false,
           "pixverseId": 401364742004177
-        },
-        {
-          "id": "img-1778102729509-9",
-          "url": "/assets/storyboard/uploads/task-tifiu0i-moukfpbz/pixverse_image_401364739502165_1778102727838.png",
-          "note": "Downloaded from PixVerse (2026-05-06T21:00:31Z)",
-          "selected": false,
-          "improve4k": false,
-          "splitGrid": false,
-          "pixverseId": 401364739502165
         },
         {
           "id": "img-1778102732907-10",
@@ -6183,16 +4242,10 @@
       "prompt": "download the pixverse images  from today 8th May but only created between 19:00 and 20:15 pm ",
       "sceneHint": "",
       "skillHint": "Download from PixVerse",
-      "status": "todo_working",
+      "status": "pass",
       "createdAt": "2026-05-06T20:42:40.235Z",
-      "updatedAt": "2026-05-08T19:50:14.672Z",
+      "updatedAt": "2026-05-09T02:54:51.495Z",
       "passes": [
-        {
-          "id": "pass-1778100837013",
-          "name": "PixVerse Download",
-          "timestamp": "2026-05-06T20:53:57.013Z",
-          "images": []
-        },
         {
           "id": "pass-1778100903352",
           "name": "PixVerse Download",
@@ -6298,10 +4351,54 @@
               "pixverseId": 401353266086635
             }
           ]
+        },
+        {
+          "id": "pass-1778292257764",
+          "name": "PixVerse Download",
+          "timestamp": "2026-05-09T02:04:17.764Z",
+          "images": [
+            {
+              "id": "img-1778292254223-2",
+              "url": "/assets/storyboard/uploads/task-uppsytn-mouixcdn/pixverse_image_401739859272515_1778291698840.png",
+              "note": "",
+              "selected": false,
+              "improve4k": false,
+              "splitGrid": false,
+              "pixverseId": 401739859272515
+            },
+            {
+              "id": "img-1778292257764-3",
+              "url": "/assets/storyboard/uploads/task-uppsytn-mouixcdn/pixverse_image_401739857686235_1778291700908.png",
+              "note": "",
+              "selected": false,
+              "improve4k": false,
+              "splitGrid": false,
+              "pixverseId": 401739857686235
+            }
+          ]
         }
       ],
-      "activePassId": "pass-1778100837013",
-      "generatedImages": []
+      "activePassId": "pass-1778292257764",
+      "generatedImages": [
+        {
+          "id": "img-1778292254223-2",
+          "url": "/assets/storyboard/uploads/task-uppsytn-mouixcdn/pixverse_image_401739859272515_1778291698840.png",
+          "note": "",
+          "selected": false,
+          "improve4k": false,
+          "splitGrid": false,
+          "pixverseId": 401739859272515
+        },
+        {
+          "id": "img-1778292257764-3",
+          "url": "/assets/storyboard/uploads/task-uppsytn-mouixcdn/pixverse_image_401739857686235_1778291700908.png",
+          "note": "",
+          "selected": false,
+          "improve4k": false,
+          "splitGrid": false,
+          "pixverseId": 401739857686235
+        }
+      ]
     },
     {
       "id": "task-n0oy4d4-moug9d32",
@@ -6319,9 +4416,9 @@
       "prompt": "### **Prompt 1/5: \"Desolate Approaches to Shelter\"**\n*(Capturing Aisha, Djinn, and Dora's journey towards the House in the Rocks, with the vast ruins and carved cliff dwellings.)*\n\n```\npremium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric golden hour light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.\n\nCHARACTER LOCKS:\n@image1 = Aisha, 16-year-old human princess, showing a mix of fatigue, wonder, and dawning resolve.\n@image2 = Dora, white panther with golden collar — normal panther size, her height reaches an adult human's hip, displaying wariness and protectiveness.\n@image3 = Djinn, a plasma-form being, ethereal and shimmering, with a sorrowful and guiding demeanor.\n\nLOCATION REFERENCE:\n@image4 = Desolate City Ruins - Overview — (User-provided: A 4-projection grid showing vast, eroded Nabatean-style architecture, sand-swept streets, broken minarets, and towering cliff formations with carved dwellings. References like 395.png and 396.png for visual style, emphasizing the 'rock holes for homes').\n@image5 = House in the Rocks - Exterior Approach — (User-provided: A front view of a winding, eroded staircase carved into a dramatic cliff face, leading up to a \"Second Layer\" dwelling entrance. Reference image 396.png for visual style, focusing on the entrance and the carved steps).\n@image6 = Desolate City Ruins - Midground — (User-provided: A medium wide shot of eroded sandstone structures and distant, rounded, natural rock formations, hinting at ancient habitations and the desolate beauty of the land).\n\nSCENE: Golden hour scene — vast, desolate desert landscape under a fading golden sun.\nAisha, Dora, and the Djinn are navigating the desolate landscape of the city ruins, making their way towards a \"Second Layer\" dwelling in the canyon wall. Aisha is tired but resolute, Dora is suspicious of the unconventional shelter, and the Djinn, burdened by memories, guides them to safety before nightfall.\n\nCreate 2x2 cinematic grid with 4 panels with 3d animated scenes in each one:\n\nPanel 1: Ultra-wide establishing shot (18mm lens, deep DOF). The vast, desolate ruins stretch into the distance, rock formations like fossilized waves under the golden hour light. Aisha (small, center-left) walks with a determined stride, brushing sand from her knees. Dora (right behind her) glances warily at the surroundings, her ears slightly flattened. The Djinn (far right, slightly ahead) floats low, his plasma form shimmering as he leads them up a winding, eroded path towards distant cliff dwellings that look like carved holes in the rock. Long, dramatic shadows emphasize the scale and solitude.\n\nPanel 2: Medium shot (50mm lens, shallow DOF on characters). Aisha is center-frame, pausing on the winding path, her face showing a pensive wonder mixed with fatigue as she scans the horizon towards the ancient, carved rock homes. Dora is close beside her, gently nuzzling Aisha's arm, her golden collar visible, sensing Aisha's mood. The Djinn is slightly behind them, left, his gaze fixed on the desolate landscape, a deep sorrow in his posture. Golden light illuminates their figures against the eroded rock face.\n\nPanel 3: Low-angle medium shot (35mm lens, focus on ascent). The Djinn, still with a sorrowful demeanor, floats slightly above the ground, leading Aisha and Dora up a winding, eroded staircase carved into the rugged, golden cliff face on the left side of the frame. Aisha follows closely, looking up at the ascent towards the 'hole in the rock' dwelling, her determination visible. Dora walks behind Aisha, her head low, sniffing the ancient stone steps suspiciously. The rock formations loom overhead, casting dramatic shadows from the fading sun.\n\nPanel 4: Medium shot (85mm lens, shallow DOF on Dora). Dora stands in the foreground, center-right, ears slightly flattened, her nose to the doorway of the \"House in the Rocks\" dwelling (a carved rock hole), sniffing suspiciously. Her fur bristles slightly. Aisha is in the background, left, entering the doorway, smiling softly, reassuring Dora (\"It's not a hole, Dora. It's a house.\"). The Djinn is visible in the distance, further up the path, looking back at them, his plasma form slightly dimmed in the fading golden light. Detailed rock textures and the carved entrance are prominent.\n\nEnvironment: The vast, desolate ruins of Ramhat Al Jawhar, with eroded Nabatean architecture and towering cliff faces containing carved rock dwellings. A winding, carved sandstone staircase leading up a cliff face to a \"Second Layer\" dwelling entrance. Golden late afternoon light fading into twilight, emphasizing textures and shadows.\n\nAll panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric golden hour light, little tiny dust motes, soft sunrays, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.\n```\n\n---\n\n### **Prompt 2/5: \"Cozy Sanctuary, Lingering Doubts\"**\n*(Capturing Aisha's reflections inside the House in the Rocks, with the starry night view and Niura's concerns.)*\n\n```\npremium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm candlelight and arabesque lamp glow, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.\n\nCHARACTER LOCKS:\n@image1 = Aisha, 16-year-old human princess, displaying a mix of newfound peace, pensive reflection, and growing determination.\n@image2 = Dora, white panther with golden collar — normal panther size, her height reaches an adult human's hip, sleeping peacefully in a corner.\n@image3 = Niura, tiny white snake — small, cute, harmless, witty, curls onto a warm rug, then looks up with concern.\n@image4 = Djinn, a plasma-form being, ethereal and shimmering, implied presence (perhaps as a soft glow) but not central to the shot.\n\nLOCATION REFERENCE:\n@image5 = House in the Rocks - Interior — (User-provided: A 4-projection grid showing the cozy, magically softened interior of a carved rock dwelling: thick woven Bedouin rugs, a small clay fire pit flickering with orange glow, desert plants in clay pots, semi-transparent white curtains in the doorway, and a large opening or window revealing a breathtaking starry night sky).\n@image6 = Starry Night View — (Reference image 401.png: A breathtaking view of real dunes and a semi-dried lake glistening beneath real stars, as seen from the dwelling's opening).\n\nSCENE: Night scene — warm candlelight, shadows dancing on woven rugs, a cool desert breeze drifts through a curtained doorway.\nInside the \"House in the Rocks,\" Aisha finds a moment of peace, gazing at the starry night sky. Niura, initially cozy, voices concerns about the Shadow King and suggests returning home. Aisha, however, feels a fierce resolve and a need to uncover her father's secrets, rejecting fear.\n\nCreate 2x2 cinematic grid with 4 panels with 3d animated scenes in each one:\n\nPanel 1: Medium wide interior shot (35mm lens, shallow DOF on Aisha). Aisha sits cross-legged by a small clay fire pit, hugging her knees, center-left. Her face is illuminated by the flickering orange glow, showing a sense of peace as she looks out through a large opening/window on the right, towards the vast, starry night sky. Thick woven Bedouin rugs cover the stone floor. Dora is curled up, sleeping peacefully, in a corner in the background, far left. Niura is a small curl on the rug near Aisha's feet. Warm candlelight fills the space.\n\nPanel 2: Close-up on Aisha's face (100mm lens, extremely shallow DOF). Her eyes are focused on the constellation of The Hunter visible through the window. Her expression transitions from peaceful admiration to pensive thought, a subtle sadness touching her lips. The faint glow of the fire pit is reflected in her eyes. The blurry background hints at the starry night sky. Soft, warm light from the fire pit highlights her features.\n\nPanel 3: Medium shot with Niura in foreground (85mm lens, focus on Niura). Niura uncoils from the warm rug in the foreground, center-right, her tiny head lifting, looking directly at Aisha with a concerned expression. Aisha is in the mid-ground, left, still by the fire, her hand touching her talisman pensively, her expression darkening slightly as Niura speaks. The background shows the cozy interior with desert plants in clay pots and a soft glow from the fire.\n\nPanel 4: Tight two-shot (50mm lens). Aisha is center-left, her head slightly turned, a fierce spark igniting in her eyes as she looks away from Niura, resolute. Her hand rests firmly on her Talisman. Niura is in the foreground, right, looking up at Aisha with worry, her small body slightly coiled. The warm glow of the fire pit illuminates Aisha's determined expression, casting subtle shadows on Niura. The semi-transparent white curtains are visible in the background doorway, gently drifting, with the breathtaking starry night scene beyond.\n\nEnvironment: Cozy interior of the \"House in the Rocks\" carved dwelling. Thick woven Bedouin rugs, a small clay fire pit with orange glow, desert plants in clay pots. Semi-transparent white curtains in the doorway. A large opening/window revealing a breathtaking starry night scene with dunes and a glistering semi-dried lake. Warm candlelight and arabesque lamp glow, with deep shadows enhancing coziness.\n\nAll panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm candlelight and arabesque lamp glow, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.",
       "sceneHint": "Act 6 - Scene 1 [396-1778040971164.png] | Act 6 - Scene 1 [397-1778040973670.png] | Act 6 - Scene 1 [401-1778040955251.png] | Act 6 - Scene 1 [PixVerse_Image_Effect_prompt_se-exact-img1-im-1778041061397.png] | Act 6 - Scene 1 [PixVerse_Image_Effect_prompt_se-exact-img1-im-2-1778041068133.png] | Act 6 - Scene 1 [PixVerse_Image_Effect_prompt_change-the-tiny-f-1778041091960.png] | characters: Aisha [card] /assets/storyboard/uploads/Aisha-and-Sands-of-Destiny-70-1778041121249.png | characters: Djinn [card] /assets/storyboard/uploads/Plasma-character-1778041170397.png | characters: Djinn [projection] /assets/storyboard/uploads/Plasma-character-Djinn-close-up-1778041175715.png",
       "skillHint": "",
-      "status": "todo",
+      "status": "archived",
       "createdAt": "2026-05-06T04:59:07.483Z",
-      "updatedAt": "2026-05-06T20:40:25.739Z"
+      "updatedAt": "2026-05-09T02:10:14.753Z"
     },
     {
       "id": "task-ger5w2p-motkl2nv",
@@ -16818,7 +14915,7 @@
             {
               "id": "shot-xuhsjb0-moqbrjbi",
               "title": "Shot 5",
-              "prompt": "Create a 2x2 cinematic grid with 4 distinct 3D animated scenes:\n\nSET GEOMETRY LAW: The landscape is dominated by a colossal, ancient, slightly curved stone wall, stretching indefinitely into the horizon, resembling a weathered dam or defensive barrier. Immediately behind this wall, immense golden sand dunes rise and fall. Beyond the dunes, the ornate rooftops, minarets, and battlements of a prosperous arabesque kingdom are visible. Sparse desert flora, including vibrant bougainvillea, dots the foreground dunes and clings to the base of the wall. In the far distance, majestic camel caravans with merchants journey across the sweeping desert.\n\nCAMERA LOCK: The camera is positioned to highlight the grandeur and intricate details of this vast environment.\n\nPanel 1: **ESTABLISHING GRANDEUR** A breathtaking wide shot, captured with a 24mm anamorphic lens, showcasing the monumental scale of the curved stone wall as it cuts across the golden desert. In the deep background, the initial undulations of the towering dunes are visible, with a hint of the kingdom's architecture just peaking over. A tiny caravan of camels is silhouetted against the far horizon.\n*   **Camera:** Wide Shot, Low Angle, 24mm anamorphic lens, deep depth of field to emphasize vastness.\n*   **Lighting:** Volumetric morning light, golden hour glow, backlighting the wall's rugged texture, creating long, soft shadows. Subtle dust motes dance in the sunbeams.\n*   **Composition:** Rule of thirds, with the wall acting as a powerful leading line, drawing the eye towards the distant horizon. The sky is a gradient of soft peach and azure.\n*   **Mood:** Awe-inspiring, ancient, majestic, full of potential.\n\nPanel 2: **TEXTURE AND FRAGILITY** A medium shot, framed with a 50mm prime lens, focusing on a weathered section of the colossal wall in the foreground. Patches of vibrant bougainvillea spill over its base, contrasting with the ancient stone. A single set of recent footprints leads away into the soft sand of the immediate foreground dunes.\n*   **Camera:** Medium Shot, Eye-level, 50mm prime lens, shallow depth of field, focusing sharply on the wall and flowers, with a gentle blur to the immediate background dunes.\n*   **Lighting:** Soft, diffused morning light, with a warm fill light highlighting the texture of the stone and the vivid colors of the flowers. A subtle rim light catches the edge of the bougainvillea.\n*   **Composition:** Close-up on the wall's texture, a diagonal line created by the bougainvillea, providing a sense of natural beauty against human construction.\n*   **Mood:** Intimate, resilient, contrasting strength with delicate beauty.\n\nPanel 3: **PROSPERITY REVEALED** A long shot, using a 100mm telephoto lens, looking over a ridge of golden dunes towards the sprawling, prosperous arabesque kingdom. Ornate rooftops, shimmering minarets, and colorful banners fluttering from high battlements are clearly visible. A network of small, well-tended gardens or courtyards are visible within the city walls.\n*   **Camera:** Long Shot, High Angle, 100mm telephoto lens, compressing the distance, offering a panoramic view of the kingdom. Moderate depth of field.\n*   **Lighting:** Bright, clear morning light, illuminating the architectural details and the vibrant colors of the banners and rooftops. Sunlight glints off reflective surfaces.\n*   **Composition:** The kingdom is nestled within the curve of the distant dunes, framed by a soft, sandy foreground. A sense of discovery and bustling life.\n*   **Mood:** Hopeful, thriving, grand, a beacon in the desert.\n\nPanel 4: **THE JOURNEY CONTINUES** An extreme long shot, captured with a 200mm telephoto lens, featuring a large, organized camel caravan with merchants traversing a vast expanse of distant golden dunes, appearing as tiny, determined silhouettes against the sweeping landscape. The wall is barely visible as a faint line on the far horizon.\n*   **Camera:** Extreme Long Shot, slightly elevated perspective, 200mm telephoto lens, creating a significant compression of distance and emphasizing the vastness of the desert. Deep depth of field, but with atmospheric haze.\n*   **Lighting:** Hazy, atmospheric morning light, creating a sense of scale and depth. The sun's rays cut through the distant air, making the caravan appear almost dreamlike.\n*   **Composition:** The caravan forms a compelling leading line across the lower third of the frame, emphasizing their journey and solitude against the monumental landscape.\n*   **Mood:** Epic, solitary, persevering, the enduring spirit of journey.\n\nStyle: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric morning light, soft depth of field, little tiny dust motes in soft sunrays, expressive animated 3D eyes of all characters (even if not visible, for stylistic consistency), realistic textures, detailed clear emotional staging, high-quality 4K animated movie look, subsurface scattering, cinematic color grading, AAA quality 3D animation, emotional resonance, hyper-detailed, photorealistic rendering.",
+              "prompt": "aisha is walkin out with her white panter form the gate looking comiclaly astonished ant the flying towrds her distressed comical hawk us e refences image . cinematic 3d aniamted. movie AAA  , depth of field, 4k",
               "dialogue": "",
               "actor": "",
               "tags": [],
@@ -16948,22 +15045,43 @@
                   "type": "image",
                   "url": "/assets/storyboard/uploads/cropped-1778279290543-1778279290604.png",
                   "fileName": "cropped-1778279290613.png"
-                },
-                {
-                  "id": "media-crop-1778279325203",
-                  "type": "image",
-                  "url": "/assets/storyboard/uploads/cropped-1778279325159-1778279325198.png",
-                  "fileName": "cropped-1778279325203.png"
-                },
-                {
-                  "id": "media-crop-1778279893495",
-                  "type": "image",
-                  "url": "/assets/storyboard/uploads/cropped-1778279893460-1778279893488.png",
-                  "fileName": "cropped-1778279893495.png"
                 }
               ],
               "expanded": true,
               "selectedMediaId": "media-gpt-image-2.0-1778259130576-0"
+            },
+            {
+              "id": "shot-auto-1778293444704",
+              "title": "Shot 5 (generated)",
+              "prompt": "Proceeded from shot [Shot 5] via enhance/edit",
+              "media": [
+                {
+                  "id": "media-gemini-3.1-flash-1778293444696-0",
+                  "type": "image",
+                  "url": "/assets/storyboard/uploads/note-edit-1778293440701.png?t=1778293444696",
+                  "fileName": "gemini-3.1-flash-1778293444696.png",
+                  "localPath": "/Users/vaquita/Downloads/aisha/aisha-cannes-showcase/public/assets/storyboard/uploads/note-edit-1778293440701.png"
+                }
+              ],
+              "selectedMediaId": "media-gemini-3.1-flash-1778293444696-0",
+              "actor": "",
+              "dialogue": ""
+            },
+            {
+              "id": "shot-auto-1778293443436",
+              "title": "Shot 5 (generated)",
+              "prompt": "Proceeded from shot [Shot 5] via enhance/edit",
+              "media": [],
+              "actor": "",
+              "dialogue": ""
+            },
+            {
+              "id": "shot-auto-1778293420613",
+              "title": "Shot 5 (generated)",
+              "prompt": "Proceeded from shot [Shot 5] via enhance/edit",
+              "media": [],
+              "actor": "",
+              "dialogue": ""
             },
             {
               "id": "shot-auto-1778275234608",

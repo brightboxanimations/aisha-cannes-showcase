@@ -1,0 +1,170 @@
+{
+  "id": "task-uppsytn-mouixcdn",
+  "title": "Task 42",
+  "prompt": "download the pixverse images  from today 8th May but only created between 19:00 and 20:15 pm ",
+  "sceneHint": "",
+  "skillHint": "Download from PixVerse",
+  "status": "pass",
+  "createdAt": "2026-05-06T20:42:40.235Z",
+  "updatedAt": "2026-05-09T02:05:31.434Z",
+  "passes": [
+    {
+      "id": "pass-1778100837013",
+      "name": "PixVerse Download",
+      "timestamp": "2026-05-06T20:53:57.013Z",
+      "images": []
+    },
+    {
+      "id": "pass-1778100903352",
+      "name": "PixVerse Download",
+      "timestamp": "2026-05-06T20:55:03.352Z",
+      "images": [
+        {
+          "id": "img-1778100878181-0",
+          "url": "/assets/storyboard/uploads/task-uppsytn-mouixcdn/pixverse_image_401361970206552_1778100877675.png",
+          "note": "Downloaded from PixVerse (2026-05-06T20:37:59Z)",
+          "selected": false,
+          "improve4k": false,
+          "splitGrid": false,
+          "pixverseId": 401361970206552
+        },
+        {
+          "id": "img-1778100880236-1",
+          "url": "/assets/storyboard/uploads/task-uppsytn-mouixcdn/pixverse_image_401361866572046_1778100879592.png",
+          "note": "Downloaded from PixVerse (2026-05-06T20:37:08Z)",
+          "selected": false,
+          "improve4k": false,
+          "splitGrid": false,
+          "pixverseId": 401361866572046
+        },
+        {
+          "id": "img-1778100883608-2",
+          "url": "/assets/storyboard/uploads/task-uppsytn-mouixcdn/pixverse_image_401361769820443_1778100881694.png",
+          "note": "Downloaded from PixVerse (2026-05-06T20:36:21Z)",
+          "selected": false,
+          "improve4k": false,
+          "splitGrid": false,
+          "pixverseId": 401361769820443
+        },
+        {
+          "id": "img-1778100885758-3",
+          "url": "/assets/storyboard/uploads/task-uppsytn-mouixcdn/pixverse_image_401359514314154_1778100885263.png",
+          "note": "Downloaded from PixVerse (2026-05-06T20:17:59Z)",
+          "selected": false,
+          "improve4k": false,
+          "splitGrid": false,
+          "pixverseId": 401359514314154
+        },
+        {
+          "id": "img-1778100887820-4",
+          "url": "/assets/storyboard/uploads/task-uppsytn-mouixcdn/pixverse_image_401359448893299_1778100887141.png",
+          "note": "Downloaded from PixVerse (2026-05-06T20:17:27Z)",
+          "selected": false,
+          "improve4k": false,
+          "splitGrid": false,
+          "pixverseId": 401359448893299
+        },
+        {
+          "id": "img-1778100891546-5",
+          "url": "/assets/storyboard/uploads/task-uppsytn-mouixcdn/pixverse_image_401359385492841_1778100889452.png",
+          "note": "Downloaded from PixVerse (2026-05-06T20:16:56Z)",
+          "selected": false,
+          "improve4k": false,
+          "splitGrid": false,
+          "pixverseId": 401359385492841
+        },
+        {
+          "id": "img-1778100894536-6",
+          "url": "/assets/storyboard/uploads/task-uppsytn-mouixcdn/pixverse_image_401356175001711_1778100892895.png",
+          "note": "Downloaded from PixVerse (2026-05-06T19:50:49Z)",
+          "selected": false,
+          "improve4k": false,
+          "splitGrid": false,
+          "pixverseId": 401356175001711
+        },
+        {
+          "id": "img-1778100896254-7",
+          "url": "/assets/storyboard/uploads/task-uppsytn-mouixcdn/pixverse_image_401355241275690_1778100896041.png",
+          "note": "Downloaded from PixVerse (2026-05-06T19:43:13Z)",
+          "selected": false,
+          "improve4k": false,
+          "splitGrid": false,
+          "pixverseId": 401355241275690
+        },
+        {
+          "id": "img-1778100898167-8",
+          "url": "/assets/storyboard/uploads/task-uppsytn-mouixcdn/pixverse_image_401355240929548_1778100897634.png",
+          "note": "Downloaded from PixVerse (2026-05-06T19:43:13Z)",
+          "selected": false,
+          "improve4k": false,
+          "splitGrid": false,
+          "pixverseId": 401355240929548
+        },
+        {
+          "id": "img-1778100899734-9",
+          "url": "/assets/storyboard/uploads/task-uppsytn-mouixcdn/pixverse_image_401355240923639_1778100899515.png",
+          "note": "Downloaded from PixVerse (2026-05-06T19:43:13Z)",
+          "selected": false,
+          "improve4k": false,
+          "splitGrid": false,
+          "pixverseId": 401355240923639
+        },
+        {
+          "id": "img-1778100903352-10",
+          "url": "/assets/storyboard/uploads/task-uppsytn-mouixcdn/pixverse_image_401353266086635_1778100901297.png",
+          "note": "Downloaded from PixVerse (2026-05-06T19:27:08Z)",
+          "selected": false,
+          "improve4k": false,
+          "splitGrid": false,
+          "pixverseId": 401353266086635
+        }
+      ]
+    },
+    {
+      "id": "pass-1778292257764",
+      "name": "PixVerse Download",
+      "timestamp": "2026-05-09T02:04:17.764Z",
+      "images": [
+        {
+          "id": "img-1778292254223-2",
+          "url": "/assets/storyboard/uploads/task-uppsytn-mouixcdn/pixverse_image_401739859272515_1778291698840.png",
+          "note": "",
+          "selected": false,
+          "improve4k": false,
+          "splitGrid": false,
+          "pixverseId": 401739859272515
+        },
+        {
+          "id": "img-1778292257764-3",
+          "url": "/assets/storyboard/uploads/task-uppsytn-mouixcdn/pixverse_image_401739857686235_1778291700908.png",
+          "note": "",
+          "selected": false,
+          "improve4k": false,
+          "splitGrid": false,
+          "pixverseId": 401739857686235
+        }
+      ]
+    }
+  ],
+  "activePassId": "pass-1778292257764",
+  "generatedImages": [
+    {
+      "id": "img-1778292254223-2",
+      "url": "/assets/storyboard/uploads/task-uppsytn-mouixcdn/pixverse_image_401739859272515_1778291698840.png",
+      "note": "",
+      "selected": false,
+      "improve4k": false,
+      "splitGrid": false,
+      "pixverseId": 401739859272515
+    },
+    {
+      "id": "img-1778292257764-3",
+      "url": "/assets/storyboard/uploads/task-uppsytn-mouixcdn/pixverse_image_401739857686235_1778291700908.png",
+      "note": "",
+      "selected": false,
+      "improve4k": false,
+      "splitGrid": false,
+      "pixverseId": 401739857686235
+    }
+  ]
+}

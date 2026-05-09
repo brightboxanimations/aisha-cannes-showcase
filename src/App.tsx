@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import type { CSSProperties, ChangeEvent, DragEvent, MouseEvent } from 'react'
 import { chatWithAgent, generatePrompt, refinePrompt, type AgentMessage } from './gemini-agent'
+import { CanvasMode } from './canvas/CanvasMode'
 import './App.css'
 
 type BookPage = {
@@ -990,8 +991,12 @@ function App() {
 }
 
 /* Lightbox Skills Store Modal — exact replica of Director's Cut Skills Store */
-function LbSkillStoreModal({ lbAvailableSkills, lbAttachedSkills, setLbAttachedSkills, setLbSkillOpen, setLbAvailableSkills, lbSkillsPage, setLbSkillsPage, onInjectPrompt }: { lbAvailableSkills: any[]; lbAttachedSkills: { id: string; name: string }[]; setLbAttachedSkills: React.Dispatch<React.SetStateAction<{ id: string; name: string }[]>>; setLbSkillOpen: (v: boolean) => void; setLbAvailableSkills: React.Dispatch<React.SetStateAction<any[]>>; lbSkillsPage: number; setLbSkillsPage: (v: number) => void; onInjectPrompt?: (text: string) => void }) {
+function LbSkillStoreModal({ lbAvailableSkills, lbAttachedSkills, setLbAttachedSkills, setLbSkillOpen, setLbAvailableSkills, lbSkillsPage, setLbSkillsPage, onInjectPrompt, compact }: { lbAvailableSkills: any[]; lbAttachedSkills: { id: string; name: string }[]; setLbAttachedSkills: React.Dispatch<React.SetStateAction<{ id: string; name: string }[]>>; setLbSkillOpen: (v: boolean) => void; setLbAvailableSkills: React.Dispatch<React.SetStateAction<any[]>>; lbSkillsPage: number; setLbSkillsPage: (v: number) => void; onInjectPrompt?: (text: string) => void; compact?: boolean }) {
   const [storeTab, setStoreTab] = useState<'skills' | 'prompts'>('skills')
+  const [lbEditPromptTitle, setLbEditPromptTitle] = useState('')
+  const [lbEditPromptText, setLbEditPromptText] = useState('')
+  const [lbEditPromptId, setLbEditPromptId] = useState<string | null>(null)
+  const [lbPromptAiImproving, setLbPromptAiImproving] = useState(false)
   const PROMPT_SVGS = [
     { color: '#e8c547', d: 'M4 4h16v16H4zM4 12h16M12 4v16' },
     { color: '#47c5e8', d: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0h4' },
@@ -1029,7 +1034,7 @@ function LbSkillStoreModal({ lbAvailableSkills, lbAttachedSkills, setLbAttachedS
 
   return (
     <div style={{ position: 'fixed', inset: 0, zIndex: 9999, background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', display: 'flex', alignItems: 'center', justifyContent: 'center', animation: 'fadeIn 0.3s ease' }} onClick={() => setLbSkillOpen(false)}>
-      <div onClick={(e) => e.stopPropagation()} style={{ width: 'min(90vw, 900px)', maxHeight: '85vh', background: 'linear-gradient(145deg, rgba(20,20,30,0.95), rgba(10,10,20,0.98))', border: '1px solid rgba(212,175,55,0.15)', borderRadius: '1.5rem', overflow: 'hidden', display: 'flex', flexDirection: 'column', boxShadow: '0 30px 80px rgba(0,0,0,0.6), 0 0 40px rgba(212,175,55,0.08), inset 0 1px 0 rgba(255,255,255,0.05)' }}>
+      <div onClick={(e) => e.stopPropagation()} style={{ width: compact ? 'min(90vw, 560px)' : 'min(90vw, 900px)', maxHeight: compact ? '75vh' : '85vh', background: 'linear-gradient(145deg, rgba(20,20,30,0.95), rgba(10,10,20,0.98))', border: '1px solid rgba(212,175,55,0.15)', borderRadius: '1.5rem', overflow: 'hidden', display: 'flex', flexDirection: 'column', boxShadow: '0 30px 80px rgba(0,0,0,0.6), 0 0 40px rgba(212,175,55,0.08), inset 0 1px 0 rgba(255,255,255,0.05)' }}>
         {/* Header with Tabs */}
         <div style={{ padding: '1.2rem 2rem 0', display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -1045,19 +1050,91 @@ function LbSkillStoreModal({ lbAvailableSkills, lbAttachedSkills, setLbAttachedS
         {/* Content area */}
         <div style={{ flex: 1, overflowY: 'auto', padding: '1.5rem 2rem' }}>
         {storeTab === 'prompts' ? (
-          /* ── Prompt Blueprints Tab ── */
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem' }}>
-            {BUILTIN_PROMPTS.map((bp) => {
-              const ic = PROMPT_SVGS[bp.icon % PROMPT_SVGS.length]
-              return (
-                <button key={bp.id} type="button" onClick={() => onInjectPrompt?.(bp.text)} style={{ width: '100%', minHeight: '140px', background: `rgba(${parseInt(ic.color.slice(1,3),16)},${parseInt(ic.color.slice(3,5),16)},${parseInt(ic.color.slice(5,7),16)},0.06)`, backdropFilter: 'blur(16px)', border: `1px solid ${ic.color}44`, borderRadius: '1rem', padding: '1.4rem 1rem', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.7rem', transition: 'all 0.3s', textAlign: 'center', boxShadow: `0 0 20px ${ic.color}22` }}>
-                  <svg viewBox="0 0 24 24" fill="none" stroke={ic.color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ width: '36px', height: '36px' }}><path d={ic.d} /></svg>
-                  <div style={{ fontSize: '0.82rem', fontWeight: 600, color: 'white' }}>{bp.name}</div>
-                  <div style={{ fontSize: '0.68rem', color: 'rgba(255,255,255,0.35)', lineHeight: 1.4 }}>{bp.desc}</div>
-                  <div style={{ fontSize: '0.6rem', color: 'rgba(64,255,156,0.6)', marginTop: 'auto' }}>Click to inject →</div>
+          /* ── Prompt Blueprints Tab with Edit/Create ── */
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
+              <p style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.35)', textTransform: 'uppercase', letterSpacing: '1.5px', fontWeight: 600, margin: 0 }}>Prompt Blueprints</p>
+              {!compact && <button type="button" onClick={() => { setLbEditPromptId('__new__'); setLbEditPromptTitle(''); setLbEditPromptText('') }} style={{ padding: '0.35rem 0.8rem', borderRadius: '0.5rem', border: '1px solid rgba(64,255,156,0.25)', background: 'rgba(64,255,156,0.06)', color: 'rgba(100,255,180,0.75)', cursor: 'pointer', fontSize: '0.72rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.3rem' }}><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Create New</button>}
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: compact ? 'repeat(3, 1fr)' : 'repeat(3, 1fr)', gap: compact ? '0.6rem' : '1rem', marginBottom: compact ? '1rem' : '2rem' }}>
+              {BUILTIN_PROMPTS.map((bp) => {
+                const ic = PROMPT_SVGS[bp.icon % PROMPT_SVGS.length]
+                return (
+                  <button key={bp.id} type="button" onClick={() => { if (compact && onInjectPrompt) { onInjectPrompt(bp.text); return } }} style={{ width: '100%', aspectRatio: '16/9', background: lbEditPromptId === bp.id ? `rgba(${parseInt(ic.color.slice(1,3),16)},${parseInt(ic.color.slice(3,5),16)},${parseInt(ic.color.slice(5,7),16)},0.08)` : `rgba(${parseInt(ic.color.slice(1,3),16)},${parseInt(ic.color.slice(3,5),16)},${parseInt(ic.color.slice(5,7),16)},0.06)`, backdropFilter: 'blur(16px)', border: lbEditPromptId === bp.id ? `1px solid ${ic.color}88` : `1px solid ${ic.color}44`, borderRadius: compact ? '0.75rem' : '1rem', padding: compact ? '0.6rem 0.5rem' : '1rem 0.8rem', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: compact ? '0.3rem' : '0.5rem', transition: 'all 0.3s', textAlign: 'center', boxShadow: lbEditPromptId === bp.id ? `0 0 24px ${ic.color}44` : `0 0 20px ${ic.color}22`, transform: lbEditPromptId === bp.id ? 'scale(1.04)' : 'scale(1)', position: 'relative' }}>
+                    <svg viewBox="0 0 24 24" fill="none" stroke={ic.color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ width: compact ? '22px' : '36px', height: compact ? '22px' : '36px' }}><path d={ic.d} /></svg>
+                    <div style={{ fontSize: compact ? '0.7rem' : '0.78rem', fontWeight: 600, color: 'white', lineHeight: 1.3, minHeight: compact ? 'calc(0.7rem * 1.3 * 2)' : 'calc(0.78rem * 1.3 * 2)', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' as any, overflow: 'hidden' }}>{bp.name}</div>
+                    {!compact && <div style={{ fontSize: '0.62rem', color: 'rgba(255,255,255,0.3)', lineHeight: 1.3, minHeight: 'calc(0.62rem * 1.3 * 2)', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' as any, overflow: 'hidden' }}>{bp.desc}</div>}
+                    {!compact && <div className="prompt-edit-icon" onClick={(e) => { e.stopPropagation(); setLbEditPromptId(bp.id); setLbEditPromptTitle(bp.name); setLbEditPromptText(bp.text) }} style={{ position: 'absolute', top: '0.4rem', right: '0.4rem', width: '1.6rem', height: '1.6rem', borderRadius: '50%', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', display: 'grid', placeItems: 'center', opacity: 0, transition: 'opacity 0.2s', cursor: 'pointer' }}><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.6)" strokeWidth="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div>}
+                  </button>
+                )
+              })}
+              {/* Upload prompt file */}
+              {!compact && <label style={{ background: 'rgba(255,255,255,0.015)', border: '1px dashed rgba(255,255,255,0.1)', borderRadius: '1rem', aspectRatio: '16/9', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', textAlign: 'center' }}>
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.3)" strokeWidth="1.5" strokeLinecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="17 8 12 3 7 8" /><line x1="12" y1="3" x2="12" y2="15" /></svg>
+                <div style={{ fontSize: '0.82rem', fontWeight: 600, color: 'rgba(255,255,255,0.35)' }}>Upload Prompt</div>
+                <div style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.2)' }}>.json or .md</div>
+                <input type="file" accept=".json,.md" style={{ display: 'none' }} onChange={(e) => {
+                  const file = e.target.files?.[0]; if (!file) return
+                  const reader = new FileReader()
+                  reader.onload = () => {
+                    try {
+                      if (file.name.endsWith('.json')) {
+                        const p = JSON.parse(reader.result as string)
+                        setLbEditPromptTitle(p.name || file.name); setLbEditPromptText(p.text || p.fullText || p.description || '')
+                      } else {
+                        setLbEditPromptTitle(file.name.replace(/\.[^.]+$/, '')); setLbEditPromptText(reader.result as string)
+                      }
+                    } catch { setLbEditPromptTitle(file.name); setLbEditPromptText(reader.result as string || '') }
+                  }
+                  reader.readAsText(file)
+                  e.target.value = ''
+                }} />
+              </label>}
+            </div>
+            {/* Create / Edit Prompt — hidden in compact mode */}
+            {!compact && lbEditPromptId && <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '1.5rem' }}>
+              <p style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.35)', textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: '0.8rem', fontWeight: 600 }}>
+                {lbEditPromptId === '__new__' ? 'Create New Prompt' : 'Edit Prompt'}
+                <button type="button" onClick={() => { setLbEditPromptId(null); setLbEditPromptTitle(''); setLbEditPromptText('') }} style={{ marginLeft: '0.8rem', background: 'none', border: 'none', color: 'rgba(255,255,255,0.3)', cursor: 'pointer', fontSize: '0.7rem' }}>Cancel</button>
+              </p>
+              <input value={lbEditPromptTitle} onChange={(e) => setLbEditPromptTitle(e.target.value)} placeholder="Prompt title (required)" style={{ width: '100%', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '0.5rem', color: 'white', padding: '0.6rem 1rem', fontSize: '0.85rem', marginBottom: '0.5rem', outline: 'none', fontFamily: 'inherit' }} />
+              <textarea value={lbEditPromptText} onChange={(e) => setLbEditPromptText(e.target.value)} placeholder="Write your prompt template here..." style={{ width: '100%', minHeight: '120px', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '0.75rem', color: 'white', padding: '0.8rem 1rem', fontSize: '0.82rem', resize: 'vertical', fontFamily: 'inherit', lineHeight: 1.5, outline: 'none' }} />
+              <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.6rem', flexWrap: 'wrap', alignItems: 'center' }}>
+                {/* AI Improve */}
+                <button type="button" disabled={lbPromptAiImproving || !lbEditPromptText.trim()} onClick={async () => {
+                  if (!lbEditPromptText.trim()) return
+                  setLbPromptAiImproving(true)
+                  try {
+                    const { sendToGemini } = await import('./gemini-agent')
+                    const result = await sendToGemini(`Improve this prompt for cinematic AI image generation. Make it more detailed, vivid and precise. Return ONLY the improved text:\n\n${lbEditPromptText}`)
+                    if (result.text) setLbEditPromptText(result.text)
+                  } catch { } finally { setLbPromptAiImproving(false) }
+                }} style={{ padding: '0.45rem 0.8rem', borderRadius: '0.5rem', border: '1px solid rgba(156,64,255,0.25)', background: 'rgba(156,64,255,0.06)', color: lbPromptAiImproving ? 'rgba(200,160,255,0.5)' : 'rgba(200,160,255,0.75)', cursor: lbPromptAiImproving ? 'wait' : 'pointer', fontSize: '0.78rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14l-5-4.87 6.91-1.01L12 2z" /></svg>
+                  {lbPromptAiImproving ? 'Improving...' : 'Improve with AI'}
                 </button>
-              )
-            })}
+                <div style={{ flex: 1 }} />
+                {/* Use / Inject prompt */}
+                <button type="button" disabled={!lbEditPromptText.trim()} onClick={() => {
+                  onInjectPrompt?.(lbEditPromptText)
+                  setLbEditPromptTitle(''); setLbEditPromptText(''); setLbEditPromptId(null)
+                }} style={{ padding: '0.45rem 0.8rem', borderRadius: '0.5rem', border: `1px solid ${!lbEditPromptText.trim() ? 'rgba(64,255,156,0.15)' : 'rgba(64,255,156,0.3)'}`, background: 'rgba(64,255,156,0.06)', color: !lbEditPromptText.trim() ? 'rgba(100,255,180,0.3)' : 'rgba(100,255,180,0.8)', cursor: !lbEditPromptText.trim() ? 'not-allowed' : 'pointer', fontSize: '0.78rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="20 6 9 17 4 12" /></svg>
+                  Use Prompt
+                </button>
+                {/* Save as skill file */}
+                <button type="button" disabled={!lbEditPromptTitle.trim() || !lbEditPromptText.trim()} onClick={async () => {
+                  const slug = lbEditPromptTitle.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').substring(0, 40)
+                  const newPrompt = { id: `prompt-${slug || 'custom'}-${Date.now()}`, name: lbEditPromptTitle.trim(), description: lbEditPromptText.substring(0, 200), fullText: lbEditPromptText, text: lbEditPromptText, iconIdx: Math.floor(Math.random() * 9), createdAt: new Date().toISOString() }
+                  await fetch('/api/skills/save', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(newPrompt) })
+                  setLbAvailableSkills(prev => [...prev, newPrompt])
+                  setLbEditPromptTitle(''); setLbEditPromptText(''); setLbEditPromptId(null)
+                }} style={{ padding: '0.45rem 0.8rem', borderRadius: '0.5rem', border: `1px solid ${(!lbEditPromptTitle.trim() || !lbEditPromptText.trim()) ? 'rgba(64,156,255,0.15)' : 'rgba(64,156,255,0.3)'}`, background: 'rgba(64,156,255,0.06)', color: (!lbEditPromptTitle.trim() || !lbEditPromptText.trim()) ? 'rgba(120,180,255,0.3)' : 'rgba(120,180,255,0.8)', cursor: (!lbEditPromptTitle.trim() || !lbEditPromptText.trim()) ? 'not-allowed' : 'pointer', fontSize: '0.78rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" /><polyline points="17 21 17 13 7 13 7 21" /></svg>
+                  Save as Skill
+                </button>
+              </div>
+            </div>}
           </div>
         ) : (
           /* ── Skills Tab ── */
@@ -1078,7 +1155,7 @@ function LbSkillStoreModal({ lbAvailableSkills, lbAttachedSkills, setLbAttachedS
               </div>
             )}
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', marginBottom: '2rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: compact ? 'repeat(3, 1fr)' : 'repeat(3, 1fr)', gap: compact ? '0.6rem' : '1rem', marginBottom: compact ? '1rem' : '2rem' }}>
             {pageSkills.map((skill, sliceIdx) => {
               const idx = page === 0 ? sliceIdx : p1Count + (page - 1) * 6 + sliceIdx
               const isSelected = lbAttachedSkills.some(s => s.id === skill.id)
@@ -1087,13 +1164,13 @@ function LbSkillStoreModal({ lbAvailableSkills, lbAttachedSkills, setLbAttachedS
                 <button key={skill.id} type="button" onClick={() => {
                   if (isSelected) { setLbAttachedSkills(prev => prev.filter(s => s.id !== skill.id)) }
                   else { setLbAttachedSkills(prev => [...prev, { id: skill.id, name: skill.name }]) }
-                }} style={{ width: '100%', minHeight: '140px', background: isSelected ? `rgba(${parseInt(ic.color.slice(1,3),16)},${parseInt(ic.color.slice(3,5),16)},${parseInt(ic.color.slice(5,7),16)},0.08)` : 'rgba(255,255,255,0.015)', backdropFilter: 'blur(16px)', border: `1px solid ${isSelected ? ic.color + '66' : 'rgba(255,255,255,0.06)'}`, borderRadius: '1rem', padding: '1.4rem 1rem', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.7rem', transition: 'all 0.35s cubic-bezier(0.4,0,0.2,1)', textAlign: 'center', position: 'relative', overflow: 'hidden', boxShadow: isSelected ? `0 0 24px ${ic.color}33` : '0 2px 12px rgba(0,0,0,0.3)', transform: isSelected ? 'scale(1.04)' : 'scale(1)' }}>
-                  <div style={{ position: 'absolute', bottom: '-30px', left: '50%', transform: 'translateX(-50%)', width: '80%', height: '60px', borderRadius: '50%', background: `radial-gradient(ellipse, ${ic.color}18, transparent 70%)`, pointerEvents: 'none', filter: 'blur(8px)' }} />
-                  <div style={{ width: isSelected ? '44px' : '36px', height: isSelected ? '44px' : '36px', transition: 'all 0.3s ease', filter: isSelected ? `drop-shadow(0 0 10px ${ic.color})` : 'none' }}>
+                }} style={{ width: '100%', aspectRatio: '16/9', background: isSelected ? `rgba(${parseInt(ic.color.slice(1,3),16)},${parseInt(ic.color.slice(3,5),16)},${parseInt(ic.color.slice(5,7),16)},0.08)` : 'rgba(255,255,255,0.015)', backdropFilter: 'blur(16px)', border: `1px solid ${isSelected ? ic.color + '66' : 'rgba(255,255,255,0.06)'}`, borderRadius: compact ? '0.75rem' : '1rem', padding: compact ? '0.6rem 0.5rem' : '1.4rem 1rem', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: compact ? '0.3rem' : '0.7rem', transition: 'all 0.35s cubic-bezier(0.4,0,0.2,1)', textAlign: 'center', position: 'relative', overflow: 'hidden', boxShadow: isSelected ? `0 0 24px ${ic.color}33` : '0 2px 12px rgba(0,0,0,0.3)', transform: isSelected ? 'scale(1.04)' : 'scale(1)' }}>
+                  {!compact && <div style={{ position: 'absolute', bottom: '-30px', left: '50%', transform: 'translateX(-50%)', width: '80%', height: '60px', borderRadius: '50%', background: `radial-gradient(ellipse, ${ic.color}18, transparent 70%)`, pointerEvents: 'none', filter: 'blur(8px)' }} />}
+                  <div style={{ width: compact ? (isSelected ? '24px' : '22px') : (isSelected ? '44px' : '36px'), height: compact ? (isSelected ? '24px' : '22px') : (isSelected ? '44px' : '36px'), transition: 'all 0.3s ease', filter: isSelected ? `drop-shadow(0 0 10px ${ic.color})` : 'none' }}>
                     <svg viewBox="0 0 24 24" fill="none" stroke={ic.color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ width: '100%', height: '100%' }}><path d={ic.d} /></svg>
                   </div>
-                  <div style={{ fontSize: '0.78rem', fontWeight: 600, color: isSelected ? 'white' : 'rgba(255,255,255,0.75)', lineHeight: 1.3, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{skill.name}</div>
-                  <div style={{ fontSize: '0.68rem', color: 'rgba(255,255,255,0.3)', lineHeight: 1.4, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{skill.description?.substring(0, 80) || ''}</div>
+                  <div style={{ fontSize: compact ? '0.7rem' : '0.78rem', fontWeight: 600, color: isSelected ? 'white' : 'rgba(255,255,255,0.75)', lineHeight: 1.3, minHeight: compact ? 'calc(0.7rem * 1.3 * 2)' : 'calc(0.78rem * 1.3 * 2)', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' as any, overflow: 'hidden' }}>{skill.name}</div>
+                  {!compact && <div style={{ fontSize: '0.68rem', color: 'rgba(255,255,255,0.3)', lineHeight: 1.4, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{skill.description?.substring(0, 80) || ''}</div>}
                   {isSelected && <div style={{ position: 'absolute', top: '0.5rem', left: '0.5rem' }}><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={ic.color} strokeWidth="2.5"><polyline points="20 6 9 17 4 12" /></svg></div>}
                 </button>
               )
@@ -1292,7 +1369,7 @@ function StoryboardWorkspace() {
   const [storyboard, setStoryboard] = useState<StoryboardData>(createDefaultStoryboard)
   const [activeActId, setActiveActId] = useState('act-1')
   const [activeSceneByAct, setActiveSceneByAct] = useState<Record<string, string>>({})
-  const [workspaceMode, setWorkspaceMode] = useState<'storyboard' | StoryboardResourceType | 'agent' | 'moodboard'>('storyboard')
+  const [workspaceMode, setWorkspaceMode] = useState<'storyboard' | StoryboardResourceType | 'agent' | 'moodboard' | 'canvas'>('storyboard')
   const [newResourceName, setNewResourceName] = useState('')
   const [agentDraft, setAgentDraft] = useState({ title: '', sceneHint: '', skillHint: '', prompt: '' })
   const [lightbox, setLightbox] = useState<{ media: StoryboardMedia; allMedia: StoryboardMedia[]; shotId: string; actId: string; sceneId: string; mode: StoryboardSequenceMode } | null>(null)
@@ -1699,10 +1776,19 @@ function StoryboardWorkspace() {
             <h1>Director's Cut</h1>
             <p>Write detailed prompts, orchestrate the AI generation pipeline, review assets dynamically, and select the final cuts for the cinematic storyboard.</p>
           </div>
+        ) : workspaceMode === 'canvas' ? (
+          <div>
+            <p className="eyebrow">
+              <button className="back-to-storyboard-btn" onClick={() => setWorkspaceMode('storyboard')} style={{ background: 'transparent', border: '1px solid rgba(255,255,255,0.2)', color: 'var(--cream)', borderRadius: '999px', padding: '0.2rem 0.8rem', cursor: 'pointer', marginRight: '1rem', transition: 'all 0.2s', fontSize: '0.8rem' }}>← Back</button>
+              Full Canvas Mode
+            </p>
+            <h1>Infinite cinematic node canvas</h1>
+            <p>Build image, video, audio, document, and reference graphs on a separate Unreal-style canvas without touching Director's Cut.</p>
+          </div>
         ) : (
           <div>
             <p className="eyebrow">Production board</p>
-            <h1>Act-by-act cinematic storyboard</h1>
+            <h1>FILM STORYBOARD</h1>
             <p>Upload full-quality images or videos, choose winning alternates, write prompts and dialogue, then share the live board through your ngrok URL while this server is running.</p>
           </div>
         )}
@@ -1719,6 +1805,15 @@ function StoryboardWorkspace() {
               <LibraryIcon type={type} />
             </button>
           ))}
+          <button
+            aria-label="Open full canvas mode"
+            className={`library-launcher canvas ${workspaceMode === 'canvas' ? 'is-active' : ''}`}
+            onClick={() => setWorkspaceMode(workspaceMode === 'canvas' ? 'storyboard' : 'canvas')}
+            title="Full Canvas Mode"
+            type="button"
+          >
+            <CinematicCanvasIcon />
+          </button>
           <button
             aria-label="Open moodboard canvas"
             className={`library-launcher moodboards ${workspaceMode === 'moodboard' ? 'is-active' : ''}`}
@@ -1760,7 +1855,9 @@ function StoryboardWorkspace() {
           </aside>
         )}
 
-        {workspaceMode === 'agent' ? (
+        {workspaceMode === 'canvas' ? (
+          <CanvasMode onBack={() => setWorkspaceMode('storyboard')} />
+        ) : workspaceMode === 'agent' ? (
           <AgentInbox
             draft={agentDraft}
             onAdd={addAgentTask}
@@ -2602,7 +2699,7 @@ function StoryboardWorkspace() {
                 const files = Array.from(e.target.files || []).slice(0, 8 - lbAttachments.length)
                 files.forEach(file => {
                   const formData = new FormData(); formData.append('file', file)
-                  fetch('/api/storyboard/upload', { method: 'POST', body: formData }).then(r => r.json()).then(d => { if (d.url && lbAttachments.length < 8) { const cacheBusted = d.url + '?t=' + Date.now(); setLbAttachments(prev => prev.length < 8 ? [...prev, cacheBusted] : prev) } }).catch(() => {})
+                  fetch('/api/storyboard/upload', { method: 'POST', body: formData }).then(r => r.json()).then(d => { if (d.url && lbAttachments.length < 8) { setLbAttachments(prev => prev.length < 8 ? [...prev, d.url] : prev) } }).catch(() => {})
                 })
                 e.target.value = ''
               }} />
@@ -2771,6 +2868,20 @@ function AgentIcon() {
       <line x1="7.5" y1="11" x2="16.5" y2="11" />
       <line x1="6" y1="12.5" x2="6" y2="16" />
       <line x1="18" y1="12.5" x2="18" y2="16" />
+    </svg>
+  )
+}
+
+function CinematicCanvasIcon() {
+  return (
+    <svg viewBox="0 0 64 64" aria-hidden="true">
+      <path d="M10 26h44v26H10z" />
+      <path d="M12 12l38-6 4 14-38 7z" />
+      <path d="M20 11l9 14M32 9l9 14M44 7l8 13" />
+      <path d="M18 33h10M36 33h10" />
+      <circle cx="23" cy="44" r="4" />
+      <circle cx="43" cy="44" r="4" />
+      <path d="M27 44h12" />
     </svg>
   )
 }
@@ -2968,6 +3079,8 @@ function TaskNode({ task, onTaskChange, data, onAssignAsset, onEditTask, onSaveB
   const [batchNoteAttachments, setBatchNoteAttachments] = useState<string[]>([])
   const [batchNoteEnhancing, setBatchNoteEnhancing] = useState(false)
   const noteFileInputRef = useRef<HTMLInputElement>(null)
+  const [passPageIndex, setPassPageIndex] = useState(0)
+  const PASS_PAGE_SIZE = 16
 
   // handleRunAgent — called DIRECTLY from Run Agent button click, NOT from useEffect
   const handleRunAgent = async () => {
@@ -3192,6 +3305,23 @@ function TaskNode({ task, onTaskChange, data, onAssignAsset, onEditTask, onSaveB
   const [assignMenu, setAssignMenu] = useState<'scene' | 'actor' | 'prop' | 'location' | 'style' | 'image' | null>(null)
   const [assignName, setAssignName] = useState('')
   const [assignSceneId, setAssignSceneId] = useState('')
+  const [dcAssignTab, setDcAssignTab] = useState<'image' | 'actor' | 'scene' | 'props'>('image')
+  const [dcAssignNewName, setDcAssignNewName] = useState('')
+  const [dcAssignExpandAct, setDcAssignExpandAct] = useState<string | null>(null)
+  const [dcSkillOpen, setDcSkillOpen] = useState(false)
+  const [dcAvailableSkills, setDcAvailableSkills] = useState<any[]>([])
+  const [dcAttachedSkills, setDcAttachedSkills] = useState<{ id: string; name: string }[]>([])
+  const [dcSkillsPage, setDcSkillsPage] = useState(0)
+  const [dcNoteAttachments, setDcNoteAttachments] = useState<string[]>([])
+  const [dcNoteAiEnhancing, setDcNoteAiEnhancing] = useState(false)
+  const [dcNoteAttachOpen, setDcNoteAttachOpen] = useState(false)
+  const [dcNoteAttachTab, setDcNoteAttachTab] = useState<'all' | 'actors' | 'locations' | 'props'>('all')
+  const [dcNoteAttachShowAll, setDcNoteAttachShowAll] = useState(false)
+  const [dcNoteModelOpen, setDcNoteModelOpen] = useState(false)
+  const [dcNoteSelectedModels, setDcNoteSelectedModels] = useState<Record<string, boolean>>({ 'gemini-3.1-flash': true, 'seedream-4.5': false })
+  const [dcNoteBatchSize, setDcNoteBatchSize] = useState(1)
+  const [dcNoteAspectRatio, setDcNoteAspectRatio] = useState('16:9')
+  const dcNoteFileRef = useRef<HTMLInputElement>(null)
 
   // selectedCount removed
 
@@ -3256,16 +3386,37 @@ function TaskNode({ task, onTaskChange, data, onAssignAsset, onEditTask, onSaveB
           )}
         </div>
 
-        <div className="task-actions-text" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem', marginTop: 'auto' }}>
+        <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.5rem' }}>
           <button type="button" onClick={() => {
+            if (dcAvailableSkills.length === 0) {
+              fetch('/api/storyboard/skills').then(r => r.json()).then(d => { if (d.skills) setDcAvailableSkills(d.skills) }).catch(() => {})
+            }
+            setDcSkillOpen(true)
+          }} style={{ padding: '0.5rem 1rem', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '2rem', color: 'rgba(255,255,255,0.6)', cursor: 'pointer', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '0.4rem', transition: 'all 0.2s' }}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8"/></svg>
+            Skills & Prompts
+          </button>
+        </div>
+        {dcSkillOpen && <LbSkillStoreModal lbAvailableSkills={dcAvailableSkills} lbAttachedSkills={dcAttachedSkills} setLbAttachedSkills={setDcAttachedSkills} setLbSkillOpen={setDcSkillOpen} setLbAvailableSkills={setDcAvailableSkills} lbSkillsPage={dcSkillsPage} setLbSkillsPage={setDcSkillsPage} onInjectPrompt={(text: string) => { onTaskChange(task.id, draft => { draft.prompt = text }); setDcSkillOpen(false) }} />}
+
+        <div className="task-actions-text" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem', marginTop: 'auto' }}>
+          <button type="button" onClick={async () => {
             onTaskChange(task.id, draft => { draft.status = 'todo_working' as any })
 
-            // 1. Update status to working on disk
-            fetch('/api/tasks/update', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ id: task.id, status: 'todo_working', updatedAt: new Date().toISOString() }),
-            }).catch(() => { })
+            // 1. CRITICAL: Create the task file on disk FIRST (update won't work if file doesn't exist)
+            try {
+              await fetch('/api/tasks/create', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ...task, status: 'todo_working', updatedAt: new Date().toISOString() }),
+              })
+            } catch { /* fallback: try update in case file already exists */ 
+              fetch('/api/tasks/update', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id: task.id, status: 'todo_working', updatedAt: new Date().toISOString() }),
+              }).catch(() => { })
+            }
 
             // 2. Trigger the automated execution based on dynamic skill parsing
             const skillLower = (task.skillHint || '').toLowerCase();
@@ -3278,8 +3429,6 @@ function TaskNode({ task, onTaskChange, data, onAssignAsset, onEditTask, onSaveB
                 body: JSON.stringify({ taskId: task.id, prompt: task.prompt })
               }).catch(() => { })
             } else if (skillLower.includes('improve') || skillLower.includes('enhance')) {
-              // Route to enhance quality (assuming backend can handle a task id directly if we adapt it, 
-              // but for now, we'll mark as working and let a backend script handle it or fallback to generate)
               fetch('/api/tasks/generate-pixverse', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -3294,7 +3443,6 @@ function TaskNode({ task, onTaskChange, data, onAssignAsset, onEditTask, onSaveB
                 })
               }).catch(() => { })
             } else if (skillLower.includes('split')) {
-              // Route to split grid
               fetch('/api/tasks/generate-pixverse', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -3354,8 +3502,8 @@ function TaskNode({ task, onTaskChange, data, onAssignAsset, onEditTask, onSaveB
             </button>
             <div className="processing-stats" style={{ textAlign: 'center' }}>
               <h3 className="processing-title" style={{ fontSize: '1.1rem', color: 'var(--gold)' }}>Generating Assets...</h3>
-              <div className="holographic-loader" style={{ marginTop: '1rem' }}>
-                <div className="scanner-line"></div>
+              <div style={{ width: '100%', height: '4px', background: 'rgba(255,255,255,0.08)', borderRadius: '2px', overflow: 'hidden', marginTop: '1rem' }}>
+                <div style={{ width: '30%', height: '100%', background: 'linear-gradient(90deg, var(--gold), #f8c040)', borderRadius: '2px', animation: 'progressPulse 2s ease-in-out infinite' }} />
               </div>
             </div>
           </div>
@@ -3371,7 +3519,7 @@ function TaskNode({ task, onTaskChange, data, onAssignAsset, onEditTask, onSaveB
       </div>
 
       {task.status.startsWith('pass') && task.passes && task.passes.length > 0 && (
-        <div className="task-passes-subtabs" style={{ display: 'flex', gap: '0.5rem', padding: '1rem 1rem 0 1rem', position: 'relative', zIndex: 200 }}>
+        <div className="task-passes-subtabs" style={{ display: 'flex', gap: '0.5rem', padding: '1rem 1rem 0 1rem', position: 'relative', zIndex: 1 }}>
           {task.passes.map(p => (
             <div key={p.id} style={{ position: 'relative', display: 'flex', alignItems: 'stretch' }}>
               <button className={`pass-tab ${task.activePassId === p.id ? 'is-active' : ''}`} onClick={() => {
@@ -3380,8 +3528,9 @@ function TaskNode({ task, onTaskChange, data, onAssignAsset, onEditTask, onSaveB
                 setSplitDropdownOpen(false)
                 setEnhanceOpen(false)
                 setExpandedImageId(null)
+                setPassPageIndex(0)
                 onTaskChange(task.id, draft => { draft.activePassId = p.id; draft.generatedImages = draft.passes?.find(x => x.id === p.id)?.images || [] })
-              }} style={{ padding: '0.6rem 1.2rem', paddingRight: task.passes!.length > 1 ? '2rem' : '1.2rem', borderRadius: '8px 8px 0 0', border: '1px solid rgba(255,255,255,0.1)', borderBottom: 'none', color: task.activePassId === p.id ? 'var(--gold)' : 'rgba(255,255,255,0.6)', background: task.activePassId === p.id ? 'rgba(248, 217, 120, 0.05)' : 'rgba(0,0,0,0.2)', cursor: 'pointer', fontSize: '0.85rem', position: 'relative', top: '1px', zIndex: task.activePassId === p.id ? 2 : 1 }}>
+              }} onDoubleClick={(e) => { e.stopPropagation(); const newName = prompt('Rename pass:', p.name); if (newName && newName.trim()) { onTaskChange(task.id, draft => { const dp = draft.passes?.find(x => x.id === p.id); if (dp) dp.name = newName.trim() }) } }} style={{ padding: '0.6rem 1.2rem', paddingRight: task.passes!.length > 1 ? '2rem' : '1.2rem', borderRadius: '8px 8px 0 0', border: '1px solid rgba(255,255,255,0.1)', borderBottom: 'none', color: task.activePassId === p.id ? 'var(--gold)' : 'rgba(255,255,255,0.6)', background: task.activePassId === p.id ? 'rgba(248, 217, 120, 0.05)' : 'rgba(0,0,0,0.2)', cursor: 'pointer', fontSize: '0.85rem', position: 'relative', top: '1px', zIndex: task.activePassId === p.id ? 2 : 1 }}>
                 {p.name}
               </button>
               {task.passes!.length > 1 && (
@@ -3436,9 +3585,7 @@ function TaskNode({ task, onTaskChange, data, onAssignAsset, onEditTask, onSaveB
                       <div style={{ width: splitProgress ? `${Math.round((splitProgress.current / splitProgress.total) * 100)}%` : '30%', height: '100%', background: 'linear-gradient(90deg, var(--gold), #f8c040)', borderRadius: '3px', transition: 'width 0.5s ease', animation: splitProgress ? 'none' : 'progressPulse 2s ease-in-out infinite' }} />
                     </div>
                   </div>
-                  <div className="holographic-loader" style={{ marginTop: '1rem' }}>
-                    <div className="scanner-line"></div>
-                  </div>
+
                 </div>
               </div>
             )
@@ -3691,12 +3838,39 @@ function TaskNode({ task, onTaskChange, data, onAssignAsset, onEditTask, onSaveB
             </div>
           )}
 
+          {/* Carousel pagination — dots + arrows for >16 images */}
+          {(() => {
+            const allImages = task.generatedImages.filter(img => !img.assignedType)
+            const totalPages = Math.ceil(allImages.length / PASS_PAGE_SIZE)
+            const safePageIdx = Math.min(passPageIndex, totalPages - 1)
+            if (totalPages <= 1) return null
+            return (
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.6rem', padding: '0.5rem 0 0.3rem', position: 'relative' }}>
+                <button type="button" disabled={safePageIdx === 0} onClick={() => setPassPageIndex(Math.max(0, safePageIdx - 1))} style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '50%', width: '32px', height: '32px', display: 'grid', placeItems: 'center', cursor: safePageIdx === 0 ? 'default' : 'pointer', opacity: safePageIdx === 0 ? 0.2 : 0.6, transition: 'all 0.2s', color: 'white', padding: 0 }}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><polyline points="15 18 9 12 15 6" /></svg>
+                </button>
+                {Array.from({ length: totalPages }).map((_, i) => (
+                  <button key={`page-dot-${i}`} type="button" onClick={() => setPassPageIndex(i)} style={{ width: i === safePageIdx ? '24px' : '8px', height: '8px', borderRadius: '4px', border: 'none', background: i === safePageIdx ? 'var(--gold)' : 'rgba(255,255,255,0.2)', boxShadow: i === safePageIdx ? '0 0 8px rgba(248,217,120,0.5)' : 'none', cursor: 'pointer', padding: 0, transition: 'all 0.3s ease' }} />
+                ))}
+                <button type="button" disabled={safePageIdx >= totalPages - 1} onClick={() => setPassPageIndex(Math.min(totalPages - 1, safePageIdx + 1))} style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '50%', width: '32px', height: '32px', display: 'grid', placeItems: 'center', cursor: safePageIdx >= totalPages - 1 ? 'default' : 'pointer', opacity: safePageIdx >= totalPages - 1 ? 0.2 : 0.6, transition: 'all 0.2s', color: 'white', padding: 0 }}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><polyline points="9 18 15 12 9 6" /></svg>
+                </button>
+                <span style={{ color: 'rgba(255,255,255,0.3)', fontSize: '0.7rem', fontWeight: 500, marginLeft: '0.4rem' }}>{safePageIdx + 1}/{totalPages} ({allImages.length} images)</span>
+              </div>
+            )
+          })()}
+
           <div className="generated-gallery" ref={galleryRef} style={{ position: 'relative', userSelect: multiSelectMode ? 'none' : 'auto' }} onMouseDown={handleGalleryMouseDown} onMouseMove={handleGalleryMouseMove} onMouseUp={handleGalleryMouseUp} onMouseLeave={handleGalleryMouseUp}>
             {/* Rubber band drag overlay */}
             {isDragging && dragBox && (
               <div style={{ position: 'absolute', left: Math.min(dragBox.startX, dragBox.endX), top: Math.min(dragBox.startY, dragBox.endY), width: Math.abs(dragBox.endX - dragBox.startX), height: Math.abs(dragBox.endY - dragBox.startY), background: 'rgba(248, 217, 120, 0.08)', border: '2px solid rgba(248, 217, 120, 0.4)', borderRadius: '4px', pointerEvents: 'none', zIndex: 100 }} />
             )}
-            {task.generatedImages.filter(img => !img.assignedType).map((img) => {
+            {(() => {
+              const allImages = task.generatedImages.filter(img => !img.assignedType)
+              const totalPages = Math.ceil(allImages.length / PASS_PAGE_SIZE)
+              const safePageIdx = Math.min(passPageIndex, totalPages - 1)
+              const pageImages = totalPages > 1 ? allImages.slice(safePageIdx * PASS_PAGE_SIZE, (safePageIdx + 1) * PASS_PAGE_SIZE) : allImages
+              return pageImages.map((img) => {
               const isAssigned = !!img.assignedType;
               const isMultiSelected = multiSelectMode && selectedImageIds.includes(img.id);
               return (
@@ -3764,67 +3938,316 @@ function TaskNode({ task, onTaskChange, data, onAssignAsset, onEditTask, onSaveB
                       </div>
 
                       {img.noteActive && !isAssigned && (
-                        <div className="floating-note-area glass">
-                          <textarea
-                            placeholder="Leave an iteration note..."
-                            value={img.note || ''}
-                            rows={2}
-                            onChange={(e) => {
-                              e.target.style.height = 'auto'
-                              e.target.style.height = e.target.scrollHeight + 'px'
-                              onTaskChange(task.id, (draft) => {
-                                const dImg = draft.generatedImages?.find(i => i.id === img.id)
-                                if (dImg) dImg.note = e.target.value
-                              })
-                            }}
-                          />
-                          <button className="tick-save-btn" onClick={() => onTaskChange(task.id, (draft) => { const i = draft.generatedImages?.find(x => x.id === img.id); if (i) i.noteActive = false; })}>
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                          </button>
-                        </div>
-                      )}
-
-                      {img.assignMenuOpen && !isAssigned && (
-                        <div className="assign-menu-glass glass">
-                          <div className="assign-menu-title">Assign Asset</div>
-                          <div className="assign-type-row">
-                            {['image', 'prop', 'actor', 'location', 'style'].map((t) => (
-                              <button key={t} className={`type-btn ${assignMenu === t ? 'is-active' : ''}`} onClick={() => setAssignMenu(t as any)}>
-                                {t}
-                              </button>
-                            ))}
+                        <div className="floating-note-area glass" style={{ position: 'absolute', bottom: '0.5rem', left: '0.5rem', right: '0.5rem', zIndex: 6, display: 'flex', flexDirection: 'column', gap: '0.5rem', maxHeight: '60vh' }}>
+                          <div style={{ position: 'relative' }}>
+                            <textarea
+                              placeholder="Leave an iteration note..."
+                              value={img.note || ''}
+                              rows={3}
+                              style={{ background: 'transparent', border: 'none', color: 'var(--cream)', outline: 'none', width: '100%', fontSize: '0.9rem', resize: 'vertical', lineHeight: 1.5, minHeight: '3.5em', maxHeight: '14rem', overflowY: 'auto', paddingRight: '2.5rem' }}
+                              onChange={(e) => {
+                                e.target.style.height = 'auto'
+                                e.target.style.height = e.target.scrollHeight + 'px'
+                                onTaskChange(task.id, (draft) => {
+                                  const dImg = draft.generatedImages?.find(i => i.id === img.id)
+                                  if (dImg) dImg.note = e.target.value
+                                })
+                              }}
+                            />
                           </div>
-                          {assignMenu && (
-                            <div className="assign-menu-body">
-                              <input type="text" placeholder={`Type ${assignMenu} name...`} className="assign-name-input" value={assignName} onChange={e => setAssignName(e.target.value)} />
-                              <div className="assign-scene-scroll">
-                                {data.acts.map(act => (
-                                  <div key={act.id} className="scene-scroll-group">
-                                    <div className="scene-scroll-act">{act.title}</div>
-                                    {act.scenes.map(s => (
-                                      <button key={s.id} className={assignSceneId === s.id ? 'is-active' : ''} onClick={() => setAssignSceneId(s.id)}>{s.title}</button>
-                                    ))}
-                                  </div>
+                          {/* Full toolbar: attach, AI enhance, skills, model, attachments strip, OK */}
+                          <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center' }}>
+                            {/* Attach refs button */}
+                            <input ref={dcNoteFileRef} type="file" accept="image/*" multiple style={{ display: 'none' }} onChange={(e) => {
+                              const files = Array.from(e.target.files || []).slice(0, 8 - dcNoteAttachments.length)
+                              files.forEach(file => {
+                                const formData = new FormData(); formData.append('file', file)
+                                fetch('/api/storyboard/upload', { method: 'POST', body: formData }).then(r => r.json()).then(d => { if (d.url && dcNoteAttachments.length < 8) { setDcNoteAttachments(prev => prev.length < 8 ? [...prev, d.url] : prev) } }).catch(() => {})
+                              })
+                              e.target.value = ''
+                            }} />
+                            <button className={`tool-icon ${dcNoteAttachOpen ? 'is-active' : ''}`} onClick={() => { setDcNoteAttachOpen(!dcNoteAttachOpen); setDcNoteModelOpen(false); setDcSkillOpen(false) }} title="Attach reference images" style={{ width: '2.2rem', height: '2.2rem' }}><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg></button>
+                            {/* AI enhance */}
+                            <button className={`tool-icon ${dcNoteAiEnhancing ? 'is-active' : ''}`} disabled={dcNoteAiEnhancing || !(img.note || '').trim()} onClick={async () => {
+                              setDcNoteAiEnhancing(true)
+                              try {
+                                let skillInstructions = ''
+                                for (const sk of dcAttachedSkills) {
+                                  try { const r = await fetch('/api/skills/read-md', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: sk.id }) }); const d = await r.json(); if (d.content) skillInstructions += `\n--- Skill: ${sk.name} ---\n${d.content.substring(0, 2000)}\n` } catch {}
+                                }
+                                const feedback = skillInstructions ? `You MUST follow these skill instructions:\n${skillInstructions}\nApply the skill rules to transform the prompt.` : 'Enhance this for cinematic AI image generation. Add lighting, camera angle, mood details.'
+                                const imageCtx = img.url ? `\nLooking at image: ${img.url}` : ''
+                                const attachCtx = dcNoteAttachments.length > 0 ? `\nAttached refs: ${dcNoteAttachments.map((u, i) => `@img${i + 1}`).join(', ')}` : ''
+                                const result = await refinePrompt(img.note || '', feedback + imageCtx + attachCtx + '\nIMPORTANT: Output ONLY the final prompt text.')
+                                if (result.text) {
+                                  let cleaned = result.text.replace(/^(Here'?s?|OK|Sure|I'?ll|Let me|Now I|The refined|The enhanced|Here is|Certainly|Of course)[^\n]*\n+/i, '').trim()
+                                  onTaskChange(task.id, draft => { const dImg = draft.generatedImages?.find(i => i.id === img.id); if (dImg) dImg.note = cleaned })
+                                }
+                              } catch {}
+                              setDcNoteAiEnhancing(false)
+                            }} title="AI Enhance prompt" style={{ width: '2.2rem', height: '2.2rem' }}>{dcNoteAiEnhancing ? <span style={{ fontSize: '0.65rem', animation: 'spin 1s linear infinite', display: 'inline-block' }}>⏳</span> : <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2l3 7 7 3-7 3-3 7-3-7-7-3 7-3z"/></svg>}</button>
+                            {/* Skills button */}
+                            <button className={`tool-icon ${dcSkillOpen ? 'is-active' : ''}`} onClick={() => { setDcSkillOpen(!dcSkillOpen); setDcNoteModelOpen(false); setDcNoteAttachOpen(false); if (!dcSkillOpen) fetch('/api/skills/list').then(r => r.json()).then(d => setDcAvailableSkills(d.skills || [])).catch(() => {}) }} title="Skills & Prompts" style={{ width: '2.2rem', height: '2.2rem' }}><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></button>
+                            {/* Model config */}
+                            <button className={`tool-icon ${dcNoteModelOpen ? 'is-active' : ''}`} onClick={() => { setDcNoteModelOpen(!dcNoteModelOpen); setDcSkillOpen(false); setDcNoteAttachOpen(false) }} title="Model & config" style={{ width: '2.2rem', height: '2.2rem' }}><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
+                            {/* CENTER: attachments + skills */}
+                            <div style={{ flex: 1, display: 'flex', gap: '0.25rem', flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center', minHeight: '2.2rem' }}>
+                              {dcNoteAttachments.map((url, i) => (
+                                <div key={`dcatt-${i}`} style={{ position: 'relative', width: '36px', height: '36px', borderRadius: '5px', overflow: 'hidden', border: '1px solid rgba(248,217,120,0.3)', flexShrink: 0 }}>
+                                  <img src={url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
+                                  <div style={{ position: 'absolute', top: 0, left: 0, background: 'rgba(0,0,0,0.7)', borderRadius: '0 0 3px 0', padding: '0 2px', fontSize: '0.45rem', color: 'var(--gold)', fontWeight: 700 }}>{i + 1}</div>
+                                  <button type="button" onClick={() => setDcNoteAttachments(prev => prev.filter((_, j) => j !== i))} style={{ position: 'absolute', top: '1px', right: '1px', background: 'rgba(0,0,0,0.7)', border: 'none', color: 'rgba(255,255,255,0.6)', cursor: 'pointer', fontSize: '0.5rem', borderRadius: '50%', width: '12px', height: '12px', display: 'grid', placeItems: 'center', padding: 0 }}>×</button>
+                                </div>
+                              ))}
+                              {dcAttachedSkills.map(s => (
+                                <div key={s.id} style={{ display: 'flex', alignItems: 'center', gap: '0.15rem', padding: '0.1rem 0.35rem', borderRadius: '999px', background: 'rgba(248,217,120,0.08)', border: '1px solid rgba(248,217,120,0.2)', fontSize: '0.5rem', color: 'var(--gold)' }}>
+                                  <svg width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>
+                                  {s.name}
+                                  <button type="button" onClick={() => setDcAttachedSkills(prev => prev.filter(sk => sk.id !== s.id))} style={{ background: 'none', border: 'none', color: 'rgba(248,217,120,0.5)', cursor: 'pointer', fontSize: '0.55rem', padding: 0 }}>×</button>
+                                </div>
+                              ))}
+                              {dcNoteAttachments.length === 0 && dcAttachedSkills.length === 0 && (
+                                <span style={{ color: 'rgba(255,255,255,0.2)', fontSize: '0.6rem' }}>{dcNoteAttachments.length}/8 refs</span>
+                              )}
+                            </div>
+                            {/* OK submit */}
+                            <button className="tick-save-btn" style={{ flexShrink: 0 }} onClick={() => { onTaskChange(task.id, (draft) => { const i = draft.generatedImages?.find(x => x.id === img.id); if (i) { i.noteActive = false; (i as any).noteAttachedImages = dcNoteAttachments.length > 0 ? [...dcNoteAttachments] : undefined } }); setDcNoteAttachments([]) }}>
+                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            </button>
+                          </div>
+                          {/* Model config popup */}
+                          {dcNoteModelOpen && (
+                            <div className="glass" style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', padding: '1.5rem', borderRadius: '1rem', border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(12,12,20,0.98)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', zIndex: 10000, minWidth: '280px', boxShadow: '0 20px 60px rgba(0,0,0,0.8), 0 0 30px rgba(248,217,120,0.1)' }}>
+                              <div style={{ fontSize: '0.8rem', color: 'var(--gold)', fontWeight: 600, marginBottom: '0.6rem' }}>Models</div>
+                              {['gemini-3.1-flash', 'seedream-4.5', 'seedream-5.0-lite', 'gpt-image-2.0'].map(m => (
+                                <label key={m} style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.75rem', color: 'rgba(255,255,255,0.7)', padding: '0.25rem 0', cursor: 'pointer' }}>
+                                  <input type="checkbox" checked={!!dcNoteSelectedModels[m]} onChange={() => setDcNoteSelectedModels(prev => ({ ...prev, [m]: !prev[m] }))} style={{ accentColor: 'var(--gold)' }} />
+                                  {m}
+                                </label>
+                              ))}
+                              <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)', marginTop: '0.6rem' }}>Batch: {dcNoteBatchSize}</div>
+                              <input type="range" min={1} max={4} value={dcNoteBatchSize} onChange={e => setDcNoteBatchSize(Number(e.target.value))} style={{ width: '100%', accentColor: 'var(--gold)' }} />
+                              <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)', marginTop: '0.4rem' }}>Aspect: {dcNoteAspectRatio}</div>
+                              <div style={{ display: 'flex', gap: '0.3rem', marginTop: '0.3rem' }}>
+                                {['16:9', '9:16', '1:1', '4:3'].map(ar => (
+                                  <button key={ar} type="button" onClick={() => setDcNoteAspectRatio(ar)} style={{ padding: '0.2rem 0.5rem', borderRadius: '4px', border: dcNoteAspectRatio === ar ? '1px solid var(--gold)' : '1px solid rgba(255,255,255,0.1)', background: dcNoteAspectRatio === ar ? 'rgba(248,217,120,0.1)' : 'transparent', color: dcNoteAspectRatio === ar ? 'var(--gold)' : 'rgba(255,255,255,0.5)', fontSize: '0.7rem', cursor: 'pointer' }}>{ar}</button>
                                 ))}
-                              </div>
-                              <div className="assign-keep-row">
-                                <button className="keep-image-btn" onClick={() => {
-                                  if (onAssignAsset) onAssignAsset(assignMenu, assignName, assignSceneId, img.url);
-                                  onTaskChange(task.id, (draft) => {
-                                    const dImg = draft.generatedImages?.find(i => i.id === img.id)
-                                    if (dImg) { dImg.assignedType = assignMenu; dImg.assignedName = assignName || "Assigned Asset"; dImg.assignMenuOpen = false; dImg.selected = true; }
-                                  })
-                                  setAssignMenu(null);
-                                  setAssignName('');
-                                  setAssignSceneId('');
-                                }}>
-                                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                                </button>
                               </div>
                             </div>
                           )}
                         </div>
                       )}
+                      {/* DC Skills Store Modal — rendered outside note area */}
+                      {dcSkillOpen && <LbSkillStoreModal compact lbAvailableSkills={dcAvailableSkills} lbAttachedSkills={dcAttachedSkills} setLbAttachedSkills={setDcAttachedSkills} setLbSkillOpen={setDcSkillOpen} setLbAvailableSkills={setDcAvailableSkills} lbSkillsPage={dcSkillsPage} setLbSkillsPage={setDcSkillsPage} onInjectPrompt={(text: string) => { onTaskChange(task.id, draft => { const activeImg = draft.generatedImages?.find(i => i.noteActive); if (activeImg) activeImg.note = text }); setDcSkillOpen(false) }} />}
+
+                      {/* DC Attach References Window — full version matching lightbox */}
+                      {dcNoteAttachOpen && (() => {
+                        const dcAttachTabs = [
+                          { key: 'all' as const, label: 'Images', icon: 'M4 16l4.586-4.586a2 2 0 0 1 2.828 0L16 16m-2-2l1.586-1.586a2 2 0 0 1 2.828 0L20 14m-6-6h.01M6 20h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2z' },
+                          { key: 'actors' as const, label: 'Actors', icon: 'M16 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0zM12 14a7 7 0 0 0-7 7h14a7 7 0 0 0-7-7z' },
+                          { key: 'locations' as const, label: 'Locations', icon: 'M17.657 16.657L13.414 20.9a1.998 1.998 0 0 1-2.827 0l-4.244-4.243a8 8 0 1 1 11.314 0z' },
+                          { key: 'props' as const, label: 'Props', icon: 'M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4' },
+                        ]
+                        const filterDcResources = (type: 'actors' | 'locations' | 'props') => {
+                          const all = data.resources[type] || []
+                          return all
+                        }
+                        return (
+                        <div className="assign-menu-glass glass" style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', maxWidth: '800px', maxHeight: '85vh', width: '94vw', zIndex: 10000, background: 'rgba(12,12,20,0.98)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', boxShadow: '0 20px 60px rgba(0,0,0,0.85), 0 0 40px rgba(248,217,120,0.12)' }} onClick={(e) => e.stopPropagation()}>
+                          <div className="assign-menu-title" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '1.3rem' }}>
+                            <span>Attach References ({dcNoteAttachments.length}/8)</span>
+                            <button type="button" onClick={() => dcNoteFileRef.current?.click()} style={{ padding: '0.5rem 1.2rem', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '2rem', color: 'rgba(255,255,255,0.6)', cursor: 'pointer', fontSize: '0.95rem' }}>↑ Upload</button>
+                          </div>
+                          <button type="button" onClick={() => { setDcNoteAttachOpen(false); setDcNoteAttachShowAll(false) }} style={{ position: 'absolute', top: '0.8rem', right: '0.8rem', background: 'none', border: 'none', color: 'rgba(255,255,255,0.4)', cursor: 'pointer', fontSize: '1.6rem' }}>✕</button>
+                          <button type="button" onClick={() => { setDcNoteAttachOpen(false); setDcNoteAttachShowAll(false) }} style={{ position: 'absolute', bottom: '1rem', right: '1rem', padding: '0.6rem 1.6rem', background: 'linear-gradient(135deg, var(--gold), #e0b94c)', color: '#111', border: 'none', borderRadius: '2rem', fontWeight: 700, cursor: 'pointer', fontSize: '0.9rem', boxShadow: '0 4px 15px rgba(248,217,120,0.3)', transition: 'all 0.2s', zIndex: 5 }}>Done</button>
+
+                          {/* Resource Type Tabs */}
+                          <div style={{ display: 'flex', gap: '0.4rem', padding: '0 0 0.6rem', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+                            {dcAttachTabs.map(tab => (
+                              <button key={tab.key} type="button" onClick={() => { setDcNoteAttachTab(tab.key); setDcNoteAttachShowAll(false) }} style={{ padding: '0.6rem 1rem', borderRadius: '0.5rem', border: `1px solid ${dcNoteAttachTab === tab.key ? 'rgba(248,217,120,0.35)' : 'rgba(255,255,255,0.06)'}`, background: dcNoteAttachTab === tab.key ? 'rgba(248,217,120,0.08)' : 'transparent', color: dcNoteAttachTab === tab.key ? 'var(--gold)' : 'rgba(255,255,255,0.45)', cursor: 'pointer', fontSize: '0.95rem', display: 'flex', alignItems: 'center', gap: '0.45rem', whiteSpace: 'nowrap', transition: 'all 0.2s' }}>
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d={tab.icon}/></svg>
+                                {tab.label}
+                              </button>
+                            ))}
+                          </div>
+
+                          {/* Content area */}
+                          <div style={{ maxHeight: '48vh', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '0.8rem', padding: '0.4rem 0' }}>
+                            {dcNoteAttachTab === 'all' ? (
+                              data.acts.map(act => {
+                                const actImages = act.scenes.flatMap(s => getSceneShots(s, 'images').flatMap(sh => sh.media.filter(m => m.type === 'image')))
+                                if (actImages.length === 0) return null
+                                return (
+                                <details key={act.id} open>
+                                  <summary style={{ color: 'var(--gold)', fontSize: '1rem', fontWeight: 700, cursor: 'pointer', padding: '0.4rem 0', listStyle: 'none', display: 'flex', alignItems: 'center', gap: '0.5rem', userSelect: 'none' }}>
+                                    <span style={{ fontSize: '0.9rem', transition: 'transform 0.2s' }}>▸</span> {act.title} <span style={{ color: 'rgba(255,255,255,0.3)', fontWeight: 400, fontSize: '0.85rem' }}>({actImages.length})</span>
+                                  </summary>
+                                  {act.scenes.map(scene => {
+                                    const shots = getSceneShots(scene, 'images')
+                                    const sceneImages = shots.flatMap(s => s.media.filter(m => m.type === 'image'))
+                                    if (sceneImages.length === 0) return null
+                                    return (
+                                      <div key={scene.id} style={{ marginBottom: '0.6rem', marginLeft: '0.5rem' }}>
+                                        <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.9rem', marginBottom: '0.35rem', fontWeight: 500 }}>{scene.title}</div>
+                                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '0.4rem' }}>
+                                          {sceneImages.slice(0, 20).map((m) => (
+                                            <button key={m.id} type="button" disabled={dcNoteAttachments.length >= 8 || dcNoteAttachments.includes(m.url)} onClick={() => { if (dcNoteAttachments.length < 8) setDcNoteAttachments(prev => [...prev, m.url]) }} style={{ width: '100%', aspectRatio: '16/11', borderRadius: '6px', overflow: 'hidden', border: dcNoteAttachments.includes(m.url) ? '2.5px solid var(--gold)' : '1px solid rgba(255,255,255,0.08)', cursor: 'pointer', padding: 0, background: 'rgba(0,0,0,0.3)', opacity: dcNoteAttachments.includes(m.url) ? 1 : 0.75, transition: 'all 0.15s', position: 'relative' }}>
+                                              <img src={m.url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
+                                              {dcNoteAttachments.includes(m.url) && <div style={{ position: 'absolute', top: '3px', right: '3px', background: 'var(--gold)', borderRadius: '50%', width: '24px', height: '24px', display: 'grid', placeItems: 'center', color: '#000', fontSize: '0.75rem', fontWeight: 800 }}>{dcNoteAttachments.indexOf(m.url) + 1}</div>}
+                                            </button>
+                                          ))}
+                                        </div>
+                                      </div>
+                                    )
+                                  })}
+                                </details>
+                                )
+                              })
+                            ) : (
+                              (() => {
+                                const resources = filterDcResources(dcNoteAttachTab)
+                                return (
+                                  <>
+                                    {resources.map((resource: any) => {
+                                      const allMedia = [...(resource.media || []), ...(resource.sheetMedia || [])].filter((m: any) => m.type === 'image')
+                                      return (
+                                        <div key={resource.name} style={{ marginBottom: '0.8rem', background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '0.6rem', padding: '0.6rem' }}>
+                                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.5rem' }}>
+                                            <span style={{ color: 'rgba(255,255,255,0.8)', fontSize: '1rem', fontWeight: 600 }}>{resource.name}</span>
+                                            <span style={{ color: 'rgba(255,255,255,0.25)', fontSize: '0.8rem' }}>{allMedia.length} img{allMedia.length !== 1 ? 's' : ''}</span>
+                                          </div>
+                                          {allMedia.length > 0 && (
+                                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.35rem' }}>
+                                              {allMedia.slice(0, 9).map((m: any) => (
+                                                <button key={m.id} type="button" disabled={dcNoteAttachments.length >= 8 || dcNoteAttachments.includes(m.url)} onClick={() => { if (dcNoteAttachments.length < 8) setDcNoteAttachments(prev => [...prev, m.url]) }} style={{ width: '100%', aspectRatio: '16/11', borderRadius: '6px', overflow: 'hidden', border: dcNoteAttachments.includes(m.url) ? '2px solid var(--gold)' : '1px solid rgba(255,255,255,0.08)', cursor: 'pointer', padding: 0, background: 'rgba(0,0,0,0.3)', opacity: dcNoteAttachments.includes(m.url) ? 1 : 0.75, transition: 'all 0.15s', position: 'relative' }}>
+                                                  <img src={m.url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
+                                                  {dcNoteAttachments.includes(m.url) && <div style={{ position: 'absolute', top: '2px', right: '2px', background: 'var(--gold)', borderRadius: '50%', width: '16px', height: '16px', display: 'grid', placeItems: 'center', color: '#000', fontSize: '0.55rem', fontWeight: 800 }}>{dcNoteAttachments.indexOf(m.url) + 1}</div>}
+                                                </button>
+                                              ))}
+                                            </div>
+                                          )}
+                                        </div>
+                                      )
+                                    })}
+                                  </>
+                                )
+                              })()
+                            )}
+                          </div>
+                          {/* Current attachments strip */}
+                          {dcNoteAttachments.length > 0 && (
+                            <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '0.6rem', display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                              {dcNoteAttachments.map((url, i) => (
+                                <div key={`dcatt-strip-${i}`} style={{ position: 'relative', width: '56px', height: '56px', borderRadius: '8px', overflow: 'hidden', border: '2px solid var(--gold)' }}>
+                                  <img src={url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
+                                  <div style={{ position: 'absolute', top: '2px', left: '2px', background: 'var(--gold)', borderRadius: '50%', width: '18px', height: '18px', display: 'grid', placeItems: 'center', color: '#000', fontSize: '0.6rem', fontWeight: 800 }}>{i + 1}</div>
+                                  <button type="button" onClick={() => setDcNoteAttachments(prev => prev.filter((_, j) => j !== i))} style={{ position: 'absolute', top: '2px', right: '2px', background: 'rgba(0,0,0,0.7)', border: 'none', color: 'white', cursor: 'pointer', fontSize: '0.65rem', borderRadius: '50%', width: '16px', height: '16px', display: 'grid', placeItems: 'center', padding: 0 }}>×</button>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                        )
+                      })()}
+
+                      {img.assignMenuOpen && !isAssigned && (() => {
+                        const dcAssignTabs = [
+                          { key: 'image' as const, label: 'Image', icon: 'M4 16l4.586-4.586a2 2 0 0 1 2.828 0L16 16m-2-2l1.586-1.586a2 2 0 0 1 2.828 0L20 14m-6-6h.01M6 20h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2z' },
+                          { key: 'actor' as const, label: 'Actor', icon: 'M16 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0zM12 14a7 7 0 0 0-7 7h14a7 7 0 0 0-7-7z' },
+                          { key: 'scene' as const, label: 'Location', icon: 'M17.657 16.657L13.414 20.9a1.998 1.998 0 0 1-2.827 0l-4.244-4.243a8 8 0 1 1 11.314 0z' },
+                          { key: 'props' as const, label: 'Props', icon: 'M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4' },
+                        ]
+                        const doDcAssign = (resKey: 'actors' | 'locations' | 'props', name: string) => {
+                          if (onAssignAsset) onAssignAsset(resKey, name, '', img.url)
+                          onTaskChange(task.id, (draft) => {
+                            const dImg = draft.generatedImages?.find(i => i.id === img.id)
+                            if (dImg) { dImg.assignedType = resKey; dImg.assignedName = name; dImg.assignMenuOpen = false; dImg.selected = true }
+                          })
+                          setDcAssignNewName('')
+                        }
+                        const renderDcSlots = (resKey: 'actors' | 'locations' | 'props') => {
+                          const resources = data.resources[resKey] || []
+                          return (
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
+                              {resources.map((r: any) => {
+                                const rImg = (r.media || [])[0]
+                                return (
+                                  <button key={r.name} type="button" onClick={() => doDcAssign(resKey, r.name)} style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', padding: '0.7rem 1rem', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '0.7rem', cursor: 'pointer', color: '#fff', transition: 'all 0.15s', width: '100%', textAlign: 'left' }} onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(248,217,120,0.4)'; e.currentTarget.style.background = 'rgba(248,217,120,0.06)' }} onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)'; e.currentTarget.style.background = 'rgba(255,255,255,0.03)' }}>
+                                    {rImg ? <img src={rImg.url} style={{ width: '64px', height: '64px', borderRadius: '8px', objectFit: 'cover', flexShrink: 0 }} alt="" /> : <div style={{ width: '64px', height: '64px', borderRadius: '8px', background: 'rgba(255,255,255,0.05)', display: 'grid', placeItems: 'center', color: 'rgba(255,255,255,0.2)', fontSize: '1.6rem', flexShrink: 0 }}>∅</div>}
+                                    <div style={{ flex: 1, minWidth: 0 }}>
+                                      <div style={{ fontSize: '1rem', fontWeight: 600 }}>{r.name}</div>
+                                      <div style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.3)' }}>{(r.media || []).length} image{(r.media || []).length !== 1 ? 's' : ''}</div>
+                                    </div>
+                                    <div style={{ fontSize: '0.85rem', color: 'rgba(64,255,156,0.5)' }}>+ Add →</div>
+                                  </button>
+                                )
+                              })}
+                              <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                                <input type="text" value={dcAssignNewName} onChange={e => setDcAssignNewName(e.target.value)} placeholder={`New ${resKey === 'actors' ? 'actor' : resKey === 'locations' ? 'location' : 'prop'}...`} style={{ flex: 1, padding: '0.7rem 1rem', background: 'rgba(255,255,255,0.04)', border: '1px dashed rgba(255,255,255,0.15)', borderRadius: '0.6rem', color: '#fff', fontSize: '1rem', outline: 'none' }} onKeyDown={e => { if (e.key === 'Enter' && dcAssignNewName.trim()) { doDcAssign(resKey, dcAssignNewName.trim()); setDcAssignNewName('') } }} />
+                                <button type="button" disabled={!dcAssignNewName.trim()} onClick={() => { if (dcAssignNewName.trim()) { doDcAssign(resKey, dcAssignNewName.trim()); setDcAssignNewName('') } }} style={{ padding: '0.7rem 1.2rem', background: dcAssignNewName.trim() ? 'var(--gold)' : 'rgba(255,255,255,0.05)', border: 'none', borderRadius: '0.6rem', color: dcAssignNewName.trim() ? '#000' : 'rgba(255,255,255,0.2)', cursor: dcAssignNewName.trim() ? 'pointer' : 'default', fontSize: '0.95rem', fontWeight: 700, transition: 'all 0.15s' }}>+ Add</button>
+                              </div>
+                            </div>
+                          )
+                        }
+                        return (
+                        <div className="assign-menu-glass glass" style={{ maxWidth: '600px', width: '90vw', maxHeight: '80vh', position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', zIndex: 10000, background: 'rgba(12,12,20,0.98)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)' }}>
+                          <div className="assign-menu-title" style={{ fontSize: '1.3rem', marginBottom: '0.5rem' }}>Assign to Scene</div>
+                          <div style={{ display: 'flex', gap: '0.4rem', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+                            {dcAssignTabs.map(tab => (
+                              <button key={tab.key} type="button" onClick={() => { setDcAssignTab(tab.key); setDcAssignNewName(''); setDcAssignExpandAct(null) }} style={{ padding: '0.7rem 1.2rem', border: 'none', borderBottom: dcAssignTab === tab.key ? '3px solid var(--gold)' : '3px solid transparent', background: 'none', color: dcAssignTab === tab.key ? 'var(--gold)' : 'rgba(255,255,255,0.4)', fontSize: '1rem', fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d={tab.icon}/></svg>
+                                {tab.label}
+                              </button>
+                            ))}
+                          </div>
+                          <div style={{ maxHeight: '50vh', overflowY: 'auto', padding: '0.8rem 0' }}>
+                            {dcAssignTab === 'image' ? (
+                              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+                                {data.acts.map(act => {
+                                  const isExp = dcAssignExpandAct === act.id
+                                  return (
+                                    <div key={act.id}>
+                                      <button type="button" onClick={() => setDcAssignExpandAct(isExp ? null : act.id)} style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', width: '100%', padding: '0.8rem 1rem', background: isExp ? 'rgba(248,217,120,0.06)' : 'rgba(255,255,255,0.02)', border: `1px solid ${isExp ? 'rgba(248,217,120,0.2)' : 'rgba(255,255,255,0.06)'}`, borderRadius: '0.6rem', cursor: 'pointer', color: isExp ? 'var(--gold)' : 'rgba(255,255,255,0.7)', fontSize: '1rem', fontWeight: 600, transition: 'all 0.15s', textAlign: 'left' }}>
+                                        <span style={{ fontSize: '0.9rem', transform: isExp ? 'rotate(90deg)' : 'none', transition: 'transform 0.2s' }}>▸</span>
+                                        {act.title}
+                                        <span style={{ marginLeft: 'auto', fontSize: '0.8rem', color: 'rgba(255,255,255,0.3)' }}>{act.scenes.length} scenes</span>
+                                      </button>
+                                      {isExp && (
+                                        <div style={{ padding: '0.5rem 0 0.5rem 0.8rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                                          {act.scenes.map(scene => {
+                                            const scImgs = getSceneShots(scene, 'images').flatMap(s => s.media.filter(m => m.type === 'image'))
+                                            return (
+                                              <div key={scene.id}>
+                                                <div style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.5)', fontWeight: 500, marginBottom: '0.4rem' }}>{scene.title}</div>
+                                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '0.35rem' }}>
+                                                  {scImgs.slice(0, 15).map(m => (
+                                                    <button key={m.id} type="button" onClick={() => {
+                                                      if (onAssignAsset) onAssignAsset('image', '', scene.id, img.url)
+                                                      onTaskChange(task.id, (draft) => { const dImg = draft.generatedImages?.find(i => i.id === img.id); if (dImg) { dImg.assignedType = 'image'; dImg.assignedName = scene.title; dImg.assignMenuOpen = false; dImg.selected = true } })
+                                                    }} style={{ width: '100%', aspectRatio: '16/11', borderRadius: '5px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.08)', cursor: 'pointer', padding: 0, background: 'rgba(0,0,0,0.3)', opacity: 0.75, transition: 'all 0.15s' }}>
+                                                      <img src={m.url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
+                                                    </button>
+                                                  ))}
+                                                  <button type="button" onClick={() => {
+                                                    if (onAssignAsset) onAssignAsset('image', '', scene.id, img.url)
+                                                    onTaskChange(task.id, (draft) => { const dImg = draft.generatedImages?.find(i => i.id === img.id); if (dImg) { dImg.assignedType = 'image'; dImg.assignedName = scene.title; dImg.assignMenuOpen = false; dImg.selected = true } })
+                                                  }} style={{ width: '100%', aspectRatio: '16/11', borderRadius: '6px', border: '2px dashed rgba(248,217,120,0.3)', background: 'rgba(248,217,120,0.04)', cursor: 'pointer', display: 'grid', placeItems: 'center', color: 'rgba(248,217,120,0.5)', fontSize: '1.8rem', transition: 'all 0.15s' }}>+</button>
+                                                </div>
+                                              </div>
+                                            )
+                                          })}
+                                        </div>
+                                      )}
+                                    </div>
+                                  )
+                                })}
+                              </div>
+                            ) : dcAssignTab === 'actor' ? renderDcSlots('actors') : dcAssignTab === 'scene' ? renderDcSlots('locations') : renderDcSlots('props')}
+                          </div>
+                          <button type="button" onClick={() => onTaskChange(task.id, (draft) => { const dImg = draft.generatedImages?.find(i => i.id === img.id); if (dImg) dImg.assignMenuOpen = false })} style={{ position: 'absolute', top: '0.8rem', right: '0.8rem', background: 'none', border: 'none', color: 'rgba(255,255,255,0.4)', cursor: 'pointer', fontSize: '1.6rem' }}>✕</button>
+                        </div>
+                        )
+                      })()}
 
                       {img.improveMenuOpen && !isAssigned && (
                         <div className="enhance-menu-glass glass">
@@ -3954,7 +4377,7 @@ function TaskNode({ task, onTaskChange, data, onAssignAsset, onEditTask, onSaveB
                   )}
                 </div>
               )
-            })}
+            })})()} 
           </div>
 
           {/* Glassmorphism Batch Note Popup — Full featured with attachments + AI enhance */}
@@ -4142,6 +4565,10 @@ function AgentInbox({
   const [aiImproving, setAiImproving] = useState(false)
   const [skillsPage, setSkillsPage] = useState(0)
   const skillRecognitionRef = useRef<any>(null)
+  const [dcStoreTab, setDcStoreTab] = useState<'skills' | 'prompts'>('skills')
+  const [newPromptTitle, setNewPromptTitle] = useState('')
+  const [newPromptText, setNewPromptText] = useState('')
+  const [editingPromptId, setEditingPromptId] = useState<string | null>(null)
 
   useEffect(() => {
     fetch('/api/skills/list').then(r => r.json()).then(d => {
@@ -4230,7 +4657,7 @@ function AgentInbox({
                       {expandedScenes[scene.id] && (
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))', gap: '0.5rem', padding: '0.5rem 0 0.5rem 1rem' }}>
                           {(scenePickerTab === 'images' ? scene.imageShots : scene.videoShots).map(shot => shot.media.map(m => (
-                            <button key={m.id} type="button" onClick={() => { const v = `${act.title} - ${scene.title || `Scene ${si + 1}`} [${m.url.split('/').pop()}]`; setSceneSelections(p => p.includes(v) ? p.filter(x => x !== v) : [...p, v]) }} style={{ background: sceneSelections.includes(`${act.title} - ${scene.title || `Scene ${si + 1}`} [${m.url.split('/').pop()}]`) ? 'rgba(64,255,156,0.1)' : 'rgba(0,0,0,0.3)', border: sceneSelections.includes(`${act.title} - ${scene.title || `Scene ${si + 1}`} [${m.url.split('/').pop()}]`) ? '1px solid rgba(64,255,156,0.4)' : '1px solid rgba(255,255,255,0.06)', borderRadius: '0.5rem', padding: '0.3rem', cursor: 'pointer', transition: 'all 0.2s', overflow: 'hidden', position: 'relative' }}>
+                            <button key={m.id} type="button" onClick={() => { const v = `${act.title} - ${scene.title || `Scene ${si + 1}`} [${m.url.split('/').pop()}] ${m.url}`; setSceneSelections(p => p.includes(v) ? p.filter(x => x !== v) : [...p, v]) }} style={{ background: sceneSelections.some(s => s.includes(m.url)) ? 'rgba(64,255,156,0.1)' : 'rgba(0,0,0,0.3)', border: sceneSelections.some(s => s.includes(m.url)) ? '1px solid rgba(64,255,156,0.4)' : '1px solid rgba(255,255,255,0.06)', borderRadius: '0.5rem', padding: '0.3rem', cursor: 'pointer', transition: 'all 0.2s', overflow: 'hidden', position: 'relative' }}>
                               <img src={m.url} alt="" loading="lazy" style={{ width: '100%', height: '65px', objectFit: 'cover', borderRadius: '0.3rem', display: 'block' }} />
                               <div style={{ fontSize: '0.55rem', color: 'rgba(255,255,255,0.4)', padding: '0.2rem 0.1rem 0', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{m.url.split('/').pop()}</div>
                             </button>
@@ -4691,14 +5118,14 @@ function AgentInbox({
                     {tasks.filter(t => ['done', 'completed', 'pass', 'pass_working'].includes(t.status as string)).length === 0 ? (
                       <div className="empty-state" style={{ color: 'rgba(255,255,255,0.5)', padding: '2rem', textAlign: 'center', gridColumn: '1/-1' }}>No completed tasks yet. Tasks move here automatically after generation finishes.</div>
                     ) : tasks.filter(t => ['done', 'completed', 'pass', 'pass_working'].includes(t.status as string)).map(task => (
-                      <article key={task.id} className="agent-task-card glass" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.8rem', height: '220px' }}>
+                      <article key={task.id} className="agent-task-card glass" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.8rem', height: '220px', overflow: 'hidden' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                          <div style={{ fontWeight: 700, color: 'var(--gold)', fontSize: '1rem', fontFamily: '"Outfit", sans-serif', lineHeight: 1.3 }}>{task.title}</div>
+                          <div style={{ fontWeight: 700, color: 'var(--gold)', fontSize: '1rem', fontFamily: '"Outfit", sans-serif', lineHeight: 1.3 }} onDoubleClick={() => { const newName = prompt('Rename task:', task.title); if (newName && newName.trim()) onTaskChange(task.id, d => { d.title = newName.trim() }) }}>{task.title}</div>
                           <div style={{ color: 'rgba(255,255,255,0.3)', fontSize: '0.7rem', whiteSpace: 'nowrap', paddingTop: '0.2rem' }}>{new Date(task.updatedAt).toLocaleDateString()}</div>
                         </div>
                         <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.8rem', lineHeight: 1.5, overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' as any }}>{task.prompt}</div>
-                        <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
-                          {task.sceneHint && <span style={{ fontSize: '0.7rem', padding: '0.2rem 0.5rem', background: 'rgba(95,189,255,0.1)', color: '#7edbff', borderRadius: '4px', border: '1px solid rgba(95,189,255,0.2)' }}>{task.sceneHint}</span>}
+                        <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', maxHeight: '60px', overflowY: 'auto', scrollbarWidth: 'thin' as any }}>
+                          {task.sceneHint && <span style={{ fontSize: '0.7rem', padding: '0.2rem 0.5rem', background: 'rgba(95,189,255,0.1)', color: '#7edbff', borderRadius: '4px', border: '1px solid rgba(95,189,255,0.2)', maxWidth: '100%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={task.sceneHint}>{task.sceneHint.length > 80 ? task.sceneHint.substring(0, 80) + '…' : task.sceneHint}</span>}
                           {task.skillHint && <span style={{ fontSize: '0.7rem', padding: '0.2rem 0.5rem', background: 'rgba(183,142,255,0.1)', color: '#c7b8ff', borderRadius: '4px', border: '1px solid rgba(183,142,255,0.2)' }}>{task.skillHint}</span>}
                           {task.passes && task.passes.length > 0 && <span style={{ fontSize: '0.7rem', padding: '0.2rem 0.5rem', background: 'rgba(255,255,255,0.05)', color: 'rgba(255,255,255,0.5)', borderRadius: '4px' }}>{task.passes.length} pass{task.passes.length > 1 ? 'es' : ''} • {task.passes.reduce((n, p) => n + (p.images?.length || 0), 0)} images</span>}
                         </div>
@@ -4720,7 +5147,7 @@ function AgentInbox({
                 {tasks.filter(t => t.status.startsWith('pass') || t.status === 'pass_working').map(task => {
                   const isActive = activeTaskIds['edit'] === task.id || (!activeTaskIds['edit'] && tasks.filter(t => t.status.startsWith('pass') || t.status === 'pass_working')[0]?.id === task.id);
                   return (
-                    <button key={task.id} className="task-sub-tab" style={{ padding: '0.5rem 1.5rem', borderRadius: '2rem', border: isActive ? '1px solid rgba(248, 217, 120, 0.5)' : '1px solid rgba(255,255,255,0.1)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', background: isActive ? 'rgba(248, 217, 120, 0.05)' : 'rgba(255,255,255,0.02)', color: isActive ? 'var(--gold)' : 'rgba(255,255,255,0.6)', boxShadow: isActive ? '0 0 12px rgba(248, 217, 120, 0.3)' : 'none', textShadow: isActive ? '0 0 8px rgba(248, 217, 120, 0.5)' : 'none', transition: 'all 0.3s ease' }} onClick={() => setActiveTaskIds({ ...activeTaskIds, edit: task.id })}>
+                    <button key={task.id} className="task-sub-tab" style={{ padding: '0.5rem 1.5rem', borderRadius: '2rem', border: isActive ? '1px solid rgba(248, 217, 120, 0.5)' : '1px solid rgba(255,255,255,0.1)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', background: isActive ? 'rgba(248, 217, 120, 0.05)' : 'rgba(255,255,255,0.02)', color: isActive ? 'var(--gold)' : 'rgba(255,255,255,0.6)', boxShadow: isActive ? '0 0 12px rgba(248, 217, 120, 0.3)' : 'none', textShadow: isActive ? '0 0 8px rgba(248, 217, 120, 0.5)' : 'none', transition: 'all 0.3s ease' }} onClick={() => setActiveTaskIds({ ...activeTaskIds, edit: task.id })} onDoubleClick={(e) => { e.stopPropagation(); const newName = prompt('Rename task:', task.title); if (newName && newName.trim()) onTaskChange(task.id, d => { d.title = newName.trim() }) }}>
                       <div style={{ fontWeight: 600 }}>{task.title || 'Untitled Task'}</div>
                     </button>
                   );
@@ -4778,22 +5205,32 @@ function AgentInbox({
         return (
           <div className="skills-store-backdrop" onClick={() => setShowSkillsStore(false)} style={{ position: 'fixed', inset: 0, zIndex: 9999, background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', display: 'flex', alignItems: 'center', justifyContent: 'center', animation: 'fadeIn 0.3s ease' }}>
             <div className="skills-store-modal" onClick={(e) => e.stopPropagation()} style={{ width: 'min(90vw, 900px)', maxHeight: '85vh', background: 'linear-gradient(145deg, rgba(20,20,30,0.95), rgba(10,10,20,0.98))', border: '1px solid rgba(212,175,55,0.15)', borderRadius: '1.5rem', overflow: 'hidden', display: 'flex', flexDirection: 'column', boxShadow: '0 30px 80px rgba(0,0,0,0.6), 0 0 40px rgba(212,175,55,0.08), inset 0 1px 0 rgba(255,255,255,0.05)' }}>
-              {/* Header */}
-              <div style={{ padding: '1.5rem 2rem', borderBottom: '1px solid rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
-                  <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'linear-gradient(135deg, rgba(212,175,55,0.2), rgba(248,192,64,0.1))', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#d4af37" strokeWidth="1.5" strokeLinecap="round"><path d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7z" /><line x1="9" y1="21" x2="15" y2="21" /><line x1="10" y1="23" x2="14" y2="23" /></svg>
+              {/* Header with Tabs */}
+              <div style={{ padding: '1.2rem 2rem 0', display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
+                    <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'linear-gradient(135deg, rgba(212,175,55,0.2), rgba(248,192,64,0.1))', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#d4af37" strokeWidth="1.5" strokeLinecap="round"><path d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7z" /><line x1="9" y1="21" x2="15" y2="21" /><line x1="10" y1="23" x2="14" y2="23" /></svg>
+                    </div>
+                    <div>
+                      <h2 style={{ margin: 0, fontSize: '1.2rem', color: 'white', fontWeight: 700, letterSpacing: '-0.3px' }}>{dcStoreTab === 'skills' ? 'Skills Store' : 'Prompt Blueprints'}</h2>
+                      <p style={{ margin: 0, fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)', letterSpacing: '0.5px' }}>{availableSkills.length} skills available · <span style={{ color: 'rgba(212,175,55,0.6)' }}>public/assets/storyboard/skills/</span></p>
+                    </div>
                   </div>
-                  <div>
-                    <h2 style={{ margin: 0, fontSize: '1.2rem', color: 'white', fontWeight: 700, letterSpacing: '-0.3px' }}>Skills Store</h2>
-                    <p style={{ margin: 0, fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)', letterSpacing: '0.5px' }}>{availableSkills.length} skills available · <span style={{ color: 'rgba(212,175,55,0.6)' }}>public/assets/storyboard/skills/</span></p>
-                  </div>
+                  <button type="button" onClick={() => setShowSkillsStore(false)} style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '0.5rem', color: 'rgba(255,255,255,0.5)', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: '1.1rem', transition: 'all 0.2s' }}>✕</button>
                 </div>
-                <button type="button" onClick={() => setShowSkillsStore(false)} style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '0.5rem', color: 'rgba(255,255,255,0.5)', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: '1.1rem', transition: 'all 0.2s' }}>✕</button>
+                <div style={{ display: 'flex', gap: '0.3rem', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+                  {(['skills', 'prompts'] as const).map(t => (
+                    <button key={t} type="button" onClick={() => setDcStoreTab(t)} style={{ padding: '0.5rem 1.2rem', border: 'none', borderBottom: dcStoreTab === t ? '2px solid var(--gold)' : '2px solid transparent', background: 'none', color: dcStoreTab === t ? 'var(--gold)' : 'rgba(255,255,255,0.4)', fontSize: '0.82rem', fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s' }}>{t === 'skills' ? '⚡ Skills' : '📝 Prompts'}</button>
+                  ))}
+                </div>
               </div>
 
-              {/* Skills Grid */}
+              {/* Content area */}
               <div style={{ flex: 1, overflowY: 'auto', padding: '1.5rem 2rem' }}>
+              {dcStoreTab === 'skills' ? (<>
+              {/* ── Skills Tab ── */}
+              <div>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.2rem' }}>
                   <p style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.35)', textTransform: 'uppercase', letterSpacing: '1.5px', fontWeight: 600, margin: 0 }}>Available Skills</p>
                   {(() => {
@@ -4954,6 +5391,124 @@ function AgentInbox({
                     )}
                   </div>
                 </div>
+              </div>
+              </>) : (
+              /* ── Prompts Tab ── */
+              <div>
+                {(() => {
+                  const PROMPT_SVGS = [
+                    { color: '#e8c547', d: 'M4 4h16v16H4zM4 12h16M12 4v16' },
+                    { color: '#47c5e8', d: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0h4' },
+                    { color: '#c547e8', d: 'M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z' },
+                    { color: '#47e88c', d: 'M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z' },
+                    { color: '#e87847', d: 'M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z' },
+                    { color: '#4778e8', d: 'M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z' },
+                    { color: '#e8d447', d: 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2' },
+                    { color: '#e84777', d: 'M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122' },
+                    { color: '#78e847', d: 'M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z' },
+                  ]
+                  const BUILTIN_PROMPTS = [
+                    { id: 'bp-cinematic-grid', name: '2×2 Cinematic Grid', icon: 0, desc: '4-panel premium 3D animated grid', text: 'premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric morning light, little tiny dust motes, in soft sunrays soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look\n\nCreate 2x2 cinematic grid with 4 panels with 3d animated scenes in each one:\n\nPanel 1: [character action, emotions, interaction. Camera/shot type. Light, background details]\nPanel 2: [describe]\nPanel 3: [describe]\nPanel 4: [describe]\n\nEnvironment: [describe main features]\n\nStyle: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric morning light, soft depth of field, expressive animated 3D eyes, realistic textures, detailed clear emotional staging, high-quality 4K animated movie look' },
+                    { id: 'bp-room-projections', name: '4 Room Projections', icon: 1, desc: 'Same room 4 camera angles in 2×2 grid', text: 'Show exact same room in four projections - 2x2 grid:\n\nPanel 1: Camera facing front. [describe wall, furniture, door, window]\nPanel 2: Camera close up facing left wall. [describe details]\nPanel 3: Top down view of the entire room. [describe layout]\nPanel 4: Camera angle from one side towards opposite wall. [describe perspective]\n\nAll panels must show SAME room, only camera angles change.\n\nStyle: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric light, expressive animated 3D eyes, realistic textures, high-quality 4K animated movie look' },
+                    { id: 'bp-quality-improve', name: 'Quality Improvement', icon: 2, desc: 'Enhance quality preserving composition', text: 'Use exact @img1 but improve quality of characters and resolution. Do not change camera angle, composition, architecture or objects. Characters remain in same poses, all objects in same places. Camera same angle as @img1 only improve quality.\n\nStyle: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric morning light, soft depth of field, expressive animated 3D eyes, realistic textures, detailed clear emotional staging, high-quality 4K animated movie look' },
+                  ]
+                  return (<>
+                    <p style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.35)', textTransform: 'uppercase', letterSpacing: '1.5px', fontWeight: 600, marginBottom: '1rem' }}>Prompt Blueprints</p>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', marginBottom: '2rem' }}>
+                      {BUILTIN_PROMPTS.map((bp) => {
+                        const svg = PROMPT_SVGS[bp.icon % PROMPT_SVGS.length]
+                        return (
+                          <button key={bp.id} type="button" onClick={() => { setNewPromptTitle(bp.name); setNewPromptText(bp.text); setEditingPromptId(bp.id) }} style={{ background: editingPromptId === bp.id ? `rgba(${parseInt(svg.color.slice(1,3),16)},${parseInt(svg.color.slice(3,5),16)},${parseInt(svg.color.slice(5,7),16)},0.08)` : 'rgba(255,255,255,0.015)', border: editingPromptId === bp.id ? `1px solid ${svg.color}66` : '1px solid rgba(255,255,255,0.06)', borderRadius: '1rem', padding: '1.4rem 1rem', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.7rem', textAlign: 'center', transition: 'all 0.3s', overflow: 'hidden', boxShadow: editingPromptId === bp.id ? `0 0 24px ${svg.color}33` : '0 2px 12px rgba(0,0,0,0.3)' }}>
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke={svg.color} strokeWidth="1.5"><path d={svg.d}/></svg>
+                            <div style={{ fontSize: '0.78rem', fontWeight: 600, color: 'rgba(255,255,255,0.75)', lineHeight: 1.3 }}>{bp.name}</div>
+                            <div style={{ fontSize: '0.68rem', color: 'rgba(255,255,255,0.3)', lineHeight: 1.4 }}>{bp.desc}</div>
+                          </button>
+                        )
+                      })}
+                      {/* Upload prompt file */}
+                      <label style={{ background: 'rgba(255,255,255,0.015)', border: '1px dashed rgba(255,255,255,0.1)', borderRadius: '1rem', padding: '1.4rem 1rem', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.7rem', textAlign: 'center', transition: 'all 0.3s' }}>
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.3)" strokeWidth="1.5" strokeLinecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="17 8 12 3 7 8" /><line x1="12" y1="3" x2="12" y2="15" /></svg>
+                        <div style={{ fontSize: '0.82rem', fontWeight: 600, color: 'rgba(255,255,255,0.35)' }}>Upload Prompt</div>
+                        <div style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.2)' }}>.json or .md file</div>
+                        <input type="file" accept=".json,.md" style={{ display: 'none' }} onChange={(e) => {
+                          const file = e.target.files?.[0]; if (!file) return
+                          const reader = new FileReader()
+                          reader.onload = () => {
+                            try {
+                              if (file.name.endsWith('.json')) {
+                                const p = JSON.parse(reader.result as string)
+                                setNewPromptTitle(p.name || file.name); setNewPromptText(p.text || p.fullText || p.description || '')
+                              } else {
+                                setNewPromptTitle(file.name.replace(/\.[^.]+$/, '')); setNewPromptText(reader.result as string)
+                              }
+                            } catch { setNewPromptTitle(file.name); setNewPromptText(reader.result as string || '') }
+                          }
+                          reader.readAsText(file)
+                          e.target.value = ''
+                        }} />
+                      </label>
+                    </div>
+                    {/* Create / Edit Prompt */}
+                    <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '1.5rem' }}>
+                      <p style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.35)', textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: '0.8rem', fontWeight: 600 }}>
+                        {editingPromptId ? 'Edit Prompt' : 'Create New Prompt'}
+                        {editingPromptId && <button type="button" onClick={() => { setEditingPromptId(null); setNewPromptTitle(''); setNewPromptText('') }} style={{ marginLeft: '0.8rem', background: 'none', border: 'none', color: 'rgba(255,255,255,0.3)', cursor: 'pointer', fontSize: '0.7rem' }}>Cancel</button>}
+                      </p>
+                      <input value={newPromptTitle} onChange={(e) => setNewPromptTitle(e.target.value)} placeholder="Prompt title (required)" style={{ width: '100%', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '0.5rem', color: 'white', padding: '0.6rem 1rem', fontSize: '0.85rem', marginBottom: '0.5rem', outline: 'none', fontFamily: 'inherit' }} />
+                      <textarea value={newPromptText} onChange={(e) => setNewPromptText(e.target.value)} placeholder="Write your prompt template here..." style={{ width: '100%', minHeight: '120px', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '0.75rem', color: 'white', padding: '0.8rem 1rem', fontSize: '0.82rem', resize: 'vertical', fontFamily: 'inherit', lineHeight: 1.5, outline: 'none' }} />
+                      <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.6rem', flexWrap: 'wrap', alignItems: 'center' }}>
+                        {/* Dictate */}
+                        <button type="button" onClick={() => {
+                          if (skillRecording) { skillRecognitionRef.current?.stop(); setSkillRecording(false); return }
+                          const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition
+                          if (!SR) return
+                          const r = new SR(); r.continuous = true; r.interimResults = true; r.lang = 'en-US'
+                          r.onresult = (ev: any) => { let t = ''; for (let i = 0; i < ev.results.length; i++) t += ev.results[i][0].transcript; setNewPromptText(t) }
+                          r.onerror = () => setSkillRecording(false); r.onend = () => setSkillRecording(false)
+                          r.start(); skillRecognitionRef.current = r; setSkillRecording(true)
+                        }} style={{ padding: '0.45rem 0.8rem', borderRadius: '0.5rem', border: `1px solid ${skillRecording ? 'rgba(255,64,64,0.5)' : 'rgba(255,255,255,0.1)'}`, background: skillRecording ? 'rgba(255,64,64,0.12)' : 'rgba(255,255,255,0.03)', color: skillRecording ? '#ff6464' : 'rgba(255,255,255,0.55)', cursor: 'pointer', fontSize: '0.78rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" /><path d="M19 10v2a7 7 0 0 1-14 0v-2" /><line x1="12" y1="19" x2="12" y2="23" /></svg>
+                          {skillRecording ? 'Stop' : 'Dictate'}
+                        </button>
+                        {/* AI Improve */}
+                        <button type="button" disabled={aiImproving || !newPromptText.trim()} onClick={async () => {
+                          if (!newPromptText.trim()) return
+                          setAiImproving(true)
+                          try {
+                            const { sendToGemini } = await import('./gemini-agent')
+                            const result = await sendToGemini(`Improve this prompt template for cinematic AI image generation. Make it more detailed, vivid and precise. Keep the structure and intent. Return ONLY the improved text:\n\n${newPromptText}`)
+                            if (result.text) setNewPromptText(result.text)
+                          } catch { } finally { setAiImproving(false) }
+                        }} style={{ padding: '0.45rem 0.8rem', borderRadius: '0.5rem', border: '1px solid rgba(156,64,255,0.25)', background: 'rgba(156,64,255,0.06)', color: aiImproving ? 'rgba(200,160,255,0.5)' : 'rgba(200,160,255,0.75)', cursor: aiImproving ? 'wait' : 'pointer', fontSize: '0.78rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14l-5-4.87 6.91-1.01L12 2z" /></svg>
+                          {aiImproving ? 'Improving...' : 'Improve with AI'}
+                        </button>
+                        <div style={{ flex: 1 }} />
+                        {/* Use / Inject prompt */}
+                        <button type="button" disabled={!newPromptText.trim()} onClick={() => {
+                          onDraftChange({ ...draft, prompt: newPromptText })
+                          setNewPromptTitle(''); setNewPromptText(''); setEditingPromptId(null); setShowSkillsStore(false)
+                        }} style={{ padding: '0.45rem 0.8rem', borderRadius: '0.5rem', border: `1px solid ${!newPromptText.trim() ? 'rgba(64,255,156,0.15)' : 'rgba(64,255,156,0.3)'}`, background: 'rgba(64,255,156,0.06)', color: !newPromptText.trim() ? 'rgba(100,255,180,0.3)' : 'rgba(100,255,180,0.8)', cursor: !newPromptText.trim() ? 'not-allowed' : 'pointer', fontSize: '0.78rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="20 6 9 17 4 12" /></svg>
+                          Use Prompt
+                        </button>
+                        {/* Save as skill file */}
+                        <button type="button" disabled={!newPromptTitle.trim() || !newPromptText.trim()} onClick={async () => {
+                          const slug = newPromptTitle.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').substring(0, 40)
+                          const newPrompt = { id: `prompt-${slug || 'custom'}-${Date.now()}`, name: newPromptTitle.trim(), description: newPromptText.substring(0, 200), fullText: newPromptText, text: newPromptText, iconIdx: Math.floor(Math.random() * 9), createdAt: new Date().toISOString() }
+                          await fetch('/api/skills/save', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(newPrompt) })
+                          setAvailableSkills(prev => [...prev, newPrompt])
+                          setNewPromptTitle(''); setNewPromptText(''); setEditingPromptId(null)
+                        }} style={{ padding: '0.45rem 0.8rem', borderRadius: '0.5rem', border: `1px solid ${(!newPromptTitle.trim() || !newPromptText.trim()) ? 'rgba(64,156,255,0.15)' : 'rgba(64,156,255,0.3)'}`, background: 'rgba(64,156,255,0.06)', color: (!newPromptTitle.trim() || !newPromptText.trim()) ? 'rgba(120,180,255,0.3)' : 'rgba(120,180,255,0.8)', cursor: (!newPromptTitle.trim() || !newPromptText.trim()) ? 'not-allowed' : 'pointer', fontSize: '0.78rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" /><polyline points="17 21 17 13 7 13 7 21" /></svg>
+                          Save as Skill
+                        </button>
+                      </div>
+                    </div>
+                  </>)
+                })()}
+              </div>
+              )}
               </div>
             </div>
           </div>

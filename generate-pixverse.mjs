@@ -27,9 +27,41 @@ if (prompt.length > 4950) {
 // 2. Extract image paths
 const attachedPaths = [];
 if (sceneHint) {
-  const matches = sceneHint.match(/\/assets\/storyboard\/uploads\/[a-zA-Z0-9_.-]+/g);
+  // Match all paths like /assets/storyboard/uploads/ANYTHING
+  const matches = sceneHint.match(/\/assets\/storyboard\/uploads\/[^\s|]+/g);
   if (matches) {
-    matches.forEach(m => attachedPaths.push(path.join(process.cwd(), 'public', m)));
+    matches.forEach(m => {
+      const fullPath = path.join(process.cwd(), 'public', m.replace(/[?#].*$/, ''));
+      if (fs.existsSync(fullPath)) attachedPaths.push(fullPath);
+    });
+  }
+  // Also try matching original filenames like "characters/xyz.png" or full paths
+  const origMatches = sceneHint.match(/\/assets\/storyboard\/[^\s|]+/g);
+  if (origMatches) {
+    origMatches.forEach(m => {
+      const fullPath = path.join(process.cwd(), 'public', m.replace(/[?#].*$/, ''));
+      if (fs.existsSync(fullPath) && !attachedPaths.includes(fullPath)) attachedPaths.push(fullPath);
+    });
+  }
+  // Fallback: bare filenames in brackets like [filename.png] — resolve to uploads dir
+  const bracketMatches = sceneHint.match(/\[([^\]]+\.(png|jpg|jpeg|webp))\]/gi);
+  if (bracketMatches) {
+    bracketMatches.forEach(bm => {
+      const filename = bm.replace(/^\[|\]$/g, '');
+      const fullPath = path.join(process.cwd(), 'public', 'assets', 'storyboard', 'uploads', filename);
+      if (fs.existsSync(fullPath) && !attachedPaths.includes(fullPath)) attachedPaths.push(fullPath);
+    });
+  }
+  // Fallback: "upload: filename /assets/..." patterns from disk uploads
+  const uploadMatches = sceneHint.match(/upload:\s*[^\s]+\s+(\/assets\/[^\s|]+)/gi);
+  if (uploadMatches) {
+    uploadMatches.forEach(um => {
+      const urlMatch = um.match(/(\/assets\/[^\s|]+)/);
+      if (urlMatch) {
+        const fullPath = path.join(process.cwd(), 'public', urlMatch[1].replace(/[?#].*$/, ''));
+        if (fs.existsSync(fullPath) && !attachedPaths.includes(fullPath)) attachedPaths.push(fullPath);
+      }
+    });
   }
 }
 
@@ -43,11 +75,19 @@ while ((match = imageRegex.exec(prompt)) !== null) {
 
 if (foundRefs.length > 0 && attachedPaths.length > 0) {
   for (const refName of foundRefs) {
-    let bestMatch = attachedPaths[0];
+    // Fuzzy-match: try all words from reference name against path
+    const refWords = refName.toLowerCase().split(/[\s,_-]+/).filter(w => w.length > 2);
+    let bestMatch = null;
+    let bestScore = 0;
     for (const p of attachedPaths) {
-      if (p.toLowerCase().includes(refName.split(' ')[0])) { bestMatch = p; break; }
+      const pLower = p.toLowerCase();
+      let score = 0;
+      for (const word of refWords) {
+        if (pLower.includes(word)) score++;
+      }
+      if (score > bestScore) { bestScore = score; bestMatch = p; }
     }
-    orderedImages.push(bestMatch);
+    orderedImages.push(bestMatch || attachedPaths[0]);
   }
 } else if (attachedPaths.length > 0) {
   orderedImages.push(...attachedPaths);
@@ -144,22 +184,48 @@ if (allSuccess && !isBatchGeneration) {
   }
 }
 
-const taskPath = path.join(tasksCurrentDir, `${taskId}.json`);
 if (fs.existsSync(taskPath)) {
   const taskData = JSON.parse(fs.readFileSync(taskPath, 'utf-8'));
   if (allSuccess) {
-    taskData.status = isBatchGeneration ? 'done' : 'pass';
-    taskData.errorNote = undefined;
-    // Inject collected images into generatedImages so the pass view shows them
-    if (collectedImages.length > 0) {
-      if (!taskData.generatedImages) taskData.generatedImages = [];
-      taskData.generatedImages.push(...collectedImages);
-      // Also inject into active pass if present
-      if (taskData.passes && taskData.activePassId) {
-        const activePass = taskData.passes.find(p => p.id === taskData.activePassId);
-        if (activePass) {
-          if (!activePass.images) activePass.images = [];
-          activePass.images.push(...collectedImages);
+    // For batch generation (--no-wait), images are NOT downloaded yet — they are being generated on PixVerse servers
+    if (isBatchGeneration) {
+      taskData.status = 'pass';
+      taskData.errorNote = undefined;
+      // Create a new pass noting the batch was submitted
+      const passId = `pass-batch-${Date.now()}`;
+      const modelsUsed = modelsToRun.map(m => m.model).join(', ');
+      const newPass = {
+        id: passId,
+        name: `Batch ${new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}`,
+        timestamp: new Date().toISOString(),
+        images: []
+      };
+      if (!taskData.passes) taskData.passes = [];
+      taskData.passes.push(newPass);
+      taskData.activePassId = passId;
+      taskData.generatedImages = [];
+      taskData.batchNote = `Submitted to PixVerse with models: ${modelsUsed}. Images are generating — use 'Download from PixVerse' to collect them when ready.`;
+    } else {
+      taskData.status = 'pass';
+      taskData.errorNote = undefined;
+      // Inject collected images into generatedImages so the pass view shows them
+      if (collectedImages.length > 0) {
+        if (!taskData.generatedImages) taskData.generatedImages = [];
+        taskData.generatedImages.push(...collectedImages);
+        // Also create or inject into active pass
+        const passId = taskData.activePassId || `pass-gen-${Date.now()}`;
+        if (taskData.passes) {
+          const activePass = taskData.passes.find(p => p.id === taskData.activePassId);
+          if (activePass) {
+            if (!activePass.images) activePass.images = [];
+            activePass.images.push(...collectedImages);
+          } else {
+            taskData.passes.push({ id: passId, name: 'Generated', timestamp: new Date().toISOString(), images: collectedImages });
+            taskData.activePassId = passId;
+          }
+        } else {
+          taskData.passes = [{ id: passId, name: 'Generated', timestamp: new Date().toISOString(), images: collectedImages }];
+          taskData.activePassId = passId;
         }
       }
     }

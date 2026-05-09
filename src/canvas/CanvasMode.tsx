@@ -20,9 +20,24 @@ const imageModels = [
   { id: 'gemini-3.1-flash', name: 'Nano Banana 2', quality: '2160p', detailLevel: '' },
   { id: 'gemini-3.0', name: 'Nano Banana Pro', quality: '1440p', detailLevel: '' },
   { id: 'gpt-image-2.0', name: 'GPT-2 Medium', quality: '1440p', detailLevel: 'medium' },
+  { id: 'seedream-4.5', name: 'SeedReam 4.5', quality: '2160p', detailLevel: '' },
+  { id: 'seedream-5.0-lite', name: 'SeedReam 5 Lite', quality: '1440p', detailLevel: '' },
+]
+
+const videoModels = [
+  { id: 'seedance-2.0-standard', name: 'Seedance 2.0 Standard', qualities: ['720p', '1080p'], durations: [5, 10, 15] },
+  { id: 'happyhorse-1.0', name: 'Happy Horse', qualities: ['720p', '1080p'], durations: [5, 10, 15] },
+  { id: 'v6', name: 'PixVerse 6', qualities: ['720p', '1080p'], durations: [5, 10, 15] },
+  { id: 'pixverse-c1', name: 'PixVerse C1', qualities: ['720p', '1080p'], durations: [5, 10, 15] },
+  { id: 'grok-imagine', name: 'Grok', qualities: ['720p'], durations: [5, 10, 15] },
+  { id: 'kling-3.0-standard', name: 'Kling 3.0 Standard', qualities: ['720p', '1080p'], durations: [5, 10] },
+  { id: 'kling-o3-standard', name: 'Kling O3 Standard', qualities: ['720p', '1080p'], durations: [5, 10] },
 ]
 
 type LinkMode = { from: string; type: CanvasEdgeType; label: string } | null
+type PendingConnection = { from: string; to: string; x: number; y: number } | null
+type PendingNodeConnection = { from: string; x: number; y: number; worldX: number; worldY: number } | null
+type ConnectorDrag = { from: string; x: number; y: number } | null
 
 function createSpace(index = 1): CanvasSpace {
   return {
@@ -82,14 +97,30 @@ function defaultGeneration() {
   }
 }
 
+function defaultGenerationForType(type: CanvasMediaType) {
+  if (type === 'video') {
+    return {
+      operation: 'video' as const,
+      model: videoModels[0].id,
+      quality: videoModels[0].qualities[0],
+      aspectRatio: '16:9',
+      detailLevel: '',
+      duration: 5,
+      status: 'idle' as const,
+    }
+  }
+  return defaultGeneration()
+}
+
 function shortModelName(model?: string) {
-  return imageModels.find(item => item.id === model)?.name || model || 'Model'
+  return imageModels.find(item => item.id === model)?.name || videoModels.find(item => item.id === model)?.name || model || 'Model'
 }
 
 export function CanvasMode({ onBack }: { onBack: () => void }) {
   const stageRef = useRef<HTMLDivElement>(null)
   const fileRef = useRef<HTMLInputElement>(null)
   const refFileRef = useRef<HTMLInputElement>(null)
+  const nodeFileRef = useRef<HTMLInputElement>(null)
   const [data, setData] = useState<CanvasData>(() => {
     try {
       const raw = window.localStorage.getItem(STORAGE_KEY)
@@ -112,6 +143,11 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
   const [noteSkillsOpen, setNoteSkillsOpen] = useState(false)
   const [noteAiEnhancing, setNoteAiEnhancing] = useState(false)
   const [activeJobs, setActiveJobs] = useState(0)
+  const [pendingConnection, setPendingConnection] = useState<PendingConnection>(null)
+  const [pendingNodeConnection, setPendingNodeConnection] = useState<PendingNodeConnection>(null)
+  const [connectorDrag, setConnectorDrag] = useState<ConnectorDrag>(null)
+  const [nodeUploadTargetId, setNodeUploadTargetId] = useState<string | null>(null)
+  const [expandedTrayId, setExpandedTrayId] = useState<string | null>(null)
 
   const activeSpace = data.spaces.find(space => space.id === data.activeSpaceId) || data.spaces[0]
   const selectedNode = activeSpace.nodes.find(node => node.id === selectedNodeId) || null
@@ -132,6 +168,12 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
       if (event.key === 'Escape') {
         setLinkMode(null)
         setContextMenu(null)
+        setPendingConnection(null)
+        setPendingNodeConnection(null)
+        setConnectorDrag(null)
+        setNoteAttachOpen(false)
+        setNoteSettingsOpen(false)
+        setNoteSkillsOpen(false)
       }
     }
     window.addEventListener('keydown', onKeyDown)
@@ -187,12 +229,13 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
       width: partial.width || size.width,
       height: partial.height || size.height,
       prompt: partial.prompt || '',
+      sourcePrompt: partial.sourcePrompt || partial.prompt || '',
       note: partial.note || '',
       url: partial.url,
       localPath: partial.localPath,
       mimeType: partial.mimeType,
       fileName: partial.fileName,
-      generation: partial.generation || defaultGeneration(),
+      generation: partial.generation || defaultGenerationForType(partial.type),
     }
     updateActiveSpace(space => {
       space.nodes.push(node)
@@ -215,6 +258,26 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
       if (exists) return
       space.edges.push({ id: makeId('edge'), from, to, type, label })
     })
+  }
+
+  const createConnection = (from: string, to: string, type: CanvasEdgeType) => {
+    const labels: Record<CanvasEdgeType, string> = {
+      derivative: 'derive',
+      reference: 'ref',
+      variation: 'variant',
+      animation: 'animate',
+      frame: 'frame',
+      context: 'context',
+    }
+    addEdge(from, to, type, labels[type])
+    setPendingConnection(null)
+    setConnectorDrag(null)
+    setStatusLine(`${labels[type]} link created`)
+  }
+
+  const cacheBustUrl = (url?: string) => {
+    if (!url || url.startsWith('blob:') || url.startsWith('data:')) return url
+    return `${url}${url.includes('?') ? '&' : '?'}t=${Date.now()}`
   }
 
   const getReferenceUrls = (nodeId: string, includeSource = false) => {
@@ -243,12 +306,36 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
     const nodeId = addNode({
       type: mediaTypeFromFile(file),
       title: file.name,
-      url: uploaded.url || URL.createObjectURL(file),
+      url: cacheBustUrl(uploaded.url) || URL.createObjectURL(file),
       localPath: uploaded.localPath,
       mimeType: uploaded.mimeType || file.type,
       fileName: uploaded.fileName || file.name,
     }, worldX, worldY)
     return nodeId
+  }
+
+  const uploadFileIntoNode = async (file: File, targetId: string) => {
+    const formData = new FormData()
+    formData.append('file', file)
+    let uploaded: { url?: string; localPath?: string; mimeType?: string; fileName?: string } = {}
+    try {
+      const response = await fetch('/api/storyboard/upload', { method: 'POST', body: formData })
+      uploaded = await response.json()
+    } catch {
+      uploaded = { url: URL.createObjectURL(file), fileName: file.name, mimeType: file.type }
+    }
+    const nextType = mediaTypeFromFile(file)
+    updateNode(targetId, node => {
+      node.type = nextType
+      node.title = file.name
+      node.url = cacheBustUrl(uploaded.url) || URL.createObjectURL(file)
+      node.localPath = uploaded.localPath
+      node.mimeType = uploaded.mimeType || file.type
+      node.fileName = uploaded.fileName || file.name
+      node.generation = node.generation || defaultGenerationForType(nextType)
+    })
+    setSelectedNodeId(targetId)
+    setStatusLine(`${file.name} loaded into node`)
   }
 
   const attachReferenceFilesToNode = async (files: File[], targetId: string) => {
@@ -278,14 +365,24 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
   }
 
   const handleStageMouseDown = (event: MouseEvent<HTMLDivElement>) => {
-    if (event.button !== 0 || (event.target as HTMLElement).closest('.canvas-node, .canvas-topbar, .canvas-space-tabs, .canvas-pinned-trays, .canvas-context-menu, .canvas-prompt-dock, .canvas-note-composer, .canvas-link-banner')) return
+    if (event.button !== 0 || (event.target as HTMLElement).closest('.canvas-node, .canvas-topbar, .canvas-space-tabs, .canvas-pinned-trays, .canvas-tray-panel, .canvas-context-menu, .canvas-connection-menu, .canvas-prompt-dock, .canvas-note-composer, .canvas-link-banner')) return
     setContextMenu(null)
+    setPendingConnection(null)
+    setPendingNodeConnection(null)
+    setNoteAttachOpen(false)
+    setNoteSettingsOpen(false)
+    setNoteSkillsOpen(false)
     setSelectedNodeId(null)
     setPanning(true)
     setDragStart({ x: event.clientX, y: event.clientY, panX: activeSpace.viewport.panX, panY: activeSpace.viewport.panY })
   }
 
   const handleMouseMove = (event: MouseEvent<HTMLDivElement>) => {
+    if (connectorDrag) {
+      const world = screenToWorld(event.clientX, event.clientY)
+      setConnectorDrag(current => current ? { ...current, x: world.x, y: world.y } : current)
+      return
+    }
     if (draggingNodeId && dragStart) {
       const dx = (event.clientX - dragStart.x) / activeSpace.viewport.zoom
       const dy = (event.clientY - dragStart.y) / activeSpace.viewport.zoom
@@ -305,7 +402,30 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
     }
   }
 
-  const stopDragging = () => {
+  const stopDragging = (event?: MouseEvent<HTMLDivElement>) => {
+    if (connectorDrag && event) {
+      const target = document.elementFromPoint(event.clientX, event.clientY)
+      const nodeEl = target?.closest?.('.canvas-node') as HTMLElement | null
+      const to = nodeEl?.dataset.nodeId
+      const world = screenToWorld(event.clientX, event.clientY)
+      if (to && to !== connectorDrag.from) {
+        setPendingConnection({
+          from: connectorDrag.from,
+          to,
+          x: event.clientX - (stageRef.current?.getBoundingClientRect().left || 0),
+          y: event.clientY - (stageRef.current?.getBoundingClientRect().top || 0),
+        })
+      } else {
+        setPendingNodeConnection({
+          from: connectorDrag.from,
+          x: event.clientX - (stageRef.current?.getBoundingClientRect().left || 0),
+          y: event.clientY - (stageRef.current?.getBoundingClientRect().top || 0),
+          worldX: world.x,
+          worldY: world.y,
+        })
+      }
+      setConnectorDrag(null)
+    }
     setDraggingNodeId(null)
     setPanning(false)
     setDragStart(null)
@@ -328,7 +448,18 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
     setDragStart({ x: event.clientX, y: event.clientY, nodeX: node.x, nodeY: node.y })
   }
 
-  const addPlaceholder = (type: CanvasMediaType, x: number, y: number, sourceId?: string) => {
+  const startConnectorDrag = (event: MouseEvent<HTMLButtonElement>, node: CanvasNode) => {
+    event.preventDefault()
+    event.stopPropagation()
+    const start = centerOf(node)
+    setSelectedNodeId(node.id)
+    setPendingConnection(null)
+    setPendingNodeConnection(null)
+    setConnectorDrag({ from: node.id, x: start.x + node.width / 2, y: start.y })
+    setStatusLine('Drag the connector to another node')
+  }
+
+  const addPlaceholder = (type: CanvasMediaType, x: number, y: number, sourceId?: string, edgeType?: CanvasEdgeType) => {
     const id = addNode({ type, title: type === 'placeholder' ? 'Empty media' : `New ${type}` }, x, y)
     if (sourceId) {
       updateActiveSpace(space => {
@@ -336,12 +467,18 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
           id: makeId('edge'),
           from: sourceId,
           to: id,
-          type: type === 'video' ? 'animation' : 'derivative',
-          label: type === 'video' ? 'image to video' : 'derivative',
+          type: edgeType || (type === 'video' ? 'animation' : 'derivative'),
+          label: edgeType === 'reference' ? 'ref' : type === 'video' ? 'image to video' : edgeType || 'derivative',
         })
       })
     }
     return id
+  }
+
+  const createConnectedNode = (type: CanvasMediaType, edgeType?: CanvasEdgeType) => {
+    if (!pendingNodeConnection) return
+    addPlaceholder(type, pendingNodeConnection.worldX, pendingNodeConnection.worldY, pendingNodeConnection.from, edgeType)
+    setPendingNodeConnection(null)
   }
 
   const deleteNode = (nodeId: string) => {
@@ -377,6 +514,7 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
       node.localPath = payload.localPath
       node.fileName = payload.fileName || payload.url.split('/').pop() || node.fileName
       node.title = title || node.title || node.fileName || 'Generated image'
+      node.sourcePrompt = node.sourcePrompt || node.prompt || ''
       node.generation = {
         ...(node.generation || defaultGeneration()),
         status: 'done',
@@ -414,6 +552,80 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
     return payload as { ok: boolean; url: string; localPath?: string }
   }
 
+  const callCanvasVideoApi = async (node: CanvasNode) => {
+    const generation = node.generation || defaultGenerationForType('video')
+    const prompt = node.prompt || node.note || ''
+    const referenceUrl = node.url || getReferenceUrls(node.id, true)[0] || ''
+    const response = await fetch('/api/tasks/edit-from-lightbox', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        type: 'video',
+        shotId: node.id,
+        actId: 'canvas',
+        sceneId: activeSpace.id,
+        mode: 'video',
+        imageUrl: referenceUrl,
+        attachments: getReferenceUrls(node.id),
+        note: prompt,
+        model: generation.model || videoModels[0].id,
+        quality: generation.quality || videoModels[0].qualities[0],
+        aspectRatio: generation.aspectRatio || '16:9',
+        duration: generation.duration || 5,
+      }),
+    })
+    const payload = await response.json()
+    if (!response.ok || payload.error) throw new Error(payload.error || 'Video generation failed')
+    return payload as { ok: boolean; url: string; localPath?: string; cliPrompt?: string }
+  }
+
+  const runVideoGeneration = async (nodeId: string) => {
+    const source = activeSpace.nodes.find(node => node.id === nodeId)
+    if (!source) return
+    if (!(source.prompt || source.note)) {
+      updateNode(source.id, node => {
+        node.generation = { ...(node.generation || defaultGenerationForType('video')), status: 'error', error: 'Add a video prompt before running.' }
+      })
+      setStatusLine('Missing video prompt')
+      return
+    }
+    const targetId = source.type === 'video' && !source.url
+      ? source.id
+      : addPlaceholder('video', source.x + source.width + 140, source.y, source.id, 'animation')
+    updateNode(targetId, node => {
+      node.prompt = source.prompt
+      node.sourcePrompt = source.prompt || source.sourcePrompt || ''
+      node.generation = {
+        ...(source.generation || defaultGenerationForType('video')),
+        operation: 'video',
+        status: 'running',
+        error: '',
+      }
+    })
+    setStatusLine(`Generating video with ${shortModelName(source.generation?.model)}...`)
+    setActiveJobs(count => count + 1)
+    try {
+      const payload = await callCanvasVideoApi(source)
+      updateNode(targetId, node => {
+        node.type = 'video'
+        node.url = cacheBustUrl(payload.url)
+        node.localPath = payload.localPath
+        node.fileName = payload.url?.split('/').pop() || 'canvas-video.mp4'
+        node.note = payload.cliPrompt || node.note
+        node.generation = { ...(node.generation || defaultGenerationForType('video')), status: 'done', error: '', lastRunAt: new Date().toISOString() }
+      })
+      setSelectedNodeId(targetId)
+      setStatusLine('Video generation complete')
+    } catch (error) {
+      updateNode(targetId, node => {
+        node.generation = { ...(node.generation || defaultGenerationForType('video')), status: 'error', error: error instanceof Error ? error.message : String(error) }
+      })
+      setStatusLine(error instanceof Error ? error.message : 'Video generation failed')
+    } finally {
+      setActiveJobs(count => Math.max(0, count - 1))
+    }
+  }
+
   const runImageGeneration = async (nodeId: string, asVariation = false) => {
     const source = activeSpace.nodes.find(node => node.id === nodeId)
     if (!source) return
@@ -431,6 +643,7 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
           type: 'placeholder',
           title: asVariation ? `Variant from ${source.title}` : `Generated from ${source.title}`,
           prompt: source.prompt,
+          sourcePrompt: source.prompt || source.sourcePrompt || '',
           generation: { ...(source.generation || defaultGeneration()), status: 'queued' },
         }, source.x + source.width + 140, source.y + (asVariation ? 52 : 0))
 
@@ -442,6 +655,7 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
     }
 
     updateNode(targetId, node => {
+      node.sourcePrompt = source.prompt || source.sourcePrompt || node.sourcePrompt || ''
       node.generation = { ...(node.generation || defaultGeneration()), status: 'running', error: '', operation: generationType }
     })
     setStatusLine(`${generationType === 'enhance' ? 'Enhancing' : 'Generating'} with ${shortModelName(source.generation?.model)}...`)
@@ -493,6 +707,7 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
           localPath: panel.localPath,
           fileName: panel.url?.split('/').pop(),
           prompt: source.prompt,
+          sourcePrompt: source.sourcePrompt || source.prompt || '',
           generation: { ...(source.generation || defaultGeneration()), status: 'done', operation: 'split' },
         }, source.x + source.width + 120 + col * 300, source.y + row * 240)
         addEdge(source.id, id, 'frame', `P${index + 1}`)
@@ -542,6 +757,19 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
     }, 0)
   }
 
+  const injectSourcePrompt = (nodeId: string) => {
+    const node = activeSpace.nodes.find(item => item.id === nodeId)
+    const parentEdge = activeSpace.edges.find(edge => edge.to === nodeId && (edge.type === 'derivative' || edge.type === 'variation' || edge.type === 'animation'))
+    const parent = parentEdge ? activeSpace.nodes.find(item => item.id === parentEdge.from) : null
+    const prompt = node?.sourcePrompt || node?.prompt || parent?.sourcePrompt || parent?.prompt || ''
+    if (!prompt) {
+      setStatusLine('No saved source prompt for this node yet')
+      return
+    }
+    updateNode(nodeId, draft => { draft.prompt = prompt })
+    setStatusLine('Source prompt injected')
+  }
+
   const addSpace = () => {
     setData(current => {
       const next = structuredClone(current)
@@ -553,6 +781,39 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
   }
 
   const nodeById = useMemo(() => new Map(activeSpace.nodes.map(node => [node.id, node])), [activeSpace.nodes])
+  const expandedTray = expandedTrayId ? activeSpace.trays.find(tray => tray.id === expandedTrayId) : null
+  const selectedIsVideo = selectedNode?.type === 'video'
+  const selectedVideoModel = videoModels.find(model => model.id === selectedGeneration.model) || videoModels[0]
+
+  const closeNotePopovers = () => {
+    setNoteAttachOpen(false)
+    setNoteSettingsOpen(false)
+    setNoteSkillsOpen(false)
+  }
+
+  const addNodeToTray = (trayId: string, nodeId: string) => {
+    updateActiveSpace(space => {
+      const tray = space.trays.find(item => item.id === trayId)
+      if (tray && !tray.nodeIds.includes(nodeId)) tray.nodeIds.push(nodeId)
+    })
+    setStatusLine('Reference stored in tray')
+  }
+
+  const duplicateTrayNodeToCanvas = (nodeId: string) => {
+    const source = activeSpace.nodes.find(node => node.id === nodeId)
+    if (!source) return
+    addNode({
+      ...source,
+      id: undefined,
+      title: source.title,
+      generation: source.generation || defaultGenerationForType(source.type),
+    }, screenToWorld(window.innerWidth / 2, window.innerHeight / 2).x, screenToWorld(window.innerWidth / 2, window.innerHeight / 2).y)
+  }
+
+  const openNodeUpload = (nodeId: string) => {
+    setNodeUploadTargetId(nodeId)
+    nodeFileRef.current?.click()
+  }
 
   return (
     <div className="canvas-mode">
@@ -622,6 +883,18 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
               event.currentTarget.value = ''
             }}
           />
+          <input
+            ref={nodeFileRef}
+            type="file"
+            accept="image/*,video/*,audio/*,.pdf,.doc,.docx"
+            style={{ display: 'none' }}
+            onChange={(event) => {
+              const file = event.target.files?.[0]
+              if (file && nodeUploadTargetId) uploadFileIntoNode(file, nodeUploadTargetId)
+              setNodeUploadTargetId(null)
+              event.currentTarget.value = ''
+            }}
+          />
         </div>
 
         {linkMode && (
@@ -649,14 +922,52 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
           {activeSpace.trays.map((tray, index) => (
             <button
               key={tray.id}
-              className={`canvas-tray-tab ${index === 0 ? 'is-active' : ''}`}
+              className={`canvas-tray-tab ${expandedTrayId === tray.id || (!expandedTrayId && index === 0) ? 'is-active' : ''}`}
               style={{ borderColor: `${tray.color}55` }}
+              onClick={() => setExpandedTrayId(expandedTrayId === tray.id ? null : tray.id)}
               type="button"
             >
               {tray.name}
             </button>
           ))}
         </div>
+
+        {expandedTray && (
+          <div
+            className="canvas-tray-panel"
+            style={{ borderColor: `${expandedTray.color}44` }}
+            onDragOver={(event) => event.preventDefault()}
+            onDrop={(event) => {
+              event.preventDefault()
+              const canvasNodeId = event.dataTransfer.getData('application/x-canvas-node')
+              if (canvasNodeId) {
+                addNodeToTray(expandedTray.id, canvasNodeId)
+                return
+              }
+              const world = screenToWorld(window.innerWidth / 2, window.innerHeight / 2)
+              Array.from(event.dataTransfer.files).forEach(async (file, index) => {
+                const nodeId = await uploadFile(file, world.x + index * 24, world.y + index * 24)
+                addNodeToTray(expandedTray.id, nodeId)
+              })
+            }}
+          >
+            <button className="canvas-popover-close" onClick={() => setExpandedTrayId(null)} type="button" aria-label="Close">×</button>
+            <div className="canvas-tray-panel-header">
+              <strong>{expandedTray.name}</strong>
+              <span>Drop files here or store the selected node.</span>
+              {selectedNode && <button type="button" onClick={() => addNodeToTray(expandedTray.id, selectedNode.id)}>Store selected</button>}
+            </div>
+            <div className="canvas-tray-panel-grid">
+              {expandedTray.nodeIds.map(nodeId => activeSpace.nodes.find(node => node.id === nodeId)).filter(Boolean).map(node => (
+                <button key={node!.id} type="button" onClick={() => duplicateTrayNodeToCanvas(node!.id)} title={`Place ${node!.title} on canvas`}>
+                  {node!.url && node!.type === 'image' ? <img src={node!.url} alt="" /> : <span>{node!.type}</span>}
+                  <small>{node!.title}</small>
+                </button>
+              ))}
+              {expandedTray.nodeIds.length === 0 && <div className="canvas-tray-empty">No references yet</div>}
+            </div>
+          </div>
+        )}
 
         <div
           className="canvas-world"
@@ -682,6 +993,15 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
                 </g>
               )
             })}
+            {connectorDrag && (() => {
+              const from = nodeById.get(connectorDrag.from)
+              if (!from) return null
+              const a = { x: from.x + from.width, y: from.y + from.height / 2 }
+              const b = { x: connectorDrag.x, y: connectorDrag.y }
+              const midX = (a.x + b.x) / 2
+              const d = `M ${a.x} ${a.y} C ${midX} ${a.y}, ${midX} ${b.y}, ${b.x} ${b.y}`
+              return <path className="canvas-edge-path draft" d={d} stroke="#f8d978" />
+            })()}
           </svg>
 
           {activeSpace.nodes.map(node => {
@@ -690,6 +1010,7 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
             return (
             <div
               key={node.id}
+              data-node-id={node.id}
               className={`canvas-node ${node.type} ${node.id === selectedNodeId ? 'is-selected' : ''} ${isReference ? 'is-reference' : ''} ${status ? `is-${status}` : ''}`}
               style={{ left: node.x, top: node.y, width: node.width, height: node.height }}
               onMouseDown={(event) => startNodeDrag(event, node)}
@@ -698,10 +1019,20 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
                 event.preventDefault()
                 event.stopPropagation()
                 const world = screenToWorld(event.clientX, event.clientY)
-                Array.from(event.dataTransfer.files).forEach(async (file, index) => {
-                  const refId = await uploadFile(file, world.x - 320 - index * 22, world.y + index * 22)
-                  addEdge(refId, node.id, 'reference', 'ref')
-                })
+                const files = Array.from(event.dataTransfer.files)
+                if (!files.length) return
+                if (!node.url && (node.type === 'placeholder' || node.type === 'image' || node.type === 'video' || node.type === 'audio' || node.type === 'document')) {
+                  uploadFileIntoNode(files[0], node.id)
+                  files.slice(1).forEach(async (file, index) => {
+                    const refId = await uploadFile(file, world.x - 320 - index * 22, world.y + index * 22)
+                    addEdge(refId, node.id, 'reference', 'ref')
+                  })
+                } else {
+                  files.forEach(async (file, index) => {
+                    const refId = await uploadFile(file, world.x - 320 - index * 22, world.y + index * 22)
+                    addEdge(refId, node.id, 'reference', 'ref')
+                  })
+                }
               }}
               onContextMenu={(event) => {
                 event.preventDefault()
@@ -713,21 +1044,37 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
             >
               {isReference && <div className="canvas-node-badge">REF</div>}
               {status && status !== 'idle' && <div className={`canvas-node-status ${status}`}>{status}</div>}
+              <button
+                className="canvas-connector-port"
+                onMouseDown={(event) => startConnectorDrag(event, node)}
+                title="Drag connector to another node"
+                type="button"
+              />
               {node.id === selectedNodeId && (
                 <>
                   <div className="canvas-floating-tools left">
-                    <button onMouseDown={(event) => event.stopPropagation()} onClick={(event) => { event.stopPropagation(); duplicateNode(node.id) }} title="Crop / duplicate working copy" type="button">⌗</button>
+                    <button onMouseDown={(event) => event.stopPropagation()} onClick={(event) => { event.stopPropagation(); duplicateNode(node.id) }} title="Duplicate node" type="button">⧉</button>
                     <button onMouseDown={(event) => event.stopPropagation()} onClick={(event) => { event.stopPropagation(); runImageGeneration(node.id) }} title="Enhance" type="button">✧</button>
                     <button onMouseDown={(event) => event.stopPropagation()} onClick={(event) => { event.stopPropagation(); splitGridNode(node.id) }} title="Split grid" type="button">▦</button>
                   </div>
                   <div className="canvas-floating-tools right">
                     <button onMouseDown={(event) => event.stopPropagation()} onClick={(event) => { event.stopPropagation(); setStatusLine('Add to scene will connect to Film Storyboard in the next pass') }} title="Add to scene" type="button">☆</button>
                     <button onMouseDown={(event) => event.stopPropagation()} onClick={(event) => { event.stopPropagation(); focusSelectedNote(node.id) }} title="Note / prompt" type="button">✎</button>
-                    <button onMouseDown={(event) => event.stopPropagation()} onClick={(event) => { event.stopPropagation(); deleteNode(node.id) }} title="Delete" type="button">⌫</button>
+                    <button onMouseDown={(event) => event.stopPropagation()} onClick={(event) => { event.stopPropagation(); deleteNode(node.id) }} title="Delete" type="button" aria-label="Delete">
+                      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M6 6l1 15h10l1-15M10 10v7M14 10v7" /></svg>
+                    </button>
                   </div>
                 </>
               )}
-              <div className="canvas-node-media">
+              <div
+                className={`canvas-node-media ${!node.url ? 'is-empty-media' : ''}`}
+                onClick={(event) => {
+                  if (!node.url) {
+                    event.stopPropagation()
+                    openNodeUpload(node.id)
+                  }
+                }}
+              >
                 {node.type === 'image' && node.url ? <img src={node.url} alt={node.title} draggable={false} /> : null}
                 {node.type === 'video' && node.url ? <video src={node.url} muted playsInline /> : null}
                 {node.type === 'audio' ? <div className="canvas-node-placeholder">♪<br />Audio / music</div> : null}
@@ -735,15 +1082,19 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
                 {(node.type === 'placeholder' || (!node.url && node.type !== 'audio' && node.type !== 'document')) ? <div className="canvas-node-placeholder">＋<br />Upload or generate media</div> : null}
               </div>
               <div className="canvas-node-footer">
-                <span className="canvas-node-title">{node.title}</span>
-                <div className="canvas-node-tools">
-                  <button className="canvas-node-action" onClick={(event) => { event.stopPropagation(); setLinkMode({ from: node.id, type: 'derivative', label: 'derive' }); setStatusLine('Choose a target node for derivative link') }} title="Connect derivative" type="button">↗</button>
-                  <button className="canvas-node-action" onClick={(event) => { event.stopPropagation(); setLinkMode({ from: node.id, type: 'reference', label: 'ref' }); setStatusLine('Choose a target node for reference link') }} title="Use as reference" type="button">◆</button>
-                  <button className="canvas-node-action" onClick={(event) => { event.stopPropagation(); runImageGeneration(node.id, true) }} title="Generate variant" type="button">⧉</button>
-                  <button className="canvas-node-action" onClick={(event) => { event.stopPropagation(); addPlaceholder('video', node.x + node.width + 120, node.y, node.id) }} title="Convert to video placeholder" type="button">▶</button>
-                  <button className="canvas-node-action" onClick={(event) => { event.stopPropagation(); disconnectNode(node.id) }} title="Disconnect" type="button">⌁</button>
-                  <button className="canvas-node-action" onClick={(event) => { event.stopPropagation(); deleteNode(node.id) }} title="Delete" type="button">×</button>
-                </div>
+                <span
+                  className="canvas-node-title"
+                  draggable
+                  onDragStart={(event) => {
+                    event.stopPropagation()
+                    event.dataTransfer.setData('application/x-canvas-node', node.id)
+                    event.dataTransfer.effectAllowed = 'copy'
+                  }}
+                  title="Drag this title into a reference tray"
+                >
+                  {node.title}
+                </span>
+                <span className="canvas-node-type-pill">{node.type}</span>
               </div>
             </div>
             )
@@ -766,27 +1117,77 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
             {selectedNode && <button type="button" onClick={() => { duplicateNode(selectedNode.id); setContextMenu(null) }}>Duplicate selected</button>}
             {selectedNode && <button type="button" onClick={() => { runImageGeneration(selectedNode.id); setContextMenu(null) }}>Run selected node</button>}
             {selectedNode?.type === 'image' && <button type="button" onClick={() => { splitGridNode(selectedNode.id); setContextMenu(null) }}>Split selected 2×2</button>}
-            {selectedNode && <button type="button" onClick={() => { setLinkMode({ from: selectedNode.id, type: 'reference', label: 'ref' }); setContextMenu(null) }}>Connect as reference...</button>}
+            {selectedNode && <button type="button" onClick={() => { setLinkMode({ from: selectedNode.id, type: 'reference', label: 'ref' }); setContextMenu(null) }}>Use selected as golden reference...</button>}
+            {selectedNode && expandedTray && <button type="button" onClick={() => { addNodeToTray(expandedTray.id, selectedNode.id); setContextMenu(null) }}>Store selected in {expandedTray.name}</button>}
             {selectedNode && <button type="button" onClick={() => { disconnectNode(selectedNode.id); setContextMenu(null) }}>Disconnect selected</button>}
+          </div>
+        )}
+
+        {pendingConnection && (
+          <div className="canvas-connection-menu" style={{ left: pendingConnection.x, top: pendingConnection.y }}>
+            <button className="canvas-popover-close" onClick={() => setPendingConnection(null)} type="button" aria-label="Close">×</button>
+            <strong>Connect as</strong>
+            <button type="button" onClick={() => createConnection(pendingConnection.from, pendingConnection.to, 'derivative')}>Derivative image</button>
+            <button type="button" onClick={() => createConnection(pendingConnection.from, pendingConnection.to, 'reference')}>Golden reference</button>
+            <button type="button" onClick={() => createConnection(pendingConnection.from, pendingConnection.to, 'variation')}>Pink variant</button>
+            <button type="button" onClick={() => createConnection(pendingConnection.from, pendingConnection.to, 'animation')}>Animation / image to video</button>
+            <button type="button" onClick={() => createConnection(pendingConnection.from, pendingConnection.to, 'frame')}>Extracted frame / panel</button>
+            <button type="button" onClick={() => createConnection(pendingConnection.from, pendingConnection.to, 'context')}>Scene context</button>
+            <button className="is-muted" type="button" onClick={() => setPendingConnection(null)}>Cancel</button>
+          </div>
+        )}
+
+        {pendingNodeConnection && (
+          <div className="canvas-connection-menu create-node" style={{ left: pendingNodeConnection.x, top: pendingNodeConnection.y }}>
+            <button className="canvas-popover-close" onClick={() => setPendingNodeConnection(null)} type="button" aria-label="Close">×</button>
+            <strong>Create connected node</strong>
+            <button type="button" onClick={() => createConnectedNode('image', 'derivative')}>Image container</button>
+            <button type="button" onClick={() => createConnectedNode('video', 'animation')}>Video container</button>
+            <button type="button" onClick={() => createConnectedNode('document', 'context')}>Text / PDF context</button>
+            <button type="button" onClick={() => createConnectedNode('placeholder', 'reference')}>Reference placeholder</button>
+            <button type="button" onClick={() => createConnectedNode('audio', 'context')}>Music / speech node</button>
+            <button className="is-muted" type="button" onClick={() => setPendingNodeConnection(null)}>Cancel</button>
           </div>
         )}
 
         {selectedNode && (
           <div className="canvas-note-composer">
+            {(noteAttachOpen || noteSettingsOpen || noteSkillsOpen) && <button className="canvas-popover-backdrop" type="button" aria-label="Close popups" onClick={closeNotePopovers} />}
             <textarea
               value={selectedNode.prompt}
               onChange={(event) => updateNode(selectedNode.id, node => { node.prompt = event.target.value })}
               placeholder="Leave an iteration note..."
               rows={4}
             />
-            <button className="canvas-note-reset" onClick={() => updateNode(selectedNode.id, node => { node.prompt = '' })} title="Clear prompt" type="button">↻</button>
+            <button className="canvas-note-reset" onClick={() => injectSourcePrompt(selectedNode.id)} title="Inject saved source prompt" type="button">↻</button>
             <div className="canvas-note-title">
               <input
                 value={selectedNode.title}
                 onChange={(event) => updateNode(selectedNode.id, node => { node.title = event.target.value })}
                 aria-label="Selected node title"
               />
-              <span>{selectedNode.type}</span>
+              <select
+                value={selectedNode.type}
+                onChange={(event) => updateNode(selectedNode.id, node => {
+                  const nextType = event.target.value as CanvasMediaType
+                  node.type = nextType
+                  node.generation = {
+                    ...defaultGenerationForType(nextType),
+                    ...(node.generation || {}),
+                    model: nextType === 'video' && !videoModels.some(model => model.id === node.generation?.model) ? videoModels[0].id : nextType !== 'video' && !imageModels.some(model => model.id === node.generation?.model) ? imageModels[0].id : node.generation?.model,
+                    quality: nextType === 'video' && !['720p', '1080p'].includes(node.generation?.quality || '') ? videoModels[0].qualities[0] : nextType !== 'video' && ['720p', '1080p'].includes(node.generation?.quality || '') ? imageModels[0].quality : node.generation?.quality,
+                    operation: nextType === 'video' ? 'video' : 'generate',
+                  }
+                })}
+                aria-label="Selected node media type"
+                title="Change node type without deleting connections"
+              >
+                <option value="image">image</option>
+                <option value="video">video</option>
+                <option value="audio">audio</option>
+                <option value="document">document</option>
+                <option value="placeholder">placeholder</option>
+              </select>
               <span>{selectedRefNodes.length}/8 refs</span>
               {activeJobs > 0 && <strong>{activeJobs} generating</strong>}
               {selectedNode.generation?.error && <em>{selectedNode.generation.error}</em>}
@@ -817,18 +1218,19 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
                 ))}
                 {selectedRefNodes.length === 0 && <span>{selectedRefNodes.length}/8 · {activeJobs > 0 ? `${activeJobs} generating` : 'ready'}</span>}
               </div>
-              <button className="canvas-note-ok" onClick={() => runImageGeneration(selectedNode.id)} title="Run generation" type="button">✓</button>
+              <button className="canvas-note-ok" onClick={() => selectedNode.type === 'video' ? runVideoGeneration(selectedNode.id) : runImageGeneration(selectedNode.id)} title={selectedNode.type === 'video' ? 'Run video generation' : 'Run image generation / enhance selected'} type="button">✓</button>
             </div>
             {noteAttachOpen && (
               <div className="canvas-note-popover attach">
+                <button className="canvas-popover-close" onClick={() => setNoteAttachOpen(false)} type="button" aria-label="Close">×</button>
                 <strong>Attach references</strong>
-                <p>Upload files or press ◆ on another node, then click this node.</p>
+                <p>Upload files or drag files directly onto the selected node.</p>
                 <button type="button" onClick={() => refFileRef.current?.click()}>Upload reference files</button>
-                <button type="button" onClick={() => setLinkMode({ from: selectedNode.id, type: 'reference', label: 'ref' })}>Use selected as reference source</button>
               </div>
             )}
             {noteSkillsOpen && (
               <div className="canvas-note-popover skills">
+                <button className="canvas-popover-close" onClick={() => setNoteSkillsOpen(false)} type="button" aria-label="Close">×</button>
                 <strong>Skills / prompts</strong>
                 <button type="button" onClick={() => updateNode(selectedNode.id, node => { node.prompt = `${node.prompt}\n\nCreate 2x2 grid with 4 panels with 3d animated scenes in each one:`.trim() })}>Inject 2×2 grid line</button>
                 <button type="button" onClick={() => updateNode(selectedNode.id, node => { node.prompt = `${node.prompt}\n\nAll panels must be consistent between each other as to backgrounds, positioning and characters.`.trim() })}>Inject consistency tag</button>
@@ -836,35 +1238,57 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
             )}
             {noteSettingsOpen && (
               <div className="canvas-note-popover settings">
-                <strong>Generation Models</strong>
-                <select
-                  value={selectedGeneration.model}
-                  onChange={(event) => {
-                    const preset = imageModels.find(item => item.id === event.target.value) || imageModels[0]
-                    updateNode(selectedNode.id, node => {
-                      node.generation = { ...(node.generation || defaultGeneration()), model: preset.id, quality: preset.quality, detailLevel: preset.detailLevel }
-                    })
-                  }}
-                >
-                  {imageModels.map(model => <option key={model.id} value={model.id}>{model.name}</option>)}
-                </select>
+                <button className="canvas-popover-close" onClick={() => setNoteSettingsOpen(false)} type="button" aria-label="Close">×</button>
+                <strong>{selectedIsVideo ? 'Video Model' : 'Image Model'}</strong>
+                <div className="canvas-model-card-list">
+                  {(selectedIsVideo ? videoModels : imageModels).map(model => {
+                    const quality = 'qualities' in model ? model.qualities[0] : model.quality
+                    const isActive = selectedGeneration.model === model.id
+                    return (
+                      <button
+                        key={model.id}
+                        className={isActive ? 'is-active' : ''}
+                        type="button"
+                        onClick={() => updateNode(selectedNode.id, node => {
+                          node.generation = {
+                            ...(node.generation || defaultGenerationForType(selectedNode.type)),
+                            model: model.id,
+                            quality,
+                            detailLevel: 'detailLevel' in model ? model.detailLevel : '',
+                            operation: selectedIsVideo ? 'video' : 'generate',
+                            duration: selectedIsVideo ? (node.generation?.duration || 5) : node.generation?.duration,
+                          }
+                        })}
+                      >
+                        <span>{model.name}</span>
+                        <small>{quality.replace('2160p', '4K').replace('1440p', '2K')}</small>
+                      </button>
+                    )
+                  })}
+                </div>
                 <div className="canvas-settings-row">
                   {['16:9', '9:16', '1:1', '4:3'].map(ar => (
                     <button key={ar} className={selectedGeneration.aspectRatio === ar ? 'is-active' : ''} onClick={() => updateNode(selectedNode.id, node => { node.generation = { ...(node.generation || defaultGeneration()), aspectRatio: ar } })} type="button">{ar}</button>
                   ))}
                 </div>
-                <div className="canvas-settings-row">
-                  {['2160p', '1440p', '1080p'].map(q => (
-                    <button key={q} className={selectedGeneration.quality === q ? 'is-active' : ''} onClick={() => updateNode(selectedNode.id, node => { node.generation = { ...(node.generation || defaultGeneration()), quality: q } })} type="button">{q}</button>
-                  ))}
-                </div>
-                <button type="button" onClick={() => runTwoVariants(selectedNode.id)}>Run 2 variants</button>
-                {selectedNode.type === 'image' && <button type="button" onClick={() => splitGridNode(selectedNode.id)}>Split 2×2</button>}
+                {selectedIsVideo && (
+                  <>
+                    <div className="canvas-settings-row">
+                      {selectedVideoModel.qualities.map(q => (
+                        <button key={q} className={selectedGeneration.quality === q ? 'is-active' : ''} onClick={() => updateNode(selectedNode.id, node => { node.generation = { ...(node.generation || defaultGenerationForType('video')), quality: q } })} type="button">{q}</button>
+                      ))}
+                    </div>
+                    <div className="canvas-settings-row">
+                      {selectedVideoModel.durations.map(duration => (
+                        <button key={duration} className={(selectedGeneration.duration || 5) === duration ? 'is-active' : ''} onClick={() => updateNode(selectedNode.id, node => { node.generation = { ...(node.generation || defaultGenerationForType('video')), duration } })} type="button">{duration}s</button>
+                      ))}
+                    </div>
+                  </>
+                )}
+                <p>{selectedIsVideo ? `PixVerse CLI: create video, ${selectedGeneration.aspectRatio || '16:9'}, ${selectedGeneration.quality || selectedVideoModel.qualities[0]}, ${selectedGeneration.duration || 5}s.` : 'Image models match Film Storyboard lightbox settings.'}</p>
               </div>
             )}
             <div className="canvas-note-counter">{selectedNode.prompt.length}/5000 · {activeJobs > 0 ? `${activeJobs} images generating` : '0 active generations'}</div>
-            <button className="canvas-note-video" onClick={() => addPlaceholder('video', selectedNode.x + selectedNode.width + 120, selectedNode.y + 250, selectedNode.id)} title="Create video placeholder" type="button">▶</button>
-            <button className="canvas-note-variant" onClick={() => runImageGeneration(selectedNode.id, true)} title="Generate variant" type="button">⧉</button>
             </div>
         )}
       </div>

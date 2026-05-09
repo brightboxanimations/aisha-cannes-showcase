@@ -101,6 +101,88 @@
   padding-bottom: 0.25rem;
 }
 
+.canvas-tray-panel {
+  position: absolute;
+  z-index: 24;
+  top: 4rem;
+  left: 14rem;
+  right: 1.1rem;
+  min-height: 7.8rem;
+  padding: 0.9rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 1rem;
+  background: rgba(5, 10, 20, 0.86);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.38);
+  backdrop-filter: blur(22px) saturate(132%);
+}
+
+.canvas-tray-panel-header {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding-right: 2rem;
+}
+
+.canvas-tray-panel-header strong {
+  color: #f8d978;
+  font-size: 0.84rem;
+}
+
+.canvas-tray-panel-header span {
+  color: rgba(255, 255, 255, 0.42);
+  font-size: 0.72rem;
+}
+
+.canvas-tray-panel-header button {
+  margin-left: auto;
+  min-height: 1.9rem;
+  border: 1px solid rgba(248, 217, 120, 0.24);
+  border-radius: 999px;
+  background: rgba(248, 217, 120, 0.08);
+  color: #f8d978;
+  cursor: pointer;
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.canvas-tray-panel-grid {
+  display: flex;
+  gap: 0.55rem;
+  min-height: 4.8rem;
+  margin-top: 0.75rem;
+  overflow-x: auto;
+}
+
+.canvas-tray-panel-grid button,
+.canvas-tray-empty {
+  width: 6rem;
+  height: 4.8rem;
+  flex: 0 0 auto;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.6rem;
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.62);
+  cursor: pointer;
+  padding: 0;
+  text-align: left;
+}
+
+.canvas-tray-panel-grid img {
+  width: 100%;
+  height: 3.35rem;
+  object-fit: cover;
+}
+
+.canvas-tray-panel-grid small,
+.canvas-tray-panel-grid span,
+.canvas-tray-empty {
+  display: grid;
+  place-items: center;
+  padding: 0.22rem;
+  font-size: 0.58rem;
+}
+
 .canvas-back,
 .canvas-chip,
 .canvas-zoom-control,
@@ -270,6 +352,13 @@
   animation: canvas-dash 1.8s linear infinite;
 }
 
+.canvas-edge-path.draft {
+  stroke-width: 2.2;
+  stroke-dasharray: 8 10;
+  opacity: 0.92;
+  filter: drop-shadow(0 0 8px rgba(248, 217, 120, 0.35));
+}
+
 .canvas-edge-label {
   paint-order: stroke;
   stroke: rgba(5, 10, 20, 0.88);
@@ -327,6 +416,10 @@
   place-items: center;
   overflow: hidden;
   background: rgba(255, 255, 255, 0.035);
+}
+
+.canvas-node:not(.is-running) .canvas-node-media.is-empty-media {
+  cursor: pointer;
 }
 
 .canvas-node-media img,
@@ -400,6 +493,18 @@
   white-space: nowrap;
 }
 
+.canvas-node-type-pill {
+  flex: 0 0 auto;
+  border-radius: 999px;
+  padding: 0.16rem 0.48rem;
+  background: rgba(255, 255, 255, 0.075);
+  color: rgba(186, 230, 253, 0.86);
+  font-size: 0.58rem;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
 .canvas-node-tools {
   display: flex;
   gap: 0.35rem;
@@ -419,6 +524,38 @@
   place-items: center;
   border-radius: 0.45rem;
   padding: 0;
+}
+
+.canvas-connector-port {
+  position: absolute;
+  z-index: 14;
+  top: 50%;
+  right: -0.48rem;
+  width: 0.96rem;
+  height: 0.96rem;
+  border: 1px solid rgba(248, 217, 120, 0.76);
+  border-radius: 999px;
+  background: rgba(248, 217, 120, 0.24);
+  box-shadow: 0 0 14px rgba(248, 217, 120, 0.26);
+  transform: translateY(-50%);
+  cursor: crosshair;
+}
+
+.canvas-connector-port::after {
+  content: "";
+  position: absolute;
+  inset: 0.26rem;
+  border-radius: inherit;
+  background: #f8d978;
+}
+
+.canvas-node:not(.is-selected) .canvas-connector-port {
+  opacity: 0;
+}
+
+.canvas-node:hover .canvas-connector-port,
+.canvas-node.is-selected .canvas-connector-port {
+  opacity: 1;
 }
 
 .canvas-floating-tools {
@@ -442,13 +579,11 @@
 .canvas-floating-tools button,
 .canvas-note-toolbar > button,
 .canvas-note-ok,
-.canvas-note-reset,
-.canvas-note-video,
-.canvas-note-variant {
+.canvas-note-reset {
   display: grid;
   place-items: center;
-  width: 2.45rem;
-  height: 2.45rem;
+  width: 2.2rem;
+  height: 2.2rem;
   border: 1px solid rgba(255, 255, 255, 0.13);
   border-radius: 999px;
   background: rgba(18, 18, 25, 0.72);
@@ -465,13 +600,27 @@
 .canvas-note-toolbar > button:hover,
 .canvas-note-ok:hover,
 .canvas-note-reset:hover,
-.canvas-note-video:hover,
-.canvas-note-variant:hover,
 .canvas-note-toolbar > button.is-active {
   border-color: rgba(248, 217, 120, 0.55);
   color: #f8d978;
   box-shadow: 0 0 24px rgba(248, 217, 120, 0.16), 0 10px 28px rgba(0, 0, 0, 0.42);
   transform: translateY(-1px);
+}
+
+.canvas-floating-tools button {
+  width: 2rem;
+  height: 2rem;
+  font-size: 0.9rem;
+}
+
+.canvas-floating-tools svg {
+  width: 1rem;
+  height: 1rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .canvas-empty-hint {
@@ -490,7 +639,8 @@
   backdrop-filter: blur(18px);
 }
 
-.canvas-context-menu {
+.canvas-context-menu,
+.canvas-connection-menu {
   position: absolute;
   z-index: 50;
   min-width: 13rem;
@@ -502,7 +652,24 @@
   backdrop-filter: blur(18px);
 }
 
-.canvas-context-menu button {
+.canvas-connection-menu {
+  z-index: 55;
+  display: grid;
+  gap: 0.22rem;
+  min-width: 15rem;
+  transform: translate(-0.4rem, 0.6rem);
+}
+
+.canvas-connection-menu strong {
+  padding: 0.4rem 0.55rem 0.2rem;
+  color: #f8d978;
+  font-size: 0.74rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.canvas-context-menu button,
+.canvas-connection-menu button {
   width: 100%;
   border: 0;
   border-radius: 0.55rem;
@@ -513,9 +680,38 @@
   cursor: pointer;
 }
 
-.canvas-context-menu button:hover {
+.canvas-context-menu button:hover,
+.canvas-connection-menu button:hover {
   background: rgba(96, 165, 250, 0.14);
   color: white;
+}
+
+.canvas-connection-menu button.is-muted {
+  color: rgba(255, 255, 255, 0.42);
+}
+
+.canvas-popover-close {
+  position: absolute;
+  top: 0.35rem;
+  right: 0.38rem;
+  z-index: 3;
+  display: grid !important;
+  place-items: center;
+  width: 1.35rem !important;
+  height: 1.35rem !important;
+  min-height: 1.35rem !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 999px !important;
+  background: rgba(255, 255, 255, 0.06) !important;
+  color: rgba(255, 255, 255, 0.45) !important;
+  padding: 0 !important;
+  text-align: center !important;
+}
+
+.canvas-popover-close:hover {
+  border-color: rgba(248, 217, 120, 0.4) !important;
+  color: #f8d978 !important;
+  background: rgba(248, 217, 120, 0.1) !important;
 }
 
 .canvas-agent-panel {
@@ -659,6 +855,15 @@
   backdrop-filter: blur(24px) saturate(132%);
 }
 
+.canvas-popover-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 35;
+  border: 0;
+  background: transparent;
+  cursor: default;
+}
+
 .canvas-note-composer textarea {
   grid-row: 2;
   width: 100%;
@@ -689,7 +894,8 @@
   font-size: 0.68rem;
 }
 
-.canvas-note-title input {
+.canvas-note-title input,
+.canvas-note-title select {
   width: min(24rem, 32vw);
   min-height: 1.55rem;
   border: 1px solid rgba(255, 255, 255, 0.08);
@@ -698,6 +904,13 @@
   color: rgba(255, 247, 224, 0.84);
   padding: 0 0.58rem;
   outline: none;
+}
+
+.canvas-note-title select {
+  width: auto;
+  max-width: 8rem;
+  color: rgba(186, 230, 253, 0.9);
+  cursor: pointer;
 }
 
 .canvas-note-title span,
@@ -788,20 +1001,6 @@
   color: rgba(52, 211, 153, 0.9);
 }
 
-.canvas-note-video,
-.canvas-note-variant {
-  position: absolute;
-  right: 1.2rem;
-}
-
-.canvas-note-video {
-  top: 4.35rem;
-}
-
-.canvas-note-variant {
-  top: 7.2rem;
-}
-
 .canvas-note-counter {
   position: absolute;
   left: 50%;
@@ -857,6 +1056,37 @@
   cursor: pointer;
   font: inherit;
   font-size: 0.76rem;
+}
+
+.canvas-model-card-list {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.canvas-model-card-list button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  min-height: 2.35rem;
+  padding: 0 0.72rem;
+  text-align: left;
+}
+
+.canvas-model-card-list button.is-active {
+  border-color: rgba(248, 217, 120, 0.5);
+  background: rgba(248, 217, 120, 0.09);
+  color: #f8d978;
+}
+
+.canvas-model-card-list span {
+  font-weight: 850;
+}
+
+.canvas-model-card-list small {
+  color: rgba(186, 230, 253, 0.72);
+  font-size: 0.68rem;
+  font-weight: 900;
 }
 
 .canvas-settings-row {

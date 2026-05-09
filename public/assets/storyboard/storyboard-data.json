@@ -10,7 +10,8 @@
     "Sultan",
     "Nibzu",
     "Oracle",
-    "Tamlun"
+    "Tamlun",
+    "Maaz-Khaan"
   ],
   "locations": [
     "Balcony Day",
@@ -88,14 +89,27 @@
         "description": "",
         "media": [
           {
-            "id": "media-assign-1778282747584",
+            "id": "media-cn2fp9e-moxwr3gn",
             "type": "image",
-            "url": "/assets/storyboard/uploads/gen-gemini-3-0-1778281443887.png?t=1778281444940",
-            "fileName": "gemini-3.0-1778281444940.png"
+            "url": "/assets/storyboard/uploads/Altair-royal-hawk-1778304781889.png",
+            "fileName": "Altair royal hawk.png",
+            "localPath": "/Users/vaquita/Downloads/aisha/aisha-cannes-showcase/public/assets/storyboard/uploads/Altair-royal-hawk-1778304781889.png",
+            "createdAt": "2026-05-09T05:33:01.895Z"
           }
         ],
-        "sheetMedia": [],
-        "mode": "card"
+        "sheetMedia": [
+          {
+            "id": "media-nwfqo7t-moxwr9ez",
+            "type": "image",
+            "url": "/assets/storyboard/uploads/Altair-royal-Hawk-sits-1778304789600.png",
+            "fileName": "Altair royal Hawk sits.png",
+            "localPath": "/Users/vaquita/Downloads/aisha/aisha-cannes-showcase/public/assets/storyboard/uploads/Altair-royal-Hawk-sits-1778304789600.png",
+            "createdAt": "2026-05-09T05:33:09.611Z"
+          }
+        ],
+        "mode": "sheet",
+        "selectedMediaId": "media-cn2fp9e-moxwr3gn",
+        "selectedSheetMediaId": "media-nwfqo7t-moxwr9ez"
       },
       {
         "id": "actor-gdm5vzq-moqe9ew9",
@@ -160,18 +174,48 @@
         "type": "actors",
         "name": "Zahra",
         "description": "",
-        "media": [],
+        "media": [
+          {
+            "id": "media-f78j7yl-moxwqle7",
+            "type": "image",
+            "url": "/assets/storyboard/uploads/Aiha-Mother-close-up-1778304758474.png",
+            "fileName": "Aiha Mother close up.png",
+            "localPath": "/Users/vaquita/Downloads/aisha/aisha-cannes-showcase/public/assets/storyboard/uploads/Aiha-Mother-close-up-1778304758474.png",
+            "createdAt": "2026-05-09T05:32:38.479Z"
+          }
+        ],
         "sheetMedia": [],
-        "mode": "card"
+        "mode": "card",
+        "selectedMediaId": "media-f78j7yl-moxwqle7"
       },
       {
         "id": "actor-vo4ewxj-moqe9ew9",
         "type": "actors",
         "name": "Sultan",
         "description": "",
-        "media": [],
-        "sheetMedia": [],
-        "mode": "card"
+        "media": [
+          {
+            "id": "media-lpchqll-moxwqp9n",
+            "type": "image",
+            "url": "/assets/storyboard/uploads/Sultan-close-up-Father-of-Aisha-1778304763496.png",
+            "fileName": "Sultan close up Father of Aisha.png",
+            "localPath": "/Users/vaquita/Downloads/aisha/aisha-cannes-showcase/public/assets/storyboard/uploads/Sultan-close-up-Father-of-Aisha-1778304763496.png",
+            "createdAt": "2026-05-09T05:32:43.499Z"
+          }
+        ],
+        "sheetMedia": [
+          {
+            "id": "media-fnj19wl-moxwqskv",
+            "type": "image",
+            "url": "/assets/storyboard/uploads/Sulrtan-Father-of-AIsha-1778304767778.png",
+            "fileName": "Sulrtan Father of AIsha.png",
+            "localPath": "/Users/vaquita/Downloads/aisha/aisha-cannes-showcase/public/assets/storyboard/uploads/Sulrtan-Father-of-AIsha-1778304767778.png",
+            "createdAt": "2026-05-09T05:32:47.791Z"
+          }
+        ],
+        "mode": "sheet",
+        "selectedMediaId": "media-lpchqll-moxwqp9n",
+        "selectedSheetMediaId": "media-fnj19wl-moxwqskv"
       },
       {
         "id": "883ad076-6a28-4688-9eab-04f750ff0d87",
@@ -238,6 +282,25 @@
         ],
         "sheetMedia": [],
         "selectedMediaId": "media-7onm9gp-motjvr3c"
+      },
+      {
+        "id": "actor-0rogqj8-moxwrryg",
+        "type": "actors",
+        "name": "Maaz-Khaan",
+        "description": "",
+        "media": [
+          {
+            "id": "media-yg8pzyn-moxwrvza",
+            "type": "image",
+            "url": "/assets/storyboard/uploads/50-copy-1778304818850.png",
+            "fileName": "50 copy.png",
+            "localPath": "/Users/vaquita/Downloads/aisha/aisha-cannes-showcase/public/assets/storyboard/uploads/50-copy-1778304818850.png",
+            "createdAt": "2026-05-09T05:33:38.854Z"
+          }
+        ],
+        "sheetMedia": [],
+        "mode": "card",
+        "selectedMediaId": "media-yg8pzyn-moxwrvza"
       }
     ],
     "locations": [
@@ -386,26 +449,12 @@
         "type": "props",
         "name": "",
         "description": "Assigned from Director's Cut pipeline.",
-        "media": [
-          {
-            "id": "a064ab48-4650-4aca-823e-29132e522f73",
-            "type": "image",
-            "url": "/assets/storyboard/uploads/split-batch-img-1778160273315-1/panel_r1_c2.png",
-            "fileName": ""
-          }
-        ],
+        "media": [],
         "sheetMedia": []
       },
       {
         "name": "Hawk flying near the gate in distress ",
-        "media": [
-          {
-            "id": "media-assign-1778281686859",
-            "type": "image",
-            "url": "/assets/storyboard/uploads/cropped-1778279893460-1778279893488.png",
-            "fileName": "cropped-1778279893495.png"
-          }
-        ]
+        "media": []
       },
       {
         "name": "Hawk 2",
@@ -418,7 +467,8 @@
           }
         ]
       }
-    ]
+    ],
+    "moodboards": []
   },
   "agentTasks": [
     {
@@ -429,7 +479,7 @@
       "skillHint": "",
       "status": "todo_working",
       "createdAt": "2026-05-09T02:10:10.485Z",
-      "updatedAt": "2026-05-09T03:13:13.353Z"
+      "updatedAt": "2026-05-09T05:29:53.297Z"
     },
     {
       "id": "task-nu1odr8-moxcou2q",
@@ -3155,7 +3205,7 @@
       "skillHint": "Download from PixVerse",
       "status": "pass",
       "createdAt": "2026-05-06T21:24:56.447Z",
-      "updatedAt": "2026-05-09T02:12:04.199Z",
+      "updatedAt": "2026-05-09T05:31:19.055Z",
       "passes": [
         {
           "id": "pass-1778102870631",
@@ -3862,7 +3912,8 @@
           "selected": false,
           "improve4k": false,
           "splitGrid": false,
-          "pixverseId": 401364481760655
+          "pixverseId": 401364481760655,
+          "assignMenuOpen": false
         },
         {
           "id": "img-1778102761449-21",
@@ -14910,14 +14961,14 @@
         {
           "id": "scene-6b2kfwt-moqb355t",
           "title": "Scene 1",
-          "mode": "images",
+          "mode": "videos",
           "imageShots": [
             {
               "id": "shot-xuhsjb0-moqbrjbi",
               "title": "Shot 5",
               "prompt": "aisha is walkin out with her white panter form the gate looking comiclaly astonished ant the flying towrds her distressed comical hawk us e refences image . cinematic 3d aniamted. movie AAA  , depth of field, 4k",
               "dialogue": "",
-              "actor": "",
+              "actor": "Niura",
               "tags": [],
               "media": [
                 {
@@ -14929,52 +14980,16 @@
                   "createdAt": "2026-05-08T10:49:14.303Z"
                 },
                 {
-                  "id": "media-gemini-3.0-1778259105097-0",
-                  "type": "image",
-                  "url": "/assets/storyboard/uploads/note-edit-1778259103965.png",
-                  "fileName": "gemini-3.0-1778259105097.png"
-                },
-                {
-                  "id": "media-gemini-3.1-flash-1778259121853-0",
-                  "type": "image",
-                  "url": "/assets/storyboard/uploads/note-edit-1778259119176.png",
-                  "fileName": "gemini-3.1-flash-1778259121853.png"
-                },
-                {
-                  "id": "media-gpt-image-2.0-1778259130576-0",
-                  "type": "image",
-                  "url": "/assets/storyboard/uploads/note-edit-1778259129898.png",
-                  "fileName": "gpt-image-2.0-1778259130576.png"
-                },
-                {
                   "id": "media-crop-1778259169669",
                   "type": "image",
                   "url": "/assets/storyboard/uploads/cropped-1778259169637-1778259169663.png",
                   "fileName": "cropped-1778259169669.png"
                 },
                 {
-                  "id": "media-gemini-3.0-1778259609671-0",
-                  "type": "image",
-                  "url": "/assets/storyboard/uploads/note-edit-1778259608563.png",
-                  "fileName": "gemini-3.0-1778259609671.png"
-                },
-                {
-                  "id": "media-gemini-3.1-flash-1778259626954-0",
-                  "type": "image",
-                  "url": "/assets/storyboard/uploads/note-edit-1778259623730.png",
-                  "fileName": "gemini-3.1-flash-1778259626954.png"
-                },
-                {
                   "id": "media-crop-1778269589582",
                   "type": "image",
                   "url": "/assets/storyboard/uploads/cropped-1778269589522-1778269589576.png",
                   "fileName": "cropped-1778269589582.png"
-                },
-                {
-                  "id": "media-crop-1778269651275",
-                  "type": "image",
-                  "url": "/assets/storyboard/uploads/cropped-1778269651244-1778269651270.png",
-                  "fileName": "cropped-1778269651275.png"
                 },
                 {
                   "id": "media-crop-1778271424594",
@@ -15048,7 +15063,289 @@
                 }
               ],
               "expanded": true,
-              "selectedMediaId": "media-gpt-image-2.0-1778259130576-0"
+              "selectedMediaId": "media-6t7xqzd-mowslvzz",
+              "masterAspect": 1.7777777777777777
+            },
+            {
+              "id": "shot-dup-1778302414288-j2lxnm",
+              "title": "Shot 5 (copy)",
+              "prompt": "aisha is walkin out with her white panter form the gate looking comiclaly astonished ant the flying towrds her distressed comical hawk us e refences image . cinematic 3d aniamted. movie AAA  , depth of field, 4k",
+              "dialogue": "",
+              "actor": "Niura",
+              "tags": [],
+              "media": [
+                {
+                  "id": "media-dup-1778302414288-zmvz7m",
+                  "type": "image",
+                  "url": "/assets/storyboard/uploads/ALtair-far-away-aproaching-the-gate-from-far-awya-1778237354292.png",
+                  "fileName": "ALtair far away aproaching the gate from far awya.png",
+                  "localPath": "/Users/vaquita/Downloads/aisha/aisha-cannes-showcase/public/assets/storyboard/uploads/ALtair-far-away-aproaching-the-gate-from-far-awya-1778237354292.png",
+                  "createdAt": "2026-05-08T10:49:14.303Z"
+                },
+                {
+                  "id": "media-dup-1778302414288-g1kmgm",
+                  "type": "image",
+                  "url": "/assets/storyboard/uploads/note-edit-1778259119176.png",
+                  "fileName": "gemini-3.1-flash-1778259121853.png"
+                },
+                {
+                  "id": "media-dup-1778302414288-9al3xs",
+                  "type": "image",
+                  "url": "/assets/storyboard/uploads/cropped-1778259169637-1778259169663.png",
+                  "fileName": "cropped-1778259169669.png"
+                },
+                {
+                  "id": "media-dup-1778302414288-7xqohs",
+                  "type": "image",
+                  "url": "/assets/storyboard/uploads/cropped-1778269589522-1778269589576.png",
+                  "fileName": "cropped-1778269589582.png"
+                },
+                {
+                  "id": "media-dup-1778302414288-9uyiwz",
+                  "type": "image",
+                  "url": "/assets/storyboard/uploads/cropped-1778269651244-1778269651270.png",
+                  "fileName": "cropped-1778269651275.png"
+                },
+                {
+                  "id": "media-dup-1778302414288-lninxn",
+                  "type": "image",
+                  "url": "/assets/storyboard/uploads/cropped-1778271424564-1778271424586.png",
+                  "fileName": "cropped-1778271424594.png"
+                },
+                {
+                  "id": "media-dup-1778302414288-2ob3iz",
+                  "type": "image",
+                  "url": "/assets/storyboard/uploads/cropped-1778271865799-1778271865823.png",
+                  "fileName": "cropped-1778271865827.png"
+                },
+                {
+                  "id": "media-dup-1778302414288-r8hogt",
+                  "type": "image",
+                  "url": "/assets/storyboard/uploads/note-edit-1778271938304.png?t=1778271942831",
+                  "fileName": "gemini-3.1-flash-1778271942831.png",
+                  "localPath": "/Users/vaquita/Downloads/aisha/aisha-cannes-showcase/public/assets/storyboard/uploads/note-edit-1778271938304.png"
+                },
+                {
+                  "id": "media-dup-1778302414288-p0dd3d",
+                  "type": "image",
+                  "url": "/assets/storyboard/uploads/note-edit-1778271943910.png?t=1778271944690",
+                  "fileName": "gpt-image-2.0-1778271944691.png",
+                  "localPath": "/Users/vaquita/Downloads/aisha/aisha-cannes-showcase/public/assets/storyboard/uploads/note-edit-1778271943910.png"
+                },
+                {
+                  "id": "media-dup-1778302414288-pcquyi",
+                  "type": "image",
+                  "url": "/assets/storyboard/uploads/note-edit-1778271949146.png?t=1778271950209",
+                  "fileName": "gemini-3.0-1778271950209.png",
+                  "localPath": "/Users/vaquita/Downloads/aisha/aisha-cannes-showcase/public/assets/storyboard/uploads/note-edit-1778271949146.png"
+                },
+                {
+                  "id": "media-dup-1778302414288-r12pfx",
+                  "type": "image",
+                  "url": "/assets/storyboard/uploads/enhanced-gpt-image-2-0-1778271980916.png?t=1778271981828",
+                  "fileName": "enhanced-gpt-image-2.0-1440p-1778271981828.png",
+                  "localPath": "/Users/vaquita/Downloads/aisha/aisha-cannes-showcase/public/assets/storyboard/uploads/enhanced-gpt-image-2-0-1778271980916.png"
+                },
+                {
+                  "id": "media-dup-1778302414288-x46u6l",
+                  "type": "image",
+                  "url": "/assets/storyboard/uploads/cropped-1778274886473-1778274886485.png",
+                  "fileName": "cropped-1778274886488.png"
+                },
+                {
+                  "id": "media-dup-1778302414288-91nnmz",
+                  "type": "image",
+                  "url": "/assets/storyboard/uploads/cropped-1778279054210-1778279054224.png",
+                  "fileName": "cropped-1778279054230.png"
+                },
+                {
+                  "id": "media-dup-1778302414288-d9msd2",
+                  "type": "image",
+                  "url": "/assets/storyboard/uploads/cropped-1778279083620-1778279083627.png",
+                  "fileName": "cropped-1778279083630.png"
+                },
+                {
+                  "id": "media-dup-1778302414288-uphls8",
+                  "type": "image",
+                  "url": "/assets/storyboard/uploads/cropped-1778279104843-1778279104851.png",
+                  "fileName": "cropped-1778279104853.png"
+                },
+                {
+                  "id": "media-dup-1778302414288-qbnlda",
+                  "type": "image",
+                  "url": "/assets/storyboard/uploads/cropped-1778279290543-1778279290604.png",
+                  "fileName": "cropped-1778279290613.png"
+                }
+              ],
+              "expanded": true,
+              "selectedMediaId": "media-dup-1778302414288-7xqohs",
+              "masterAspect": 1.7777777777777777
+            },
+            {
+              "id": "shot-auto-1778302324031",
+              "title": "Shot 5 (generated)",
+              "prompt": "Proceeded from shot [Shot 5] via enhance/edit",
+              "media": [
+                {
+                  "id": "media-crop-1778269651275",
+                  "type": "image",
+                  "url": "/assets/storyboard/uploads/cropped-1778269651244-1778269651270.png",
+                  "fileName": "cropped-1778269651275.png"
+                },
+                {
+                  "id": "media-gemini-3.1-flash-1778259121853-0",
+                  "type": "image",
+                  "url": "/assets/storyboard/uploads/note-edit-1778259119176.png",
+                  "fileName": "gemini-3.1-flash-1778259121853.png"
+                }
+              ],
+              "actor": "",
+              "dialogue": "",
+              "expanded": true,
+              "selectedMediaId": "media-crop-1778269651275"
+            },
+            {
+              "id": "shot-3lmf55d-moxu3m5k",
+              "title": "Shot 26",
+              "prompt": "",
+              "dialogue": "",
+              "actor": "",
+              "tags": [],
+              "media": [
+                {
+                  "id": "media-drag-1778301558903-5qle",
+                  "type": "image",
+                  "url": "/assets/storyboard/uploads/note-edit-1778259623730.png",
+                  "fileName": "gemini-3.1-flash-1778259626954.png"
+                },
+                {
+                  "id": "media-drag-1778301083361-3s5t",
+                  "type": "image",
+                  "url": "/assets/storyboard/uploads/note-edit-1778259608563.png",
+                  "fileName": "gemini-3.0-1778259609671.png"
+                }
+              ],
+              "selectedMediaId": "media-drag-1778301558903-5qle",
+              "masterAspect": 1.7916666666666667,
+              "expanded": true
+            },
+            {
+              "id": "shot-dup-1778300317194-la50a9",
+              "title": "Shot 5 (copy)",
+              "prompt": "aisha is walkin out with her white panter form the gate looking comiclaly astonished ant the flying towrds her distressed comical hawk us e refences image . cinematic 3d aniamted. movie AAA  , depth of field, 4k",
+              "dialogue": "",
+              "actor": "",
+              "tags": [],
+              "media": [
+                {
+                  "id": "media-dup-1778300317194-q7ic57",
+                  "type": "image",
+                  "url": "/assets/storyboard/uploads/note-edit-1778259119176.png",
+                  "fileName": "gemini-3.1-flash-1778259121853.png"
+                },
+                {
+                  "id": "media-dup-1778300317194-zdq0er",
+                  "type": "image",
+                  "url": "/assets/storyboard/uploads/cropped-1778259169637-1778259169663.png",
+                  "fileName": "cropped-1778259169669.png"
+                },
+                {
+                  "id": "media-dup-1778300317194-nyikvt",
+                  "type": "image",
+                  "url": "/assets/storyboard/uploads/note-edit-1778259608563.png",
+                  "fileName": "gemini-3.0-1778259609671.png"
+                },
+                {
+                  "id": "media-dup-1778300317194-4yq44j",
+                  "type": "image",
+                  "url": "/assets/storyboard/uploads/note-edit-1778259623730.png",
+                  "fileName": "gemini-3.1-flash-1778259626954.png"
+                },
+                {
+                  "id": "media-dup-1778300317194-7oovzu",
+                  "type": "image",
+                  "url": "/assets/storyboard/uploads/cropped-1778269589522-1778269589576.png",
+                  "fileName": "cropped-1778269589582.png"
+                },
+                {
+                  "id": "media-dup-1778300317194-xcm4sr",
+                  "type": "image",
+                  "url": "/assets/storyboard/uploads/cropped-1778269651244-1778269651270.png",
+                  "fileName": "cropped-1778269651275.png"
+                },
+                {
+                  "id": "media-dup-1778300317194-y4tnk5",
+                  "type": "image",
+                  "url": "/assets/storyboard/uploads/cropped-1778271424564-1778271424586.png",
+                  "fileName": "cropped-1778271424594.png"
+                },
+                {
+                  "id": "media-dup-1778300317194-qj9p7o",
+                  "type": "image",
+                  "url": "/assets/storyboard/uploads/cropped-1778271865799-1778271865823.png",
+                  "fileName": "cropped-1778271865827.png"
+                },
+                {
+                  "id": "media-dup-1778300317194-mbplnu",
+                  "type": "image",
+                  "url": "/assets/storyboard/uploads/note-edit-1778271938304.png?t=1778271942831",
+                  "fileName": "gemini-3.1-flash-1778271942831.png",
+                  "localPath": "/Users/vaquita/Downloads/aisha/aisha-cannes-showcase/public/assets/storyboard/uploads/note-edit-1778271938304.png"
+                },
+                {
+                  "id": "media-dup-1778300317194-wcv4wg",
+                  "type": "image",
+                  "url": "/assets/storyboard/uploads/note-edit-1778271943910.png?t=1778271944690",
+                  "fileName": "gpt-image-2.0-1778271944691.png",
+                  "localPath": "/Users/vaquita/Downloads/aisha/aisha-cannes-showcase/public/assets/storyboard/uploads/note-edit-1778271943910.png"
+                },
+                {
+                  "id": "media-dup-1778300317194-s6vj6a",
+                  "type": "image",
+                  "url": "/assets/storyboard/uploads/note-edit-1778271949146.png?t=1778271950209",
+                  "fileName": "gemini-3.0-1778271950209.png",
+                  "localPath": "/Users/vaquita/Downloads/aisha/aisha-cannes-showcase/public/assets/storyboard/uploads/note-edit-1778271949146.png"
+                },
+                {
+                  "id": "media-dup-1778300317194-fq8csh",
+                  "type": "image",
+                  "url": "/assets/storyboard/uploads/enhanced-gpt-image-2-0-1778271980916.png?t=1778271981828",
+                  "fileName": "enhanced-gpt-image-2.0-1440p-1778271981828.png",
+                  "localPath": "/Users/vaquita/Downloads/aisha/aisha-cannes-showcase/public/assets/storyboard/uploads/enhanced-gpt-image-2-0-1778271980916.png"
+                },
+                {
+                  "id": "media-dup-1778300317194-p7zj1n",
+                  "type": "image",
+                  "url": "/assets/storyboard/uploads/cropped-1778274886473-1778274886485.png",
+                  "fileName": "cropped-1778274886488.png"
+                },
+                {
+                  "id": "media-dup-1778300317194-76qnhu",
+                  "type": "image",
+                  "url": "/assets/storyboard/uploads/cropped-1778279054210-1778279054224.png",
+                  "fileName": "cropped-1778279054230.png"
+                },
+                {
+                  "id": "media-dup-1778300317194-5a48fd",
+                  "type": "image",
+                  "url": "/assets/storyboard/uploads/cropped-1778279083620-1778279083627.png",
+                  "fileName": "cropped-1778279083630.png"
+                },
+                {
+                  "id": "media-dup-1778300317194-zhp0mi",
+                  "type": "image",
+                  "url": "/assets/storyboard/uploads/cropped-1778279104843-1778279104851.png",
+                  "fileName": "cropped-1778279104853.png"
+                },
+                {
+                  "id": "media-dup-1778300317194-xacq1k",
+                  "type": "image",
+                  "url": "/assets/storyboard/uploads/cropped-1778279290543-1778279290604.png",
+                  "fileName": "cropped-1778279290613.png"
+                }
+              ],
+              "expanded": false,
+              "selectedMediaId": "media-dup-1778300317194-q7ic57"
             },
             {
               "id": "shot-auto-1778293444704",
@@ -15065,23 +15362,42 @@
               ],
               "selectedMediaId": "media-gemini-3.1-flash-1778293444696-0",
               "actor": "",
-              "dialogue": ""
+              "dialogue": "",
+              "expanded": false
             },
             {
               "id": "shot-auto-1778293443436",
               "title": "Shot 5 (generated)",
               "prompt": "Proceeded from shot [Shot 5] via enhance/edit",
-              "media": [],
+              "media": [
+                {
+                  "id": "media-drag-1778300061837-88v2",
+                  "type": "image",
+                  "url": "/assets/storyboard/uploads/note-edit-1778259129898.png",
+                  "fileName": "gpt-image-2.0-1778259130576.png"
+                }
+              ],
               "actor": "",
-              "dialogue": ""
+              "dialogue": "",
+              "selectedMediaId": "media-drag-1778300061837-88v2",
+              "expanded": false
             },
             {
               "id": "shot-auto-1778293420613",
               "title": "Shot 5 (generated)",
               "prompt": "Proceeded from shot [Shot 5] via enhance/edit",
-              "media": [],
+              "media": [
+                {
+                  "id": "media-drag-1778300065919-ypxz",
+                  "type": "image",
+                  "url": "/assets/storyboard/uploads/note-edit-1778259103965.png",
+                  "fileName": "gemini-3.0-1778259105097.png"
+                }
+              ],
               "actor": "",
-              "dialogue": ""
+              "dialogue": "",
+              "selectedMediaId": "media-drag-1778300065919-ypxz",
+              "expanded": false
             },
             {
               "id": "shot-auto-1778275234608",
@@ -15464,7 +15780,7 @@
                 }
               ],
               "selectedMediaId": "media-gemini-3.1-flash-1778261637901-0",
-              "expanded": true
+              "expanded": false
             },
             {
               "id": "shot-3mefpdi-moqbwnc8",
@@ -15517,7 +15833,7 @@
                   "localPath": "/Users/vaquita/Downloads/aisha/aisha-cannes-showcase/public/assets/storyboard/uploads/gen-gemini-3-1-flash-1778284462106.png"
                 }
               ],
-              "expanded": true,
+              "expanded": false,
               "selectedMediaId": "media-gemini-3.1-flash-1778284465106-0"
             },
             {
@@ -15527,7 +15843,8 @@
               "dialogue": "",
               "actor": "",
               "tags": [],
-              "media": []
+              "media": [],
+              "expanded": false
             },
             {
               "id": "shot-6tsfejx-moqbwqpy",
@@ -15536,7 +15853,25 @@
               "dialogue": "",
               "actor": "",
               "tags": [],
-              "media": []
+              "media": [],
+              "expanded": false
+            },
+            {
+              "id": "shot-auto-1778189255487",
+              "title": "Shot 1 (generated)",
+              "prompt": "Proceeded from shot [Shot 1] via enhance/edit",
+              "media": [
+                {
+                  "id": "media-note-1778189255483",
+                  "type": "image",
+                  "url": "/assets/storyboard/uploads/note-edit-1778189254735.png",
+                  "fileName": "note-edit-1778189255483.png"
+                }
+              ],
+              "selectedMediaId": "media-note-1778189255483",
+              "actor": "Djinn",
+              "dialogue": "",
+              "expanded": false
             },
             {
               "id": "shot-x3ovsl1-moqbqcwu",
@@ -15556,7 +15891,7 @@
                 }
               ],
               "selectedMediaId": "media-ygc212s-moqhol63",
-              "expanded": true
+              "expanded": false
             },
             {
               "id": "shot-6f8m2ty-movnrsuw",
@@ -15565,7 +15900,8 @@
               "dialogue": "",
               "actor": "",
               "tags": [],
-              "media": []
+              "media": [],
+              "expanded": false
             },
             {
               "id": "shot-cslwdlr-moqb355t",
@@ -15629,7 +15965,7 @@
                 }
               ],
               "selectedMediaId": "media-crop-1778189062422",
-              "expanded": true
+              "expanded": false
             },
             {
               "id": "shot-auto-1778189299858",
@@ -15666,22 +16002,6 @@
               "dialogue": ""
             },
             {
-              "id": "shot-auto-1778189255487",
-              "title": "Shot 1 (generated)",
-              "prompt": "Proceeded from shot [Shot 1] via enhance/edit",
-              "media": [
-                {
-                  "id": "media-note-1778189255483",
-                  "type": "image",
-                  "url": "/assets/storyboard/uploads/note-edit-1778189254735.png",
-                  "fileName": "note-edit-1778189255483.png"
-                }
-              ],
-              "selectedMediaId": "media-note-1778189255483",
-              "actor": "Djinn",
-              "dialogue": ""
-            },
-            {
               "id": "shot-06vdp3y-moqbqao2",
               "title": "Shot 2",
               "prompt": "",
@@ -15698,7 +16018,8 @@
                   "createdAt": "2026-05-03T22:10:59.714Z"
                 }
               ],
-              "selectedMediaId": "media-t2rst2l-moqbrdhe"
+              "selectedMediaId": "media-t2rst2l-moqbrdhe",
+              "expanded": false
             },
             {
               "id": "shot-v9rs9zp-moqbqd7a",
@@ -15845,7 +16166,8 @@
             ],
             "props": [
               "Hawk 2"
-            ]
+            ],
+            "moodboards": []
           },
           "audioShots": [
             {
@@ -15936,7 +16258,8 @@
             "locations": [
               "cf83a788-5f5f-47e1-91dd-e5f39ee7cec7"
             ],
-            "props": []
+            "props": [],
+            "moodboards": []
           },
           "audioShots": [
             {
@@ -15995,7 +16318,8 @@
           "resourceRefs": {
             "actors": [],
             "locations": [],
-            "props": []
+            "props": [],
+            "moodboards": []
           },
           "audioShots": [
             {
@@ -16049,7 +16373,8 @@
             "locations": [],
             "props": [
               "ebe8a5bf-f265-4de6-8372-538b9b0ba7a3"
-            ]
+            ],
+            "moodboards": []
           },
           "audioShots": [
             {
@@ -16092,7 +16417,8 @@
           "resourceRefs": {
             "actors": [],
             "locations": [],
-            "props": []
+            "props": [],
+            "moodboards": []
           },
           "audioShots": [
             {
@@ -16146,7 +16472,8 @@
           "resourceRefs": {
             "actors": [],
             "locations": [],
-            "props": []
+            "props": [],
+            "moodboards": []
           }
         },
         {
@@ -16189,7 +16516,8 @@
           "resourceRefs": {
             "actors": [],
             "locations": [],
-            "props": []
+            "props": [],
+            "moodboards": []
           }
         }
       ]
@@ -16253,7 +16581,8 @@
           "resourceRefs": {
             "actors": [],
             "locations": [],
-            "props": []
+            "props": [],
+            "moodboards": []
           },
           "audioShots": [
             {
@@ -16296,7 +16625,8 @@
           "resourceRefs": {
             "actors": [],
             "locations": [],
-            "props": []
+            "props": [],
+            "moodboards": []
           },
           "audioShots": [
             {
@@ -16350,7 +16680,8 @@
           "resourceRefs": {
             "actors": [],
             "locations": [],
-            "props": []
+            "props": [],
+            "moodboards": []
           }
         }
       ]
@@ -16388,7 +16719,8 @@
           "resourceRefs": {
             "actors": [],
             "locations": [],
-            "props": []
+            "props": [],
+            "moodboards": []
           },
           "audioShots": [
             {
@@ -16437,7 +16769,8 @@
           "resourceRefs": {
             "actors": [],
             "locations": [],
-            "props": []
+            "props": [],
+            "moodboards": []
           },
           "audioShots": [
             {
@@ -16486,7 +16819,8 @@
           "resourceRefs": {
             "actors": [],
             "locations": [],
-            "props": []
+            "props": [],
+            "moodboards": []
           },
           "audioShots": [
             {
@@ -16728,7 +17062,8 @@
           "resourceRefs": {
             "actors": [],
             "locations": [],
-            "props": []
+            "props": [],
+            "moodboards": []
           },
           "audioShots": [
             {
@@ -16777,7 +17112,8 @@
           "resourceRefs": {
             "actors": [],
             "locations": [],
-            "props": []
+            "props": [],
+            "moodboards": []
           },
           "audioShots": [
             {
@@ -16826,7 +17162,8 @@
           "resourceRefs": {
             "actors": [],
             "locations": [],
-            "props": []
+            "props": [],
+            "moodboards": []
           },
           "audioShots": [
             {
@@ -16875,7 +17212,8 @@
           "resourceRefs": {
             "actors": [],
             "locations": [],
-            "props": []
+            "props": [],
+            "moodboards": []
           },
           "audioShots": [
             {
@@ -17004,7 +17342,8 @@
           "resourceRefs": {
             "actors": [],
             "locations": [],
-            "props": []
+            "props": [],
+            "moodboards": []
           },
           "audioShots": [
             {
@@ -17053,7 +17392,8 @@
           "resourceRefs": {
             "actors": [],
             "locations": [],
-            "props": []
+            "props": [],
+            "moodboards": []
           },
           "audioShots": [
             {

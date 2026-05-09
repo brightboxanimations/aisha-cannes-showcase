@@ -13,6 +13,7 @@ export type CanvasNode = {
   width: number
   height: number
   prompt: string
+  sourcePrompt?: string
   note: string
   selected?: boolean
   generation?: {
@@ -21,6 +22,7 @@ export type CanvasNode = {
     quality?: string
     aspectRatio?: string
     detailLevel?: string
+    duration?: number
     status?: 'idle' | 'queued' | 'running' | 'done' | 'error'
     error?: string
     lastRunAt?: string

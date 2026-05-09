@@ -2284,14 +2284,15 @@ p {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 1rem;
+  align-items: start;
 }
 
 .shot-card {
   position: relative;
   min-width: 0;
   overflow: hidden;
-  padding: 0.58rem;
-  border-radius: 1.35rem;
+  padding: 0.35rem;
+  border-radius: 1rem;
   transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
 }
 
@@ -2301,6 +2302,19 @@ p {
 
 .shot-card[draggable="true"]:active {
   cursor: grabbing;
+}
+
+.shot-card.is-collapsed {
+  padding-bottom: 0.35rem;
+}
+
+/* When collapsed, hide everything below the image */
+.shot-card.is-collapsed .shot-title-input,
+.shot-card.is-collapsed textarea,
+.shot-card.is-collapsed .dialogue-row,
+.shot-card.is-collapsed .dialogue-preview,
+.shot-card.is-collapsed .alternative-branch {
+  display: none !important;
 }
 
 .shot-card:hover {
@@ -2366,7 +2380,7 @@ p {
   place-items: center;
   aspect-ratio: 16 / 10;
   overflow: hidden;
-  border-radius: 1rem;
+  border-radius: 0.65rem;
   background:
     radial-gradient(circle at 50% 25%, rgba(248, 217, 120, 0.12), transparent 48%),
     rgba(3, 12, 24, 0.55);

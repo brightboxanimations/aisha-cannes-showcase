@@ -154,6 +154,7 @@ type StoryboardData = {
   resources: Record<StoryboardResourceType, StoryboardResource[]>
   agentTasks: AgentTask[]
   acts: StoryboardAct[]
+  masterAspect?: number
 }
 
 const heroSlides: HeroSlide[] = [
@@ -220,6 +221,7 @@ const createEmptyResourceRefs = (): Record<StoryboardResourceType, string[]> => 
   actors: [],
   locations: [],
   props: [],
+  moodboards: [],
 })
 
 const createResource = (type: StoryboardResourceType, name: string): StoryboardResource => ({
@@ -279,6 +281,7 @@ const normalizeStoryboard = (payload?: Partial<StoryboardData>): StoryboardData 
     actors: payload.resources?.actors?.length ? payload.resources.actors : actorNames.map((actor) => createResource('actors', actor)),
     locations: payload.resources?.locations?.length ? payload.resources.locations : locationNames.map((location) => createResource('locations', location)),
     props: payload.resources?.props || [],
+    moodboards: payload.resources?.moodboards || [],
   }
 
   return {
@@ -1572,6 +1575,29 @@ function StoryboardWorkspace() {
     })
   }
 
+  const moveShotMedia = (actId: string, sceneId: string, mode: StoryboardSequenceMode, fromShotId: string, toShotId: string, mediaId: string) => {
+    updateStoryboard((draft) => {
+      const act = draft.acts.find(a => a.id === actId)
+      if (!act) return
+      const scene = act.scenes.find(s => s.id === sceneId)
+      if (!scene) return
+      const shots = mode === 'images' ? scene.imageShots : mode === 'videos' ? scene.videoShots : scene.audioShots
+      const fromShot = shots.find(s => s.id === fromShotId)
+      const toShot = shots.find(s => s.id === toShotId)
+      if (!fromShot || !toShot) return
+
+      const mediaIndex = fromShot.media.findIndex(m => m.id === mediaId)
+      if (mediaIndex > -1) {
+        const [media] = fromShot.media.splice(mediaIndex, 1)
+        if (fromShot.selectedMediaId === mediaId) {
+          fromShot.selectedMediaId = fromShot.media[0]?.id || ''
+        }
+        toShot.media.unshift(media)
+        toShot.selectedMediaId = media.id
+      }
+    })
+  }
+
   /** Inject generated result media into shot alt slots, or create a new shot if full (8+) */
   const injectResultMedia = (actId: string, sceneId: string, mode: StoryboardSequenceMode, shotId: string, newMediaList: StoryboardMedia[]) => {
     setStoryboard(prev => {
@@ -1696,9 +1722,40 @@ function StoryboardWorkspace() {
   const toggleSceneResource = (type: StoryboardResourceType, resourceId: string) => {
     if (!activeAct || !activeScene) return
     updateScene(activeAct.id, activeScene.id, (scene) => {
-      const refs = scene.resourceRefs[type]
+      const refs = scene.resourceRefs[type] || []
       if (refs.includes(resourceId)) scene.resourceRefs[type] = refs.filter((id) => id !== resourceId)
-      else refs.push(resourceId)
+      else {
+        scene.resourceRefs[type] = [...refs, resourceId]
+      }
+    })
+  }
+
+  const deleteResource = (type: StoryboardResourceType, resourceId: string) => {
+    updateStoryboard((draft) => {
+      if (draft.resources[type]) {
+        draft.resources[type] = draft.resources[type].filter((r) => r.id !== resourceId)
+      }
+      // Also remove from any scene's resourceRefs
+      draft.acts.forEach(act => {
+        act.scenes.forEach(scene => {
+          if (scene.resourceRefs[type]) {
+            scene.resourceRefs[type] = scene.resourceRefs[type].filter(id => id !== resourceId)
+          }
+        })
+      })
+    })
+  }
+
+  const reorderResource = (type: StoryboardResourceType, fromId: string, toId: string) => {
+    updateStoryboard((draft) => {
+      const list = draft.resources[type]
+      if (!list) return
+      const fromIdx = list.findIndex((r) => r.id === fromId)
+      const toIdx = list.findIndex((r) => r.id === toId)
+      if (fromIdx > -1 && toIdx > -1 && fromIdx !== toIdx) {
+        const [item] = list.splice(fromIdx, 1)
+        list.splice(toIdx, 0, item)
+      }
     })
   }
 
@@ -1928,6 +1985,8 @@ function StoryboardWorkspace() {
             onUpload={uploadResourceMedia}
             resources={storyboard.resources[workspaceMode]}
             type={workspaceMode}
+            onDeleteResource={deleteResource}
+            onReorderResource={reorderResource}
           />
         ) : activeAct && activeScene && (
           <div className="storyboard-stage">
@@ -2016,6 +2075,19 @@ function StoryboardWorkspace() {
                 onUpload={uploadMedia}
                 selectedShotId={selectedShotId}
                 onSelectShot={setSelectedShotId}
+                masterAspect={storyboard.masterAspect}
+                setMasterAspect={(aspect) => updateStoryboard(draft => { draft.masterAspect = aspect })}
+                onRowToggle={(rowIndex, expanded) => updateStoryboard(draft => {
+                  const act = draft.acts.find(a => a.id === activeAct.id)
+                  if (!act) return
+                  const sc = act.scenes.find(s => s.id === activeScene.id)
+                  if (!sc) return
+                  const shotsList = activeScene.mode === 'images' ? sc.imageShots : activeScene.mode === 'videos' ? sc.videoShots : sc.audioShots
+                  for (let i = rowIndex * 4; i < (rowIndex + 1) * 4 && i < shotsList.length; i++) {
+                    shotsList[i].expanded = expanded
+                  }
+                })}
+                onMoveMedia={moveShotMedia}
               />
             ) : activeScene.mode === 'moodboards' ? (
               <div className="scene-resources" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '300px', color: 'rgba(255,255,255,0.4)', border: '1px dashed rgba(255,255,255,0.1)', borderRadius: '1rem', marginTop: '1rem' }}>
@@ -2030,6 +2102,8 @@ function StoryboardWorkspace() {
                   refs={activeScene.resourceRefs[activeScene.mode]}
                   resources={storyboard.resources[activeScene.mode]}
                   type={activeScene.mode}
+                  onDeleteResource={deleteResource}
+                  onReorderResource={reorderResource}
                 />
               </div>
             )}
@@ -5630,6 +5704,8 @@ function ResourceLibrary({
   onUpload,
   resources,
   type,
+  onDeleteResource,
+  onReorderResource,
 }: {
   newName: string
   onAdd: (type: StoryboardResourceType) => void
@@ -5642,6 +5718,8 @@ function ResourceLibrary({
   onUpload: (file: File, type: StoryboardResourceType, resourceId: string, slot: StoryboardResourceSlot) => void
   resources: StoryboardResource[]
   type: StoryboardResourceType
+  onDeleteResource?: (type: StoryboardResourceType, resourceId: string) => void
+  onReorderResource?: (type: StoryboardResourceType, fromId: string, toId: string) => void
 }) {
   return (
     <div className={`storyboard-stage resource-library ${type}`}>
@@ -5664,7 +5742,7 @@ function ResourceLibrary({
       </div>
 
       <div className="resource-grid">
-        {resources.map((resource) => (
+        {(resources || []).map((resource) => (
           <ResourceCard
             key={resource.id}
             onCopyPath={onCopyPath}
@@ -5674,6 +5752,8 @@ function ResourceLibrary({
             onUpload={onUpload}
             resource={resource}
             type={type}
+            onDeleteResource={onDeleteResource}
+            onReorderResource={onReorderResource}
           />
         ))}
       </div>
@@ -5692,6 +5772,8 @@ function ResourceCard({
   resource,
   selected = false,
   type,
+  onDeleteResource,
+  onReorderResource,
 }: {
   compact?: boolean
   onCopyPath?: (media?: StoryboardMedia) => void
@@ -5703,6 +5785,8 @@ function ResourceCard({
   resource: StoryboardResource
   selected?: boolean
   type: StoryboardResourceType
+  onDeleteResource?: (type: StoryboardResourceType, resourceId: string) => void
+  onReorderResource?: (type: StoryboardResourceType, fromId: string, toId: string) => void
 }) {
   const slot = resource.mode || 'card'
   const media = slot === 'card' ? resource.media : resource.sheetMedia
@@ -5722,8 +5806,31 @@ function ResourceCard({
     if (file && onUpload) onUpload(file, type, resource.id, slot)
   }
 
+  const handleCardDragStart = (e: React.DragEvent) => {
+    if (onReorderResource) {
+      e.dataTransfer.setData('text/storyboard-resource', resource.id)
+    }
+  }
+
+  const handleCardDrop = (e: React.DragEvent) => {
+    if (onReorderResource) {
+      const fromId = e.dataTransfer.getData('text/storyboard-resource')
+      if (fromId && fromId !== resource.id) {
+        e.preventDefault()
+        e.stopPropagation()
+        onReorderResource(type, fromId, resource.id)
+      }
+    }
+  }
+
   return (
-    <article className={`resource-card glass ${type} ${compact ? 'is-compact' : ''} ${selected ? 'is-selected' : ''}`}>
+    <article 
+      draggable={!!onReorderResource}
+      onDragStart={handleCardDragStart}
+      onDrop={handleCardDrop}
+      onDragOver={(e) => { if (onReorderResource) e.preventDefault() }}
+      className={`resource-card glass ${type} ${compact ? 'is-compact' : ''} ${selected ? 'is-selected' : ''}`}
+    >
       <div className="resource-media" onDragOver={(event) => event.preventDefault()} onDrop={handleDrop}>
         {selectedMedia ? (
           selectedMedia.type === 'video'
@@ -5742,6 +5849,7 @@ function ResourceCard({
           {onCopyPath && <button disabled={!selectedMedia?.localPath} onClick={() => onCopyPath(selectedMedia)} title="Reveal in Finder and copy path" type="button">⌁</button>}
           {onResourceChange && <button disabled={media.length < 1} onClick={() => onResourceChange(type, resource.id, (draft) => { draft.expanded = !draft.expanded })} title="Show options" type="button">⋯</button>}
           {onToggle && <button onClick={() => onToggle(resource.id)} title={selected ? 'Remove from scene' : 'Attach to scene'} type="button">{selected ? '✓' : '＋'}</button>}
+          {onDeleteResource && <button aria-label="Delete resource card" onClick={(e) => { e.stopPropagation(); onDeleteResource(type, resource.id) }} title="Delete resource entirely" type="button" style={{ color: 'rgba(255,100,100,0.8)' }}>×</button>}
         </div>
         {selectedMedia && onDeleteMedia && (
           <button aria-label="Remove reference from board" className="media-delete" onClick={() => onDeleteMedia(type, resource.id, slot, selectedMedia.id)} title="Remove from board, keep file on disk" type="button">×</button>
@@ -5798,6 +5906,8 @@ function SceneResourcePanel({
   refs,
   resources,
   type,
+  onDeleteResource,
+  onReorderResource,
 }: {
   onCopyPath: (media?: StoryboardMedia) => void
   onLightbox: (media: StoryboardMedia) => void
@@ -5805,9 +5915,13 @@ function SceneResourcePanel({
   refs: string[]
   resources: StoryboardResource[]
   type: StoryboardResourceType
+  onDeleteResource?: (type: StoryboardResourceType, resourceId: string) => void
+  onReorderResource?: (type: StoryboardResourceType, fromId: string, toId: string) => void
 }) {
-  const selected = resources.filter((resource) => refs.includes(resource.id))
-  const available = resources.filter((resource) => !refs.includes(resource.id))
+  const safeResources = resources || []
+  const safeRefs = refs || []
+  const selected = safeResources.filter((resource) => safeRefs.includes(resource.id))
+  const available = safeResources.filter((resource) => !safeRefs.includes(resource.id))
 
   return (
     <div className={`scene-resource-panel ${type}`}>
@@ -5816,11 +5930,11 @@ function SceneResourcePanel({
       </div>
       {selected.length > 0 && (
         <div className="resource-grid selected-resources">
-          {selected.map((resource) => <ResourceCard compact key={resource.id} onCopyPath={onCopyPath} onLightbox={onLightbox} onToggle={(id) => onToggle(type, id)} resource={resource} selected type={type} />)}
+          {selected.map((resource) => <ResourceCard compact key={resource.id} onCopyPath={onCopyPath} onLightbox={onLightbox} onToggle={(id) => onToggle(type, id)} resource={resource} selected type={type} onDeleteResource={onDeleteResource} onReorderResource={onReorderResource} />)}
         </div>
       )}
       <div className="resource-grid available-resources">
-        {available.map((resource) => <ResourceCard compact key={resource.id} onCopyPath={onCopyPath} onLightbox={onLightbox} onToggle={(id) => onToggle(type, id)} resource={resource} type={type} />)}
+        {available.map((resource) => <ResourceCard compact key={resource.id} onCopyPath={onCopyPath} onLightbox={onLightbox} onToggle={(id) => onToggle(type, id)} resource={resource} type={type} onDeleteResource={onDeleteResource} onReorderResource={onReorderResource} />)}
       </div>
     </div>
   )
@@ -5999,6 +6113,10 @@ function ShotGrid({
   onUpload,
   selectedShotId,
   onSelectShot,
+  masterAspect,
+  setMasterAspect,
+  onRowToggle,
+  onMoveMedia,
 }: {
   actors: string[]
   actId: string
@@ -6015,6 +6133,10 @@ function ShotGrid({
   onUpload: (file: File, actId: string, sceneId: string, mode: StoryboardSequenceMode, shotId: string) => void
   selectedShotId: string | null
   onSelectShot: (id: string | null) => void
+  masterAspect?: number
+  setMasterAspect?: (aspect: number) => void
+  onRowToggle: (rowIndex: number, expanded: boolean) => void
+  onMoveMedia?: (actId: string, sceneId: string, mode: StoryboardSequenceMode, fromShotId: string, toShotId: string, mediaId: string) => void
 }) {
   const shots = getSceneShots(scene, mode)
   const [altPage, setAltPage] = useState<Record<string, number>>({})
@@ -6032,6 +6154,20 @@ function ShotGrid({
       onUpload(file, actId, scene.id, mode, shotId)
       return
     }
+    
+    const mediaData = event.dataTransfer.getData('text/storyboard-media')
+    if (mediaData) {
+      try {
+        const { shotId: fromShotId, mediaId } = JSON.parse(mediaData)
+        if (fromShotId && mediaId && fromShotId !== shotId) {
+          onMoveMedia?.(actId, scene.id, mode, fromShotId, shotId, mediaId)
+        }
+      } catch (e) {
+        // ignore JSON parse error
+      }
+      return
+    }
+
     const fromId = event.dataTransfer.getData('text/storyboard-shot')
     if (fromId) onReorder(actId, scene.id, mode, fromId, shotId)
   }
@@ -6065,13 +6201,20 @@ function ShotGrid({
               <span className="shot-number-text">{String(index + 1).padStart(2, '0')}</span>
               <span className="shot-number-plus">+</span>
             </div>
-            <div className="shot-media" style={{ position: 'relative' }}>
+            <div className="shot-media" style={{ position: 'relative', ...(masterAspect ? { aspectRatio: String(masterAspect) } : {}) }}>
               {selected ? (
                 selected.type === 'video'
                   ? <video src={selected.url} muted playsInline />
                   : selected.type === 'audio'
                     ? <CustomAudioPlayer url={selected.url} fileName={selected.fileName} />
-                    : <img src={selected.url} alt={shot.title} onDoubleClick={(e) => { e.stopPropagation(); onLightbox(selected, shot.media, shot.id) }} style={{ cursor: 'pointer' }} />
+                    : <img src={selected.url} alt={shot.title} onDoubleClick={(e) => {
+                        e.stopPropagation()
+                        const img = e.currentTarget
+                        if (img.naturalWidth && img.naturalHeight && setMasterAspect) {
+                          setMasterAspect(img.naturalWidth / img.naturalHeight)
+                        }
+                        onLightbox(selected, shot.media, shot.id)
+                      }} style={{ cursor: 'pointer' }} />
               ) : (
                 <div className="empty-shot-canvas" onDoubleClick={(e) => { e.stopPropagation(); onEmptyLightbox(shot.id) }} style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', background: 'linear-gradient(135deg, rgba(248,217,120,0.02), rgba(255,255,255,0.01))', borderRadius: '0.5rem', gap: '0.5rem', minHeight: '140px', border: '1px dashed rgba(248,217,120,0.1)' }}>
                   <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="rgba(248,217,120,0.3)" strokeWidth="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
@@ -6084,7 +6227,7 @@ function ShotGrid({
                 <button disabled={!selected} onClick={(e) => { e.stopPropagation(); selected && onLightbox(selected, shot.media, shot.id) }} title="Open large" type="button">⤢</button>
                 <a className={!selected ? 'is-disabled' : ''} href={selected?.url || '#'} download={selected?.fileName} title="Download original">↓</a>
                 <button disabled={!selected?.localPath} onClick={(e) => { e.stopPropagation(); onCopyPath(selected) }} title="Reveal in Finder and copy path" type="button">⌁</button>
-                <button onClick={(e) => { e.stopPropagation(); onShotChange(actId, scene.id, mode, shot.id, (draft) => { draft.expanded = !draft.expanded }) }} title="Alternatives" type="button"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></button>
+                <button onClick={(e) => { e.stopPropagation(); onRowToggle(Math.floor(index / 4), !shot.expanded) }} title="Toggle Row Collapse" type="button"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></button>
               </div>
               {selected ? (
                 <button aria-label="Remove media from board" className="media-delete" onClick={(e) => { e.stopPropagation(); onDeleteMedia(actId, scene.id, mode, shot.id, selected.id) }} title="Remove from board, keep file on disk" type="button">×</button>
@@ -6106,7 +6249,16 @@ function ShotGrid({
                   const media = visibleAlts[slotIdx]
                   if (media) {
                     return (
-                      <button className={media.id === selected?.id ? 'is-active' : ''} key={media.id} onClick={(e) => { e.stopPropagation(); onShotChange(actId, scene.id, mode, shot.id, (draft) => { draft.selectedMediaId = media.id }) }} type="button">
+                      <button 
+                        className={media.id === selected?.id ? 'is-active' : ''} 
+                        key={media.id} 
+                        draggable={true}
+                        onDragStart={(e) => {
+                          e.dataTransfer.setData('text/storyboard-media', JSON.stringify({ shotId: shot.id, mediaId: media.id }))
+                        }}
+                        onClick={(e) => { e.stopPropagation(); onShotChange(actId, scene.id, mode, shot.id, (draft) => { draft.selectedMediaId = media.id }) }} 
+                        type="button"
+                      >
                         <span>{page * altPerPage + slotIdx + 1}</span>
                         {media.type === 'video' ? <video src={media.url} muted playsInline /> : media.type === 'audio' ? <div className="audio-alt">♪</div> : <img src={media.url} alt={media.fileName} />}
                       </button>
@@ -6119,31 +6271,35 @@ function ShotGrid({
               </div>
             )}
 
-            <input
-              className="shot-title-input"
-              value={shot.title}
-              onClick={(e) => e.stopPropagation()}
-              onChange={(event) => onShotChange(actId, scene.id, mode, shot.id, (draft) => { draft.title = event.target.value })}
-            />
-            <textarea
-              placeholder={mode === 'images' ? 'Image prompt / shot notes' : mode === 'videos' ? 'Video prompt / animation notes' : 'Music cue / SFX notes'}
-              value={shot.prompt}
-              onClick={(e) => e.stopPropagation()}
-              onChange={(event) => onShotChange(actId, scene.id, mode, shot.id, (draft) => { draft.prompt = event.target.value })}
-            />
-            <div className="dialogue-row">
-              <select value={shot.actor} onClick={(e) => e.stopPropagation()} onChange={(event) => onShotChange(actId, scene.id, mode, shot.id, (draft) => { draft.actor = event.target.value })}>
-                <option value="">Narration / action</option>
-                {actors.map((actor) => <option key={actor} value={actor}>{actor}</option>)}
-              </select>
-              <textarea
-                placeholder="Dialogue or action text"
-                value={shot.dialogue}
-                onClick={(e) => e.stopPropagation()}
-                onChange={(event) => onShotChange(actId, scene.id, mode, shot.id, (draft) => { draft.dialogue = event.target.value })}
-              />
-            </div>
-            {dialoguePreview && <p className="dialogue-preview">{dialoguePreview}</p>}
+            {shot.expanded && (
+              <>
+                <input
+                  className="shot-title-input"
+                  value={shot.title}
+                  onClick={(e) => e.stopPropagation()}
+                  onChange={(event) => onShotChange(actId, scene.id, mode, shot.id, (draft) => { draft.title = event.target.value })}
+                />
+                <textarea
+                  placeholder={mode === 'images' ? 'Image prompt / shot notes' : mode === 'videos' ? 'Video prompt / animation notes' : 'Music cue / SFX notes'}
+                  value={shot.prompt}
+                  onClick={(e) => e.stopPropagation()}
+                  onChange={(event) => onShotChange(actId, scene.id, mode, shot.id, (draft) => { draft.prompt = event.target.value })}
+                />
+                <div className="dialogue-row">
+                  <select value={shot.actor} onClick={(e) => e.stopPropagation()} onChange={(event) => onShotChange(actId, scene.id, mode, shot.id, (draft) => { draft.actor = event.target.value })}>
+                    <option value="">Narration / action</option>
+                    {actors.map((actor) => <option key={actor} value={actor}>{actor}</option>)}
+                  </select>
+                  <textarea
+                    placeholder="Dialogue or action text"
+                    value={shot.dialogue}
+                    onClick={(e) => e.stopPropagation()}
+                    onChange={(event) => onShotChange(actId, scene.id, mode, shot.id, (draft) => { draft.dialogue = event.target.value })}
+                  />
+                </div>
+                {dialoguePreview && <p className="dialogue-preview">{dialoguePreview}</p>}
+              </>
+            )}
           </article>
         )
       })}

@@ -329,4 +329,4 @@ When "Start Task" is clicked and this skill is attached:
 - [ ] Each prompt can stand alone (no reliance on "previous context")
 S Nano Banana 2 4K       -> model: gemini-3.1-flash, quality: 2160p, aspect-ratio: 16:9
 Nano Banana Pro 2K     -> model: gemini-3.0,       quality: 1440p, aspect-ratio: 16:9
-GPT-2 2K Medium        -> model: gpt-image-2.0,    quality: 1440p, detail-level: medium
+GPT-2 2K Medium        -> model: gpt-image-2.0,    quality: 1440p, detail-level: mediumS

@@ -15757,7 +15757,7 @@
             {
               "id": "shot-xuhsjb0-moqbrjbi",
               "title": "Shot 5",
-              "prompt": "aisha is walkin out with her white panter form the gate looking comiclaly astonished ant the flying towrds her distressed comical hawk us e refences image . cinematic 3d aniamted. movie AAA  , depth of field, 4k",
+              "prompt": "Use exact same image 1 and complete the empty space with seamless background extension that should preserve same style, light and colors, seamlessly and logically completing the space. The camera has zoomed out.\n\n{USER CUSTOM PROMPT}\n\nThe quality should match the same level of detail quality and 4k of the original image.",
               "dialogue": "",
               "actor": "Niura",
               "tags": [],
@@ -15880,6 +15880,57 @@
               "expanded": false,
               "selectedMediaId": "media-crop-1778269589582",
               "masterAspect": 1.7777777777777777
+            },
+            {
+              "id": "shot-auto-1778407390764",
+              "title": "Shot 5 (generated)",
+              "prompt": "Proceeded from shot [Shot 5] via enhance/edit",
+              "media": [
+                {
+                  "id": "media-gpt-image-2.0-1778407390757-0",
+                  "type": "image",
+                  "url": "/assets/storyboard/uploads/note-edit-1778407388500.png?t=1778407390757",
+                  "fileName": "gpt-image-2.0-1778407390757.png",
+                  "localPath": "/Users/vaquita/Downloads/aisha/aisha-cannes-showcase/public/assets/storyboard/uploads/note-edit-1778407388500.png"
+                }
+              ],
+              "selectedMediaId": "media-gpt-image-2.0-1778407390757-0",
+              "actor": "Niura",
+              "dialogue": ""
+            },
+            {
+              "id": "shot-auto-1778407389799",
+              "title": "Shot 5 (generated)",
+              "prompt": "Proceeded from shot [Shot 5] via enhance/edit",
+              "media": [
+                {
+                  "id": "media-gemini-3.1-flash-1778407389792-0",
+                  "type": "image",
+                  "url": "/assets/storyboard/uploads/note-edit-1778407385637.png?t=1778407389791",
+                  "fileName": "gemini-3.1-flash-1778407389792.png",
+                  "localPath": "/Users/vaquita/Downloads/aisha/aisha-cannes-showcase/public/assets/storyboard/uploads/note-edit-1778407385637.png"
+                }
+              ],
+              "selectedMediaId": "media-gemini-3.1-flash-1778407389792-0",
+              "actor": "Niura",
+              "dialogue": ""
+            },
+            {
+              "id": "shot-auto-1778407381310",
+              "title": "Shot 5 (generated)",
+              "prompt": "Proceeded from shot [Shot 5] via enhance/edit",
+              "media": [
+                {
+                  "id": "media-gemini-3.0-1778407381303-0",
+                  "type": "image",
+                  "url": "/assets/storyboard/uploads/note-edit-1778407379889.png?t=1778407381303",
+                  "fileName": "gemini-3.0-1778407381303.png",
+                  "localPath": "/Users/vaquita/Downloads/aisha/aisha-cannes-showcase/public/assets/storyboard/uploads/note-edit-1778407379889.png"
+                }
+              ],
+              "selectedMediaId": "media-gemini-3.0-1778407381303-0",
+              "actor": "Niura",
+              "dialogue": ""
             },
             {
               "id": "shot-auto-1778320352300",
@@ -18347,5 +18398,5 @@
       ]
     }
   ],
-  "masterAspect": 1.7916666666666667
+  "masterAspect": 1.7765726681127982
 }

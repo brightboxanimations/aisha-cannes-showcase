@@ -1,0 +1,17 @@
+{
+  "id": "skill-pixverse-cli-video-generation",
+  "name": "PixVerse CLI Video Generation",
+  "description": "Correct PixVerse CLI modes and model rules for Canvas video generation: create video for one image, create reference for multi-reference image/video groups, create transition for keyframes, and create motion-control for character image plus motion video.",
+  "file": "skill-pixverse-cli-video-generation.md",
+  "tags": [
+    "pixverse",
+    "cli",
+    "video-generation",
+    "multi-reference",
+    "canvas",
+    "seedance",
+    "kling",
+    "grok",
+    "happyhorse"
+  ]
+}

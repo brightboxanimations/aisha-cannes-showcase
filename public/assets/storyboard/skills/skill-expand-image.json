@@ -1,0 +1,11 @@
+{
+  "id": "skill-expand-image",
+  "name": "Expand Image",
+  "iconIdx": 6,
+  "description": "Rules and prompt templates for seamlessly extending and expanding image boundaries (outpainting) while preserving style, lighting, colors, and 4k quality.",
+  "promptBase": "Use exact same image 1 and complete the empty space with seamless background extension that should preserve same style, light and colors, seamlessly and logically completing the space. The quality should match the same level of detail quality and 4k of the original image.",
+  "promptWithReferences": "Use exact same image 1 and complete the empty space with seamless background extension that should preserve same style, light and colors, seamlessly and logically completing the space. The quality should match the same level of detail quality and 4k of the original image.",
+  "models": [],
+  "aspectRatio": "16:9",
+  "createdAt": "2026-05-10T11:30:00Z"
+}

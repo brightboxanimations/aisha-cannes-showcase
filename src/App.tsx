@@ -1063,7 +1063,7 @@ function LbSkillStoreModal({ lbAvailableSkills, lbAttachedSkills, setLbAttachedS
               {BUILTIN_PROMPTS.map((bp) => {
                 const ic = PROMPT_SVGS[bp.icon % PROMPT_SVGS.length]
                 return (
-                  <button key={bp.id} type="button" onClick={() => { if (compact && onInjectPrompt) { onInjectPrompt(bp.text); return } }} style={{ width: '100%', aspectRatio: '16/9', background: lbEditPromptId === bp.id ? `rgba(${parseInt(ic.color.slice(1,3),16)},${parseInt(ic.color.slice(3,5),16)},${parseInt(ic.color.slice(5,7),16)},0.08)` : `rgba(${parseInt(ic.color.slice(1,3),16)},${parseInt(ic.color.slice(3,5),16)},${parseInt(ic.color.slice(5,7),16)},0.06)`, backdropFilter: 'blur(16px)', border: lbEditPromptId === bp.id ? `1px solid ${ic.color}88` : `1px solid ${ic.color}44`, borderRadius: compact ? '0.75rem' : '1rem', padding: compact ? '0.6rem 0.5rem' : '1rem 0.8rem', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: compact ? '0.3rem' : '0.5rem', transition: 'all 0.3s', textAlign: 'center', boxShadow: lbEditPromptId === bp.id ? `0 0 24px ${ic.color}44` : `0 0 20px ${ic.color}22`, transform: lbEditPromptId === bp.id ? 'scale(1.04)' : 'scale(1)', position: 'relative' }}>
+                  <button key={bp.id} type="button" onClick={() => { if (onInjectPrompt) { onInjectPrompt(bp.text); return } }} style={{ width: '100%', aspectRatio: '16/9', background: lbEditPromptId === bp.id ? `rgba(${parseInt(ic.color.slice(1,3),16)},${parseInt(ic.color.slice(3,5),16)},${parseInt(ic.color.slice(5,7),16)},0.08)` : `rgba(${parseInt(ic.color.slice(1,3),16)},${parseInt(ic.color.slice(3,5),16)},${parseInt(ic.color.slice(5,7),16)},0.06)`, backdropFilter: 'blur(16px)', border: lbEditPromptId === bp.id ? `1px solid ${ic.color}88` : `1px solid ${ic.color}44`, borderRadius: compact ? '0.75rem' : '1rem', padding: compact ? '0.6rem 0.5rem' : '1rem 0.8rem', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: compact ? '0.3rem' : '0.5rem', transition: 'all 0.3s', textAlign: 'center', boxShadow: lbEditPromptId === bp.id ? `0 0 24px ${ic.color}44` : `0 0 20px ${ic.color}22`, transform: lbEditPromptId === bp.id ? 'scale(1.04)' : 'scale(1)', position: 'relative' }}>
                     <svg viewBox="0 0 24 24" fill="none" stroke={ic.color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ width: compact ? '22px' : '36px', height: compact ? '22px' : '36px' }}><path d={ic.d} /></svg>
                     <div style={{ fontSize: compact ? '0.7rem' : '0.78rem', fontWeight: 600, color: 'white', lineHeight: 1.3, minHeight: compact ? 'calc(0.7rem * 1.3 * 2)' : 'calc(0.78rem * 1.3 * 2)', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' as any, overflow: 'hidden' }}>{bp.name}</div>
                     {!compact && <div style={{ fontSize: '0.62rem', color: 'rgba(255,255,255,0.3)', lineHeight: 1.3, minHeight: 'calc(0.62rem * 1.3 * 2)', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' as any, overflow: 'hidden' }}>{bp.desc}</div>}
@@ -1378,6 +1378,77 @@ function StoryboardWorkspace() {
   const [lightbox, setLightbox] = useState<{ media: StoryboardMedia; allMedia: StoryboardMedia[]; shotId: string; actId: string; sceneId: string; mode: StoryboardSequenceMode } | null>(null)
   const [lightboxCompare, setLightboxCompare] = useState(false)
   const [lightboxCrop, setLightboxCrop] = useState(false)
+
+  const [lightboxToolMode, setLightboxToolMode] = useState<'normal' | '3d-camera' | 'extend'>('normal')
+  const [camRot, setCamRot] = useState({ x: 0, y: 0 })
+  const [camZoom, setCamZoom] = useState(1)
+  const [isCamDragging, setIsCamDragging] = useState(false)
+  const [camSource, setCamSource] = useState<{type: 'front'|'back', index: number} | null>(null)
+  const [camTarget, setCamTarget] = useState<{type: 'front'|'back', index: number} | null>(null)
+  const [extScale, setExtScale] = useState(1)
+  const [extRot, setExtRot] = useState(0)
+  const [extOff, setExtOff] = useState({x: 0, y: 0})
+  const [isExtDragging, setIsExtDragging] = useState(false)
+  const [extStart, setExtStart] = useState({x: 0, y: 0})
+  const [localToolImage, setLocalToolImage] = useState<string | null>(null)
+
+  // Handlers
+  useEffect(() => {
+    if (lightboxToolMode === '3d-camera' && camSource && camTarget) {
+      const rowWords = ['top', 'middle', 'bottom'];
+      const colWords = ['left', 'center', 'right'];
+      const srcRow = rowWords[Math.floor(camSource.index / 3)];
+      const srcCol = colWords[camSource.index % 3];
+      const tgtRow = rowWords[Math.floor(camTarget.index / 3)];
+      const tgtCol = colWords[camTarget.index % 3];
+
+      let promptText = `Use image 1 and create another projection of the exact same space.\nOnly the camera angle and position changes.\n`;
+      let isBackTarget = (camTarget.type === 'back');
+      if (isBackTarget) {
+        promptText += `Camera turns 180 degrees to reveal the back (opposite) view of the space not visible on this image and that should be consistent with the style, architecture and light of the original space.\n`;
+      }
+      let targetSpaceName = isBackTarget ? "back (opposite side of the image)" : "space";
+      let srcPosStr = srcCol.toUpperCase() + " SIDE";
+      if (srcCol === 'center') srcPosStr = 'CENTER';
+      let lookTowardsStr = tgtCol.toUpperCase() + " " + (tgtRow === 'top' ? 'UP' : tgtRow === 'bottom' ? 'DOWN' : 'FRONT');
+
+      let revealVertical = '';
+      if (srcRow === 'top' && tgtRow === 'bottom') { revealVertical = 'down side (topdown view)'; } 
+      else if (srcRow === 'bottom' && tgtRow === 'top') { revealVertical = 'upper side (low angle view tilting up)'; } 
+      else if (tgtRow === 'top') { revealVertical = 'top down side'; } 
+      else if (tgtRow === 'bottom') { revealVertical = 'low angle'; } 
+      else { revealVertical = 'front side'; }
+
+      let revealingStr = `revealing the ${tgtCol} ${revealVertical} of the ${targetSpaceName}`;
+      let actionDesc = `Camera is now positioned on the ${srcPosStr} looking towards the ${lookTowardsStr} SIDE of the space, ${revealingStr}.`;
+
+      let zoomDesc = '';
+      if (camZoom < 1) zoomDesc = ` The camera has pulled back, showing ${Math.round((1/camZoom)*100)}% more of the environment.`;
+      else if (camZoom > 1) zoomDesc = ` The camera has zoomed in closely on the subject at ${Math.round(camZoom*100)}% scale.`;
+
+      promptText += `${actionDesc}${zoomDesc}\n[USER NOTE HERE]\nThe image's objects, positions, architecture, and characters must remain exactly the same as reference image 1.\nOnly the camera perspective changes.`;
+      
+      setLbNote(promptText);
+    }
+  }, [camZoom, camSource, camTarget, lightboxToolMode]);
+
+  const handleCamPointClick = (type: 'front'|'back', index: number) => {
+    if (!camSource) { setCamSource({type, index}); return; }
+    if (!camTarget) { 
+      setCamTarget({type, index});
+    } else {
+      setCamSource({type, index});
+      setCamTarget(null);
+    }
+  }
+
+  const handleExtPromptGenerate = () => {
+    let zoomText = extScale < 1 ? " The camera has zoomed out." : "";
+    let p = `Use exact same image 1 and complete the empty space with seamless background extension that should preserve same style, light and colors, seamlessly and logically completing the space.${zoomText}\n\n{USER CUSTOM PROMPT}\n\nThe quality should match the same level of detail quality and 4k of the original image.`;
+    setLbNote(p);
+    setLbNoteOpen(true);
+  }
+
   const [lbNote, setLbNote] = useState('')
   const [lbNoteOpen, setLbNoteOpen] = useState(false)
   const [lbEnhanceOpen, setLbEnhanceOpen] = useState(false)
@@ -2137,6 +2208,16 @@ function StoryboardWorkspace() {
                 const lbShotPrompt = lbCurrentShot?.prompt || ''
                 return (<>
               <div style={{ position: 'relative', borderRadius: '1rem', overflow: 'visible', boxShadow: '0 30px 80px rgba(0,0,0,0.7)', maxHeight: '72vh', maxWidth: '85vw' }} onClick={() => { if (lbNoteOpen) { setLbNoteOpen(false); setLbSkillOpen(false); setLbModelConfigOpen(false) } }}>
+                
+                <div style={{ position: 'absolute', top: '1rem', left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: '1rem', zIndex: 10 }}>
+                  <button className={`tool-icon action-star ${lightboxToolMode === '3d-camera' ? 'is-active' : ''}`} onClick={() => { setLightboxToolMode(lightboxToolMode === '3d-camera' ? 'normal' : '3d-camera'); setLocalToolImage(null); setLbNoteOpen(false); }} title="3D Camera Projection">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                  </button>
+                  <button className={`tool-icon action-doodle ${lightboxToolMode === 'extend' ? 'is-active' : ''}`} onClick={() => { setLightboxToolMode(lightboxToolMode === 'extend' ? 'normal' : 'extend'); setLocalToolImage(null); setLbNoteOpen(lightboxToolMode !== 'extend'); if(lightboxToolMode !== 'extend') handleExtPromptGenerate(); }} title="Image Extend">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
+                  </button>
+                </div>
+
                 {/* Shot number badge — top right of image */}
                 <div style={{ position: 'absolute', top: '0.6rem', right: '4.5rem', zIndex: 8, padding: '0.25rem 0.7rem', borderRadius: '999px', background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(8px)', border: '1px solid rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.65)', fontSize: '0.72rem', fontWeight: 600, letterSpacing: '0.05em', pointerEvents: 'none' }}>{lbShotLabel}</div>
                 {lbEmptyMode && !lightbox.media.url ? (
@@ -2146,7 +2227,71 @@ function StoryboardWorkspace() {
                     <div style={{ color: 'rgba(248,217,120,0.35)', fontSize: '1.1rem', fontWeight: 600, letterSpacing: '0.08em' }}>It all starts with an image.</div>
                     <div style={{ color: 'rgba(255,255,255,0.2)', fontSize: '0.78rem', maxWidth: '400px', textAlign: 'center', lineHeight: 1.5 }}>Write your vision in the note below, attach references, choose your models and hit submit to generate.</div>
                   </div>
-                ) : lightbox.media.type === 'video' ? <video src={lightbox.media.url} controls autoPlay style={{ maxHeight: '72vh', maxWidth: '85vw', borderRadius: '1rem', display: 'block' }} /> : lightbox.media.type === 'audio' ? <div style={{ padding: '3rem' }}><CustomAudioPlayer url={lightbox.media.url} fileName={lightbox.media.fileName} autoPlay /></div> : <img src={lightbox.media.url} alt={lightbox.media.fileName} style={{ maxHeight: '72vh', maxWidth: '85vw', borderRadius: '1rem', display: 'block' }} />}
+                ) : lightbox.media.type === 'video' ? <video src={lightbox.media.url} controls autoPlay style={{ maxHeight: '72vh', maxWidth: '85vw', borderRadius: '1rem', display: 'block' }} /> : lightbox.media.type === 'audio' ? <div style={{ padding: '3rem' }}><CustomAudioPlayer url={lightbox.media.url} fileName={lightbox.media.fileName} autoPlay /></div> : lightboxToolMode === '3d-camera' ? (
+                  <div className="container-3d" 
+                    onMouseDown={(e) => { setIsCamDragging(true); setExtStart({x: e.clientX, y: e.clientY}); }}
+                    onMouseMove={(e) => { if(isCamDragging) { setCamRot({ x: camRot.x + (e.clientX - extStart.x)*0.5, y: camRot.y + (e.clientY - extStart.y)*0.5 }); setExtStart({x: e.clientX, y: e.clientY}); } }}
+                    onMouseUp={() => setIsCamDragging(false)} onMouseLeave={() => setIsCamDragging(false)}
+                    style={{ width: '85vw', maxWidth: '1200px', display: 'flex', alignItems: 'center', justifyContent: 'center', height: '72vh', overflow: 'hidden' }}>
+                    
+                    <div style={{ position: 'absolute', top: '1rem', right: '1rem', display: 'flex', gap: '0.5rem', zIndex: 30 }}>
+                      <button onClick={(e) => { e.stopPropagation(); setCamZoom(z => Math.min(z + 0.25, 4)); }} style={{ background: 'rgba(0,0,0,0.5)', border: '1px solid rgba(255,255,255,0.2)', color: 'white', padding: '0.4rem 0.8rem', borderRadius: '0.5rem', cursor: 'pointer', fontWeight: 'bold', backdropFilter: 'blur(10px)' }}>+</button>
+                      <button onClick={(e) => { e.stopPropagation(); setCamZoom(z => Math.max(z - 0.25, 0.25)); }} style={{ background: 'rgba(0,0,0,0.5)', border: '1px solid rgba(255,255,255,0.2)', color: 'white', padding: '0.4rem 0.8rem', borderRadius: '0.5rem', cursor: 'pointer', fontWeight: 'bold', backdropFilter: 'blur(10px)' }}>-</button>
+                      <button onClick={(e) => { e.stopPropagation(); setLbNoteOpen(!lbNoteOpen); }} style={{ background: 'linear-gradient(135deg, var(--gold) 0%, #e0b94c 100%)', color: '#111', border: 'none', padding: '0.4rem 1rem', borderRadius: '0.5rem', cursor: 'pointer', fontWeight: 'bold' }}>Confirm</button>
+                    </div>
+
+                    <div style={{ transform: `scale(${camZoom})`, transition: 'transform 0.2s cubic-bezier(0.4,0,0.2,1)', width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <div className="image-plane" style={{ transform: `rotateX(${-camRot.y}deg) rotateY(${camRot.x}deg)` }}>
+                        <div className="image-plane-inner" style={{ backgroundImage: `url('${localToolImage || lightbox.media.url}')` }} />
+                        <div className="target-grid back-grid">
+                          {[0,1,2,3,4,5,6,7,8].map(i => <div key={`b${i}`} className={`point ${camTarget?.type==='back' && camTarget.index===i ? 'active' : ''} ${camSource?.type==='back' && camSource.index===i ? 'active has-camera' : ''}`} onClick={(e) => { e.stopPropagation(); handleCamPointClick('back', i); }}>
+                            {(camSource?.type==='back' && camSource.index===i) && <div className="camera-icon">🎥</div>}
+                          </div>)}
+                        </div>
+                        <div className="source-grid front-grid">
+                          {[0,1,2,3,4,5,6,7,8].map(i => <div key={`f${i}`} className={`point ${camTarget?.type==='front' && camTarget.index===i ? 'active' : ''} ${camSource?.type==='front' && camSource.index===i ? 'active has-camera' : ''}`} onClick={(e) => { e.stopPropagation(); handleCamPointClick('front', i); }}>
+                            {(camSource?.type==='front' && camSource.index===i) && <div className="camera-icon">🎥</div>}
+                          </div>)}
+                        </div>
+                        {/* Laser Line Renderer */}
+                        {camSource && camTarget && (() => {
+                          const getPos = (type: 'front'|'back', idx: number) => {
+                            const row = Math.floor(idx / 3); const col = idx % 3;
+                            const z = type === 'front' ? 150 : -150;
+                            return { x: (col - 1) * 340, y: (row - 1) * 223.33, z };
+                          };
+                          const srcPos = getPos(camSource.type, camSource.index);
+                          const tgtPos = getPos(camTarget.type, camTarget.index);
+                          const dx = tgtPos.x - srcPos.x; const dy = tgtPos.y - srcPos.y; const dz = tgtPos.z - srcPos.z;
+                          const dist = Math.sqrt(dx*dx + dy*dy + dz*dz);
+                          const rotY = Math.atan2(dz, dx);
+                          const rotZ = Math.asin(dy / dist);
+                          return (
+                            <div className="laser-line" style={{
+                              width: `${dist}px`,
+                              left: '50%', top: '50%',
+                              color: camSource.type === 'back' ? 'rgba(255, 100, 150, 0.9)' : 'rgba(100, 200, 255, 0.9)',
+                              transform: `translate3d(${srcPos.x}px, ${srcPos.y}px, ${srcPos.z}px) rotateY(${-rotY}rad) rotateZ(${rotZ}rad)`
+                            }} />
+                          );
+                        })()}
+                      </div>
+                    </div>
+                  </div>
+                ) : lightboxToolMode === 'extend' ? (
+                  <div className="extend-preview" style={{ width: '85vw', maxWidth: '1200px', height: '72vh', background: 'rgba(15, 20, 30, 0.6)', border: '1px solid rgba(255, 255, 255, 0.1)', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow: 'hidden', backdropFilter: 'blur(20px)', boxShadow: 'inset 0 0 40px rgba(255, 215, 0, 0.02), 0 20px 50px rgba(0,0,0,0.8)', backgroundImage: 'radial-gradient(rgba(255, 215, 0, 0.15) 1px, transparent 1px), linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 100%)', backgroundSize: '20px 20px, 100% 100%' }}
+                    onWheel={(e) => { e.preventDefault(); setExtScale(Math.max(0.1, Math.min(extScale + (e.deltaY < 0 ? 0.05 : -0.05), 4))); handleExtPromptGenerate(); }}
+                    onMouseDown={(e) => { setIsExtDragging(true); setExtStart({x: e.clientX - extOff.x, y: e.clientY - extOff.y}); }}
+                    onMouseMove={(e) => { 
+                      if(isExtDragging) {
+                        if(e.altKey) setExtRot(extRot + (e.clientX - extStart.x)*0.3);
+                        else setExtOff({x: e.clientX - extStart.x, y: e.clientY - extStart.y});
+                      }
+                    }}
+                    onMouseUp={() => setIsExtDragging(false)} onMouseLeave={() => setIsExtDragging(false)}>
+                    <img src={lightbox.media.url} className="extend-image" draggable="false" style={{ maxWidth: '60%', maxHeight: '80%', boxShadow: '0 0 30px rgba(0,0,0,0.8)', zIndex: 2, transform: `translate3d(${extOff.x}px, ${extOff.y}px, 0) scale(${extScale}) rotate(${extRot}deg)` }} />
+                  </div>
+                ) : <img src={lightbox.media.url} alt={lightbox.media.fileName} style={{ maxHeight: '72vh', maxWidth: '85vw', borderRadius: '1rem', display: 'block' }} />}
                 {lbProcessing && (
                   <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.6)', borderRadius: '1rem', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '1rem', zIndex: 10 }}>
                     <div style={{ width: '40px', height: '40px', border: '3px solid rgba(248,217,120,0.2)', borderTop: '3px solid var(--gold)', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
@@ -2334,7 +2479,7 @@ function StoryboardWorkspace() {
                       </div>
                     )}
                     {/* SKILLS STORE MODAL — OUTSIDE note area to avoid backdrop-filter containing block */}
-                    {lbSkillOpen && <LbSkillStoreModal lbAvailableSkills={lbAvailableSkills} lbAttachedSkills={lbAttachedSkills} setLbAttachedSkills={setLbAttachedSkills} setLbSkillOpen={setLbSkillOpen} setLbAvailableSkills={setLbAvailableSkills} lbSkillsPage={lbSkillsPage} setLbSkillsPage={setLbSkillsPage} onInjectPrompt={(text: string) => { setLbNote(text); setLbSkillOpen(false) }} />}
+                    {lbSkillOpen && <LbSkillStoreModal lbAvailableSkills={lbAvailableSkills} lbAttachedSkills={lbAttachedSkills} setLbAttachedSkills={setLbAttachedSkills} setLbSkillOpen={setLbSkillOpen} setLbAvailableSkills={setLbAvailableSkills} lbSkillsPage={lbSkillsPage} setLbSkillsPage={setLbSkillsPage} onInjectPrompt={(text: string) => { setLbNote(text); setLbSkillOpen(false); setLbNoteOpen(true); }} />}
                     {/* Model & Generation Config popup — OUTSIDE note area */}
                     {lbNoteOpen && lbModelConfigOpen && (
                           <>
@@ -2389,7 +2534,7 @@ function StoryboardWorkspace() {
                     <button type="button" onClick={() => setLbAltPage(p => Math.max(0, p - 1))} style={{ width: '32px', height: '52px', borderRadius: '6px', border: 'none', background: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.5)', cursor: 'pointer', fontSize: '1.1rem', display: 'grid', placeItems: 'center', transition: 'background 0.2s', flexShrink: 0 }} onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(248,217,120,0.15)'; e.currentTarget.style.color = 'var(--gold)' }} onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.06)'; e.currentTarget.style.color = 'rgba(255,255,255,0.5)' }}>‹</button>
                   )}
                   {visibleAlts.map((m, idx) => (
-                    <button key={m.id} type="button" onClick={() => { setLightbox({ ...lightbox, media: m }); setLbEmptyMode(false) }} style={{ width: m.id === lightbox.media.id ? '64px' : '52px', height: m.id === lightbox.media.id ? '64px' : '52px', borderRadius: '8px', overflow: 'hidden', border: m.id === lightbox.media.id ? '2px solid var(--gold)' : '1px solid rgba(255,255,255,0.15)', cursor: 'pointer', padding: 0, background: 'transparent', transition: 'all 0.25s cubic-bezier(0.4,0,0.2,1)', opacity: m.id === lightbox.media.id ? 1 : 0.6, transform: m.id === lightbox.media.id ? 'translateY(-4px)' : 'none', boxShadow: m.id === lightbox.media.id ? '0 8px 20px rgba(248,217,120,0.15)' : 'none', flexShrink: 0 }}>
+                    <button key={m.id} type="button" onClick={() => { setLightbox({ ...lightbox, media: m }); setLbEmptyMode(false); setLocalToolImage(null) }} style={{ width: m.id === lightbox.media.id ? '64px' : '52px', height: m.id === lightbox.media.id ? '64px' : '52px', borderRadius: '8px', overflow: 'hidden', border: m.id === lightbox.media.id ? '2px solid var(--gold)' : '1px solid rgba(255,255,255,0.15)', cursor: 'pointer', padding: 0, background: 'transparent', transition: 'all 0.25s cubic-bezier(0.4,0,0.2,1)', opacity: m.id === lightbox.media.id ? 1 : 0.6, transform: m.id === lightbox.media.id ? 'translateY(-4px)' : 'none', boxShadow: m.id === lightbox.media.id ? '0 8px 20px rgba(248,217,120,0.15)' : 'none', flexShrink: 0 }}>
                       {m.type === 'image' && m.url ? <img src={m.url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt={`Alt ${page * perPage + idx + 1}`} /> : <div style={{ width: '100%', height: '100%', background: 'rgba(255,255,255,0.05)', display: 'grid', placeItems: 'center', color: 'rgba(255,255,255,0.4)', fontSize: '0.7rem' }}>{!m.url ? '∅' : page * perPage + idx + 1}</div>}
                     </button>
                   ))}

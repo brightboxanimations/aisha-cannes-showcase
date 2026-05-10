@@ -1,0 +1,11 @@
+{
+  "id": "skill-3d-image-projections",
+  "name": "3D Image Projections",
+  "iconIdx": 2,
+  "description": "Rules and prompt templates for 3D Camera Projection generation. Includes all possible combinations of angles, zoom descriptions, and back-view conditions to maintain structural consistency.",
+  "promptBase": "Use image 1 and create another projection of the exact same space. Only the camera angle and position changes. The image's objects, positions, architecture, and characters must remain exactly the same as reference image 1. Only the camera perspective changes.",
+  "promptWithReferences": "Use image 1 and create another projection of the exact same space. Only the camera angle and position changes. The image's objects, positions, architecture, and characters must remain exactly the same as reference image 1. Only the camera perspective changes.",
+  "models": [],
+  "aspectRatio": "16:9",
+  "createdAt": "2026-05-10T11:30:00Z"
+}

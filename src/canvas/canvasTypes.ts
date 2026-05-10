@@ -15,10 +15,20 @@ export type CanvasNode = {
   prompt: string
   sourcePrompt?: string
   note: string
+  inputRefs?: Array<{
+    id: string
+    title: string
+    type: CanvasMediaType
+    url?: string
+    localPath?: string
+    fileName?: string
+  }>
   videoCrop?: {
     start: number
     end: number
   }
+  frameTime?: number
+  marker?: 'master' | 'alternative'
   selected?: boolean
   pinnedOnly?: boolean
   generation?: {
@@ -43,6 +53,7 @@ export type CanvasEdge = {
   type: CanvasEdgeType
   label?: string
   fromGroup?: boolean
+  points?: { x: number; y: number }[]
 }
 
 export type CanvasGroup = {

@@ -7,6 +7,7 @@ import react from '@vitejs/plugin-react'
 const storyboardRoot = path.resolve(process.cwd(), 'public/assets/storyboard')
 const storyboardUploads = path.join(storyboardRoot, 'uploads')
 const storyboardDataFile = path.join(storyboardRoot, 'storyboard-data.json')
+const canvasModeDataFile = path.join(storyboardRoot, 'canvas-mode-data.json')
 
 // Task system directories
 const tasksRoot = path.join(storyboardRoot, 'tasks')
@@ -19,6 +20,9 @@ function ensureStoryboardFolders() {
   fs.mkdirSync(tasksArchivedDir, { recursive: true })
   if (!fs.existsSync(storyboardDataFile)) {
     fs.writeFileSync(storyboardDataFile, JSON.stringify({ actors: ['Aisha', 'Dora', 'Niura', 'Altair', 'Djinn', 'Sharak'], locations: [], acts: [] }, null, 2))
+  }
+  if (!fs.existsSync(canvasModeDataFile)) {
+    fs.writeFileSync(canvasModeDataFile, JSON.stringify({ version: 1, activeSpaceId: '', spaces: [] }, null, 2))
   }
 }
 
@@ -188,6 +192,30 @@ function storyboardApiPlugin() {
             sendJson(res, { ok: true, localPath: storyboardDataFile })
           } catch (error) {
             sendJson(res, { error: error instanceof Error ? error.message : 'Save failed' }, 500)
+          }
+          return
+        }
+
+        sendJson(res, { error: 'Method not allowed' }, 405)
+      })
+
+      server.middlewares.use('/api/canvas-mode', async (req, res) => {
+        ensureStoryboardFolders()
+        if (req.method === 'GET') {
+          const data = fs.readFileSync(canvasModeDataFile, 'utf8')
+          res.setHeader('Content-Type', 'application/json')
+          res.end(data)
+          return
+        }
+
+        if (req.method === 'POST') {
+          try {
+            const body = await collectBody(req)
+            const payload = JSON.parse(body.toString() || '{}')
+            fs.writeFileSync(canvasModeDataFile, JSON.stringify(payload, null, 2))
+            sendJson(res, { ok: true, localPath: canvasModeDataFile })
+          } catch (error) {
+            sendJson(res, { error: error instanceof Error ? error.message : 'Canvas save failed' }, 500)
           }
           return
         }
@@ -846,8 +874,8 @@ function storyboardApiPlugin() {
         if (req.method !== 'POST') return sendJson(res, { error: 'Method not allowed' }, 405)
         try {
           const body = await collectBody(req)
-          const { imageUrl, note, attachments, shotId, actId, sceneId, mode, type, splitSize, model, quality, aspectRatio, detailLevel, duration } = JSON.parse(body.toString() || '{}')
-          console.log('[edit-from-lightbox]', { type, model, shotId, imageUrl: imageUrl?.substring(0, 60), attachmentCount: (attachments || []).length, noteLen: (note || '').length, aspectRatio })
+          const { imageUrl, note, attachments, referenceDebug, shotId, actId, sceneId, mode, type, splitSize, model, quality, aspectRatio, detailLevel, duration } = JSON.parse(body.toString() || '{}')
+          console.log('[edit-from-lightbox]', { type, model, shotId, imageUrl: imageUrl?.substring(0, 60), attachmentCount: (attachments || []).length, referenceCount: (referenceDebug || []).length, noteLen: (note || '').length, aspectRatio })
           if (!shotId) return sendJson(res, { error: 'Missing shotId' }, 400)
 
           const publicDir = path.join(process.cwd(), 'public')
@@ -977,18 +1005,33 @@ function storyboardApiPlugin() {
           }
 
           if (type === 'video') {
-            const referencePaths = cleanedImageUrl ? [imagePath, ...cleanedAttachments.map((u: string) => u.startsWith('/') ? path.join(publicDir, u) : path.resolve(u))] : cleanedAttachments.map((u: string) => u.startsWith('/') ? path.join(publicDir, u) : path.resolve(u))
-            // Prefer the new/hidden multi-reference path when available, and
-            // fall back to the documented single --image input if this CLI build
-            // rejects it. This keeps all inherited canvas refs eligible.
-            const multiImageArgs = referencePaths.length > 1 ? ['--images', ...referencePaths.map((p: string) => `"${p}"`)] : []
-            const singleImageArgs = referencePaths[0] ? ['--image', `"${referencePaths[0]}"`] : []
+            const referencePaths = Array.from(new Set(
+              (cleanedImageUrl ? [imagePath] : [])
+                .concat(cleanedAttachments.map((u: string) => u.startsWith('/') ? path.join(publicDir, u) : path.resolve(u)))
+                .filter(Boolean)
+            ))
+            const isVideoRef = (p: string) => /\.(mp4|mov|webm|m4v)$/i.test(p)
+            const imageReferencePaths = referencePaths.filter((p: string) => !isVideoRef(p)).slice(0, 7)
+            const videoReferencePaths = referencePaths.filter((p: string) => isVideoRef(p)).slice(0, 3)
+            const usesMultiReferenceMode = referencePaths.length > 1 || videoReferencePaths.length > 0
+            const requestedVideoModel = model || 'seedance-2.0-standard'
+            // PixVerse CLI has separate video modes. `create video` accepts one
+            // `--image`; true multi-reference work must use `create reference`.
+            // Video refs inside reference mode are documented as seedance-2.0 only.
+            const effectiveVideoModel = videoReferencePaths.length && !requestedVideoModel.includes('seedance-2.0')
+              ? 'seedance-2.0-standard'
+              : requestedVideoModel
+            const referenceArgs = [
+              ...(imageReferencePaths.length ? ['--images', ...imageReferencePaths.map((p: string) => JSON.stringify(p))] : []),
+              ...(videoReferencePaths.length ? ['--videos', ...videoReferencePaths.map((p: string) => JSON.stringify(p))] : []),
+            ]
+            const singleImageArgs = imageReferencePaths[0] ? ['--image', JSON.stringify(imageReferencePaths[0])] : []
             const videoDuration = Math.max(1, Math.min(15, Number(duration) || 5))
-            const buildVideoArgs = (imageArgs: string[]) => [
-              'npx', 'pixverse-cli', 'create', 'video',
+            const buildVideoArgs = (mode: 'video' | 'reference', inputArgs: string[]) => [
+              'npx', 'pixverse-cli', 'create', mode,
               '--prompt', JSON.stringify(note || ''),
-              ...imageArgs,
-              '--model', model || 'seedance-2.0-standard',
+              ...inputArgs,
+              '--model', effectiveVideoModel,
               '--quality', quality || '720p',
               '--aspect-ratio', aspectRatio || '16:9',
               '--duration', String(videoDuration),
@@ -996,6 +1039,7 @@ function storyboardApiPlugin() {
             ]
             try {
               const { exec } = require('child_process')
+              const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
               const runVideoCli = (args: string[]) => new Promise((resolve, reject) => {
                 console.log('[video] CLI cmd:', args.join(' ').substring(0, 320))
                 exec(args.join(' '), { timeout: 900000, cwd: process.cwd(), maxBuffer: 12 * 1024 * 1024 }, (err: any, stdout: string, stderr: string) => {
@@ -1003,13 +1047,35 @@ function storyboardApiPlugin() {
                   try { resolve(JSON.parse(stdout)) } catch { reject(new Error('Invalid JSON: ' + stdout.substring(0, 300) + stderr.substring(0, 160))) }
                 })
               })
+              const runVideoCliWithRetry = async (args: string[], attempts = 3) => {
+                let lastError: unknown
+                for (let attempt = 1; attempt <= attempts; attempt += 1) {
+                  try {
+                    return await runVideoCli(args)
+                  } catch (error) {
+                    lastError = error
+                    if (attempt < attempts) {
+                      console.warn(`[video] Full multi-reference submit failed, retry ${attempt + 1}/${attempts}:`, error instanceof Error ? error.message : String(error))
+                      await wait(attempt === 1 ? 10000 : 5000)
+                    }
+                  }
+                }
+                throw lastError
+              }
               let result: any
-              try {
-                result = await runVideoCli(buildVideoArgs(multiImageArgs.length ? multiImageArgs : singleImageArgs))
-              } catch (firstErr) {
-                if (!multiImageArgs.length) throw firstErr
-                console.warn('[video] Multi-reference failed, falling back to single primary reference:', firstErr instanceof Error ? firstErr.message : String(firstErr))
-                result = await runVideoCli(buildVideoArgs(singleImageArgs))
+              if (usesMultiReferenceMode) {
+                if (!referenceArgs.length) {
+                  return sendJson(res, { error: 'Multi-reference video requires at least one image reference or supported video reference.' }, 400)
+                }
+                console.log('[video] using PixVerse multi-reference mode', {
+                  images: imageReferencePaths.length,
+                  videos: videoReferencePaths.length,
+                  requestedModel: requestedVideoModel,
+                  model: effectiveVideoModel,
+                })
+                result = await runVideoCliWithRetry(buildVideoArgs('reference', referenceArgs), 3)
+              } else {
+                result = await runVideoCliWithRetry(buildVideoArgs('video', singleImageArgs), 3)
               }
               console.log('[video] Result:', JSON.stringify(result).substring(0, 240))
               const videoUrl = [
@@ -1026,7 +1092,7 @@ function storyboardApiPlugin() {
                 result.outputs?.[0]?.url,
               ].find(Boolean)
               if (videoUrl) {
-                const outName = `video-${(model || 'seedance').replace(/\./g, '-')}-${Date.now()}.mp4`
+                const outName = `video-${effectiveVideoModel.replace(/\./g, '-')}-${Date.now()}.mp4`
                 const outPath = path.join(storyboardUploads, outName)
                 if (/^https?:\/\//i.test(videoUrl)) {
                   await new Promise((resolve, reject) => {

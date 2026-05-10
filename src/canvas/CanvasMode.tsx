@@ -5,6 +5,7 @@ import type { CanvasData, CanvasEdgeType, CanvasMediaType, CanvasNode, CanvasSpa
 import './CanvasMode.css'
 
 const STORAGE_KEY = 'aisha-canvas-mode-v1'
+const CANVAS_API = '/api/canvas-mode'
 
 const makeId = (prefix: string) => `${prefix}-${Math.random().toString(36).slice(2, 9)}-${Date.now().toString(36)}`
 
@@ -74,6 +75,8 @@ type GroupResize = {
   groupHeight: number
 } | null
 type MultiSelection = { x: number; y: number; width: number; height: number; nodeIds: string[] } | null
+type CanvasTool = 'group' | 'scissors' | 'master' | 'node' | null
+type EdgePointDrag = { edgeId: string; index: number } | null
 
 function createSpace(index = 1): CanvasSpace {
   return {
@@ -154,6 +157,14 @@ function centerOf(node: CanvasNode) {
   return { x: node.x + node.width / 2, y: node.y + node.height / 2 }
 }
 
+function edgePath(a: { x: number; y: number }, b: { x: number; y: number }, points: { x: number; y: number }[] = []) {
+  if (points.length) {
+    return `M ${a.x} ${a.y} ${points.map(point => `L ${point.x} ${point.y}`).join(' ')} L ${b.x} ${b.y}`
+  }
+  const midX = (a.x + b.x) / 2
+  return `M ${a.x} ${a.y} C ${midX} ${a.y}, ${midX} ${b.y}, ${b.x} ${b.y}`
+}
+
 function nodeCenterInsideGroup(node: CanvasNode, group: { x: number; y: number; width: number; height: number }) {
   const centerX = node.x + node.width / 2
   const centerY = node.y + node.height / 2
@@ -179,27 +190,14 @@ function uniqueMediaNodes(nodes: CanvasNode[]) {
   return Array.from(new Map(nodes.filter(isMediaReferenceNode).map(node => [node.id, node])).values())
 }
 
+function savedInputRefNodes(node?: CanvasNode) {
+  return ((node?.inputRefs || []) as CanvasNode[]).filter(isMediaReferenceNode)
+}
+
 function groupMediaNodes(space: CanvasSpace, groupId: string) {
   const group = space.groups.find(item => item.id === groupId)
   if (!group) return []
   return uniqueMediaNodes(group.nodeIds.map(nodeId => space.nodes.find(node => node.id === nodeId)).filter(Boolean) as CanvasNode[])
-}
-
-function directReferenceNodes(space: CanvasSpace, nodeId: string) {
-  const nodes: CanvasNode[] = []
-  space.edges
-    .filter(edge => edge.to === nodeId)
-    .forEach(edge => {
-      if (edge.fromGroup) {
-        nodes.push(...groupMediaNodes(space, edge.from))
-        return
-      }
-      if (edge.type === 'reference' || edge.type === 'context') {
-        const input = space.nodes.find(item => item.id === edge.from)
-        if (isMediaReferenceNode(input)) nodes.push(input!)
-      }
-    })
-  return uniqueMediaNodes(nodes)
 }
 
 function collectInputNodes(space: CanvasSpace, nodeId: string, includeSource = false, seen = new Set<string>()) {
@@ -208,6 +206,7 @@ function collectInputNodes(space: CanvasSpace, nodeId: string, includeSource = f
   const nodes: CanvasNode[] = []
   const source = space.nodes.find(item => item.id === nodeId)
   if (includeSource && isMediaReferenceNode(source)) nodes.push(source!)
+  if (includeSource) nodes.push(...savedInputRefNodes(source))
 
   space.edges
     .filter(edge => edge.to === nodeId && generationInputEdgeTypes.includes(edge.type))
@@ -222,12 +221,14 @@ function collectInputNodes(space: CanvasSpace, nodeId: string, includeSource = f
         return
       }
       if (edge.type === 'variation') {
+        nodes.push(...savedInputRefNodes(input))
         nodes.push(...collectInputNodes(space, edge.from, false, seen))
         return
       }
       if (edge.type === 'derivative' || edge.type === 'animation' || edge.type === 'frame') {
         if (isMediaReferenceNode(input)) nodes.push(input!)
-        nodes.push(...directReferenceNodes(space, edge.from))
+        nodes.push(...savedInputRefNodes(input))
+        nodes.push(...collectInputNodes(space, edge.from, false, seen))
       }
     })
 
@@ -285,6 +286,8 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
   const nodeFileRef = useRef<HTMLInputElement>(null)
   const trayFileRef = useRef<HTMLInputElement>(null)
   const agentFileRef = useRef<HTMLInputElement>(null)
+  const saveTimerRef = useRef<number | null>(null)
+  const loadedServerDataRef = useRef(false)
   const [data, setData] = useState<CanvasData>(() => {
     try {
       const raw = window.localStorage.getItem(STORAGE_KEY)
@@ -319,7 +322,6 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
   const [trayUploadTargetId, setTrayUploadTargetId] = useState<string | null>(null)
   const [agentMessages, setAgentMessages] = useState<{ role: 'user' | 'model'; text: string }[]>([])
   const [agentLoading, setAgentLoading] = useState(false)
-  const [groupToolActive, setGroupToolActive] = useState(false)
   const [playingVideoIds, setPlayingVideoIds] = useState<Set<string>>(() => new Set())
   const [unmutedVideoIds, setUnmutedVideoIds] = useState<Set<string>>(() => new Set())
   const [videoProgress, setVideoProgress] = useState<Record<string, { current: number; duration: number }>>({})
@@ -328,6 +330,8 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
   const [resizingGroup, setResizingGroup] = useState<GroupResize>(null)
   const [multiSelection, setMultiSelection] = useState<MultiSelection>(null)
   const [edgeSnapCandidate, setEdgeSnapCandidate] = useState<string | null>(null)
+  const [canvasTool, setCanvasTool] = useState<CanvasTool>(null)
+  const [draggingEdgePoint, setDraggingEdgePoint] = useState<EdgePointDrag>(null)
 
   const activeSpace = data.spaces.find(space => space.id === data.activeSpaceId) || data.spaces[0]
   const selectedNode = activeSpace.nodes.find(node => node.id === selectedNodeId) || null
@@ -335,14 +339,55 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
   const selectedGroup = activeSpace.groups.find(group => group.id === selectedGroupId) || null
   const selectedRefNodes = selectedNode ? collectInputNodes(activeSpace, selectedNode.id, false) : []
   const displayedRefNodes = selectedNode ? collectInputNodes(activeSpace, selectedNode.id, true) : []
+  const groupToolArmed = canvasTool === 'group'
 
   useEffect(() => {
     setData(current => normalizePinnedTrayCopies(current))
   }, [])
 
   useEffect(() => {
+    if (!loadedServerDataRef.current) return
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(data))
+    if (saveTimerRef.current) window.clearTimeout(saveTimerRef.current)
+    saveTimerRef.current = window.setTimeout(() => {
+      fetch(CANVAS_API, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      }).catch(() => {
+        // localStorage remains the fallback when the dev API is unavailable.
+      })
+    }, 420)
   }, [data])
+
+  useEffect(() => {
+    let cancelled = false
+    let serverHadData = false
+    fetch(CANVAS_API)
+      .then(response => response.ok ? response.json() : null)
+      .then(payload => {
+        if (cancelled || !payload?.spaces?.length) return
+        serverHadData = true
+        setData(normalizePinnedTrayCopies(payload as CanvasData))
+      })
+      .catch(() => {
+        // Existing browser save is enough if the API has not been restarted yet.
+      })
+      .finally(() => {
+        loadedServerDataRef.current = true
+        if (!cancelled && !serverHadData) {
+          fetch(CANVAS_API, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+          }).catch(() => {})
+        }
+      })
+    return () => {
+      cancelled = true
+      if (saveTimerRef.current) window.clearTimeout(saveTimerRef.current)
+    }
+  }, [])
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -358,6 +403,8 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
         setAlternativeMenuNodeId(null)
         setMultiSelection(null)
         setEdgeSnapCandidate(null)
+        setCanvasTool(null)
+        setDraggingEdgePoint(null)
       }
       if ((event.key === 'Delete' || event.key === 'Backspace') && !(event.target instanceof HTMLInputElement) && !(event.target instanceof HTMLTextAreaElement)) {
         if (selectedNodeId) deleteNode(selectedNodeId)
@@ -375,6 +422,18 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
       if (space) mutate(space)
       return next
     })
+  }
+
+  const activateCanvasTool = (tool: CanvasTool) => {
+    const next = canvasTool === tool ? null : tool
+    setCanvasTool(next)
+    setMultiSelection(null)
+    setStatusLine(next ? `${next === 'node' ? 'Doodle point' : next} tool active` : 'Canvas tool reset')
+  }
+
+  const resetCanvasTool = () => {
+    setCanvasTool(null)
+    setStatusLine('Canvas tool reset')
   }
 
   const screenToWorld = (clientX: number, clientY: number) => {
@@ -423,6 +482,8 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
       localPath: partial.localPath,
       mimeType: partial.mimeType,
       fileName: partial.fileName,
+      frameTime: partial.frameTime,
+      inputRefs: partial.inputRefs,
       pinnedOnly: partial.pinnedOnly,
       generation: partial.generation || defaultGenerationForType(partial.type),
     }
@@ -520,8 +581,29 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
     return Array.from(new Set(collectInputNodes(activeSpace, nodeId, includeSource).map(node => node.url).filter(Boolean) as string[]))
   }
 
+  const getReferenceDebug = (nodeId: string, includeSource = false) => {
+    return collectInputNodes(activeSpace, nodeId, includeSource).map(node => ({
+      id: node.id,
+      title: node.title,
+      type: node.type,
+      url: node.url,
+      localPath: node.localPath,
+    }))
+  }
+
   const getInputNodes = (nodeId: string, includeSource = false) => {
     return collectInputNodes(activeSpace, nodeId, includeSource)
+  }
+
+  const snapshotInputRefs = (nodeId: string, includeSource = false) => {
+    return getInputNodes(nodeId, includeSource).slice(0, 8).map(node => ({
+      id: node.id,
+      title: node.title,
+      type: node.type,
+      url: node.url,
+      localPath: node.localPath,
+      fileName: node.fileName,
+    }))
   }
 
   const uploadFile = async (file: File, worldX: number, worldY: number) => {
@@ -664,7 +746,7 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
     setNoteSkillsOpen(false)
     setSelectedNodeId(null)
     setSelectedGroupId(null)
-    if (event.shiftKey || groupToolActive) {
+    if (event.shiftKey || groupToolArmed) {
       const world = screenToWorld(event.clientX, event.clientY)
       setMarquee({ startX: world.x, startY: world.y, x: world.x, y: world.y })
       return
@@ -674,6 +756,15 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
   }
 
   const handleMouseMove = (event: MouseEvent<HTMLDivElement>) => {
+    if (draggingEdgePoint) {
+      const world = screenToWorld(event.clientX, event.clientY)
+      updateActiveSpace(space => {
+        const edge = space.edges.find(item => item.id === draggingEdgePoint.edgeId)
+        if (!edge?.points?.[draggingEdgePoint.index]) return
+        edge.points[draggingEdgePoint.index] = world
+      })
+      return
+    }
     if (connectorDrag) {
       const world = screenToWorld(event.clientX, event.clientY)
       setConnectorDrag(current => current ? { ...current, x: world.x, y: world.y } : current)
@@ -826,6 +917,7 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
     setDraggingNodeId(null)
     setDraggingGroupId(null)
     setResizingGroup(null)
+    setDraggingEdgePoint(null)
     setEdgeSnapCandidate(null)
     updateActiveSpace(space => {
       space.groups.forEach(group => {
@@ -841,7 +933,11 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
     event.stopPropagation()
     setContextMenu(null)
     setMultiSelection(null)
-    if (event.shiftKey || groupToolActive) {
+    if (canvasTool === 'master') {
+      setNodeMarker(node.id, 'master')
+      return
+    }
+    if (event.shiftKey || groupToolArmed) {
       const world = screenToWorld(event.clientX, event.clientY)
       setSelectedNodeId(null)
       setSelectedGroupId(null)
@@ -1035,8 +1131,16 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
     const generation = (node.generation || defaultGenerationForType('video')) as NonNullable<CanvasNode['generation']>
     const prompt = node.prompt || node.note || ''
     const allReferenceUrls = getReferenceUrls(node.id, !!node.url)
+    const referenceDebug = getReferenceDebug(node.id, !!node.url)
     const referenceUrl = node.url || allReferenceUrls[0] || ''
     const attachments = allReferenceUrls.filter(url => url !== referenceUrl)
+    console.info('[canvas video refs]', {
+      node: node.title,
+      total: allReferenceUrls.length,
+      primary: referenceUrl,
+      attachments: attachments.length,
+      refs: referenceDebug.map(ref => ref.title),
+    })
     const response = await fetch('/api/tasks/edit-from-lightbox', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -1048,6 +1152,7 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
         mode: 'video',
         imageUrl: referenceUrl,
         attachments,
+        referenceDebug,
         note: prompt,
         model: generation.model || videoModels[0].id,
         quality: generation.quality || videoModels[0].qualities[0],
@@ -1071,12 +1176,15 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
       return
     }
     const isContinuationFromFrame = activeSpace.edges.some(edge => edge.to === source.id && edge.type === 'frame')
-    const targetId = source.type === 'video' && !source.url
+    const targetId = !source.url && (source.type === 'placeholder' || source.type === 'video')
       ? source.id
       : addPlaceholder('video', source.x + source.width + 140, source.y, source.id, 'animation', isContinuationFromFrame ? 'CONT VIDEO' : 'image to video')
+    const inputRefs = snapshotInputRefs(source.id, !!source.url)
     updateNode(targetId, node => {
+      node.type = 'video'
       node.prompt = source.prompt
       node.sourcePrompt = source.prompt || source.sourcePrompt || ''
+      node.inputRefs = inputRefs
       node.generation = {
         ...(source.generation || defaultGenerationForType('video')),
         operation: 'video',
@@ -1121,6 +1229,7 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
     }
     const fillSelected = !source.url && (source.type === 'placeholder' || source.type === 'image' || source.type === 'video')
     const generationType: 'generate' | 'enhance' = forceEnhance && source.type === 'image' && !!source.url && !asVariation ? 'enhance' : 'generate'
+    const inputRefs = snapshotInputRefs(source.id, generationType === 'generate' && !!source.url && !asVariation)
     const targetId = fillSelected
       ? source.id
       : addNode({
@@ -1142,6 +1251,7 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
 
     updateNode(targetId, node => {
       node.sourcePrompt = source.prompt || source.sourcePrompt || node.sourcePrompt || ''
+      node.inputRefs = inputRefs
       node.generation = { ...(node.generation || defaultGeneration()), status: 'running', error: '', operation: generationType }
     })
     setStatusLine(`${generationType === 'enhance' ? 'Enhancing' : 'Generating'} with ${shortModelName(source.generation?.model)}...`)
@@ -1242,6 +1352,22 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
       })
     })
     setStatusLine(`${node.title} is now the master flow`)
+  }
+
+  const setNodeMarker = (nodeId: string, marker: CanvasNode['marker']) => {
+    updateNode(nodeId, node => {
+      node.marker = node.marker === marker ? undefined : marker
+    })
+    setStatusLine(marker === 'master' ? 'Master frame marker toggled' : 'Alternative frame marker toggled')
+  }
+
+  const addEdgePoint = (edgeId: string, x: number, y: number) => {
+    updateActiveSpace(space => {
+      const edge = space.edges.find(item => item.id === edgeId)
+      if (!edge) return
+      edge.points = [...(edge.points || []), { x, y }]
+    })
+    setStatusLine('Doodle shaping point added')
   }
 
   const swapNodeMedia = (sourceId: string, targetId: string) => {
@@ -1562,7 +1688,8 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
   const canvasNodes = activeSpace.nodes.filter(node => !node.pinnedOnly)
   const nodeById = useMemo(() => new Map(activeSpace.nodes.map(node => [node.id, node])), [activeSpace.nodes])
   const expandedTray = expandedTrayId ? activeSpace.trays.find(tray => tray.id === expandedTrayId) : null
-  const selectedIsVideo = selectedNode?.type === 'video'
+  const selectedIsVideo = selectedGeneration.operation === 'video' || (selectedNode?.type === 'video' && selectedGeneration.operation !== 'generate')
+  const selectedOutputType: CanvasMediaType = selectedIsVideo ? 'video' : selectedNode?.type || 'placeholder'
   const selectedVideoModel = videoModels.find(model => model.id === selectedGeneration.model) || videoModels[0]
   const edgeLabelForDisplay = (edgeId: string) => {
     const edge = activeSpace.edges.find(item => item.id === edgeId)
@@ -1742,7 +1869,9 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
       const blob = await new Promise<Blob | null>(resolve => canvas.toBlob(resolve, 'image/png'))
       if (!blob) throw new Error('Could not capture frame')
       const frameTime = Number.isFinite(video.currentTime) ? video.currentTime : 0
-      const file = new File([blob], `${source.title.replace(/\W+/g, '-').slice(0, 42) || 'video'}-frame-${Math.round(frameTime * 1000)}.png`, { type: 'image/png' })
+      const frameLabel = formatSeconds(frameTime)
+      const frameSeconds = Math.round(frameTime).toString().padStart(2, '0')
+      const file = new File([blob], `${source.title.replace(/\W+/g, '-').slice(0, 42) || 'video'}-frame-${frameSeconds}s.png`, { type: 'image/png' })
       const previewUrl = URL.createObjectURL(file)
       const formData = new FormData()
       formData.append('file', file)
@@ -1755,11 +1884,12 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
       }
       const frameId = addNode({
         type: 'image',
-        title: `Frame from ${source.title}`,
+        title: `${source.title} frame ${frameLabel}`,
         url: previewUrl,
         localPath: uploaded.localPath,
         mimeType: uploaded.mimeType || file.type,
         fileName: uploaded.fileName || file.name,
+        frameTime,
         prompt: source.prompt,
         sourcePrompt: source.sourcePrompt || source.prompt || '',
         generation: { ...defaultGeneration(), operation: 'generate', status: 'done' },
@@ -1850,6 +1980,10 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
         onMouseMove={handleMouseMove}
         onMouseUp={stopDragging}
         onMouseLeave={stopDragging}
+        onDoubleClick={(event) => {
+          if ((event.target as HTMLElement).closest('.canvas-node, .canvas-group-box, .canvas-edge-controls, .canvas-edge-point, .canvas-topbar, .canvas-space-tabs, .canvas-pinned-trays, .canvas-tray-panel, .canvas-context-menu, .canvas-connection-menu, .canvas-prompt-dock, .canvas-note-composer')) return
+          resetCanvasTool()
+        }}
         onWheel={handleWheel}
       >
         <div
@@ -1995,8 +2129,8 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
             <button onClick={() => zoomBy(1.14)} type="button" aria-label="Zoom in">＋</button>
             <button className="canvas-zoom-reset" onClick={() => setZoomAt(1)} type="button">{Math.round(activeSpace.viewport.zoom * 100)}%</button>
             <button
-              className={`canvas-group-tool ${groupToolActive ? 'is-active' : ''}`}
-              onClick={() => setGroupToolActive(active => !active)}
+              className={`canvas-group-tool ${groupToolArmed ? 'is-active' : ''}`}
+              onClick={() => activateCanvasTool('group')}
               type="button"
               title="Group tool: drag an area over nodes"
               aria-label="Toggle group selection tool"
@@ -2139,8 +2273,7 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
                 ? { x: fromGroup.x + fromGroup.width, y: fromGroup.y + fromGroup.height / 2 }
                 : centerOf(from!)
               const b = centerOf(to)
-              const midX = (a.x + b.x) / 2
-              const d = `M ${a.x} ${a.y} C ${midX} ${a.y}, ${midX} ${b.y}, ${b.x} ${b.y}`
+              const d = edgePath(a, b, edge.points)
               return (
                 <g key={edge.id}>
                   <path className="canvas-edge-hit" data-edge-id={edge.id} d={d} />
@@ -2161,8 +2294,7 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
                 ? { x: fromGroup.x + fromGroup.width, y: fromGroup.y + fromGroup.height / 2 }
                 : { x: fromNode!.x + fromNode!.width, y: fromNode!.y + fromNode!.height / 2 }
               const b = { x: connectorDrag.x, y: connectorDrag.y }
-              const midX = (a.x + b.x) / 2
-              const d = `M ${a.x} ${a.y} C ${midX} ${a.y}, ${midX} ${b.y}, ${b.x} ${b.y}`
+              const d = edgePath(a, b)
               return <path className="canvas-edge-path draft" d={d} stroke="#f8d978" />
             })()}
           </svg>
@@ -2184,6 +2316,23 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
                 data-edge-id={edge.id}
                 className="canvas-edge-controls"
                 style={{ left: x, top: y }}
+                onClick={(event) => {
+                  if (canvasTool !== 'scissors' && canvasTool !== 'node') return
+                  event.preventDefault()
+                  event.stopPropagation()
+                  if (canvasTool === 'scissors') {
+                    deleteEdge(edge.id)
+                    return
+                  }
+                  const world = screenToWorld(event.clientX, event.clientY)
+                  addEdgePoint(edge.id, world.x, world.y)
+                }}
+                onDoubleClick={(event) => {
+                  event.preventDefault()
+                  event.stopPropagation()
+                  const world = screenToWorld(event.clientX, event.clientY)
+                  addEdgePoint(edge.id, world.x, world.y)
+                }}
                 onDragOver={(event) => event.preventDefault()}
                 onDrop={(event) => {
                   event.preventDefault()
@@ -2198,10 +2347,38 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
                 }}
               >
                 <button type="button" title="Insert node between" onClick={() => insertPlaceholderOnEdge(edge.id)}>＋</button>
+                <button type="button" title="Add pipe shaping point" onClick={(event) => {
+                  const rect = (event.currentTarget.closest('.canvas-edge-controls') as HTMLElement | null)?.getBoundingClientRect()
+                  const world = rect ? screenToWorld(rect.left + rect.width / 2, rect.top + rect.height / 2) : { x, y }
+                  addEdgePoint(edge.id, world.x, world.y)
+                }}>•</button>
                 <button type="button" title="Cut connection" onClick={() => deleteEdge(edge.id)}>✂</button>
               </div>
             )
           })}
+
+          {activeSpace.edges.flatMap(edge => (edge.points || []).map((point, index) => (
+            <button
+              key={`point-${edge.id}-${index}`}
+              className="canvas-edge-point"
+              style={{ left: point.x, top: point.y }}
+              type="button"
+              title="Drag pipe point"
+              onMouseDown={(event) => {
+                event.preventDefault()
+                event.stopPropagation()
+                setDraggingEdgePoint({ edgeId: edge.id, index })
+              }}
+              onDoubleClick={(event) => {
+                event.preventDefault()
+                event.stopPropagation()
+                updateActiveSpace(space => {
+                  const item = space.edges.find(candidate => candidate.id === edge.id)
+                  if (item?.points) item.points = item.points.filter((_, pointIndex) => pointIndex !== index)
+                })
+              }}
+            />
+          )))}
 
           {marquee && (
             <div
@@ -2242,7 +2419,7 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
             <div
               key={node.id}
               data-node-id={node.id}
-              className={`canvas-node ${node.type} ${node.id === selectedNodeId ? 'is-selected' : ''} ${node.id === draggingNodeId ? 'is-dragging-node' : ''} ${isReference ? 'is-reference' : ''} ${status ? `is-${status}` : ''}`}
+              className={`canvas-node ${node.type} ${node.id === selectedNodeId ? 'is-selected' : ''} ${node.id === draggingNodeId ? 'is-dragging-node' : ''} ${node.marker ? `is-marker-${node.marker}` : ''} ${isReference ? 'is-reference' : ''} ${status ? `is-${status}` : ''}`}
               style={{ left: node.x, top: node.y, width: node.width, height: node.height }}
               onMouseDown={(event) => startNodeDrag(event, node)}
               onDragOver={(event) => event.preventDefault()}
@@ -2279,6 +2456,7 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
               }}
             >
               {isReference && <div className="canvas-node-badge">REF</div>}
+              {typeof node.frameTime === 'number' && <div className="canvas-frame-time-tag">{formatSeconds(node.frameTime)}</div>}
               {status && ['queued', 'running', 'error'].includes(status) && <div className={`canvas-node-status ${status}`}>{status}</div>}
               {node.url && (node.type === 'image' || node.type === 'video') && (
                 <div className="canvas-alt-picker" onMouseDown={(event) => event.stopPropagation()}>
@@ -2438,18 +2616,36 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
 
         {contextMenu && (
           <div className="canvas-context-menu" style={{ left: contextMenu.x, top: contextMenu.y }}>
+            <div className="canvas-context-tools">
+              <button className={canvasTool === 'group' ? 'is-active' : ''} type="button" title="Group selection tool" onClick={() => {
+                activateCanvasTool('group')
+                setContextMenu(null)
+              }}>▣</button>
+              <button className={canvasTool === 'scissors' ? 'is-active' : ''} type="button" title="Scissors tool" onClick={() => {
+                activateCanvasTool('scissors')
+                setContextMenu(null)
+              }}>✂</button>
+              <button className={canvasTool === 'master' ? 'is-active' : ''} type="button" title="Master marker tool" onClick={() => {
+                activateCanvasTool('master')
+                setContextMenu(null)
+              }}>M</button>
+              <button className={canvasTool === 'node' ? 'is-active' : ''} type="button" title="Doodle point tool" onClick={() => {
+                activateCanvasTool('node')
+                setContextMenu(null)
+              }}>•</button>
+            </div>
             <button type="button" onClick={() => { addPlaceholder('image', contextMenu.worldX, contextMenu.worldY); setContextMenu(null) }}>Add image placeholder</button>
             <button type="button" onClick={() => { addPlaceholder('video', contextMenu.worldX, contextMenu.worldY); setContextMenu(null) }}>Add video placeholder</button>
             <button type="button" onClick={() => { addPlaceholder('document', contextMenu.worldX, contextMenu.worldY); setContextMenu(null) }}>Add PDF/DOCX node</button>
             <button type="button" onClick={() => { addSpace(); setContextMenu(null) }}>Add new space</button>
             {selectedNode && <button type="button" onClick={() => { duplicateNode(selectedNode.id); setContextMenu(null) }}>Duplicate selected</button>}
             {selectedNode && <button type="button" onClick={() => { createVariationNode(selectedNode.id); setContextMenu(null) }}>Create pink variation node</button>}
-            {selectedNode?.url && <button type="button" onClick={() => { setAlternativeMenuNodeId(selectedNode.id); setContextMenu(null) }}>Select existing as alternative...</button>}
+            {selectedNode?.url && <button type="button" onClick={() => { setNodeMarker(selectedNode.id, 'alternative'); setContextMenu(null) }}>Mark selected as alternative</button>}
+            {selectedNode && activeSpace.edges.some(edge => edge.to === selectedNode.id && edge.type === 'variation') && <button type="button" onClick={() => { makeMasterShot(selectedNode.id); setContextMenu(null) }}>Make variation the flow master</button>}
             {selectedNode?.type !== 'video' && selectedNode && <button type="button" onClick={() => { runTwoVariants(selectedNode.id); setContextMenu(null) }}>Generate two pink variations</button>}
-            {selectedNode && <button type="button" onClick={() => { makeMasterShot(selectedNode.id); setContextMenu(null) }}>Make selected master shot</button>}
+            {selectedNode && <button type="button" onClick={() => { setNodeMarker(selectedNode.id, 'master'); setContextMenu(null) }}>Mark selected as master</button>}
             {selectedNode && <button type="button" onClick={() => { runImageGeneration(selectedNode.id); setContextMenu(null) }}>Run selected node</button>}
             {selectedNode?.type === 'image' && <button type="button" onClick={() => { splitGridNode(selectedNode.id); setContextMenu(null) }}>Split selected 2×2</button>}
-            {selectedNode?.type === 'video' && <button type="button" onClick={() => { extractFrameFromVideo(selectedNode.id); setContextMenu(null) }}>Extract current frame</button>}
             {selectedNode?.type === 'video' && selectedNode.videoCrop && <button type="button" onClick={() => { resetVideoCrop(selectedNode.id); setContextMenu(null) }}>Reset video trim</button>}
             {selectedNode && <button type="button" onClick={() => { setLinkMode({ from: selectedNode.id, type: 'reference', label: 'ref' }); setContextMenu(null) }}>Use selected as reference...</button>}
             {selectedNode && expandedTray && <button type="button" onClick={() => { addNodeToTray(expandedTray.id, selectedNode.id); setContextMenu(null) }}>Store selected in {expandedTray.name}</button>}
@@ -2505,10 +2701,12 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
                 aria-label="Selected node title"
               />
               <select
-                value={selectedNode.type}
+                value={selectedOutputType}
                 onChange={(event) => updateNode(selectedNode.id, node => {
                   const nextType = event.target.value as CanvasMediaType
-                  node.type = nextType
+                  if (!node.url || node.type === 'placeholder') {
+                    node.type = nextType
+                  }
                   node.generation = {
                     ...defaultGenerationForType(nextType),
                     ...(node.generation || {}),
@@ -2556,7 +2754,7 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
                 ))}
                 {displayedRefNodes.length === 0 && <span>{displayedRefNodes.length}/8 · {activeJobs > 0 ? `${activeJobs} generating` : 'ready'}</span>}
               </div>
-              <button className="canvas-note-ok" onClick={() => selectedNode.type === 'video' ? runVideoGeneration(selectedNode.id) : runImageGeneration(selectedNode.id)} title={selectedNode.type === 'video' ? 'Run video generation' : 'Run image generation / enhance selected'} type="button">✓</button>
+              <button className="canvas-note-ok" onClick={() => selectedIsVideo ? runVideoGeneration(selectedNode.id) : runImageGeneration(selectedNode.id)} title={selectedIsVideo ? 'Run video generation' : 'Run image generation / enhance selected'} type="button">✓</button>
             </div>
             {noteAttachOpen && (
               <div className="canvas-note-popover attach">
@@ -2589,7 +2787,7 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
                         type="button"
                         onClick={() => updateNode(selectedNode.id, node => {
                           node.generation = {
-                            ...(node.generation || defaultGenerationForType(selectedNode.type)),
+                            ...(node.generation || defaultGenerationForType(selectedIsVideo ? 'video' : selectedNode.type)),
                             model: model.id,
                             quality,
                             detailLevel: 'detailLevel' in model ? model.detailLevel : '',

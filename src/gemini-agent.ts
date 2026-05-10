@@ -115,6 +115,85 @@ export async function sendToGemini(
   }
 }
 
+async function urlToInlinePart(url: string): Promise<{ inlineData: { mimeType: string; data: string } } | null> {
+  try {
+    const response = await fetch(url);
+    if (!response.ok) return null;
+    const blob = await response.blob();
+    if (!blob.type.startsWith('image/')) return null;
+    const dataUrl = await new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result || ''));
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+    const data = dataUrl.split(',')[1];
+    if (!data) return null;
+    return { inlineData: { mimeType: blob.type || 'image/png', data } };
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Send a Gemini message with actual image pixels attached.
+ */
+export async function sendToGeminiWithImages(
+  userMessage: string,
+  imageUrls: string[] = [],
+  conversationHistory: AgentMessage[] = [],
+  systemInstruction?: string
+): Promise<{ text: string; error?: string }> {
+  try {
+    const imageParts = (await Promise.all(imageUrls.slice(0, 8).map(urlToInlinePart))).filter(Boolean) as { inlineData: { mimeType: string; data: string } }[];
+    const contents = [
+      ...conversationHistory,
+      {
+        role: 'user' as const,
+        parts: [
+          { text: userMessage },
+          ...imageParts,
+        ],
+      },
+    ];
+
+    const body: any = { contents };
+    if (systemInstruction || SYSTEM_INSTRUCTION) {
+      body.systemInstruction = {
+        parts: [{ text: systemInstruction || SYSTEM_INSTRUCTION }],
+      };
+    }
+    body.generationConfig = {
+      temperature: 0.9,
+      topP: 0.95,
+      topK: 40,
+      maxOutputTokens: 8192,
+    };
+
+    const response = await fetch(
+      `${GEMINI_BASE_URL}:generateContent?key=${GEMINI_API_KEY}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      }
+    );
+
+    if (!response.ok) {
+      const errText = await response.text();
+      return { text: '', error: `Gemini API error ${response.status}: ${errText}` };
+    }
+
+    const data = await response.json();
+    const text =
+      data.candidates?.[0]?.content?.parts?.[0]?.text || 'No response generated.';
+
+    return { text };
+  } catch (err: any) {
+    return { text: '', error: `Network error: ${err.message}` };
+  }
+}
+
 /**
  * Generate a cinematic prompt from a brief description
  */

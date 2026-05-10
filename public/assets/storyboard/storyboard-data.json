@@ -11,7 +11,7 @@
     "Nibzu",
     "Oracle",
     "Tamlun",
-    "Maaz-Khaan"
+    "Khaan"
   ],
   "locations": [
     "Balcony Day",
@@ -286,7 +286,7 @@
       {
         "id": "actor-0rogqj8-moxwrryg",
         "type": "actors",
-        "name": "Maaz-Khaan",
+        "name": "Khaan",
         "description": "",
         "media": [
           {
@@ -472,14 +472,24 @@
   },
   "agentTasks": [
     {
+      "id": "task-9og5iee-moy67w1m",
+      "title": "Task 53",
+      "prompt": "```\npremium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric morning light, in soft sunrays, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.\n\nCHARACTER LOCKS:\n@image1 = Aisha, 16-year-old human princess, initially startled and surprised, then thoughtful, then a subtle spark of mischievous rebellion.\n@image2 = Dora, white panther with golden collar — normal panther size, her height reaches an adult human's hip, initially startled, then exhibiting a royal lazy attitude and dismissive expression.\n@image3 = Altair Royal Hawk, in comical distress, wings flapping awkwardly and frantically, feathers ruffled, delivering a scroll, then darting away quickly.\n\nLOCATION REFERENCE:\n@image4 = Palace exterior — the internal courtyard viewed from Aisha's royal balcony, showing ornate arabesque architecture, lush green gardens, and the bustling activity of the palace below. The architecture, lighting, and scale must remain 100% unchanged.\n\nPROPS REFERENCE:\n@image5 = Rolled scroll, ancient parchment appearance, clutched in Altair's talons.\n\nSCENE: Morning scene — a light, refreshing breeze, soft sunrays filtering through the palace. Altair the Royal Hawk frantically delivers an urgent message to Aisha and Dora on the vast royal balcony, then quickly darts away, leaving them in a moment of stunned silence. Dora expresses her typical pragmatic and dismissive attitude about \"royal business,\" while Aisha's initial shock quickly gives way to a dawning, mischievous idea and a glint of rebellion in her eyes.\n\nCreate 2x2 cinematic grid with 4 panels with 3d animated scenes in each one:\n\nPanel 1: Medium shot. Altair the Royal Hawk is mid-air, center-left, wings flapping frantically and awkwardly, clutching a rolled scroll in his talons. He's hovering just in front of Aisha, who stands on the left side of the balcony, looking up with a surprised expression. Dora the white panther sits on the right side of the balcony, beside Aisha, startled but with a hint of annoyance, looking towards Altair. The ornate arabesque balcony railing is in the foreground, and the palace courtyard is visible in the background under soft morning light.\n\nPanel 2: Tight two-shot. Aisha is on the left, and Dora the white panther is on the right, both looking at each other with wide, stunned eyes. Altair has just darted away, leaving a sense of lingering surprise. Aisha’s mouth is slightly agape, while Dora's ears are slightly flattened, conveying disbelief. The balcony railing is in the very soft foreground, and the palace courtyard is a blurred background. Morning light bathes their faces.\n\nPanel 3: Medium shot, Over-the-shoulder (OTS) of Dora. Dora the white panther is in the foreground, facing away from the camera and towards the balcony railing, her posture dismissive. Her head is turned slightly back towards Aisha (who is visible in the mid-ground, center-right), looking at her with a royal lazy, 'I told you so' expression, eyes slightly rolled. Aisha is seen with a thoughtful, almost pondering look, beginning to process what just happened. The detailed balcony railing is prominent, with the courtyard in soft focus behind Aisha.\n\nPanel 4: Close-up on Aisha's face. Her eyes are narrowed slightly, a subtle, mischievous smile playing on her lips, hinting at a newly formed idea. Her expression conveys a spark of rebellion and determination. A hint of her headscarf dances in a light breeze. The background is a very shallow depth of field blur of the palace courtyard, catching soft morning light, emphasizing her focused expression.\n\nEnvironment: A grand, expansive royal balcony with an intricately carved arabesque railing, overlooking a bustling and beautiful internal palace courtyard. The courtyard features lush gardens, elegant fountains, and pathways, all framed by the ornate, sun-drenched palace architecture. A gentle morning breeze drifts across the balcony, carrying the faint sounds of the waking palace. Soft sunrays pierce through the air, highlighting faint dust motes.\n\nAll panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric morning light, in soft sunrays, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.\n```\n\n---\n\n**CLI Command for Generation:**\n\nTo run this prompt and get all three model outputs in a 2x2 grid format, assuming the prompt text is saved as `aisha_balcony_hawk_scene.txt` and your image references are in the `assets/` directory:\n\n```bash\nnpx pixverse create image \\\n  --prompt \"$(cat aisha_balcony_hawk_scene.txt)\" \\\n  --model nano-banana-2 \\\n  --quality 2160p \\\n  --aspect-ratio 16:9 \\\n  --grid \"2x2\" \\\n  --image assets/characters/aisha.png \\\n  --image assets/characters/dora_panther.png \\\n  --image assets/characters/altair_hawk.png \\\n  --image assets/locations/palace-exterior.png \\\n  --image assets/props/scroll.png \\\n  --json\n```",
+      "sceneHint": "Act 1 - Scene 3 [palace-exterior.png] /assets/locations/palace-exterior.png",
+      "skillHint": "Batch 2×2 Grid Prompt Writing & Generation",
+      "status": "todo_working",
+      "createdAt": "2026-05-09T09:58:01.978Z",
+      "updatedAt": "2026-05-09T09:59:35.427Z"
+    },
+    {
       "id": "task-akduzmi-moxpi7xx",
       "title": "Task 40",
       "prompt": "### **Prompt 1/5: \"Desolate Approaches to Shelter\"**\n*(Capturing Aisha, Djinn, and Dora's journey towards the House in the Rocks, with the vast ruins and carved cliff dwellings.)*\n\n```\npremium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric golden hour light, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.\n\nCHARACTER LOCKS:\n@image1 = Aisha, 16-year-old human princess, showing a mix of fatigue, wonder, and dawning resolve.\n@image2 = Dora, white panther with golden collar — normal panther size, her height reaches an adult human's hip, displaying wariness and protectiveness.\n@image3 = Djinn, a plasma-form being, ethereal and shimmering, with a sorrowful and guiding demeanor.\n\nLOCATION REFERENCE:\n@image4 = Desolate City Ruins - Overview — (User-provided: A 4-projection grid showing vast, eroded Nabatean-style architecture, sand-swept streets, broken minarets, and towering cliff formations with carved dwellings. References like 395.png and 396.png for visual style, emphasizing the 'rock holes for homes').\n@image5 = House in the Rocks - Exterior Approach — (User-provided: A front view of a winding, eroded staircase carved into a dramatic cliff face, leading up to a \"Second Layer\" dwelling entrance. Reference image 396.png for visual style, focusing on the entrance and the carved steps).\n@image6 = Desolate City Ruins - Midground — (User-provided: A medium wide shot of eroded sandstone structures and distant, rounded, natural rock formations, hinting at ancient habitations and the desolate beauty of the land).\n\nSCENE: Golden hour scene — vast, desolate desert landscape under a fading golden sun.\nAisha, Dora, and the Djinn are navigating the desolate landscape of the city ruins, making their way towards a \"Second Layer\" dwelling in the canyon wall. Aisha is tired but resolute, Dora is suspicious of the unconventional shelter, and the Djinn, burdened by memories, guides them to safety before nightfall.\n\nCreate 2x2 cinematic grid with 4 panels with 3d animated scenes in each one:\n\nPanel 1: Ultra-wide establishing shot (18mm lens, deep DOF). The vast, desolate ruins stretch into the distance, rock formations like fossilized waves under the golden hour light. Aisha (small, center-left) walks with a determined stride, brushing sand from her knees. Dora (right behind her) glances warily at the surroundings, her ears slightly flattened. The Djinn (far right, slightly ahead) floats low, his plasma form shimmering as he leads them up a winding, eroded path towards distant cliff dwellings that look like carved holes in the rock. Long, dramatic shadows emphasize the scale and solitude.\n\nPanel 2: Medium shot (50mm lens, shallow DOF on characters). Aisha is center-frame, pausing on the winding path, her face showing a pensive wonder mixed with fatigue as she scans the horizon towards the ancient, carved rock homes. Dora is close beside her, gently nuzzling Aisha's arm, her golden collar visible, sensing Aisha's mood. The Djinn is slightly behind them, left, his gaze fixed on the desolate landscape, a deep sorrow in his posture. Golden light illuminates their figures against the eroded rock face.\n\nPanel 3: Low-angle medium shot (35mm lens, focus on ascent). The Djinn, still with a sorrowful demeanor, floats slightly above the ground, leading Aisha and Dora up a winding, eroded staircase carved into the rugged, golden cliff face on the left side of the frame. Aisha follows closely, looking up at the ascent towards the 'hole in the rock' dwelling, her determination visible. Dora walks behind Aisha, her head low, sniffing the ancient stone steps suspiciously. The rock formations loom overhead, casting dramatic shadows from the fading sun.\n\nPanel 4: Medium shot (85mm lens, shallow DOF on Dora). Dora stands in the foreground, center-right, ears slightly flattened, her nose to the doorway of the \"House in the Rocks\" dwelling (a carved rock hole), sniffing suspiciously. Her fur bristles slightly. Aisha is in the background, left, entering the doorway, smiling softly, reassuring Dora (\"It's not a hole, Dora. It's a house.\"). The Djinn is visible in the distance, further up the path, looking back at them, his plasma form slightly dimmed in the fading golden light. Detailed rock textures and the carved entrance are prominent.\n\nEnvironment: The vast, desolate ruins of Ramhat Al Jawhar, with eroded Nabatean architecture and towering cliff faces containing carved rock dwellings. A winding, carved sandstone staircase leading up a cliff face to a \"Second Layer\" dwelling entrance. Golden late afternoon light fading into twilight, emphasizing textures and shadows.\n\nAll panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric golden hour light, little tiny dust motes, soft sunrays, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.\n```\n\n---\n\n### **Prompt 2/5: \"Cozy Sanctuary, Lingering Doubts\"**\n*(Capturing Aisha's reflections inside the House in the Rocks, with the starry night view and Niura's concerns.)*\n\n```\npremium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm candlelight and arabesque lamp glow, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.\n\nCHARACTER LOCKS:\n@image1 = Aisha, 16-year-old human princess, displaying a mix of newfound peace, pensive reflection, and growing determination.\n@image2 = Dora, white panther with golden collar — normal panther size, her height reaches an adult human's hip, sleeping peacefully in a corner.\n@image3 = Niura, tiny white snake — small, cute, harmless, witty, curls onto a warm rug, then looks up with concern.\n@image4 = Djinn, a plasma-form being, ethereal and shimmering, implied presence (perhaps as a soft glow) but not central to the shot.\n\nLOCATION REFERENCE:\n@image5 = House in the Rocks - Interior — (User-provided: A 4-projection grid showing the cozy, magically softened interior of a carved rock dwelling: thick woven Bedouin rugs, a small clay fire pit flickering with orange glow, desert plants in clay pots, semi-transparent white curtains in the doorway, and a large opening or window revealing a breathtaking starry night sky).\n@image6 = Starry Night View — (Reference image 401.png: A breathtaking view of real dunes and a semi-dried lake glistening beneath real stars, as seen from the dwelling's opening).\n\nSCENE: Night scene — warm candlelight, shadows dancing on woven rugs, a cool desert breeze drifts through a curtained doorway.\nInside the \"House in the Rocks,\" Aisha finds a moment of peace, gazing at the starry night sky. Niura, initially cozy, voices concerns about the Shadow King and suggests returning home. Aisha, however, feels a fierce resolve and a need to uncover her father's secrets, rejecting fear.\n\nCreate 2x2 cinematic grid with 4 panels with 3d animated scenes in each one:\n\nPanel 1: Medium wide interior shot (35mm lens, shallow DOF on Aisha). Aisha sits cross-legged by a small clay fire pit, hugging her knees, center-left. Her face is illuminated by the flickering orange glow, showing a sense of peace as she looks out through a large opening/window on the right, towards the vast, starry night sky. Thick woven Bedouin rugs cover the stone floor. Dora is curled up, sleeping peacefully, in a corner in the background, far left. Niura is a small curl on the rug near Aisha's feet. Warm candlelight fills the space.\n\nPanel 2: Close-up on Aisha's face (100mm lens, extremely shallow DOF). Her eyes are focused on the constellation of The Hunter visible through the window. Her expression transitions from peaceful admiration to pensive thought, a subtle sadness touching her lips. The faint glow of the fire pit is reflected in her eyes. The blurry background hints at the starry night sky. Soft, warm light from the fire pit highlights her features.\n\nPanel 3: Medium shot with Niura in foreground (85mm lens, focus on Niura). Niura uncoils from the warm rug in the foreground, center-right, her tiny head lifting, looking directly at Aisha with a concerned expression. Aisha is in the mid-ground, left, still by the fire, her hand touching her talisman pensively, her expression darkening slightly as Niura speaks. The background shows the cozy interior with desert plants in clay pots and a soft glow from the fire.\n\nPanel 4: Tight two-shot (50mm lens). Aisha is center-left, her head slightly turned, a fierce spark igniting in her eyes as she looks away from Niura, resolute. Her hand rests firmly on her Talisman. Niura is in the foreground, right, looking up at Aisha with worry, her small body slightly coiled. The warm glow of the fire pit illuminates Aisha's determined expression, casting subtle shadows on Niura. The semi-transparent white curtains are visible in the background doorway, gently drifting, with the breathtaking starry night scene beyond.\n\nEnvironment: Cozy interior of the \"House in the Rocks\" carved dwelling. Thick woven Bedouin rugs, a small clay fire pit with orange glow, desert plants in clay pots. Semi-transparent white curtains in the doorway. A large opening/window revealing a breathtaking starry night scene with dunes and a glistering semi-dried lake. Warm candlelight and arabesque lamp glow, with deep shadows enhancing coziness.\n\nAll panels must be consistent between each other as to the backgrounds, positioning and characters as one beat-to-beat story. Style: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric warm candlelight and arabesque lamp glow, little tiny dust motes, soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look.",
       "sceneHint": "Act 6 - Scene 1 [396-1778040971164.png] | Act 6 - Scene 1 [397-1778040973670.png] | Act 6 - Scene 1 [401-1778040955251.png] | Act 6 - Scene 1 [PixVerse_Image_Effect_prompt_se-exact-img1-im-1778041061397.png] | Act 6 - Scene 1 [PixVerse_Image_Effect_prompt_se-exact-img1-im-2-1778041068133.png] | Act 6 - Scene 1 [PixVerse_Image_Effect_prompt_change-the-tiny-f-1778041091960.png] | characters: Aisha [card] /assets/storyboard/uploads/Aisha-and-Sands-of-Destiny-70-1778041121249.png | characters: Djinn [card] /assets/storyboard/uploads/Plasma-character-1778041170397.png | characters: Djinn [projection] /assets/storyboard/uploads/Plasma-character-Djinn-close-up-1778041175715.png",
       "skillHint": "",
-      "status": "todo_working",
+      "status": "todo",
       "createdAt": "2026-05-09T02:10:10.485Z",
-      "updatedAt": "2026-05-09T05:29:53.297Z"
+      "updatedAt": "2026-05-09T09:58:06.575Z"
     },
     {
       "id": "task-nu1odr8-moxcou2q",
@@ -1479,7 +1489,7 @@
       "skillHint": "Download from PixVerse",
       "status": "pass",
       "createdAt": "2026-05-07T12:28:05.544Z",
-      "updatedAt": "2026-05-09T03:03:15.913Z",
+      "updatedAt": "2026-05-09T10:06:10.730Z",
       "passes": [
         {
           "id": "pass-1778158232101",
@@ -2028,7 +2038,8 @@
               "height": 1536,
               "selected": false,
               "improve4k": false,
-              "splitGrid": false
+              "splitGrid": false,
+              "assignMenuOpen": true
             },
             {
               "id": "split-img-1778156920371-0-r1c2-1778159883475",
@@ -2269,10 +2280,790 @@
             "improves": 0,
             "notes": 0
           }
+        },
+        {
+          "id": "pass-3",
+          "name": "Pass 3 — Split Grid",
+          "images": [
+            {
+              "id": "split-img-1778158204208-48-r1c1-1778321168812",
+              "url": "/assets/storyboard/uploads/split-batch-img-1778158204208-48/panel_r1_c1.png",
+              "path": "/assets/storyboard/uploads/split-batch-img-1778158204208-48/panel_r1_c1.png",
+              "row": 1,
+              "col": 1,
+              "width": 2752,
+              "height": 1536,
+              "selected": false,
+              "improve4k": false,
+              "splitGrid": false
+            },
+            {
+              "id": "split-img-1778158204208-48-r1c2-1778321168812",
+              "url": "/assets/storyboard/uploads/split-batch-img-1778158204208-48/panel_r1_c2.png",
+              "path": "/assets/storyboard/uploads/split-batch-img-1778158204208-48/panel_r1_c2.png",
+              "row": 1,
+              "col": 2,
+              "width": 2752,
+              "height": 1536,
+              "selected": false,
+              "improve4k": false,
+              "splitGrid": false
+            },
+            {
+              "id": "split-img-1778158204208-48-r2c1-1778321168812",
+              "url": "/assets/storyboard/uploads/split-batch-img-1778158204208-48/panel_r2_c1.png",
+              "path": "/assets/storyboard/uploads/split-batch-img-1778158204208-48/panel_r2_c1.png",
+              "row": 2,
+              "col": 1,
+              "width": 2752,
+              "height": 1536,
+              "selected": false,
+              "improve4k": false,
+              "splitGrid": false
+            },
+            {
+              "id": "split-img-1778158204208-48-r2c2-1778321168812",
+              "url": "/assets/storyboard/uploads/split-batch-img-1778158204208-48/panel_r2_c2.png",
+              "path": "/assets/storyboard/uploads/split-batch-img-1778158204208-48/panel_r2_c2.png",
+              "row": 2,
+              "col": 2,
+              "width": 2752,
+              "height": 1536,
+              "selected": false,
+              "improve4k": false,
+              "splitGrid": false
+            },
+            {
+              "id": "split-img-1778158207451-49-r1c1-1778321168812",
+              "url": "/assets/storyboard/uploads/split-batch-img-1778158207451-49/panel_r1_c1.png",
+              "path": "/assets/storyboard/uploads/split-batch-img-1778158207451-49/panel_r1_c1.png",
+              "row": 1,
+              "col": 1,
+              "width": 2752,
+              "height": 1536,
+              "selected": false,
+              "improve4k": false,
+              "splitGrid": false
+            },
+            {
+              "id": "split-img-1778158207451-49-r1c2-1778321168812",
+              "url": "/assets/storyboard/uploads/split-batch-img-1778158207451-49/panel_r1_c2.png",
+              "path": "/assets/storyboard/uploads/split-batch-img-1778158207451-49/panel_r1_c2.png",
+              "row": 1,
+              "col": 2,
+              "width": 2752,
+              "height": 1536,
+              "selected": false,
+              "improve4k": false,
+              "splitGrid": false
+            },
+            {
+              "id": "split-img-1778158207451-49-r2c1-1778321168812",
+              "url": "/assets/storyboard/uploads/split-batch-img-1778158207451-49/panel_r2_c1.png",
+              "path": "/assets/storyboard/uploads/split-batch-img-1778158207451-49/panel_r2_c1.png",
+              "row": 2,
+              "col": 1,
+              "width": 2752,
+              "height": 1536,
+              "selected": false,
+              "improve4k": false,
+              "splitGrid": false
+            },
+            {
+              "id": "split-img-1778158207451-49-r2c2-1778321168812",
+              "url": "/assets/storyboard/uploads/split-batch-img-1778158207451-49/panel_r2_c2.png",
+              "path": "/assets/storyboard/uploads/split-batch-img-1778158207451-49/panel_r2_c2.png",
+              "row": 2,
+              "col": 2,
+              "width": 2752,
+              "height": 1536,
+              "selected": false,
+              "improve4k": false,
+              "splitGrid": false
+            },
+            {
+              "id": "split-img-1778158211071-50-r1c1-1778321168812",
+              "url": "/assets/storyboard/uploads/split-batch-img-1778158211071-50/panel_r1_c1.png",
+              "path": "/assets/storyboard/uploads/split-batch-img-1778158211071-50/panel_r1_c1.png",
+              "row": 1,
+              "col": 1,
+              "width": 2752,
+              "height": 1536,
+              "selected": false,
+              "improve4k": false,
+              "splitGrid": false
+            },
+            {
+              "id": "split-img-1778158211071-50-r1c2-1778321168812",
+              "url": "/assets/storyboard/uploads/split-batch-img-1778158211071-50/panel_r1_c2.png",
+              "path": "/assets/storyboard/uploads/split-batch-img-1778158211071-50/panel_r1_c2.png",
+              "row": 1,
+              "col": 2,
+              "width": 2752,
+              "height": 1536,
+              "selected": false,
+              "improve4k": false,
+              "splitGrid": false
+            },
+            {
+              "id": "split-img-1778158211071-50-r2c1-1778321168812",
+              "url": "/assets/storyboard/uploads/split-batch-img-1778158211071-50/panel_r2_c1.png",
+              "path": "/assets/storyboard/uploads/split-batch-img-1778158211071-50/panel_r2_c1.png",
+              "row": 2,
+              "col": 1,
+              "width": 2752,
+              "height": 1536,
+              "selected": false,
+              "improve4k": false,
+              "splitGrid": false
+            },
+            {
+              "id": "split-img-1778158211071-50-r2c2-1778321168812",
+              "url": "/assets/storyboard/uploads/split-batch-img-1778158211071-50/panel_r2_c2.png",
+              "path": "/assets/storyboard/uploads/split-batch-img-1778158211071-50/panel_r2_c2.png",
+              "row": 2,
+              "col": 2,
+              "width": 2752,
+              "height": 1536,
+              "selected": false,
+              "improve4k": false,
+              "splitGrid": false
+            },
+            {
+              "id": "split-img-1778158216903-52-r1c1-1778321168812",
+              "url": "/assets/storyboard/uploads/split-batch-img-1778158216903-52/panel_r1_c1.png",
+              "path": "/assets/storyboard/uploads/split-batch-img-1778158216903-52/panel_r1_c1.png",
+              "row": 1,
+              "col": 1,
+              "width": 2752,
+              "height": 1536,
+              "selected": false,
+              "improve4k": false,
+              "splitGrid": false
+            },
+            {
+              "id": "split-img-1778158216903-52-r1c2-1778321168812",
+              "url": "/assets/storyboard/uploads/split-batch-img-1778158216903-52/panel_r1_c2.png",
+              "path": "/assets/storyboard/uploads/split-batch-img-1778158216903-52/panel_r1_c2.png",
+              "row": 1,
+              "col": 2,
+              "width": 2752,
+              "height": 1536,
+              "selected": false,
+              "improve4k": false,
+              "splitGrid": false
+            },
+            {
+              "id": "split-img-1778158216903-52-r2c1-1778321168812",
+              "url": "/assets/storyboard/uploads/split-batch-img-1778158216903-52/panel_r2_c1.png",
+              "path": "/assets/storyboard/uploads/split-batch-img-1778158216903-52/panel_r2_c1.png",
+              "row": 2,
+              "col": 1,
+              "width": 2752,
+              "height": 1536,
+              "selected": false,
+              "improve4k": false,
+              "splitGrid": false
+            },
+            {
+              "id": "split-img-1778158216903-52-r2c2-1778321168812",
+              "url": "/assets/storyboard/uploads/split-batch-img-1778158216903-52/panel_r2_c2.png",
+              "path": "/assets/storyboard/uploads/split-batch-img-1778158216903-52/panel_r2_c2.png",
+              "row": 2,
+              "col": 2,
+              "width": 2752,
+              "height": 1536,
+              "selected": false,
+              "improve4k": false,
+              "splitGrid": false
+            },
+            {
+              "id": "split-img-1778158220128-53-r1c1-1778321168812",
+              "url": "/assets/storyboard/uploads/split-batch-img-1778158220128-53/panel_r1_c1.png",
+              "path": "/assets/storyboard/uploads/split-batch-img-1778158220128-53/panel_r1_c1.png",
+              "row": 1,
+              "col": 1,
+              "width": 2752,
+              "height": 1536,
+              "selected": false,
+              "improve4k": false,
+              "splitGrid": false
+            },
+            {
+              "id": "split-img-1778158220128-53-r1c2-1778321168812",
+              "url": "/assets/storyboard/uploads/split-batch-img-1778158220128-53/panel_r1_c2.png",
+              "path": "/assets/storyboard/uploads/split-batch-img-1778158220128-53/panel_r1_c2.png",
+              "row": 1,
+              "col": 2,
+              "width": 2752,
+              "height": 1536,
+              "selected": false,
+              "improve4k": false,
+              "splitGrid": false
+            },
+            {
+              "id": "split-img-1778158220128-53-r2c1-1778321168812",
+              "url": "/assets/storyboard/uploads/split-batch-img-1778158220128-53/panel_r2_c1.png",
+              "path": "/assets/storyboard/uploads/split-batch-img-1778158220128-53/panel_r2_c1.png",
+              "row": 2,
+              "col": 1,
+              "width": 2752,
+              "height": 1536,
+              "selected": false,
+              "improve4k": false,
+              "splitGrid": false
+            },
+            {
+              "id": "split-img-1778158220128-53-r2c2-1778321168812",
+              "url": "/assets/storyboard/uploads/split-batch-img-1778158220128-53/panel_r2_c2.png",
+              "path": "/assets/storyboard/uploads/split-batch-img-1778158220128-53/panel_r2_c2.png",
+              "row": 2,
+              "col": 2,
+              "width": 2752,
+              "height": 1536,
+              "selected": false,
+              "improve4k": false,
+              "splitGrid": false
+            },
+            {
+              "id": "split-img-1778158226113-55-r1c1-1778321168812",
+              "url": "/assets/storyboard/uploads/split-batch-img-1778158226113-55/panel_r1_c1.png",
+              "path": "/assets/storyboard/uploads/split-batch-img-1778158226113-55/panel_r1_c1.png",
+              "row": 1,
+              "col": 1,
+              "width": 2752,
+              "height": 1536,
+              "selected": false,
+              "improve4k": false,
+              "splitGrid": false
+            },
+            {
+              "id": "split-img-1778158226113-55-r1c2-1778321168812",
+              "url": "/assets/storyboard/uploads/split-batch-img-1778158226113-55/panel_r1_c2.png",
+              "path": "/assets/storyboard/uploads/split-batch-img-1778158226113-55/panel_r1_c2.png",
+              "row": 1,
+              "col": 2,
+              "width": 2752,
+              "height": 1536,
+              "selected": false,
+              "improve4k": false,
+              "splitGrid": false
+            },
+            {
+              "id": "split-img-1778158226113-55-r2c1-1778321168812",
+              "url": "/assets/storyboard/uploads/split-batch-img-1778158226113-55/panel_r2_c1.png",
+              "path": "/assets/storyboard/uploads/split-batch-img-1778158226113-55/panel_r2_c1.png",
+              "row": 2,
+              "col": 1,
+              "width": 2752,
+              "height": 1536,
+              "selected": false,
+              "improve4k": false,
+              "splitGrid": false
+            },
+            {
+              "id": "split-img-1778158226113-55-r2c2-1778321168812",
+              "url": "/assets/storyboard/uploads/split-batch-img-1778158226113-55/panel_r2_c2.png",
+              "path": "/assets/storyboard/uploads/split-batch-img-1778158226113-55/panel_r2_c2.png",
+              "row": 2,
+              "col": 2,
+              "width": 2752,
+              "height": 1536,
+              "selected": false,
+              "improve4k": false,
+              "splitGrid": false
+            },
+            {
+              "id": "split-img-1778158229026-56-r1c1-1778321168812",
+              "url": "/assets/storyboard/uploads/split-batch-img-1778158229026-56/panel_r1_c1.png",
+              "path": "/assets/storyboard/uploads/split-batch-img-1778158229026-56/panel_r1_c1.png",
+              "row": 1,
+              "col": 1,
+              "width": 2752,
+              "height": 1536,
+              "selected": false,
+              "improve4k": false,
+              "splitGrid": false
+            },
+            {
+              "id": "split-img-1778158229026-56-r1c2-1778321168812",
+              "url": "/assets/storyboard/uploads/split-batch-img-1778158229026-56/panel_r1_c2.png",
+              "path": "/assets/storyboard/uploads/split-batch-img-1778158229026-56/panel_r1_c2.png",
+              "row": 1,
+              "col": 2,
+              "width": 2752,
+              "height": 1536,
+              "selected": false,
+              "improve4k": false,
+              "splitGrid": false
+            },
+            {
+              "id": "split-img-1778158229026-56-r2c1-1778321168812",
+              "url": "/assets/storyboard/uploads/split-batch-img-1778158229026-56/panel_r2_c1.png",
+              "path": "/assets/storyboard/uploads/split-batch-img-1778158229026-56/panel_r2_c1.png",
+              "row": 2,
+              "col": 1,
+              "width": 2752,
+              "height": 1536,
+              "selected": false,
+              "improve4k": false,
+              "splitGrid": false
+            },
+            {
+              "id": "split-img-1778158229026-56-r2c2-1778321168812",
+              "url": "/assets/storyboard/uploads/split-batch-img-1778158229026-56/panel_r2_c2.png",
+              "path": "/assets/storyboard/uploads/split-batch-img-1778158229026-56/panel_r2_c2.png",
+              "row": 2,
+              "col": 2,
+              "width": 2752,
+              "height": 1536,
+              "selected": false,
+              "improve4k": false,
+              "splitGrid": false
+            },
+            {
+              "id": "split-img-1778158232100-57-r1c1-1778321168812",
+              "url": "/assets/storyboard/uploads/split-batch-img-1778158232100-57/panel_r1_c1.png",
+              "path": "/assets/storyboard/uploads/split-batch-img-1778158232100-57/panel_r1_c1.png",
+              "row": 1,
+              "col": 1,
+              "width": 2752,
+              "height": 1536,
+              "selected": false,
+              "improve4k": false,
+              "splitGrid": false
+            },
+            {
+              "id": "split-img-1778158232100-57-r1c2-1778321168812",
+              "url": "/assets/storyboard/uploads/split-batch-img-1778158232100-57/panel_r1_c2.png",
+              "path": "/assets/storyboard/uploads/split-batch-img-1778158232100-57/panel_r1_c2.png",
+              "row": 1,
+              "col": 2,
+              "width": 2752,
+              "height": 1536,
+              "selected": false,
+              "improve4k": false,
+              "splitGrid": false
+            },
+            {
+              "id": "split-img-1778158232100-57-r2c1-1778321168812",
+              "url": "/assets/storyboard/uploads/split-batch-img-1778158232100-57/panel_r2_c1.png",
+              "path": "/assets/storyboard/uploads/split-batch-img-1778158232100-57/panel_r2_c1.png",
+              "row": 2,
+              "col": 1,
+              "width": 2752,
+              "height": 1536,
+              "selected": false,
+              "improve4k": false,
+              "splitGrid": false
+            },
+            {
+              "id": "split-img-1778158232100-57-r2c2-1778321168812",
+              "url": "/assets/storyboard/uploads/split-batch-img-1778158232100-57/panel_r2_c2.png",
+              "path": "/assets/storyboard/uploads/split-batch-img-1778158232100-57/panel_r2_c2.png",
+              "row": 2,
+              "col": 2,
+              "width": 2752,
+              "height": 1536,
+              "selected": false,
+              "improve4k": false,
+              "splitGrid": false
+            }
+          ],
+          "batchStats": {
+            "splits": 8,
+            "improves": 0,
+            "notes": 0
+          }
         }
       ],
-      "activePassId": "pass-5",
-      "generatedImages": []
+      "activePassId": "pass-3",
+      "generatedImages": [
+        {
+          "id": "split-img-1778158204208-48-r1c1-1778321168812",
+          "url": "/assets/storyboard/uploads/split-batch-img-1778158204208-48/panel_r1_c1.png",
+          "path": "/assets/storyboard/uploads/split-batch-img-1778158204208-48/panel_r1_c1.png",
+          "row": 1,
+          "col": 1,
+          "width": 2752,
+          "height": 1536,
+          "selected": false,
+          "improve4k": false,
+          "splitGrid": false
+        },
+        {
+          "id": "split-img-1778158204208-48-r1c2-1778321168812",
+          "url": "/assets/storyboard/uploads/split-batch-img-1778158204208-48/panel_r1_c2.png",
+          "path": "/assets/storyboard/uploads/split-batch-img-1778158204208-48/panel_r1_c2.png",
+          "row": 1,
+          "col": 2,
+          "width": 2752,
+          "height": 1536,
+          "selected": false,
+          "improve4k": false,
+          "splitGrid": false
+        },
+        {
+          "id": "split-img-1778158204208-48-r2c1-1778321168812",
+          "url": "/assets/storyboard/uploads/split-batch-img-1778158204208-48/panel_r2_c1.png",
+          "path": "/assets/storyboard/uploads/split-batch-img-1778158204208-48/panel_r2_c1.png",
+          "row": 2,
+          "col": 1,
+          "width": 2752,
+          "height": 1536,
+          "selected": false,
+          "improve4k": false,
+          "splitGrid": false
+        },
+        {
+          "id": "split-img-1778158204208-48-r2c2-1778321168812",
+          "url": "/assets/storyboard/uploads/split-batch-img-1778158204208-48/panel_r2_c2.png",
+          "path": "/assets/storyboard/uploads/split-batch-img-1778158204208-48/panel_r2_c2.png",
+          "row": 2,
+          "col": 2,
+          "width": 2752,
+          "height": 1536,
+          "selected": false,
+          "improve4k": false,
+          "splitGrid": false
+        },
+        {
+          "id": "split-img-1778158207451-49-r1c1-1778321168812",
+          "url": "/assets/storyboard/uploads/split-batch-img-1778158207451-49/panel_r1_c1.png",
+          "path": "/assets/storyboard/uploads/split-batch-img-1778158207451-49/panel_r1_c1.png",
+          "row": 1,
+          "col": 1,
+          "width": 2752,
+          "height": 1536,
+          "selected": false,
+          "improve4k": false,
+          "splitGrid": false
+        },
+        {
+          "id": "split-img-1778158207451-49-r1c2-1778321168812",
+          "url": "/assets/storyboard/uploads/split-batch-img-1778158207451-49/panel_r1_c2.png",
+          "path": "/assets/storyboard/uploads/split-batch-img-1778158207451-49/panel_r1_c2.png",
+          "row": 1,
+          "col": 2,
+          "width": 2752,
+          "height": 1536,
+          "selected": false,
+          "improve4k": false,
+          "splitGrid": false
+        },
+        {
+          "id": "split-img-1778158207451-49-r2c1-1778321168812",
+          "url": "/assets/storyboard/uploads/split-batch-img-1778158207451-49/panel_r2_c1.png",
+          "path": "/assets/storyboard/uploads/split-batch-img-1778158207451-49/panel_r2_c1.png",
+          "row": 2,
+          "col": 1,
+          "width": 2752,
+          "height": 1536,
+          "selected": false,
+          "improve4k": false,
+          "splitGrid": false
+        },
+        {
+          "id": "split-img-1778158207451-49-r2c2-1778321168812",
+          "url": "/assets/storyboard/uploads/split-batch-img-1778158207451-49/panel_r2_c2.png",
+          "path": "/assets/storyboard/uploads/split-batch-img-1778158207451-49/panel_r2_c2.png",
+          "row": 2,
+          "col": 2,
+          "width": 2752,
+          "height": 1536,
+          "selected": false,
+          "improve4k": false,
+          "splitGrid": false
+        },
+        {
+          "id": "split-img-1778158211071-50-r1c1-1778321168812",
+          "url": "/assets/storyboard/uploads/split-batch-img-1778158211071-50/panel_r1_c1.png",
+          "path": "/assets/storyboard/uploads/split-batch-img-1778158211071-50/panel_r1_c1.png",
+          "row": 1,
+          "col": 1,
+          "width": 2752,
+          "height": 1536,
+          "selected": false,
+          "improve4k": false,
+          "splitGrid": false
+        },
+        {
+          "id": "split-img-1778158211071-50-r1c2-1778321168812",
+          "url": "/assets/storyboard/uploads/split-batch-img-1778158211071-50/panel_r1_c2.png",
+          "path": "/assets/storyboard/uploads/split-batch-img-1778158211071-50/panel_r1_c2.png",
+          "row": 1,
+          "col": 2,
+          "width": 2752,
+          "height": 1536,
+          "selected": false,
+          "improve4k": false,
+          "splitGrid": false
+        },
+        {
+          "id": "split-img-1778158211071-50-r2c1-1778321168812",
+          "url": "/assets/storyboard/uploads/split-batch-img-1778158211071-50/panel_r2_c1.png",
+          "path": "/assets/storyboard/uploads/split-batch-img-1778158211071-50/panel_r2_c1.png",
+          "row": 2,
+          "col": 1,
+          "width": 2752,
+          "height": 1536,
+          "selected": false,
+          "improve4k": false,
+          "splitGrid": false
+        },
+        {
+          "id": "split-img-1778158211071-50-r2c2-1778321168812",
+          "url": "/assets/storyboard/uploads/split-batch-img-1778158211071-50/panel_r2_c2.png",
+          "path": "/assets/storyboard/uploads/split-batch-img-1778158211071-50/panel_r2_c2.png",
+          "row": 2,
+          "col": 2,
+          "width": 2752,
+          "height": 1536,
+          "selected": false,
+          "improve4k": false,
+          "splitGrid": false
+        },
+        {
+          "id": "split-img-1778158216903-52-r1c1-1778321168812",
+          "url": "/assets/storyboard/uploads/split-batch-img-1778158216903-52/panel_r1_c1.png",
+          "path": "/assets/storyboard/uploads/split-batch-img-1778158216903-52/panel_r1_c1.png",
+          "row": 1,
+          "col": 1,
+          "width": 2752,
+          "height": 1536,
+          "selected": false,
+          "improve4k": false,
+          "splitGrid": false
+        },
+        {
+          "id": "split-img-1778158216903-52-r1c2-1778321168812",
+          "url": "/assets/storyboard/uploads/split-batch-img-1778158216903-52/panel_r1_c2.png",
+          "path": "/assets/storyboard/uploads/split-batch-img-1778158216903-52/panel_r1_c2.png",
+          "row": 1,
+          "col": 2,
+          "width": 2752,
+          "height": 1536,
+          "selected": false,
+          "improve4k": false,
+          "splitGrid": false
+        },
+        {
+          "id": "split-img-1778158216903-52-r2c1-1778321168812",
+          "url": "/assets/storyboard/uploads/split-batch-img-1778158216903-52/panel_r2_c1.png",
+          "path": "/assets/storyboard/uploads/split-batch-img-1778158216903-52/panel_r2_c1.png",
+          "row": 2,
+          "col": 1,
+          "width": 2752,
+          "height": 1536,
+          "selected": false,
+          "improve4k": false,
+          "splitGrid": false
+        },
+        {
+          "id": "split-img-1778158216903-52-r2c2-1778321168812",
+          "url": "/assets/storyboard/uploads/split-batch-img-1778158216903-52/panel_r2_c2.png",
+          "path": "/assets/storyboard/uploads/split-batch-img-1778158216903-52/panel_r2_c2.png",
+          "row": 2,
+          "col": 2,
+          "width": 2752,
+          "height": 1536,
+          "selected": false,
+          "improve4k": false,
+          "splitGrid": false
+        },
+        {
+          "id": "split-img-1778158220128-53-r1c1-1778321168812",
+          "url": "/assets/storyboard/uploads/split-batch-img-1778158220128-53/panel_r1_c1.png",
+          "path": "/assets/storyboard/uploads/split-batch-img-1778158220128-53/panel_r1_c1.png",
+          "row": 1,
+          "col": 1,
+          "width": 2752,
+          "height": 1536,
+          "selected": false,
+          "improve4k": false,
+          "splitGrid": false
+        },
+        {
+          "id": "split-img-1778158220128-53-r1c2-1778321168812",
+          "url": "/assets/storyboard/uploads/split-batch-img-1778158220128-53/panel_r1_c2.png",
+          "path": "/assets/storyboard/uploads/split-batch-img-1778158220128-53/panel_r1_c2.png",
+          "row": 1,
+          "col": 2,
+          "width": 2752,
+          "height": 1536,
+          "selected": false,
+          "improve4k": false,
+          "splitGrid": false
+        },
+        {
+          "id": "split-img-1778158220128-53-r2c1-1778321168812",
+          "url": "/assets/storyboard/uploads/split-batch-img-1778158220128-53/panel_r2_c1.png",
+          "path": "/assets/storyboard/uploads/split-batch-img-1778158220128-53/panel_r2_c1.png",
+          "row": 2,
+          "col": 1,
+          "width": 2752,
+          "height": 1536,
+          "selected": false,
+          "improve4k": false,
+          "splitGrid": false
+        },
+        {
+          "id": "split-img-1778158220128-53-r2c2-1778321168812",
+          "url": "/assets/storyboard/uploads/split-batch-img-1778158220128-53/panel_r2_c2.png",
+          "path": "/assets/storyboard/uploads/split-batch-img-1778158220128-53/panel_r2_c2.png",
+          "row": 2,
+          "col": 2,
+          "width": 2752,
+          "height": 1536,
+          "selected": false,
+          "improve4k": false,
+          "splitGrid": false
+        },
+        {
+          "id": "split-img-1778158226113-55-r1c1-1778321168812",
+          "url": "/assets/storyboard/uploads/split-batch-img-1778158226113-55/panel_r1_c1.png",
+          "path": "/assets/storyboard/uploads/split-batch-img-1778158226113-55/panel_r1_c1.png",
+          "row": 1,
+          "col": 1,
+          "width": 2752,
+          "height": 1536,
+          "selected": false,
+          "improve4k": false,
+          "splitGrid": false
+        },
+        {
+          "id": "split-img-1778158226113-55-r1c2-1778321168812",
+          "url": "/assets/storyboard/uploads/split-batch-img-1778158226113-55/panel_r1_c2.png",
+          "path": "/assets/storyboard/uploads/split-batch-img-1778158226113-55/panel_r1_c2.png",
+          "row": 1,
+          "col": 2,
+          "width": 2752,
+          "height": 1536,
+          "selected": false,
+          "improve4k": false,
+          "splitGrid": false
+        },
+        {
+          "id": "split-img-1778158226113-55-r2c1-1778321168812",
+          "url": "/assets/storyboard/uploads/split-batch-img-1778158226113-55/panel_r2_c1.png",
+          "path": "/assets/storyboard/uploads/split-batch-img-1778158226113-55/panel_r2_c1.png",
+          "row": 2,
+          "col": 1,
+          "width": 2752,
+          "height": 1536,
+          "selected": false,
+          "improve4k": false,
+          "splitGrid": false
+        },
+        {
+          "id": "split-img-1778158226113-55-r2c2-1778321168812",
+          "url": "/assets/storyboard/uploads/split-batch-img-1778158226113-55/panel_r2_c2.png",
+          "path": "/assets/storyboard/uploads/split-batch-img-1778158226113-55/panel_r2_c2.png",
+          "row": 2,
+          "col": 2,
+          "width": 2752,
+          "height": 1536,
+          "selected": false,
+          "improve4k": false,
+          "splitGrid": false
+        },
+        {
+          "id": "split-img-1778158229026-56-r1c1-1778321168812",
+          "url": "/assets/storyboard/uploads/split-batch-img-1778158229026-56/panel_r1_c1.png",
+          "path": "/assets/storyboard/uploads/split-batch-img-1778158229026-56/panel_r1_c1.png",
+          "row": 1,
+          "col": 1,
+          "width": 2752,
+          "height": 1536,
+          "selected": false,
+          "improve4k": false,
+          "splitGrid": false
+        },
+        {
+          "id": "split-img-1778158229026-56-r1c2-1778321168812",
+          "url": "/assets/storyboard/uploads/split-batch-img-1778158229026-56/panel_r1_c2.png",
+          "path": "/assets/storyboard/uploads/split-batch-img-1778158229026-56/panel_r1_c2.png",
+          "row": 1,
+          "col": 2,
+          "width": 2752,
+          "height": 1536,
+          "selected": false,
+          "improve4k": false,
+          "splitGrid": false
+        },
+        {
+          "id": "split-img-1778158229026-56-r2c1-1778321168812",
+          "url": "/assets/storyboard/uploads/split-batch-img-1778158229026-56/panel_r2_c1.png",
+          "path": "/assets/storyboard/uploads/split-batch-img-1778158229026-56/panel_r2_c1.png",
+          "row": 2,
+          "col": 1,
+          "width": 2752,
+          "height": 1536,
+          "selected": false,
+          "improve4k": false,
+          "splitGrid": false
+        },
+        {
+          "id": "split-img-1778158229026-56-r2c2-1778321168812",
+          "url": "/assets/storyboard/uploads/split-batch-img-1778158229026-56/panel_r2_c2.png",
+          "path": "/assets/storyboard/uploads/split-batch-img-1778158229026-56/panel_r2_c2.png",
+          "row": 2,
+          "col": 2,
+          "width": 2752,
+          "height": 1536,
+          "selected": false,
+          "improve4k": false,
+          "splitGrid": false
+        },
+        {
+          "id": "split-img-1778158232100-57-r1c1-1778321168812",
+          "url": "/assets/storyboard/uploads/split-batch-img-1778158232100-57/panel_r1_c1.png",
+          "path": "/assets/storyboard/uploads/split-batch-img-1778158232100-57/panel_r1_c1.png",
+          "row": 1,
+          "col": 1,
+          "width": 2752,
+          "height": 1536,
+          "selected": false,
+          "improve4k": false,
+          "splitGrid": false
+        },
+        {
+          "id": "split-img-1778158232100-57-r1c2-1778321168812",
+          "url": "/assets/storyboard/uploads/split-batch-img-1778158232100-57/panel_r1_c2.png",
+          "path": "/assets/storyboard/uploads/split-batch-img-1778158232100-57/panel_r1_c2.png",
+          "row": 1,
+          "col": 2,
+          "width": 2752,
+          "height": 1536,
+          "selected": false,
+          "improve4k": false,
+          "splitGrid": false
+        },
+        {
+          "id": "split-img-1778158232100-57-r2c1-1778321168812",
+          "url": "/assets/storyboard/uploads/split-batch-img-1778158232100-57/panel_r2_c1.png",
+          "path": "/assets/storyboard/uploads/split-batch-img-1778158232100-57/panel_r2_c1.png",
+          "row": 2,
+          "col": 1,
+          "width": 2752,
+          "height": 1536,
+          "selected": false,
+          "improve4k": false,
+          "splitGrid": false
+        },
+        {
+          "id": "split-img-1778158232100-57-r2c2-1778321168812",
+          "url": "/assets/storyboard/uploads/split-batch-img-1778158232100-57/panel_r2_c2.png",
+          "path": "/assets/storyboard/uploads/split-batch-img-1778158232100-57/panel_r2_c2.png",
+          "row": 2,
+          "col": 2,
+          "width": 2752,
+          "height": 1536,
+          "selected": false,
+          "improve4k": false,
+          "splitGrid": false
+        }
+      ]
     },
     {
       "id": "task-lsijmtc-mouvksj1",
@@ -14961,7 +15752,7 @@
         {
           "id": "scene-6b2kfwt-moqb355t",
           "title": "Scene 1",
-          "mode": "videos",
+          "mode": "images",
           "imageShots": [
             {
               "id": "shot-xuhsjb0-moqbrjbi",
@@ -15060,11 +15851,53 @@
                   "type": "image",
                   "url": "/assets/storyboard/uploads/cropped-1778279290543-1778279290604.png",
                   "fileName": "cropped-1778279290613.png"
+                },
+                {
+                  "id": "media-split-1778319899367-r1c1",
+                  "type": "image",
+                  "url": "/assets/storyboard/uploads/split-1778319895599/panel_r1_c1.png",
+                  "fileName": "panel_r1_c1.png"
+                },
+                {
+                  "id": "media-split-1778319899367-r1c2",
+                  "type": "image",
+                  "url": "/assets/storyboard/uploads/split-1778319895599/panel_r1_c2.png",
+                  "fileName": "panel_r1_c2.png"
+                },
+                {
+                  "id": "media-split-1778319899367-r2c1",
+                  "type": "image",
+                  "url": "/assets/storyboard/uploads/split-1778319895599/panel_r2_c1.png",
+                  "fileName": "panel_r2_c1.png"
+                },
+                {
+                  "id": "media-split-1778319899367-r2c2",
+                  "type": "image",
+                  "url": "/assets/storyboard/uploads/split-1778319895599/panel_r2_c2.png",
+                  "fileName": "panel_r2_c2.png"
                 }
               ],
-              "expanded": true,
-              "selectedMediaId": "media-6t7xqzd-mowslvzz",
+              "expanded": false,
+              "selectedMediaId": "media-crop-1778269589582",
               "masterAspect": 1.7777777777777777
+            },
+            {
+              "id": "shot-auto-1778320352300",
+              "title": "Shot 5 (generated)",
+              "prompt": "Proceeded from shot [Shot 5] via enhance/edit",
+              "media": [
+                {
+                  "id": "media-enhance-1778320352297",
+                  "type": "image",
+                  "url": "/assets/storyboard/uploads/enhanced-gpt-image-2-0-1778320350391.png?t=1778320352297",
+                  "fileName": "enhanced-gpt-image-2.0-1440p-1778320352297.png",
+                  "localPath": "/Users/vaquita/Downloads/aisha/aisha-cannes-showcase/public/assets/storyboard/uploads/enhanced-gpt-image-2-0-1778320350391.png"
+                }
+              ],
+              "selectedMediaId": "media-enhance-1778320352297",
+              "actor": "Niura",
+              "dialogue": "",
+              "expanded": false
             },
             {
               "id": "shot-dup-1778302414288-j2lxnm",
@@ -15177,14 +16010,14 @@
                   "fileName": "cropped-1778279290613.png"
                 }
               ],
-              "expanded": true,
-              "selectedMediaId": "media-dup-1778302414288-7xqohs",
+              "expanded": false,
+              "selectedMediaId": "media-dup-1778302414288-g1kmgm",
               "masterAspect": 1.7777777777777777
             },
             {
               "id": "shot-auto-1778302324031",
               "title": "Shot 5 (generated)",
-              "prompt": "Proceeded from shot [Shot 5] via enhance/edit",
+              "prompt": "A magnificent, distressed hawk, wings beating erratically, sharp talons extended, performs a frantic, tight circle over a lone, heavily armored guard. The hawk's eyes are wide with a desperate urgency. CAMERA: Dynamic low-angle tracking shot, following the hawk's desperate arc. LENS: 85mm telephoto. DEPTH OF FIELD: Shallow DOF, crisp focus on the hawk's intricate feathers and piercing gaze, the guard slightly blurred in the foreground. LIGHTING: Intense late afternoon sun, strong backlight silhouetting the hawk's form with a brilliant golden rim light, highlighting every individual feather. Diffused fill light softly illuminates its underside. Volumetric dust motes catch the light, creating a hazy, tense atmosphere. COMPOSITION: The hawk dominates the upper two-thirds, its wings outstretched across the frame, a powerful diagonal. The guard, helmeted and looking up in alarm, occupies the lower third, creating a visual anchor. The background shows hints of a desolate, windswept ruin. MOOD: Urgent, desperate, foreboding. Cinematic color grading, desaturated with warm highlights. Subsurface scattering, motion blur on wings, AAA quality 3D animation. and change the gate with attached refernce image ",
               "media": [
                 {
                   "id": "media-crop-1778269651275",
@@ -15201,7 +16034,7 @@
               ],
               "actor": "",
               "dialogue": "",
-              "expanded": true,
+              "expanded": false,
               "selectedMediaId": "media-crop-1778269651275"
             },
             {
@@ -16105,6 +16938,22 @@
                   "fileName": ""
                 }
               ]
+            },
+            {
+              "id": "67773294-8fed-4e75-9e3d-6c52a1bfeca9",
+              "title": "Assigned Shot",
+              "prompt": "",
+              "dialogue": "",
+              "actor": "",
+              "tags": [],
+              "media": [
+                {
+                  "id": "c925b1d1-40af-4d3a-8255-407c451363dd",
+                  "type": "image",
+                  "url": "/assets/storyboard/uploads/split-batch-img-1778156920371-0/panel_r1_c1.png",
+                  "fileName": ""
+                }
+              ]
             }
           ],
           "videoShots": [
@@ -16519,6 +17368,94 @@
             "props": [],
             "moodboards": []
           }
+        },
+        {
+          "id": "scene-7cvwoej-moy545mw",
+          "title": "Scene 8",
+          "mode": "images",
+          "imageShots": [
+            {
+              "id": "shot-vltwo4c-moy545mw",
+              "title": "Shot 1",
+              "prompt": "",
+              "dialogue": "",
+              "actor": "",
+              "tags": [],
+              "media": []
+            }
+          ],
+          "videoShots": [
+            {
+              "id": "shot-2up7dzm-moy545mw",
+              "title": "Video 1",
+              "prompt": "",
+              "dialogue": "",
+              "actor": "",
+              "tags": [],
+              "media": []
+            }
+          ],
+          "audioShots": [
+            {
+              "id": "shot-8g64tjk-moy545mw",
+              "title": "Track 1",
+              "prompt": "",
+              "dialogue": "",
+              "actor": "",
+              "tags": [],
+              "media": []
+            }
+          ],
+          "resourceRefs": {
+            "actors": [],
+            "locations": [],
+            "props": [],
+            "moodboards": []
+          }
+        },
+        {
+          "id": "scene-k4fbudy-moy546q0",
+          "title": "Scene 9",
+          "mode": "images",
+          "imageShots": [
+            {
+              "id": "shot-m62bg8g-moy546q0",
+              "title": "Shot 1",
+              "prompt": "",
+              "dialogue": "",
+              "actor": "",
+              "tags": [],
+              "media": []
+            }
+          ],
+          "videoShots": [
+            {
+              "id": "shot-rdnus0r-moy546q0",
+              "title": "Video 1",
+              "prompt": "",
+              "dialogue": "",
+              "actor": "",
+              "tags": [],
+              "media": []
+            }
+          ],
+          "audioShots": [
+            {
+              "id": "shot-butyj9p-moy546q0",
+              "title": "Track 1",
+              "prompt": "",
+              "dialogue": "",
+              "actor": "",
+              "tags": [],
+              "media": []
+            }
+          ],
+          "resourceRefs": {
+            "actors": [],
+            "locations": [],
+            "props": [],
+            "moodboards": []
+          }
         }
       ]
     },
@@ -16871,6 +17808,25 @@
               ]
             },
             {
+              "id": "shot-jfl4o9k-motjnrp5",
+              "title": "Shot 7",
+              "prompt": "",
+              "dialogue": "",
+              "actor": "",
+              "tags": [],
+              "media": [
+                {
+                  "id": "media-2936et6-motjorqi",
+                  "type": "image",
+                  "url": "/assets/storyboard/uploads/397-1778040973670.png",
+                  "fileName": "397.png",
+                  "localPath": "/Users/vaquita/Downloads/aisha/aisha-cannes-showcase/public/assets/storyboard/uploads/397-1778040973670.png",
+                  "createdAt": "2026-05-06T04:16:13.674Z"
+                }
+              ],
+              "selectedMediaId": "media-2936et6-motjorqi"
+            },
+            {
               "id": "a4aedb2c-c596-4967-9c23-209a97799a3c",
               "title": "Crack ont he floor",
               "prompt": "",
@@ -16942,25 +17898,6 @@
                 }
               ],
               "selectedMediaId": "media-eqli7xg-motjopsy"
-            },
-            {
-              "id": "shot-jfl4o9k-motjnrp5",
-              "title": "Shot 7",
-              "prompt": "",
-              "dialogue": "",
-              "actor": "",
-              "tags": [],
-              "media": [
-                {
-                  "id": "media-2936et6-motjorqi",
-                  "type": "image",
-                  "url": "/assets/storyboard/uploads/397-1778040973670.png",
-                  "fileName": "397.png",
-                  "localPath": "/Users/vaquita/Downloads/aisha/aisha-cannes-showcase/public/assets/storyboard/uploads/397-1778040973670.png",
-                  "createdAt": "2026-05-06T04:16:13.674Z"
-                }
-              ],
-              "selectedMediaId": "media-2936et6-motjorqi"
             },
             {
               "id": "shot-9c5l8vd-motjotdx",
@@ -17409,5 +18346,6 @@
         }
       ]
     }
-  ]
+  ],
+  "masterAspect": 1.7916666666666667
 }

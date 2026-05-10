@@ -15,7 +15,12 @@ export type CanvasNode = {
   prompt: string
   sourcePrompt?: string
   note: string
+  videoCrop?: {
+    start: number
+    end: number
+  }
   selected?: boolean
+  pinnedOnly?: boolean
   generation?: {
     operation?: 'generate' | 'enhance' | 'split' | 'video'
     model?: string
@@ -37,6 +42,7 @@ export type CanvasEdge = {
   to: string
   type: CanvasEdgeType
   label?: string
+  fromGroup?: boolean
 }
 
 export type CanvasGroup = {

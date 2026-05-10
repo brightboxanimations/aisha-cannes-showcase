@@ -846,7 +846,7 @@ function storyboardApiPlugin() {
         if (req.method !== 'POST') return sendJson(res, { error: 'Method not allowed' }, 405)
         try {
           const body = await collectBody(req)
-          const { imageUrl, note, attachments, shotId, actId, sceneId, mode, type, splitSize, model, quality, aspectRatio, detailLevel } = JSON.parse(body.toString() || '{}')
+          const { imageUrl, note, attachments, shotId, actId, sceneId, mode, type, splitSize, model, quality, aspectRatio, detailLevel, duration } = JSON.parse(body.toString() || '{}')
           console.log('[edit-from-lightbox]', { type, model, shotId, imageUrl: imageUrl?.substring(0, 60), attachmentCount: (attachments || []).length, noteLen: (note || '').length, aspectRatio })
           if (!shotId) return sendJson(res, { error: 'Missing shotId' }, 400)
 
@@ -973,6 +973,120 @@ function storyboardApiPlugin() {
             } catch (err) {
               console.error('[generate] Error:', err instanceof Error ? err.message : String(err))
               return sendJson(res, { error: 'Generation failed: ' + (err instanceof Error ? err.message : String(err)) }, 500)
+            }
+          }
+
+          if (type === 'video') {
+            const referencePaths = cleanedImageUrl ? [imagePath, ...cleanedAttachments.map((u: string) => u.startsWith('/') ? path.join(publicDir, u) : path.resolve(u))] : cleanedAttachments.map((u: string) => u.startsWith('/') ? path.join(publicDir, u) : path.resolve(u))
+            // Prefer the new/hidden multi-reference path when available, and
+            // fall back to the documented single --image input if this CLI build
+            // rejects it. This keeps all inherited canvas refs eligible.
+            const multiImageArgs = referencePaths.length > 1 ? ['--images', ...referencePaths.map((p: string) => `"${p}"`)] : []
+            const singleImageArgs = referencePaths[0] ? ['--image', `"${referencePaths[0]}"`] : []
+            const videoDuration = Math.max(1, Math.min(15, Number(duration) || 5))
+            const buildVideoArgs = (imageArgs: string[]) => [
+              'npx', 'pixverse-cli', 'create', 'video',
+              '--prompt', JSON.stringify(note || ''),
+              ...imageArgs,
+              '--model', model || 'seedance-2.0-standard',
+              '--quality', quality || '720p',
+              '--aspect-ratio', aspectRatio || '16:9',
+              '--duration', String(videoDuration),
+              '--json',
+            ]
+            try {
+              const { exec } = require('child_process')
+              const runVideoCli = (args: string[]) => new Promise((resolve, reject) => {
+                console.log('[video] CLI cmd:', args.join(' ').substring(0, 320))
+                exec(args.join(' '), { timeout: 900000, cwd: process.cwd(), maxBuffer: 12 * 1024 * 1024 }, (err: any, stdout: string, stderr: string) => {
+                  if (err) return reject(err)
+                  try { resolve(JSON.parse(stdout)) } catch { reject(new Error('Invalid JSON: ' + stdout.substring(0, 300) + stderr.substring(0, 160))) }
+                })
+              })
+              let result: any
+              try {
+                result = await runVideoCli(buildVideoArgs(multiImageArgs.length ? multiImageArgs : singleImageArgs))
+              } catch (firstErr) {
+                if (!multiImageArgs.length) throw firstErr
+                console.warn('[video] Multi-reference failed, falling back to single primary reference:', firstErr instanceof Error ? firstErr.message : String(firstErr))
+                result = await runVideoCli(buildVideoArgs(singleImageArgs))
+              }
+              console.log('[video] Result:', JSON.stringify(result).substring(0, 240))
+              const videoUrl = [
+                result.video_url,
+                result.url,
+                result.asset_url,
+                result.output_url,
+                result.video?.url,
+                result.video?.asset_url,
+                result.data?.video_url,
+                result.data?.url,
+                result.data?.video?.url,
+                result.assets?.[0]?.url,
+                result.outputs?.[0]?.url,
+              ].find(Boolean)
+              if (videoUrl) {
+                const outName = `video-${(model || 'seedance').replace(/\./g, '-')}-${Date.now()}.mp4`
+                const outPath = path.join(storyboardUploads, outName)
+                if (/^https?:\/\//i.test(videoUrl)) {
+                  await new Promise((resolve, reject) => {
+                    exec(`curl -sL "${videoUrl}" -o "${outPath}"`, { timeout: 180000 }, (err: any) => err ? reject(err) : resolve(null))
+                  })
+                } else {
+                  const resolvedVideoPath = String(videoUrl).startsWith('/') ? path.join(publicDir, String(videoUrl).replace(/^\//, '')) : path.resolve(String(videoUrl))
+                  if (fs.existsSync(resolvedVideoPath)) fs.copyFileSync(resolvedVideoPath, outPath)
+                  else return sendJson(res, { error: 'Video returned but could not be resolved: ' + String(videoUrl) }, 500)
+                }
+                return sendJson(res, { ok: true, url: `/assets/storyboard/uploads/${outName}`, localPath: outPath, cliPrompt: note || '' })
+              }
+              const findDownloadedVideo = (before: Set<string>) => fs.readdirSync(storyboardUploads)
+                .filter(name => !before.has(name) && /\.(mp4|mov|webm)$/i.test(name))
+                .sort((a, b) => fs.statSync(path.join(storyboardUploads, b)).mtimeMs - fs.statSync(path.join(storyboardUploads, a)).mtimeMs)[0]
+              const downloadAsset = async (assetId: string) => {
+                const before = new Set(fs.readdirSync(storyboardUploads))
+                await new Promise((resolve, reject) => {
+                  exec(`npx pixverse-cli asset download ${JSON.stringify(String(assetId))} --type video --dest ${JSON.stringify(storyboardUploads)} --json`, { timeout: 240000, cwd: process.cwd(), maxBuffer: 8 * 1024 * 1024 }, (err: any) => err ? reject(err) : resolve(null))
+                })
+                return findDownloadedVideo(before)
+              }
+              const assetId = [
+                result.asset_id,
+                result.video_id,
+                result.id,
+                result.data?.asset_id,
+                result.data?.video_id,
+                result.video?.asset_id,
+                result.video?.id,
+                result.assets?.[0]?.asset_id,
+                result.assets?.[0]?.id,
+                result.data?.assets?.[0]?.asset_id,
+                result.data?.assets?.[0]?.id,
+              ].find(Boolean)
+              if (assetId) {
+                const downloaded = await downloadAsset(String(assetId))
+                if (downloaded) return sendJson(res, { ok: true, url: `/assets/storyboard/uploads/${downloaded}`, localPath: path.join(storyboardUploads, downloaded), cliPrompt: note || '' })
+              }
+              try {
+                const listed = await new Promise<any>((resolve, reject) => {
+                  exec('npx pixverse-cli asset list --type video --limit 12 --json', { timeout: 90000, cwd: process.cwd(), maxBuffer: 8 * 1024 * 1024 }, (err: any, stdout: string, stderr: string) => {
+                    if (err) return reject(err)
+                    try { resolve(JSON.parse(stdout)) } catch { reject(new Error('Invalid asset list JSON: ' + stdout.substring(0, 180) + stderr.substring(0, 120))) }
+                  })
+                })
+                const assets = Array.isArray(listed) ? listed : (listed.assets || listed.data || listed.items || [])
+                const newest = assets.find((asset: any) => asset?.asset_id || asset?.id || asset?.video_id)
+                const newestId = newest?.asset_id || newest?.id || newest?.video_id
+                if (newestId) {
+                  const downloaded = await downloadAsset(String(newestId))
+                  if (downloaded) return sendJson(res, { ok: true, url: `/assets/storyboard/uploads/${downloaded}`, localPath: path.join(storyboardUploads, downloaded), cliPrompt: note || '' })
+                }
+              } catch (listError) {
+                console.warn('[video] Asset-list fallback failed:', listError instanceof Error ? listError.message : String(listError))
+              }
+              return sendJson(res, { error: 'No video returned from PixVerse CLI' }, 500)
+            } catch (err) {
+              console.error('[video] Error:', err instanceof Error ? err.message : String(err))
+              return sendJson(res, { error: 'Video generation failed: ' + (err instanceof Error ? err.message : String(err)) }, 500)
             }
           }
 

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type { DragEvent, MouseEvent, WheelEvent } from 'react'
-import { refinePrompt } from '../gemini-agent'
+import { refinePrompt, sendToGeminiWithImages } from '../gemini-agent'
 import type { CanvasData, CanvasEdgeType, CanvasMediaType, CanvasNode, CanvasSpace } from './canvasTypes'
 import './CanvasMode.css'
 
@@ -14,6 +14,19 @@ const defaultTrays = [
   { id: 'tray-props', name: 'Props', color: '#f472b6', nodeIds: [] },
   { id: 'tray-styles', name: 'Styles', color: '#f8d978', nodeIds: [] },
   { id: 'tray-master-shots', name: 'Master Shots', color: '#a78bfa', nodeIds: [] },
+]
+
+const groupSwatches = [
+  '#f8d978',
+  '#60a5fa',
+  '#34d399',
+  '#f472b6',
+  '#a78bfa',
+  '#fb7185',
+  '#38bdf8',
+  '#fb923c',
+  '#e879f9',
+  '#f1f5f9',
 ]
 
 const imageModels = [
@@ -34,10 +47,33 @@ const videoModels = [
   { id: 'kling-o3-standard', name: 'Kling O3 Standard', qualities: ['720p', '1080p'], durations: [5, 10] },
 ]
 
+const generationInputEdgeTypes: CanvasEdgeType[] = ['reference', 'derivative', 'animation', 'context', 'frame', 'variation']
+
+type AgentAttachment = {
+  id: string
+  name: string
+  type: string
+  url?: string
+  text?: string
+}
+
 type LinkMode = { from: string; type: CanvasEdgeType; label: string } | null
-type PendingConnection = { from: string; to: string; x: number; y: number } | null
+type PendingConnection = { from: string; to: string; x: number; y: number; fromGroup?: boolean } | null
 type PendingNodeConnection = { from: string; x: number; y: number; worldX: number; worldY: number } | null
-type ConnectorDrag = { from: string; x: number; y: number } | null
+type ConnectorDrag = { from: string; x: number; y: number; fromGroup?: boolean } | null
+type Marquee = { startX: number; startY: number; x: number; y: number } | null
+type GroupResizeHandle = 'nw' | 'ne' | 'sw' | 'se' | 'n' | 's' | 'e' | 'w'
+type GroupResize = {
+  id: string
+  handle: GroupResizeHandle
+  startX: number
+  startY: number
+  groupX: number
+  groupY: number
+  groupWidth: number
+  groupHeight: number
+} | null
+type MultiSelection = { x: number; y: number; width: number; height: number; nodeIds: string[] } | null
 
 function createSpace(index = 1): CanvasSpace {
   return {
@@ -58,6 +94,33 @@ function createInitialData(): CanvasData {
   return { version: 1, activeSpaceId: first.id, spaces: [first] }
 }
 
+function normalizePinnedTrayCopies(data: CanvasData): CanvasData {
+  const next = structuredClone(data)
+  next.spaces.forEach(space => {
+    space.nodes.forEach(node => {
+      if (node.type === 'image' || node.type === 'video' || node.type === 'placeholder') {
+        const width = Math.max(260, node.width || 320)
+        node.width = width
+        node.height = Math.round(width * 9 / 16)
+      }
+    })
+    space.trays.forEach(tray => {
+      tray.nodeIds = tray.nodeIds.map(nodeId => {
+        const node = space.nodes.find(item => item.id === nodeId)
+        if (!node || node.pinnedOnly) return nodeId
+        const pinnedId = makeId('pinned')
+        space.nodes.push({
+          ...structuredClone(node),
+          id: pinnedId,
+          pinnedOnly: true,
+        })
+        return pinnedId
+      })
+    })
+  })
+  return next
+}
+
 function mediaTypeFromFile(file: File): CanvasMediaType {
   if (file.type.startsWith('image/')) return 'image'
   if (file.type.startsWith('video/')) return 'video'
@@ -67,23 +130,115 @@ function mediaTypeFromFile(file: File): CanvasMediaType {
 }
 
 function nodeSize(type: CanvasMediaType) {
-  if (type === 'video') return { width: 320, height: 230 }
+  if (type === 'image' || type === 'video' || type === 'placeholder') return { width: 320, height: 180 }
   if (type === 'audio') return { width: 280, height: 150 }
   if (type === 'document') return { width: 260, height: 180 }
-  return { width: 280, height: 210 }
+  return { width: 320, height: 180 }
 }
 
 function edgeColor(type: string) {
   if (type === 'reference') return '#f8d978'
   if (type === 'variation') return '#fb7185'
   if (type === 'animation') return '#38bdf8'
-  if (type === 'frame') return '#fb923c'
+  if (type === 'frame') return '#34d399'
   if (type === 'context') return '#c084fc'
   return 'rgba(226, 232, 240, 0.58)'
 }
 
+function edgeDisplayColor(type: CanvasEdgeType, label?: string) {
+  if (type === 'animation' && label === 'CONT VIDEO') return '#34d399'
+  return edgeColor(type)
+}
+
 function centerOf(node: CanvasNode) {
   return { x: node.x + node.width / 2, y: node.y + node.height / 2 }
+}
+
+function nodeCenterInsideGroup(node: CanvasNode, group: { x: number; y: number; width: number; height: number }) {
+  const centerX = node.x + node.width / 2
+  const centerY = node.y + node.height / 2
+  return centerX >= group.x && centerX <= group.x + group.width && centerY >= group.y && centerY <= group.y + group.height
+}
+
+function groupMediaSummary(nodes: CanvasNode[]) {
+  const counts = nodes.reduce<Record<string, number>>((acc, node) => {
+    const label = node.type === 'placeholder' ? 'empty' : node.type
+    acc[label] = (acc[label] || 0) + 1
+    return acc
+  }, {})
+  return Object.entries(counts)
+    .map(([type, count]) => `${count} ${type}${count === 1 ? '' : type === 'audio' ? '' : 's'}`)
+    .join(' · ')
+}
+
+function isMediaReferenceNode(node?: CanvasNode) {
+  return !!node?.url && (node.type === 'image' || node.type === 'video')
+}
+
+function uniqueMediaNodes(nodes: CanvasNode[]) {
+  return Array.from(new Map(nodes.filter(isMediaReferenceNode).map(node => [node.id, node])).values())
+}
+
+function groupMediaNodes(space: CanvasSpace, groupId: string) {
+  const group = space.groups.find(item => item.id === groupId)
+  if (!group) return []
+  return uniqueMediaNodes(group.nodeIds.map(nodeId => space.nodes.find(node => node.id === nodeId)).filter(Boolean) as CanvasNode[])
+}
+
+function directReferenceNodes(space: CanvasSpace, nodeId: string) {
+  const nodes: CanvasNode[] = []
+  space.edges
+    .filter(edge => edge.to === nodeId)
+    .forEach(edge => {
+      if (edge.fromGroup) {
+        nodes.push(...groupMediaNodes(space, edge.from))
+        return
+      }
+      if (edge.type === 'reference' || edge.type === 'context') {
+        const input = space.nodes.find(item => item.id === edge.from)
+        if (isMediaReferenceNode(input)) nodes.push(input!)
+      }
+    })
+  return uniqueMediaNodes(nodes)
+}
+
+function collectInputNodes(space: CanvasSpace, nodeId: string, includeSource = false, seen = new Set<string>()) {
+  if (seen.has(nodeId)) return []
+  seen.add(nodeId)
+  const nodes: CanvasNode[] = []
+  const source = space.nodes.find(item => item.id === nodeId)
+  if (includeSource && isMediaReferenceNode(source)) nodes.push(source!)
+
+  space.edges
+    .filter(edge => edge.to === nodeId && generationInputEdgeTypes.includes(edge.type))
+    .forEach(edge => {
+      if (edge.fromGroup) {
+        nodes.push(...groupMediaNodes(space, edge.from))
+        return
+      }
+      const input = space.nodes.find(item => item.id === edge.from)
+      if (edge.type === 'reference' || edge.type === 'context') {
+        if (isMediaReferenceNode(input)) nodes.push(input!)
+        return
+      }
+      if (edge.type === 'variation') {
+        nodes.push(...collectInputNodes(space, edge.from, false, seen))
+        return
+      }
+      if (edge.type === 'derivative' || edge.type === 'animation' || edge.type === 'frame') {
+        if (isMediaReferenceNode(input)) nodes.push(input!)
+        nodes.push(...directReferenceNodes(space, edge.from))
+      }
+    })
+
+  return uniqueMediaNodes(nodes)
+}
+
+function portPoint(node: CanvasNode, side: string) {
+  if (side === 'left') return { x: node.x, y: node.y + node.height / 2 }
+  if (side === 'top') return { x: node.x + node.width / 2, y: node.y }
+  if (side === 'bottom') return { x: node.x + node.width / 2, y: node.y + node.height }
+  return { x: node.x + node.width, y: node.y + node.height / 2 }
 }
 
 function defaultGeneration() {
@@ -116,20 +271,30 @@ function shortModelName(model?: string) {
   return imageModels.find(item => item.id === model)?.name || videoModels.find(item => item.id === model)?.name || model || 'Model'
 }
 
+function formatSeconds(value = 0) {
+  if (!Number.isFinite(value)) return '0:00'
+  const minutes = Math.floor(value / 60)
+  const seconds = Math.floor(value % 60).toString().padStart(2, '0')
+  return `${minutes}:${seconds}`
+}
+
 export function CanvasMode({ onBack }: { onBack: () => void }) {
   const stageRef = useRef<HTMLDivElement>(null)
   const fileRef = useRef<HTMLInputElement>(null)
   const refFileRef = useRef<HTMLInputElement>(null)
   const nodeFileRef = useRef<HTMLInputElement>(null)
+  const trayFileRef = useRef<HTMLInputElement>(null)
+  const agentFileRef = useRef<HTMLInputElement>(null)
   const [data, setData] = useState<CanvasData>(() => {
     try {
       const raw = window.localStorage.getItem(STORAGE_KEY)
-      return raw ? JSON.parse(raw) as CanvasData : createInitialData()
+      return raw ? normalizePinnedTrayCopies(JSON.parse(raw) as CanvasData) : createInitialData()
     } catch {
       return createInitialData()
     }
   })
   const [draggingNodeId, setDraggingNodeId] = useState<string | null>(null)
+  const [draggingGroupId, setDraggingGroupId] = useState<string | null>(null)
   const [dragStart, setDragStart] = useState<{ x: number; y: number; nodeX?: number; nodeY?: number; panX?: number; panY?: number } | null>(null)
   const [panning, setPanning] = useState(false)
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null)
@@ -148,16 +313,32 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
   const [connectorDrag, setConnectorDrag] = useState<ConnectorDrag>(null)
   const [nodeUploadTargetId, setNodeUploadTargetId] = useState<string | null>(null)
   const [expandedTrayId, setExpandedTrayId] = useState<string | null>(null)
+  const [agentOpen, setAgentOpen] = useState(true)
+  const [marquee, setMarquee] = useState<Marquee>(null)
+  const [selectedGroupId, setSelectedGroupId] = useState<string | null>(null)
+  const [trayUploadTargetId, setTrayUploadTargetId] = useState<string | null>(null)
+  const [agentMessages, setAgentMessages] = useState<{ role: 'user' | 'model'; text: string }[]>([])
+  const [agentLoading, setAgentLoading] = useState(false)
+  const [groupToolActive, setGroupToolActive] = useState(false)
+  const [playingVideoIds, setPlayingVideoIds] = useState<Set<string>>(() => new Set())
+  const [unmutedVideoIds, setUnmutedVideoIds] = useState<Set<string>>(() => new Set())
+  const [videoProgress, setVideoProgress] = useState<Record<string, { current: number; duration: number }>>({})
+  const [agentAttachments, setAgentAttachments] = useState<AgentAttachment[]>([])
+  const [alternativeMenuNodeId, setAlternativeMenuNodeId] = useState<string | null>(null)
+  const [resizingGroup, setResizingGroup] = useState<GroupResize>(null)
+  const [multiSelection, setMultiSelection] = useState<MultiSelection>(null)
+  const [edgeSnapCandidate, setEdgeSnapCandidate] = useState<string | null>(null)
 
   const activeSpace = data.spaces.find(space => space.id === data.activeSpaceId) || data.spaces[0]
   const selectedNode = activeSpace.nodes.find(node => node.id === selectedNodeId) || null
-  const selectedGeneration = selectedNode?.generation || defaultGeneration()
-  const selectedRefNodes = selectedNode
-    ? activeSpace.edges
-      .filter(edge => edge.to === selectedNode.id && edge.type === 'reference')
-      .map(edge => activeSpace.nodes.find(node => node.id === edge.from))
-      .filter(Boolean) as CanvasNode[]
-    : []
+  const selectedGeneration = (selectedNode?.generation || defaultGeneration()) as NonNullable<CanvasNode['generation']>
+  const selectedGroup = activeSpace.groups.find(group => group.id === selectedGroupId) || null
+  const selectedRefNodes = selectedNode ? collectInputNodes(activeSpace, selectedNode.id, false) : []
+  const displayedRefNodes = selectedNode ? collectInputNodes(activeSpace, selectedNode.id, true) : []
+
+  useEffect(() => {
+    setData(current => normalizePinnedTrayCopies(current))
+  }, [])
 
   useEffect(() => {
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(data))
@@ -174,11 +355,18 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
         setNoteAttachOpen(false)
         setNoteSettingsOpen(false)
         setNoteSkillsOpen(false)
+        setAlternativeMenuNodeId(null)
+        setMultiSelection(null)
+        setEdgeSnapCandidate(null)
+      }
+      if ((event.key === 'Delete' || event.key === 'Backspace') && !(event.target instanceof HTMLInputElement) && !(event.target instanceof HTMLTextAreaElement)) {
+        if (selectedNodeId) deleteNode(selectedNodeId)
+        else if (selectedGroupId) deleteGroup(selectedGroupId)
       }
     }
     window.addEventListener('keydown', onKeyDown)
     return () => window.removeEventListener('keydown', onKeyDown)
-  }, [])
+  }, [selectedNodeId, selectedGroupId, activeSpace.id])
 
   const updateActiveSpace = (mutate: (space: CanvasSpace) => void) => {
     setData(current => {
@@ -235,6 +423,7 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
       localPath: partial.localPath,
       mimeType: partial.mimeType,
       fileName: partial.fileName,
+      pinnedOnly: partial.pinnedOnly,
       generation: partial.generation || defaultGenerationForType(partial.type),
     }
     updateActiveSpace(space => {
@@ -256,7 +445,27 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
     updateActiveSpace(space => {
       const exists = space.edges.some(edge => edge.from === from && edge.to === to && edge.type === type)
       if (exists) return
-      space.edges.push({ id: makeId('edge'), from, to, type, label })
+      const edgeLabel = type === 'reference' && (!label || label === 'ref')
+        ? `ref ${space.edges.filter(edge => edge.to === to && edge.type === 'reference').length + 1}`
+        : label
+      space.edges.push({ id: makeId('edge'), from, to, type, label: edgeLabel })
+      const target = space.nodes.find(node => node.id === to)
+      const source = space.nodes.find(node => node.id === from)
+      if (target && !target.url && target.type === 'placeholder') {
+        if (type === 'animation') {
+          target.type = 'video'
+          target.title = target.title === 'Empty media' ? 'New video' : target.title
+          target.generation = defaultGenerationForType('video')
+        } else if (type === 'derivative' || type === 'variation') {
+          target.type = 'image'
+          target.title = target.title === 'Empty media' ? 'New image' : target.title
+          target.generation = defaultGenerationForType('image')
+        }
+      }
+      if (target && !target.url && source && !target.prompt && (type === 'animation' || type === 'derivative' || type === 'variation')) {
+        target.prompt = source.prompt || source.sourcePrompt || ''
+        target.sourcePrompt = source.sourcePrompt || source.prompt || ''
+      }
     })
   }
 
@@ -264,15 +473,42 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
     const labels: Record<CanvasEdgeType, string> = {
       derivative: 'derive',
       reference: 'ref',
-      variation: 'variant',
+      variation: 'var',
       animation: 'animate',
       frame: 'frame',
       context: 'context',
     }
-    addEdge(from, to, type, labels[type])
+    if (pendingConnection?.fromGroup) {
+      const group = activeSpace.groups.find(item => item.id === from)
+      if (group) {
+        updateActiveSpace(space => {
+          const exists = space.edges.some(edge => edge.fromGroup && edge.from === from && edge.to === to && edge.type === type)
+          if (exists) return
+          const edgeLabel = type === 'reference' && labels[type] === 'ref'
+            ? `ref ${space.edges.filter(edge => edge.to === to && edge.type === 'reference').length + 1}`
+            : labels[type]
+          space.edges.push({ id: makeId('edge'), from, to, type, label: edgeLabel, fromGroup: true })
+          const target = space.nodes.find(node => node.id === to)
+          if (target && !target.url && target.type === 'placeholder') {
+            if (type === 'animation') {
+              target.type = 'video'
+              target.title = target.title === 'Empty media' ? 'New video' : target.title
+              target.generation = defaultGenerationForType('video')
+            } else if (type === 'derivative' || type === 'variation') {
+              target.type = 'image'
+              target.title = target.title === 'Empty media' ? 'New image' : target.title
+              target.generation = defaultGenerationForType('image')
+            }
+          }
+        })
+      }
+      setStatusLine(`${group?.name || 'Group'} ${labels[type]} link created`)
+    } else {
+      addEdge(from, to, type, labels[type])
+      setStatusLine(`${labels[type]} link created`)
+    }
     setPendingConnection(null)
     setConnectorDrag(null)
-    setStatusLine(`${labels[type]} link created`)
   }
 
   const cacheBustUrl = (url?: string) => {
@@ -281,16 +517,11 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
   }
 
   const getReferenceUrls = (nodeId: string, includeSource = false) => {
-    const urls: string[] = []
-    const node = activeSpace.nodes.find(item => item.id === nodeId)
-    if (includeSource && node?.url && (node.type === 'image' || node.type === 'video')) urls.push(node.url)
-    activeSpace.edges
-      .filter(edge => edge.to === nodeId && edge.type === 'reference')
-      .forEach(edge => {
-        const refNode = activeSpace.nodes.find(item => item.id === edge.from)
-        if (refNode?.url) urls.push(refNode.url)
-      })
-    return Array.from(new Set(urls))
+    return Array.from(new Set(collectInputNodes(activeSpace, nodeId, includeSource).map(node => node.url).filter(Boolean) as string[]))
+  }
+
+  const getInputNodes = (nodeId: string, includeSource = false) => {
+    return collectInputNodes(activeSpace, nodeId, includeSource)
   }
 
   const uploadFile = async (file: File, worldX: number, worldY: number) => {
@@ -311,6 +542,48 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
       mimeType: uploaded.mimeType || file.type,
       fileName: uploaded.fileName || file.name,
     }, worldX, worldY)
+    return nodeId
+  }
+
+  const uploadFileToTray = async (file: File, trayId: string) => {
+    const formData = new FormData()
+    formData.append('file', file)
+    let uploaded: { url?: string; localPath?: string; mimeType?: string; fileName?: string } = {}
+    try {
+      const response = await fetch('/api/storyboard/upload', { method: 'POST', body: formData })
+      uploaded = await response.json()
+    } catch {
+      uploaded = { url: URL.createObjectURL(file), fileName: file.name, mimeType: file.type }
+    }
+    const type = mediaTypeFromFile(file)
+    const size = nodeSize(type)
+    const nodeId = makeId('pinned')
+    const node: CanvasNode = {
+      id: nodeId,
+      type,
+      title: file.name,
+      url: cacheBustUrl(uploaded.url) || URL.createObjectURL(file),
+      localPath: uploaded.localPath,
+      mimeType: uploaded.mimeType || file.type,
+      fileName: uploaded.fileName || file.name,
+      x: 0,
+      y: 0,
+      width: size.width,
+      height: size.height,
+      prompt: '',
+      sourcePrompt: '',
+      note: '',
+      pinnedOnly: true,
+      generation: defaultGenerationForType(type),
+    }
+    updateActiveSpace(space => {
+      const tray = space.trays.find(item => item.id === trayId)
+      if (!tray) return
+      space.nodes.push(node)
+      tray.nodeIds.push(nodeId)
+    })
+    setExpandedTrayId(trayId)
+    setStatusLine(`${file.name} added to ${activeSpace.trays.find(tray => tray.id === trayId)?.name || 'tray'}`)
     return nodeId
   }
 
@@ -351,7 +624,23 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
 
   const handleDrop = (event: DragEvent<HTMLDivElement>) => {
     event.preventDefault()
+    const trayNodeId = event.dataTransfer.getData('application/x-canvas-tray-node')
+    const trayId = event.dataTransfer.getData('application/x-canvas-tray-id')
     const world = screenToWorld(event.clientX, event.clientY)
+    if (trayNodeId) {
+      const placedId = duplicateTrayNodeToCanvas(trayNodeId, world.x, world.y)
+      if (trayId) {
+        updateActiveSpace(space => {
+          const tray = space.trays.find(item => item.id === trayId)
+          if (tray) tray.nodeIds = tray.nodeIds.filter(id => id !== trayNodeId)
+          const pinned = space.nodes.find(node => node.id === trayNodeId && node.pinnedOnly)
+          if (pinned) space.nodes = space.nodes.filter(node => node.id !== trayNodeId)
+        })
+        setStatusLine('Reference unpinned to canvas')
+      }
+      if (placedId) setSelectedNodeId(placedId)
+      return
+    }
     Array.from(event.dataTransfer.files).forEach((file, index) => {
       uploadFile(file, world.x + index * 36, world.y + index * 36)
     })
@@ -367,12 +656,19 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
   const handleStageMouseDown = (event: MouseEvent<HTMLDivElement>) => {
     if (event.button !== 0 || (event.target as HTMLElement).closest('.canvas-node, .canvas-topbar, .canvas-space-tabs, .canvas-pinned-trays, .canvas-tray-panel, .canvas-context-menu, .canvas-connection-menu, .canvas-prompt-dock, .canvas-note-composer, .canvas-link-banner')) return
     setContextMenu(null)
+    setMultiSelection(null)
     setPendingConnection(null)
     setPendingNodeConnection(null)
     setNoteAttachOpen(false)
     setNoteSettingsOpen(false)
     setNoteSkillsOpen(false)
     setSelectedNodeId(null)
+    setSelectedGroupId(null)
+    if (event.shiftKey || groupToolActive) {
+      const world = screenToWorld(event.clientX, event.clientY)
+      setMarquee({ startX: world.x, startY: world.y, x: world.x, y: world.y })
+      return
+    }
     setPanning(true)
     setDragStart({ x: event.clientX, y: event.clientY, panX: activeSpace.viewport.panX, panY: activeSpace.viewport.panY })
   }
@@ -383,6 +679,11 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
       setConnectorDrag(current => current ? { ...current, x: world.x, y: world.y } : current)
       return
     }
+    if (marquee) {
+      const world = screenToWorld(event.clientX, event.clientY)
+      setMarquee(current => current ? { ...current, x: world.x, y: world.y } : current)
+      return
+    }
     if (draggingNodeId && dragStart) {
       const dx = (event.clientX - dragStart.x) / activeSpace.viewport.zoom
       const dy = (event.clientY - dragStart.y) / activeSpace.viewport.zoom
@@ -391,6 +692,63 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
         if (!node || dragStart.nodeX === undefined || dragStart.nodeY === undefined) return
         node.x = dragStart.nodeX + dx
         node.y = dragStart.nodeY + dy
+      })
+      const target = document.elementFromPoint(event.clientX, event.clientY)
+      const edgeEl = target?.closest?.('[data-edge-id]') as HTMLElement | null
+      setEdgeSnapCandidate(edgeEl?.dataset.edgeId || null)
+      return
+    }
+    if (resizingGroup) {
+      const dx = (event.clientX - resizingGroup.startX) / activeSpace.viewport.zoom
+      const dy = (event.clientY - resizingGroup.startY) / activeSpace.viewport.zoom
+      updateActiveSpace(space => {
+        const group = space.groups.find(item => item.id === resizingGroup.id)
+        if (!group) return
+        let x = resizingGroup.groupX
+        let y = resizingGroup.groupY
+        let width = resizingGroup.groupWidth
+        let height = resizingGroup.groupHeight
+        if (resizingGroup.handle.includes('e')) width = resizingGroup.groupWidth + dx
+        if (resizingGroup.handle.includes('s')) height = resizingGroup.groupHeight + dy
+        if (resizingGroup.handle.includes('w')) {
+          x = resizingGroup.groupX + dx
+          width = resizingGroup.groupWidth - dx
+        }
+        if (resizingGroup.handle.includes('n')) {
+          y = resizingGroup.groupY + dy
+          height = resizingGroup.groupHeight - dy
+        }
+        group.x = Math.min(x, x + width - 120)
+        group.y = Math.min(y, y + height - 90)
+        group.width = Math.max(120, Math.abs(width))
+        group.height = Math.max(90, Math.abs(height))
+        space.nodes
+          .filter(node => !node.pinnedOnly)
+          .forEach(node => {
+            const inside = nodeCenterInsideGroup(node, group)
+            if (inside && !group.nodeIds.includes(node.id)) group.nodeIds.push(node.id)
+            if (!inside && group.nodeIds.includes(node.id)) group.nodeIds = group.nodeIds.filter(id => id !== node.id)
+          })
+      })
+      return
+    }
+    if (draggingGroupId && dragStart) {
+      const dx = (event.clientX - dragStart.x) / activeSpace.viewport.zoom
+      const dy = (event.clientY - dragStart.y) / activeSpace.viewport.zoom
+      updateActiveSpace(space => {
+        const group = space.groups.find(item => item.id === draggingGroupId)
+        if (!group || dragStart.nodeX === undefined || dragStart.nodeY === undefined) return
+        group.x = dragStart.nodeX + dx
+        group.y = dragStart.nodeY + dy
+        group.nodeIds.forEach(nodeId => {
+          const node = space.nodes.find(item => item.id === nodeId)
+          if (node) {
+            node.x += dx - ((group as any)._lastDx || 0)
+            node.y += dy - ((group as any)._lastDy || 0)
+          }
+        })
+        ;(group as any)._lastDx = dx
+        ;(group as any)._lastDy = dy
       })
       return
     }
@@ -403,6 +761,22 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
   }
 
   const stopDragging = (event?: MouseEvent<HTMLDivElement>) => {
+    if (marquee) {
+      const x = Math.min(marquee.startX, marquee.x)
+      const y = Math.min(marquee.startY, marquee.y)
+      const width = Math.abs(marquee.x - marquee.startX)
+      const height = Math.abs(marquee.y - marquee.startY)
+      if (width > 40 && height > 40) {
+        const nodeIds = canvasNodes
+          .filter(node => node.x >= x && node.y >= y && node.x + node.width <= x + width && node.y + node.height <= y + height)
+          .map(node => node.id)
+        if (nodeIds.length) {
+          setMultiSelection({ x, y, width, height, nodeIds })
+          setStatusLine(`${nodeIds.length} selected`)
+        }
+      }
+      setMarquee(null)
+    }
     if (connectorDrag && event) {
       const target = document.elementFromPoint(event.clientX, event.clientY)
       const nodeEl = target?.closest?.('.canvas-node') as HTMLElement | null
@@ -414,19 +788,51 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
           to,
           x: event.clientX - (stageRef.current?.getBoundingClientRect().left || 0),
           y: event.clientY - (stageRef.current?.getBoundingClientRect().top || 0),
+          fromGroup: connectorDrag.fromGroup,
         })
       } else {
-        setPendingNodeConnection({
-          from: connectorDrag.from,
-          x: event.clientX - (stageRef.current?.getBoundingClientRect().left || 0),
-          y: event.clientY - (stageRef.current?.getBoundingClientRect().top || 0),
-          worldX: world.x,
-          worldY: world.y,
-        })
+        if (!connectorDrag.fromGroup) {
+          setPendingNodeConnection({
+            from: connectorDrag.from,
+            x: event.clientX - (stageRef.current?.getBoundingClientRect().left || 0),
+            y: event.clientY - (stageRef.current?.getBoundingClientRect().top || 0),
+            worldX: world.x,
+            worldY: world.y,
+          })
+        }
       }
       setConnectorDrag(null)
     }
+    if (draggingNodeId) {
+      const target = event ? document.elementFromPoint(event.clientX, event.clientY) : null
+      const edgeEl = target?.closest?.('[data-edge-id]') as HTMLElement | null
+      const nodeEl = target?.closest?.('.canvas-node') as HTMLElement | null
+      const targetNodeId = nodeEl?.dataset.nodeId
+      if (targetNodeId && targetNodeId !== draggingNodeId) {
+        swapNodeMedia(draggingNodeId, targetNodeId)
+      } else if (edgeEl?.dataset.edgeId) {
+        insertExistingNodeOnEdge(edgeEl.dataset.edgeId, draggingNodeId)
+      }
+      updateActiveSpace(space => {
+        const node = space.nodes.find(item => item.id === draggingNodeId)
+        if (!node) return
+        space.groups.forEach(group => {
+          const inside = nodeCenterInsideGroup(node, group)
+          if (inside && !group.nodeIds.includes(draggingNodeId)) group.nodeIds.push(draggingNodeId)
+          if (!inside && group.nodeIds.includes(draggingNodeId)) group.nodeIds = group.nodeIds.filter(id => id !== draggingNodeId)
+        })
+      })
+    }
     setDraggingNodeId(null)
+    setDraggingGroupId(null)
+    setResizingGroup(null)
+    setEdgeSnapCandidate(null)
+    updateActiveSpace(space => {
+      space.groups.forEach(group => {
+        delete (group as any)._lastDx
+        delete (group as any)._lastDy
+      })
+    })
     setPanning(false)
     setDragStart(null)
   }
@@ -434,6 +840,15 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
   const startNodeDrag = (event: MouseEvent<HTMLDivElement>, node: CanvasNode) => {
     event.stopPropagation()
     setContextMenu(null)
+    setMultiSelection(null)
+    if (event.shiftKey || groupToolActive) {
+      const world = screenToWorld(event.clientX, event.clientY)
+      setSelectedNodeId(null)
+      setSelectedGroupId(null)
+      setDraggingNodeId(null)
+      setMarquee({ startX: world.x, startY: world.y, x: world.x, y: world.y })
+      return
+    }
     if (linkMode) {
       if (linkMode.from !== node.id) {
         addEdge(linkMode.from, node.id, linkMode.type, linkMode.label)
@@ -448,27 +863,85 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
     setDragStart({ x: event.clientX, y: event.clientY, nodeX: node.x, nodeY: node.y })
   }
 
-  const startConnectorDrag = (event: MouseEvent<HTMLButtonElement>, node: CanvasNode) => {
+  const startConnectorDrag = (event: MouseEvent<HTMLButtonElement>, node: CanvasNode, side = 'right') => {
     event.preventDefault()
     event.stopPropagation()
-    const start = centerOf(node)
+    const start = portPoint(node, side)
     setSelectedNodeId(node.id)
     setPendingConnection(null)
     setPendingNodeConnection(null)
-    setConnectorDrag({ from: node.id, x: start.x + node.width / 2, y: start.y })
+    setConnectorDrag({ from: node.id, x: start.x, y: start.y })
     setStatusLine('Drag the connector to another node')
   }
 
-  const addPlaceholder = (type: CanvasMediaType, x: number, y: number, sourceId?: string, edgeType?: CanvasEdgeType) => {
+  const startGroupConnectorDrag = (event: MouseEvent<HTMLButtonElement>, groupId: string) => {
+    event.preventDefault()
+    event.stopPropagation()
+    const group = activeSpace.groups.find(item => item.id === groupId)
+    if (!group) return
+    setSelectedGroupId(group.id)
+    setSelectedNodeId(null)
+    setPendingConnection(null)
+    setPendingNodeConnection(null)
+    setConnectorDrag({ from: group.id, x: group.x + group.width, y: group.y + group.height / 2, fromGroup: true })
+    setStatusLine('Drag the group connector to a target node')
+  }
+
+  const startGroupDrag = (event: MouseEvent<HTMLElement>, groupId: string) => {
+    event.preventDefault()
+    event.stopPropagation()
+    const group = activeSpace.groups.find(item => item.id === groupId)
+    if (!group) return
+    setSelectedGroupId(group.id)
+    setSelectedNodeId(null)
+    setDraggingNodeId(null)
+    setDraggingGroupId(group.id)
+    updateActiveSpace(space => {
+      const item = space.groups.find(g => g.id === group.id) as any
+      if (item) {
+        item._lastDx = 0
+        item._lastDy = 0
+      }
+    })
+    setDragStart({ x: event.clientX, y: event.clientY, nodeX: group.x, nodeY: group.y })
+  }
+
+  const startGroupResize = (event: MouseEvent<HTMLElement>, groupId: string, handle: GroupResizeHandle) => {
+    event.preventDefault()
+    event.stopPropagation()
+    const group = activeSpace.groups.find(item => item.id === groupId)
+    if (!group) return
+    setSelectedGroupId(group.id)
+    setSelectedNodeId(null)
+    setDraggingNodeId(null)
+    setDraggingGroupId(null)
+    setResizingGroup({
+      id: group.id,
+      handle,
+      startX: event.clientX,
+      startY: event.clientY,
+      groupX: group.x,
+      groupY: group.y,
+      groupWidth: group.width,
+      groupHeight: group.height,
+    })
+  }
+
+  const addPlaceholder = (type: CanvasMediaType, x: number, y: number, sourceId?: string, edgeType?: CanvasEdgeType, edgeLabel?: string) => {
     const id = addNode({ type, title: type === 'placeholder' ? 'Empty media' : `New ${type}` }, x, y)
     if (sourceId) {
+      const label = edgeLabel || (edgeType === 'reference' ? 'ref' : type === 'video' ? 'image to video' : edgeType || 'derivative')
       updateActiveSpace(space => {
+        const finalType = edgeType || (type === 'video' ? 'animation' : 'derivative')
+        const finalLabel = finalType === 'reference' && label === 'ref'
+          ? `ref ${space.edges.filter(edge => edge.to === id && edge.type === 'reference').length + 1}`
+          : label
         space.edges.push({
           id: makeId('edge'),
           from: sourceId,
           to: id,
-          type: edgeType || (type === 'video' ? 'animation' : 'derivative'),
-          label: edgeType === 'reference' ? 'ref' : type === 'video' ? 'image to video' : edgeType || 'derivative',
+          type: finalType,
+          label: finalLabel,
         })
       })
     }
@@ -485,6 +958,12 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
     updateActiveSpace(space => {
       space.nodes = space.nodes.filter(node => node.id !== nodeId)
       space.edges = space.edges.filter(edge => edge.from !== nodeId && edge.to !== nodeId)
+      space.groups.forEach(group => {
+        group.nodeIds = group.nodeIds.filter(id => id !== nodeId)
+      })
+      space.trays.forEach(tray => {
+        tray.nodeIds = tray.nodeIds.filter(id => id !== nodeId)
+      })
     })
     if (selectedNodeId === nodeId) setSelectedNodeId(null)
   }
@@ -510,7 +989,7 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
   const fillNodeWithImage = (nodeId: string, payload: { url: string; localPath?: string; fileName?: string }, title?: string) => {
     updateNode(nodeId, node => {
       node.type = 'image'
-      node.url = payload.url
+      node.url = cacheBustUrl(payload.url)
       node.localPath = payload.localPath
       node.fileName = payload.fileName || payload.url.split('/').pop() || node.fileName
       node.title = title || node.title || node.fileName || 'Generated image'
@@ -524,11 +1003,11 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
     })
   }
 
-  const callCanvasImageApi = async (node: CanvasNode, type: 'generate' | 'enhance') => {
+  const callCanvasImageApi = async (node: CanvasNode, type: 'generate' | 'enhance', forceSourceAsReference = false) => {
     const generation = node.generation || defaultGeneration()
     const modelPreset = imageModels.find(item => item.id === generation.model)
-    const prompt = node.prompt || node.note || ''
-    const attachments = type === 'generate' ? getReferenceUrls(node.id, node.type === 'image') : getReferenceUrls(node.id)
+    const prompt = node.prompt || node.note || (forceSourceAsReference ? 'Use exact @img1 as the source image. Improve quality, clarity, resolution, cinematic lighting, and details while preserving the same composition, camera angle, character identity, object positions, and overall design. Do not invent new characters or change the scene.' : '')
+    const attachments = type === 'generate' ? getReferenceUrls(node.id, forceSourceAsReference || node.type === 'image') : getReferenceUrls(node.id)
     const response = await fetch('/api/tasks/edit-from-lightbox', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -553,9 +1032,11 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
   }
 
   const callCanvasVideoApi = async (node: CanvasNode) => {
-    const generation = node.generation || defaultGenerationForType('video')
+    const generation = (node.generation || defaultGenerationForType('video')) as NonNullable<CanvasNode['generation']>
     const prompt = node.prompt || node.note || ''
-    const referenceUrl = node.url || getReferenceUrls(node.id, true)[0] || ''
+    const allReferenceUrls = getReferenceUrls(node.id, !!node.url)
+    const referenceUrl = node.url || allReferenceUrls[0] || ''
+    const attachments = allReferenceUrls.filter(url => url !== referenceUrl)
     const response = await fetch('/api/tasks/edit-from-lightbox', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -566,7 +1047,7 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
         sceneId: activeSpace.id,
         mode: 'video',
         imageUrl: referenceUrl,
-        attachments: getReferenceUrls(node.id),
+        attachments,
         note: prompt,
         model: generation.model || videoModels[0].id,
         quality: generation.quality || videoModels[0].qualities[0],
@@ -589,9 +1070,10 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
       setStatusLine('Missing video prompt')
       return
     }
+    const isContinuationFromFrame = activeSpace.edges.some(edge => edge.to === source.id && edge.type === 'frame')
     const targetId = source.type === 'video' && !source.url
       ? source.id
-      : addPlaceholder('video', source.x + source.width + 140, source.y, source.id, 'animation')
+      : addPlaceholder('video', source.x + source.width + 140, source.y, source.id, 'animation', isContinuationFromFrame ? 'CONT VIDEO' : 'image to video')
     updateNode(targetId, node => {
       node.prompt = source.prompt
       node.sourcePrompt = source.prompt || source.sourcePrompt || ''
@@ -626,21 +1108,23 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
     }
   }
 
-  const runImageGeneration = async (nodeId: string, asVariation = false) => {
+  const runImageGeneration = async (nodeId: string, asVariation = false, forceEnhance = false) => {
     const source = activeSpace.nodes.find(node => node.id === nodeId)
     if (!source) return
-    if (!(source.prompt || source.note || source.url)) {
+    const hasRefs = getReferenceUrls(source.id, !!source.url).length > 0
+    if (!(source.prompt || source.note || source.url || hasRefs)) {
       updateNode(source.id, node => {
         node.generation = { ...(node.generation || defaultGeneration()), status: 'error', error: 'Add a prompt or image before running.' }
       })
       setStatusLine('Missing prompt or source image')
       return
     }
-    const generationType = source.type === 'image' && !asVariation ? 'enhance' : 'generate'
-    const targetId = source.type === 'placeholder'
+    const fillSelected = !source.url && (source.type === 'placeholder' || source.type === 'image' || source.type === 'video')
+    const generationType: 'generate' | 'enhance' = forceEnhance && source.type === 'image' && !!source.url && !asVariation ? 'enhance' : 'generate'
+    const targetId = fillSelected
       ? source.id
       : addNode({
-          type: 'placeholder',
+          type: 'image',
           title: asVariation ? `Variant from ${source.title}` : `Generated from ${source.title}`,
           prompt: source.prompt,
           sourcePrompt: source.prompt || source.sourcePrompt || '',
@@ -649,9 +1133,11 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
 
     if (source.id !== targetId) {
       addEdge(source.id, targetId, asVariation ? 'variation' : 'derivative', asVariation ? 'variant' : 'generated')
-      activeSpace.edges
-        .filter(edge => edge.to === source.id && edge.type === 'reference')
-        .forEach(edge => addEdge(edge.from, targetId, 'reference', 'ref'))
+      if (!asVariation) {
+        activeSpace.edges
+          .filter(edge => edge.to === source.id && edge.type === 'reference')
+          .forEach(edge => addEdge(edge.from, targetId, 'reference', 'ref'))
+      }
     }
 
     updateNode(targetId, node => {
@@ -661,7 +1147,7 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
     setStatusLine(`${generationType === 'enhance' ? 'Enhancing' : 'Generating'} with ${shortModelName(source.generation?.model)}...`)
     setActiveJobs(count => count + 1)
     try {
-      const payload = await callCanvasImageApi(source, generationType)
+      const payload = await callCanvasImageApi(source, generationType, !!source.url && !asVariation)
       fillNodeWithImage(targetId, payload, asVariation ? `${source.title} variant` : payload.url.split('/').pop())
       setSelectedNodeId(targetId)
       setStatusLine('Generation complete')
@@ -678,6 +1164,197 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
   const runTwoVariants = async (nodeId: string) => {
     await runImageGeneration(nodeId, true)
     await runImageGeneration(nodeId, true)
+  }
+
+  const createVariationNode = (nodeId: string) => {
+    const source = activeSpace.nodes.find(node => node.id === nodeId)
+    if (!source) return
+    const variantIndex = activeSpace.edges.filter(edge => edge.from === nodeId && edge.type === 'variation').length + 1
+    const type: CanvasMediaType = source.type === 'video' ? 'video' : 'image'
+    const size = nodeSize(type)
+    const newId = addNode({
+      type,
+      title: `${source.title} var ${variantIndex}`,
+      width: size.width,
+      height: size.height,
+      prompt: source.prompt || source.sourcePrompt || '',
+      sourcePrompt: source.sourcePrompt || source.prompt || '',
+      generation: { ...(source.generation || defaultGenerationForType(type)), operation: type === 'video' ? 'video' : 'generate', status: 'idle' },
+    }, source.x + source.width + 150, source.y + (variantIndex - 1) * 62)
+    addEdge(source.id, newId, 'variation', `var ${variantIndex}`)
+    setSelectedNodeId(newId)
+    setStatusLine(`Variation node ${variantIndex} created; prompt and inherited references are ready`)
+    return newId
+  }
+
+  const addExistingAlternative = (sourceId: string, alternativeId: string) => {
+    if (sourceId === alternativeId) return
+    const source = activeSpace.nodes.find(node => node.id === sourceId)
+    const alternative = activeSpace.nodes.find(node => node.id === alternativeId)
+    if (!source || !alternative) return
+    updateActiveSpace(space => {
+      const sourceNode = space.nodes.find(node => node.id === sourceId)
+      const altNode = space.nodes.find(node => node.id === alternativeId)
+      if (!sourceNode || !altNode) return
+      const existing = space.edges.find(edge => edge.from === sourceId && edge.to === alternativeId)
+      const variantIndex = space.edges.filter(edge => edge.from === sourceId && edge.type === 'variation').length + (existing?.type === 'variation' ? 0 : 1)
+      if (existing) {
+        existing.type = 'variation'
+        existing.label = `var ${Math.max(1, variantIndex)}`
+      } else {
+        space.edges.push({
+          id: makeId('edge'),
+          from: sourceId,
+          to: alternativeId,
+          type: 'variation',
+          label: `var ${Math.max(1, variantIndex)}`,
+        })
+      }
+      if (!altNode.prompt) {
+        altNode.prompt = sourceNode.prompt || sourceNode.sourcePrompt || ''
+        altNode.sourcePrompt = sourceNode.sourcePrompt || sourceNode.prompt || ''
+      }
+    })
+    setAlternativeMenuNodeId(null)
+    setSelectedNodeId(alternativeId)
+    setStatusLine(`${alternative.title} is now a pink variation of ${source.title}`)
+  }
+
+  const makeMasterShot = (nodeId: string) => {
+    const node = activeSpace.nodes.find(item => item.id === nodeId)
+    const incomingVariation = activeSpace.edges.find(edge => edge.to === nodeId && edge.type === 'variation')
+    if (!node || !incomingVariation) {
+      setStatusLine('Select a variation node to make it the master')
+      return
+    }
+    updateActiveSpace(space => {
+      const siblingEdges = space.edges.filter(edge => edge.from === incomingVariation.from)
+      siblingEdges.forEach(edge => {
+        if (edge.to === nodeId) {
+          edge.type = node.type === 'video' ? 'animation' : 'derivative'
+          edge.label = 'master'
+          return
+        }
+        if ((edge.type === 'derivative' || edge.type === 'animation') && edge.to !== nodeId) {
+          edge.type = 'variation'
+          edge.label = edge.label?.toLowerCase().startsWith('var') ? edge.label : `var ${siblingEdges.filter(item => item.type === 'variation').length + 1}`
+        }
+      })
+    })
+    setStatusLine(`${node.title} is now the master flow`)
+  }
+
+  const swapNodeMedia = (sourceId: string, targetId: string) => {
+    if (sourceId === targetId) return
+    updateActiveSpace(space => {
+      const source = space.nodes.find(node => node.id === sourceId)
+      const target = space.nodes.find(node => node.id === targetId)
+      if (!source || !target) return
+      const sourcePayload = {
+        type: source.type,
+        title: source.title,
+        url: source.url,
+        localPath: source.localPath,
+        mimeType: source.mimeType,
+        fileName: source.fileName,
+        prompt: source.prompt,
+        sourcePrompt: source.sourcePrompt,
+        note: source.note,
+        generation: structuredClone(source.generation),
+      }
+      source.type = target.type
+      source.title = target.title
+      source.url = target.url
+      source.localPath = target.localPath
+      source.mimeType = target.mimeType
+      source.fileName = target.fileName
+      source.prompt = target.prompt
+      source.sourcePrompt = target.sourcePrompt
+      source.note = target.note
+      source.generation = structuredClone(target.generation)
+      target.type = sourcePayload.type
+      target.title = sourcePayload.title
+      target.url = sourcePayload.url
+      target.localPath = sourcePayload.localPath
+      target.mimeType = sourcePayload.mimeType
+      target.fileName = sourcePayload.fileName
+      target.prompt = sourcePayload.prompt
+      target.sourcePrompt = sourcePayload.sourcePrompt
+      target.note = sourcePayload.note
+      target.generation = sourcePayload.generation
+    })
+    setSelectedNodeId(targetId)
+    setStatusLine('Node media swapped; connections stayed in place')
+  }
+
+  const deleteEdge = (edgeId: string) => {
+    updateActiveSpace(space => {
+      space.edges = space.edges.filter(edge => edge.id !== edgeId)
+    })
+    setStatusLine('Connection removed')
+  }
+
+  const insertPlaceholderOnEdge = (edgeId: string, type: CanvasMediaType = 'placeholder') => {
+    const edge = activeSpace.edges.find(item => item.id === edgeId)
+    if (!edge) return
+    const from = edge.fromGroup ? null : activeSpace.nodes.find(node => node.id === edge.from)
+    const fromGroup = edge.fromGroup ? activeSpace.groups.find(group => group.id === edge.from) : null
+    const to = activeSpace.nodes.find(node => node.id === edge.to)
+    if ((!from && !fromGroup) || !to) return
+    const a = fromGroup ? { x: fromGroup.x + fromGroup.width, y: fromGroup.y + fromGroup.height / 2 } : centerOf(from!)
+    const b = centerOf(to)
+    const size = nodeSize(type)
+    const newId = addNode({ type, title: type === 'placeholder' ? 'Between node' : `New ${type}` }, (a.x + b.x) / 2 - size.width / 2, (a.y + b.y) / 2 - size.height / 2)
+    updateActiveSpace(space => {
+      const original = space.edges.find(item => item.id === edgeId)
+      if (!original) return
+      space.edges = space.edges.filter(item => item.id !== edgeId)
+      space.edges.push({ id: makeId('edge'), from: original.from, to: newId, type: original.type, label: original.label, fromGroup: original.fromGroup })
+      space.edges.push({ id: makeId('edge'), from: newId, to: original.to, type: original.type, label: original.label })
+    })
+  }
+
+  const insertFileOnEdge = async (edgeId: string, file: File) => {
+    const edge = activeSpace.edges.find(item => item.id === edgeId)
+    if (!edge) return
+    const from = edge.fromGroup ? null : activeSpace.nodes.find(node => node.id === edge.from)
+    const fromGroup = edge.fromGroup ? activeSpace.groups.find(group => group.id === edge.from) : null
+    const to = activeSpace.nodes.find(node => node.id === edge.to)
+    if ((!from && !fromGroup) || !to) return
+    const a = fromGroup ? { x: fromGroup.x + fromGroup.width, y: fromGroup.y + fromGroup.height / 2 } : centerOf(from!)
+    const b = centerOf(to)
+    const newId = await uploadFile(file, (a.x + b.x) / 2, (a.y + b.y) / 2)
+    updateActiveSpace(space => {
+      const original = space.edges.find(item => item.id === edgeId)
+      if (!original) return
+      space.edges = space.edges.filter(item => item.id !== edgeId)
+      space.edges.push({ id: makeId('edge'), from: original.from, to: newId, type: original.type, label: original.label, fromGroup: original.fromGroup })
+      space.edges.push({ id: makeId('edge'), from: newId, to: original.to, type: original.type, label: original.label })
+    })
+  }
+
+  const insertExistingNodeOnEdge = (edgeId: string, nodeId: string) => {
+    const edge = activeSpace.edges.find(item => item.id === edgeId)
+    if (!edge || edge.from === nodeId || edge.to === nodeId) return
+    const from = edge.fromGroup ? null : activeSpace.nodes.find(node => node.id === edge.from)
+    const fromGroup = edge.fromGroup ? activeSpace.groups.find(group => group.id === edge.from) : null
+    const to = activeSpace.nodes.find(node => node.id === edge.to)
+    const inserted = activeSpace.nodes.find(node => node.id === nodeId)
+    if ((!from && !fromGroup) || !to || !inserted) return
+    const a = fromGroup ? { x: fromGroup.x + fromGroup.width, y: fromGroup.y + fromGroup.height / 2 } : centerOf(from!)
+    const b = centerOf(to)
+    updateActiveSpace(space => {
+      const original = space.edges.find(item => item.id === edgeId)
+      const node = space.nodes.find(item => item.id === nodeId)
+      if (!original || !node) return
+      node.x = (a.x + b.x) / 2 - node.width / 2
+      node.y = (a.y + b.y) / 2 - node.height / 2
+      space.edges = space.edges.filter(item => item.id !== edgeId)
+      space.edges.push({ id: makeId('edge'), from: original.from, to: nodeId, type: original.type, label: original.label, fromGroup: original.fromGroup })
+      space.edges.push({ id: makeId('edge'), from: nodeId, to: original.to, type: original.type, label: original.label })
+    })
+    setSelectedNodeId(nodeId)
+    setStatusLine('Node inserted between connection')
   }
 
   const splitGridNode = async (nodeId: string) => {
@@ -780,10 +1457,122 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
     })
   }
 
+  const createGroupFromMarquee = (selection: { x: number; y: number; width: number; height: number }) => {
+    const nodeIds = canvasNodes
+      .filter(node => node.x >= selection.x && node.y >= selection.y && node.x + node.width <= selection.x + selection.width && node.y + node.height <= selection.y + selection.height)
+      .map(node => node.id)
+    if (nodeIds.length < 2) {
+      setStatusLine('Drag around at least two nodes to make a group')
+      return
+    }
+    const pad = 26
+    updateActiveSpace(space => {
+      space.groups.push({
+        id: makeId('group'),
+        name: `Group ${space.groups.length + 1}`,
+        nodeIds,
+        x: selection.x - pad,
+        y: selection.y - pad,
+        width: selection.width + pad * 2,
+        height: selection.height + pad * 2,
+        strokeColor: '#f8d978',
+        fillColor: 'rgba(248, 217, 120, 0.12)',
+      })
+    })
+    setMultiSelection(null)
+    setStatusLine(`${nodeIds.length} nodes grouped`)
+  }
+
+  const createGroupFromSelection = () => {
+    if (!multiSelection) return
+    createGroupFromMarquee(multiSelection)
+  }
+
+  const deleteSelectedNodes = () => {
+    if (!multiSelection) return
+    updateActiveSpace(space => {
+      const ids = new Set(multiSelection.nodeIds)
+      space.nodes = space.nodes.filter(node => !ids.has(node.id))
+      space.edges = space.edges.filter(edge => !ids.has(edge.from) && !ids.has(edge.to))
+      space.groups.forEach(group => { group.nodeIds = group.nodeIds.filter(id => !ids.has(id)) })
+      space.trays.forEach(tray => { tray.nodeIds = tray.nodeIds.filter(id => !ids.has(id)) })
+    })
+    setMultiSelection(null)
+    setStatusLine('Selected nodes deleted')
+  }
+
+  const disconnectSelectedNodes = () => {
+    if (!multiSelection) return
+    updateActiveSpace(space => {
+      const ids = new Set(multiSelection.nodeIds)
+      space.edges = space.edges.filter(edge => !ids.has(edge.from) && !ids.has(edge.to))
+    })
+    setStatusLine('Selected nodes disconnected')
+  }
+
+  const cutInternalSelectedEdges = () => {
+    if (!multiSelection) return
+    updateActiveSpace(space => {
+      const ids = new Set(multiSelection.nodeIds)
+      space.edges = space.edges.filter(edge => !(ids.has(edge.from) && ids.has(edge.to)))
+    })
+    setStatusLine('Internal selected links cut')
+  }
+
+  const downloadSelectedNodes = () => {
+    if (!multiSelection) return
+    multiSelection.nodeIds
+      .map(id => activeSpace.nodes.find(node => node.id === id))
+      .filter(node => node?.url)
+      .forEach(node => {
+        const anchor = document.createElement('a')
+        anchor.href = node!.url!
+        anchor.download = node!.fileName || node!.title || 'canvas-media'
+        anchor.target = '_blank'
+        anchor.click()
+      })
+    setStatusLine('Selected downloads started')
+  }
+
+  const deleteGroup = (groupId: string) => {
+    updateActiveSpace(space => {
+      space.groups = space.groups.filter(group => group.id !== groupId)
+      space.edges = space.edges.filter(edge => !(edge.fromGroup && edge.from === groupId))
+    })
+    if (selectedGroupId === groupId) setSelectedGroupId(null)
+  }
+
+  const setGroupColor = (groupId: string, color: string) => {
+    updateActiveSpace(space => {
+      const group = space.groups.find(item => item.id === groupId)
+      if (!group) return
+      group.strokeColor = color
+      group.fillColor = `${color}26`
+    })
+  }
+
+  const groupReferenceUrls = (groupId: string) => {
+    const group = activeSpace.groups.find(item => item.id === groupId)
+    if (!group) return []
+    return group.nodeIds
+      .map(nodeId => activeSpace.nodes.find(node => node.id === nodeId)?.url)
+      .filter(Boolean) as string[]
+  }
+
+  const canvasNodes = activeSpace.nodes.filter(node => !node.pinnedOnly)
   const nodeById = useMemo(() => new Map(activeSpace.nodes.map(node => [node.id, node])), [activeSpace.nodes])
   const expandedTray = expandedTrayId ? activeSpace.trays.find(tray => tray.id === expandedTrayId) : null
   const selectedIsVideo = selectedNode?.type === 'video'
   const selectedVideoModel = videoModels.find(model => model.id === selectedGeneration.model) || videoModels[0]
+  const edgeLabelForDisplay = (edgeId: string) => {
+    const edge = activeSpace.edges.find(item => item.id === edgeId)
+    if (!edge) return ''
+    if (edge.type === 'reference' && (!edge.label || edge.label === 'ref')) {
+      const refs = activeSpace.edges.filter(item => item.to === edge.to && item.type === 'reference')
+      return `ref ${refs.findIndex(item => item.id === edge.id) + 1}`
+    }
+    return edge.label || ''
+  }
 
   const closeNotePopovers = () => {
     setNoteAttachOpen(false)
@@ -792,22 +1581,44 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
   }
 
   const addNodeToTray = (trayId: string, nodeId: string) => {
+    let pinnedId = nodeId
+    const source = activeSpace.nodes.find(node => node.id === nodeId)
+    if (source && !source.pinnedOnly) {
+      pinnedId = makeId('pinned')
+      updateActiveSpace(space => {
+        const freshSource = space.nodes.find(node => node.id === nodeId)
+        const tray = space.trays.find(item => item.id === trayId)
+        if (!freshSource || !tray) return
+        space.nodes.push({
+          ...structuredClone(freshSource),
+          id: pinnedId,
+          title: freshSource.title,
+          pinnedOnly: true,
+          x: freshSource.x,
+          y: freshSource.y,
+        })
+        if (!tray.nodeIds.includes(pinnedId)) tray.nodeIds.push(pinnedId)
+      })
+      setStatusLine('Reference duplicated into pinned tray')
+      return
+    }
     updateActiveSpace(space => {
       const tray = space.trays.find(item => item.id === trayId)
-      if (tray && !tray.nodeIds.includes(nodeId)) tray.nodeIds.push(nodeId)
+      if (tray && !tray.nodeIds.includes(pinnedId)) tray.nodeIds.push(pinnedId)
     })
     setStatusLine('Reference stored in tray')
   }
 
-  const duplicateTrayNodeToCanvas = (nodeId: string) => {
+  const duplicateTrayNodeToCanvas = (nodeId: string, x?: number, y?: number) => {
     const source = activeSpace.nodes.find(node => node.id === nodeId)
     if (!source) return
-    addNode({
+    return addNode({
       ...source,
       id: undefined,
       title: source.title,
+      pinnedOnly: false,
       generation: source.generation || defaultGenerationForType(source.type),
-    }, screenToWorld(window.innerWidth / 2, window.innerHeight / 2).x, screenToWorld(window.innerWidth / 2, window.innerHeight / 2).y)
+    }, x ?? screenToWorld(window.innerWidth / 2, window.innerHeight / 2).x, y ?? screenToWorld(window.innerWidth / 2, window.innerHeight / 2).y)
   }
 
   const openNodeUpload = (nodeId: string) => {
@@ -815,8 +1626,216 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
     nodeFileRef.current?.click()
   }
 
+  const openTrayUpload = (trayId: string) => {
+    setTrayUploadTargetId(trayId)
+    trayFileRef.current?.click()
+  }
+
+  const setVideoPlaying = (nodeId: string, isPlaying: boolean) => {
+    setPlayingVideoIds(current => {
+      const next = new Set(current)
+      if (isPlaying) next.add(nodeId)
+      else next.delete(nodeId)
+      return next
+    })
+  }
+
+  const toggleNodeVideo = async (event: MouseEvent<HTMLButtonElement>, nodeId: string) => {
+    event.preventDefault()
+    event.stopPropagation()
+    const video = stageRef.current?.querySelector<HTMLVideoElement>(`video[data-node-video-id="${nodeId}"]`)
+    if (!video) {
+      setStatusLine('Video player is not ready yet')
+      return
+    }
+    try {
+      if (video.paused) {
+        await video.play()
+        setVideoPlaying(nodeId, true)
+      } else {
+        video.pause()
+        setVideoPlaying(nodeId, false)
+      }
+    } catch (error) {
+      setStatusLine(error instanceof Error ? error.message : 'Video playback failed')
+    }
+  }
+
+  const toggleNodeVideoMute = (event: MouseEvent<HTMLButtonElement>, nodeId: string) => {
+    event.preventDefault()
+    event.stopPropagation()
+    const video = stageRef.current?.querySelector<HTMLVideoElement>(`video[data-node-video-id="${nodeId}"]`)
+    if (!video) return
+    video.muted = !video.muted
+    if (!video.muted && video.volume < 0.15) video.volume = 0.75
+    setUnmutedVideoIds(current => {
+      const next = new Set(current)
+      if (video.muted) next.delete(nodeId)
+      else next.add(nodeId)
+      return next
+    })
+  }
+
+  const updateVideoProgress = (nodeId: string) => {
+    const video = stageRef.current?.querySelector<HTMLVideoElement>(`video[data-node-video-id="${nodeId}"]`)
+    if (!video) return
+    setVideoProgress(current => ({
+      ...current,
+      [nodeId]: { current: video.currentTime || 0, duration: video.duration || 0 },
+    }))
+  }
+
+  const setVideoCrop = (nodeId: string, key: 'start' | 'end', value: number) => {
+    const duration = videoProgress[nodeId]?.duration || 0
+    updateNode(nodeId, node => {
+      const current = node.videoCrop || { start: 0, end: duration || 0 }
+      const next = { ...current, [key]: value }
+      if (duration) {
+        next.start = Math.max(0, Math.min(next.start, Math.max(0, duration - 0.1)))
+        next.end = Math.max(next.start + 0.1, Math.min(next.end || duration, duration))
+      }
+      node.videoCrop = next
+    })
+  }
+
+  const resetVideoCrop = (nodeId: string) => {
+    updateNode(nodeId, node => {
+      delete node.videoCrop
+    })
+    setStatusLine('Video trim reset')
+  }
+
+  const extractFrameFromVideo = async (nodeId: string) => {
+    const source = activeSpace.nodes.find(node => node.id === nodeId)
+    const video = stageRef.current?.querySelector<HTMLVideoElement>(`video[data-node-video-id="${nodeId}"]`)
+    if (!source?.url || !video) {
+      setStatusLine('Video frame is not ready yet')
+      return
+    }
+    const width = video.videoWidth || 1280
+    const height = video.videoHeight || 720
+    if (!width || !height) {
+      setStatusLine('Play or load the video once before extracting a frame')
+      return
+    }
+    const canvas = document.createElement('canvas')
+    canvas.width = width
+    canvas.height = height
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+    try {
+      const crop = source.videoCrop
+      if (crop && Number.isFinite(crop.start) && Number.isFinite(crop.end)) {
+        const clampedTime = Math.min(crop.end, Math.max(crop.start, video.currentTime || crop.start))
+        if (Math.abs((video.currentTime || 0) - clampedTime) > 0.04) {
+          await new Promise<void>(resolve => {
+            const onSeeked = () => {
+              video.removeEventListener('seeked', onSeeked)
+              resolve()
+            }
+            video.addEventListener('seeked', onSeeked)
+            video.currentTime = clampedTime
+          })
+        }
+      }
+      ctx.drawImage(video, 0, 0, width, height)
+      const blob = await new Promise<Blob | null>(resolve => canvas.toBlob(resolve, 'image/png'))
+      if (!blob) throw new Error('Could not capture frame')
+      const frameTime = Number.isFinite(video.currentTime) ? video.currentTime : 0
+      const file = new File([blob], `${source.title.replace(/\W+/g, '-').slice(0, 42) || 'video'}-frame-${Math.round(frameTime * 1000)}.png`, { type: 'image/png' })
+      const previewUrl = URL.createObjectURL(file)
+      const formData = new FormData()
+      formData.append('file', file)
+      let uploaded: { url?: string; localPath?: string; mimeType?: string; fileName?: string } = {}
+      try {
+        const response = await fetch('/api/storyboard/upload', { method: 'POST', body: formData })
+        uploaded = await response.json()
+      } catch {
+        uploaded = { fileName: file.name, mimeType: file.type }
+      }
+      const frameId = addNode({
+        type: 'image',
+        title: `Frame from ${source.title}`,
+        url: previewUrl,
+        localPath: uploaded.localPath,
+        mimeType: uploaded.mimeType || file.type,
+        fileName: uploaded.fileName || file.name,
+        prompt: source.prompt,
+        sourcePrompt: source.sourcePrompt || source.prompt || '',
+        generation: { ...defaultGeneration(), operation: 'generate', status: 'done' },
+      }, source.x + source.width + 120, source.y + 18)
+      if (uploaded.url) {
+        window.setTimeout(() => {
+          updateNode(frameId, node => {
+            if (node.url === previewUrl) node.url = cacheBustUrl(uploaded.url)
+          })
+        }, 900)
+      }
+      addEdge(source.id, frameId, 'frame', 'frame')
+      setStatusLine('Current video frame extracted')
+    } catch (error) {
+      setStatusLine(error instanceof Error ? error.message : 'Frame extraction failed')
+    }
+  }
+
+  const startAgentDictation = () => {
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition
+    if (!SpeechRecognition) {
+      setStatusLine('Microphone dictation is not available in this browser')
+      return
+    }
+    const recognition = new SpeechRecognition()
+    recognition.lang = 'en-US'
+    recognition.interimResults = false
+    recognition.maxAlternatives = 1
+    recognition.onresult = (event: any) => {
+      const transcript = event.results?.[0]?.[0]?.transcript
+      if (transcript) setAgentDraft(current => `${current}${current ? ' ' : ''}${transcript}`)
+    }
+    recognition.onerror = () => setStatusLine('Microphone dictation failed')
+    recognition.start()
+    setStatusLine('Listening...')
+  }
+
+  const sendAgentMessage = async () => {
+    const text = agentDraft.trim()
+    if (!text || agentLoading) return
+    const agentContextNodes = selectedGroup
+      ? selectedGroup.nodeIds.map(nodeId => activeSpace.nodes.find(node => node.id === nodeId)).filter(Boolean) as CanvasNode[]
+      : selectedNode
+        ? getInputNodes(selectedNode.id, true)
+        : []
+    const agentImageUrls = [
+      ...agentContextNodes.filter(node => node.type === 'image' && node.url).map(node => node.url as string),
+      ...agentAttachments.filter(file => file.url && file.type.startsWith('image/')).map(file => file.url as string),
+    ]
+    const context = [
+      `Active canvas space: ${activeSpace.name}`,
+      `Nodes: ${activeSpace.nodes.length}; connections: ${activeSpace.edges.length}; groups: ${activeSpace.groups.length}`,
+      selectedNode ? `Selected node: ${selectedNode.title} (${selectedNode.type}); prompt: ${selectedNode.prompt || selectedNode.note || 'empty'}; connected inputs: ${agentContextNodes.map(node => `${node.title} (${node.type})`).join(', ') || 'none'}` : 'Selected node: none',
+      selectedGroup ? `Selected group: ${selectedGroup.name}; nodes: ${selectedGroup.nodeIds.length}` : '',
+      agentAttachments.length ? `Theo-only attachments:\n${agentAttachments.map(file => `- ${file.name} (${file.type})${file.text ? `:\n${file.text.slice(0, 5000)}` : ''}`).join('\n')}` : '',
+    ].filter(Boolean).join('\n')
+    const nextUser = { role: 'user' as const, text }
+    setAgentMessages(messages => [...messages, nextUser])
+    setAgentDraft('')
+    setAgentLoading(true)
+    try {
+      const history = agentMessages.map(message => ({ role: message.role, parts: [{ text: message.text }] }))
+      const result = await sendToGeminiWithImages(`${text}\n\nCanvas context:\n${context}`, agentImageUrls, history)
+      setAgentMessages(messages => [...messages, { role: 'model', text: result.text || result.error || 'No response.' }])
+      setStatusLine(result.error ? result.error : 'Gemini replied')
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Gemini failed'
+      setAgentMessages(messages => [...messages, { role: 'model', text: message }])
+      setStatusLine(message)
+    } finally {
+      setAgentLoading(false)
+    }
+  }
+
   return (
-    <div className="canvas-mode">
+    <div className={`canvas-mode ${agentOpen ? '' : 'agent-collapsed'}`}>
       <div
         ref={stageRef}
         className={`canvas-stage ${panning ? 'is-dragging' : ''}`}
@@ -854,23 +1873,6 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
             </svg>
             <span>FILM STORYBOARD</span>
           </button>
-          <button className="canvas-chip" onClick={() => fileRef.current?.click()} type="button">＋ Upload media</button>
-          <button className="canvas-chip" onClick={() => addPlaceholder('placeholder', screenToWorld(window.innerWidth / 2, window.innerHeight / 2).x, screenToWorld(window.innerWidth / 2, window.innerHeight / 2).y)} type="button">Empty node</button>
-          <span className={`canvas-chip canvas-status-chip ${statusLine.includes('failed') || statusLine.includes('Missing') ? 'is-error' : ''}`}>{statusLine}</span>
-          <div className="canvas-zoom-control" aria-label="Canvas zoom controls">
-            <button onClick={() => zoomBy(0.88)} type="button" aria-label="Zoom out">−</button>
-            <input
-              type="range"
-              min="16"
-              max="300"
-              step="1"
-              value={Math.round(activeSpace.viewport.zoom * 100)}
-              onChange={(event) => setZoomAt(Number(event.target.value) / 100)}
-              aria-label="Zoom level"
-            />
-            <button onClick={() => zoomBy(1.14)} type="button" aria-label="Zoom in">＋</button>
-            <button className="canvas-zoom-reset" onClick={() => setZoomAt(1)} type="button">100%</button>
-          </div>
           <input
             ref={fileRef}
             type="file"
@@ -892,6 +1894,44 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
               const file = event.target.files?.[0]
               if (file && nodeUploadTargetId) uploadFileIntoNode(file, nodeUploadTargetId)
               setNodeUploadTargetId(null)
+              event.currentTarget.value = ''
+            }}
+          />
+          <input
+            ref={trayFileRef}
+            type="file"
+            multiple
+            accept="image/*,video/*,audio/*,.pdf,.doc,.docx"
+            style={{ display: 'none' }}
+            onChange={(event) => {
+              const files = Array.from(event.target.files || [])
+              if (trayUploadTargetId) files.forEach(file => uploadFileToTray(file, trayUploadTargetId))
+              setTrayUploadTargetId(null)
+              event.currentTarget.value = ''
+            }}
+          />
+          <input
+            ref={agentFileRef}
+            type="file"
+            multiple
+            accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.txt,.md,.json,.csv"
+            style={{ display: 'none' }}
+            onChange={async (event) => {
+              const files = Array.from(event.target.files || [])
+              const attachments = await Promise.all(files.map(async file => {
+                const attachment: AgentAttachment = {
+                  id: makeId('agent-file'),
+                  name: file.name,
+                  type: file.type || 'file',
+                  url: file.type.startsWith('image/') ? URL.createObjectURL(file) : undefined,
+                }
+                if (/^(text\/|application\/json|application\/csv)/.test(file.type) || /\.(txt|md|json|csv)$/i.test(file.name)) {
+                  attachment.text = await file.text()
+                }
+                return attachment
+              }))
+              setAgentAttachments(current => [...current, ...attachments])
+              if (attachments.length) setStatusLine(`${attachments.length} file${attachments.length === 1 ? '' : 's'} attached to Theo`)
               event.currentTarget.value = ''
             }}
           />
@@ -925,11 +1965,45 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
               className={`canvas-tray-tab ${expandedTrayId === tray.id || (!expandedTrayId && index === 0) ? 'is-active' : ''}`}
               style={{ borderColor: `${tray.color}55` }}
               onClick={() => setExpandedTrayId(expandedTrayId === tray.id ? null : tray.id)}
+              onDragOver={(event) => event.preventDefault()}
+              onDrop={(event) => {
+                event.preventDefault()
+                const canvasNodeId = event.dataTransfer.getData('application/x-canvas-node')
+                if (canvasNodeId) {
+                  addNodeToTray(tray.id, canvasNodeId)
+                } else {
+                  Array.from(event.dataTransfer.files).forEach(file => uploadFileToTray(file, tray.id))
+                }
+                setExpandedTrayId(tray.id)
+              }}
               type="button"
             >
               {tray.name}
             </button>
           ))}
+          <div className="canvas-zoom-control" aria-label="Canvas zoom controls">
+            <button onClick={() => zoomBy(0.88)} type="button" aria-label="Zoom out">−</button>
+            <input
+              type="range"
+              min="16"
+              max="300"
+              step="1"
+              value={Math.round(activeSpace.viewport.zoom * 100)}
+              onChange={(event) => setZoomAt(Number(event.target.value) / 100)}
+              aria-label="Zoom level"
+            />
+            <button onClick={() => zoomBy(1.14)} type="button" aria-label="Zoom in">＋</button>
+            <button className="canvas-zoom-reset" onClick={() => setZoomAt(1)} type="button">{Math.round(activeSpace.viewport.zoom * 100)}%</button>
+            <button
+              className={`canvas-group-tool ${groupToolActive ? 'is-active' : ''}`}
+              onClick={() => setGroupToolActive(active => !active)}
+              type="button"
+              title="Group tool: drag an area over nodes"
+              aria-label="Toggle group selection tool"
+            >
+              ▣
+            </button>
+          </div>
         </div>
 
         {expandedTray && (
@@ -944,27 +2018,44 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
                 addNodeToTray(expandedTray.id, canvasNodeId)
                 return
               }
-              const world = screenToWorld(window.innerWidth / 2, window.innerHeight / 2)
-              Array.from(event.dataTransfer.files).forEach(async (file, index) => {
-                const nodeId = await uploadFile(file, world.x + index * 24, world.y + index * 24)
-                addNodeToTray(expandedTray.id, nodeId)
-              })
+              Array.from(event.dataTransfer.files).forEach(file => uploadFileToTray(file, expandedTray.id))
             }}
           >
             <button className="canvas-popover-close" onClick={() => setExpandedTrayId(null)} type="button" aria-label="Close">×</button>
             <div className="canvas-tray-panel-header">
               <strong>{expandedTray.name}</strong>
-              <span>Drop files here or store the selected node.</span>
+              <span>Drop files here, click Add reference, or store selected node.</span>
               {selectedNode && <button type="button" onClick={() => addNodeToTray(expandedTray.id, selectedNode.id)}>Store selected</button>}
             </div>
             <div className="canvas-tray-panel-grid">
+              <button className="canvas-tray-add" type="button" onClick={() => openTrayUpload(expandedTray.id)}>
+                <span>＋</span>
+                <small>Add reference</small>
+              </button>
               {expandedTray.nodeIds.map(nodeId => activeSpace.nodes.find(node => node.id === nodeId)).filter(Boolean).map(node => (
-                <button key={node!.id} type="button" onClick={() => duplicateTrayNodeToCanvas(node!.id)} title={`Place ${node!.title} on canvas`}>
-                  {node!.url && node!.type === 'image' ? <img src={node!.url} alt="" /> : <span>{node!.type}</span>}
-                  <small>{node!.title}</small>
-                </button>
+                <div key={node!.id} className="canvas-tray-item">
+                  <button
+                    type="button"
+                    draggable
+                    onDragStart={(event) => {
+                      event.dataTransfer.setData('application/x-canvas-tray-node', node!.id)
+                      event.dataTransfer.setData('application/x-canvas-tray-id', expandedTray.id)
+                      event.dataTransfer.effectAllowed = 'move'
+                    }}
+                    onClick={() => duplicateTrayNodeToCanvas(node!.id)}
+                    title={`Place ${node!.title} on canvas`}
+                  >
+                    {node!.url && node!.type === 'image' ? <img src={node!.url} alt="" /> : <span>{node!.type}</span>}
+                    <small>{node!.title}</small>
+                  </button>
+                  <button className="canvas-tray-delete" type="button" title="Remove from tray" onClick={() => updateActiveSpace(space => {
+                    const tray = space.trays.find(item => item.id === expandedTray.id)
+                    if (tray) tray.nodeIds = tray.nodeIds.filter(id => id !== node!.id)
+                    const pinned = space.nodes.find(item => item.id === node!.id && item.pinnedOnly)
+                    if (pinned) space.nodes = space.nodes.filter(item => item.id !== node!.id)
+                  })}>×</button>
+                </div>
               ))}
-              {expandedTray.nodeIds.length === 0 && <div className="canvas-tray-empty">No references yet</div>}
             </div>
           </div>
         )}
@@ -973,30 +2064,102 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
           className="canvas-world"
           style={{ transform: `translate(${activeSpace.viewport.panX}px, ${activeSpace.viewport.panY}px) scale(${activeSpace.viewport.zoom})` }}
         >
+          {activeSpace.groups.map(group => {
+            const groupNodes = group.nodeIds.map(nodeId => activeSpace.nodes.find(node => node.id === nodeId)).filter(Boolean) as CanvasNode[]
+            return (
+            <div
+              key={group.id}
+              className={`canvas-group-box ${group.id === selectedGroupId ? 'is-selected' : ''}`}
+              style={{ left: group.x, top: group.y, width: group.width, height: group.height, borderColor: group.strokeColor, background: group.fillColor }}
+              onMouseDown={(event) => {
+                event.stopPropagation()
+                setSelectedGroupId(group.id)
+                setSelectedNodeId(null)
+              }}
+            >
+              {(['n', 's', 'e', 'w'] as GroupResizeHandle[]).map(handle => (
+                <span
+                  key={handle}
+                  className={`canvas-group-rim ${handle}`}
+                  onMouseDown={(event) => startGroupDrag(event, group.id)}
+                  title="Drag group"
+                />
+              ))}
+              {(['nw', 'ne', 'sw', 'se'] as GroupResizeHandle[]).map(handle => (
+                <span
+                  key={handle}
+                  className={`canvas-group-resize ${handle}`}
+                  onMouseDown={(event) => startGroupResize(event, group.id, handle)}
+                  title="Resize group"
+                />
+              ))}
+              <button className="canvas-group-move" type="button" onMouseDown={(event) => startGroupDrag(event, group.id)} title="Drag group">
+                move
+              </button>
+              <div className="canvas-group-count">{groupMediaSummary(groupNodes) || 'empty group'}</div>
+              <input
+                value={group.name}
+                onMouseDown={(event) => event.stopPropagation()}
+                onChange={(event) => updateActiveSpace(space => {
+                  const item = space.groups.find(g => g.id === group.id)
+                  if (item) item.name = event.target.value
+                })}
+              />
+              <button type="button" onMouseDown={(event) => event.stopPropagation()} onClick={() => deleteGroup(group.id)}>×</button>
+              {group.id === selectedGroupId && (
+                <div className="canvas-group-colors" onMouseDown={(event) => event.stopPropagation()}>
+                  {groupSwatches.map(color => (
+                    <button
+                      key={color}
+                      type="button"
+                      className={group.strokeColor === color ? 'is-active' : ''}
+                      style={{ background: color }}
+                      aria-label={`Set group color ${color}`}
+                      onClick={() => setGroupColor(group.id, color)}
+                    />
+                  ))}
+                </div>
+              )}
+              <button
+                className="canvas-group-port"
+                type="button"
+                title={`Drag group noodle: ${groupReferenceUrls(group.id).length} refs in group`}
+                onMouseDown={(event) => startGroupConnectorDrag(event, group.id)}
+              />
+            </div>
+          )})}
+
           <svg className="canvas-edge-layer">
             {activeSpace.edges.map(edge => {
-              const from = nodeById.get(edge.from)
+              const from = edge.fromGroup ? null : nodeById.get(edge.from)
+              const fromGroup = edge.fromGroup ? activeSpace.groups.find(group => group.id === edge.from) : null
               const to = nodeById.get(edge.to)
-              if (!from || !to) return null
-              const a = centerOf(from)
+              if ((!from && !fromGroup) || !to) return null
+              const a = fromGroup
+                ? { x: fromGroup.x + fromGroup.width, y: fromGroup.y + fromGroup.height / 2 }
+                : centerOf(from!)
               const b = centerOf(to)
               const midX = (a.x + b.x) / 2
               const d = `M ${a.x} ${a.y} C ${midX} ${a.y}, ${midX} ${b.y}, ${b.x} ${b.y}`
               return (
                 <g key={edge.id}>
-                  <path className={`canvas-edge-path ${edge.type}`} d={d} stroke={edgeColor(edge.type)} />
-                  {edge.label && (
-                    <text className="canvas-edge-label" x={(a.x + b.x) / 2} y={(a.y + b.y) / 2 - 8} fill={edgeColor(edge.type)}>
-                      {edge.label}
+                  <path className="canvas-edge-hit" data-edge-id={edge.id} d={d} />
+                  <path className={`canvas-edge-path ${edge.type} ${edge.id === edgeSnapCandidate ? 'is-snap-target' : ''} ${edge.fromGroup ? 'group-edge' : ''} ${edge.label === 'CONT VIDEO' ? 'continuation' : ''} ${edge.type === 'variation' && ((from?.type === 'video') || to.type === 'video') ? 'video-variation' : ''}`} d={d} stroke={edgeDisplayColor(edge.type, edge.label)} />
+                  {edgeLabelForDisplay(edge.id) && (
+                    <text className="canvas-edge-label" x={(a.x + b.x) / 2} y={(a.y + b.y) / 2 - 8} fill={edgeDisplayColor(edge.type, edge.label)}>
+                      {edgeLabelForDisplay(edge.id)}
                     </text>
                   )}
                 </g>
               )
             })}
             {connectorDrag && (() => {
-              const from = nodeById.get(connectorDrag.from)
-              if (!from) return null
-              const a = { x: from.x + from.width, y: from.y + from.height / 2 }
+              const fromNode = nodeById.get(connectorDrag.from)
+              const fromGroup = activeSpace.groups.find(group => group.id === connectorDrag.from)
+              if (!fromNode && !fromGroup) return null
+              const a = fromGroup
+                ? { x: fromGroup.x + fromGroup.width, y: fromGroup.y + fromGroup.height / 2 }
+                : { x: fromNode!.x + fromNode!.width, y: fromNode!.y + fromNode!.height / 2 }
               const b = { x: connectorDrag.x, y: connectorDrag.y }
               const midX = (a.x + b.x) / 2
               const d = `M ${a.x} ${a.y} C ${midX} ${a.y}, ${midX} ${b.y}, ${b.x} ${b.y}`
@@ -1004,14 +2167,82 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
             })()}
           </svg>
 
-          {activeSpace.nodes.map(node => {
+          {activeSpace.edges.map(edge => {
+            const from = edge.fromGroup ? null : nodeById.get(edge.from)
+            const fromGroup = edge.fromGroup ? activeSpace.groups.find(group => group.id === edge.from) : null
+            const to = nodeById.get(edge.to)
+            if ((!from && !fromGroup) || !to) return null
+            const a = fromGroup
+              ? { x: fromGroup.x + fromGroup.width, y: fromGroup.y + fromGroup.height / 2 }
+              : centerOf(from!)
+            const b = centerOf(to)
+            const x = (a.x + b.x) / 2
+            const y = (a.y + b.y) / 2
+            return (
+              <div
+                key={`controls-${edge.id}`}
+                data-edge-id={edge.id}
+                className="canvas-edge-controls"
+                style={{ left: x, top: y }}
+                onDragOver={(event) => event.preventDefault()}
+                onDrop={(event) => {
+                  event.preventDefault()
+                  event.stopPropagation()
+                  const droppedNodeId = event.dataTransfer.getData('application/x-canvas-node')
+                  if (droppedNodeId) {
+                    insertExistingNodeOnEdge(edge.id, droppedNodeId)
+                    return
+                  }
+                  const file = event.dataTransfer.files?.[0]
+                  if (file) insertFileOnEdge(edge.id, file)
+                }}
+              >
+                <button type="button" title="Insert node between" onClick={() => insertPlaceholderOnEdge(edge.id)}>＋</button>
+                <button type="button" title="Cut connection" onClick={() => deleteEdge(edge.id)}>✂</button>
+              </div>
+            )
+          })}
+
+          {marquee && (
+            <div
+              className="canvas-marquee"
+              style={{
+                left: Math.min(marquee.startX, marquee.x),
+                top: Math.min(marquee.startY, marquee.y),
+                width: Math.abs(marquee.x - marquee.startX),
+                height: Math.abs(marquee.y - marquee.startY),
+              }}
+            />
+          )}
+
+          {multiSelection && (
+            <>
+              <div
+                className="canvas-selection-frame"
+                style={{ left: multiSelection.x, top: multiSelection.y, width: multiSelection.width, height: multiSelection.height }}
+              />
+              <div
+                className="canvas-selection-menu"
+                style={{ left: multiSelection.x + multiSelection.width / 2, top: multiSelection.y - 52 }}
+                onMouseDown={(event) => event.stopPropagation()}
+              >
+                <button type="button" onClick={createGroupFromSelection} title="Group selected">▣ <span>Group</span></button>
+                <button type="button" onClick={deleteSelectedNodes} title="Delete selected">⌫ <span>Delete</span></button>
+                <button type="button" onClick={disconnectSelectedNodes} title="Disconnect all selected">✂ <span>Disconnect</span></button>
+                <button type="button" onClick={cutInternalSelectedEdges} title="Cut selected internal links">╳ <span>Cut links</span></button>
+                <button type="button" onClick={downloadSelectedNodes} title="Download selected">⇩ <span>Download</span></button>
+              </div>
+            </>
+          )}
+
+          {canvasNodes.map(node => {
             const isReference = activeSpace.edges.some(edge => edge.from === node.id && edge.type === 'reference')
             const status = node.generation?.status
             return (
             <div
               key={node.id}
               data-node-id={node.id}
-              className={`canvas-node ${node.type} ${node.id === selectedNodeId ? 'is-selected' : ''} ${isReference ? 'is-reference' : ''} ${status ? `is-${status}` : ''}`}
+              className={`canvas-node ${node.type} ${node.id === selectedNodeId ? 'is-selected' : ''} ${node.id === draggingNodeId ? 'is-dragging-node' : ''} ${isReference ? 'is-reference' : ''} ${status ? `is-${status}` : ''}`}
               style={{ left: node.x, top: node.y, width: node.width, height: node.height }}
               onMouseDown={(event) => startNodeDrag(event, node)}
               onDragOver={(event) => event.preventDefault()}
@@ -1019,6 +2250,11 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
                 event.preventDefault()
                 event.stopPropagation()
                 const world = screenToWorld(event.clientX, event.clientY)
+                const draggedNodeId = event.dataTransfer.getData('application/x-canvas-node')
+                if (draggedNodeId) {
+                  swapNodeMedia(draggedNodeId, node.id)
+                  return
+                }
                 const files = Array.from(event.dataTransfer.files)
                 if (!files.length) return
                 if (!node.url && (node.type === 'placeholder' || node.type === 'image' || node.type === 'video' || node.type === 'audio' || node.type === 'document')) {
@@ -1043,23 +2279,56 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
               }}
             >
               {isReference && <div className="canvas-node-badge">REF</div>}
-              {status && status !== 'idle' && <div className={`canvas-node-status ${status}`}>{status}</div>}
-              <button
-                className="canvas-connector-port"
-                onMouseDown={(event) => startConnectorDrag(event, node)}
-                title="Drag connector to another node"
-                type="button"
-              />
+              {status && ['queued', 'running', 'error'].includes(status) && <div className={`canvas-node-status ${status}`}>{status}</div>}
+              {node.url && (node.type === 'image' || node.type === 'video') && (
+                <div className="canvas-alt-picker" onMouseDown={(event) => event.stopPropagation()}>
+                  <button
+                    type="button"
+                    onClick={(event) => {
+                      event.stopPropagation()
+                      setAlternativeMenuNodeId(alternativeMenuNodeId === node.id ? null : node.id)
+                    }}
+                    title="Choose an existing media node as a pink variation"
+                  >
+                    var
+                  </button>
+                  {alternativeMenuNodeId === node.id && (
+                    <div className="canvas-alt-menu">
+                      <strong>Set existing as variation</strong>
+                      {canvasNodes
+                        .filter(candidate => candidate.id !== node.id && candidate.url && (candidate.type === 'image' || candidate.type === 'video'))
+                        .map(candidate => (
+                          <button key={candidate.id} type="button" onClick={() => addExistingAlternative(node.id, candidate.id)}>
+                            {candidate.type === 'image' ? <img src={candidate.url} alt="" /> : <span>video</span>}
+                            <small>{candidate.title}</small>
+                          </button>
+                        ))}
+                      {canvasNodes.filter(candidate => candidate.id !== node.id && candidate.url && (candidate.type === 'image' || candidate.type === 'video')).length === 0 && <p>No other media nodes yet.</p>}
+                    </div>
+                  )}
+                </div>
+              )}
+              {(['right', 'left', 'top', 'bottom'] as const).map(side => (
+                <button
+                  key={side}
+                  className={`canvas-connector-port ${side}`}
+                  onMouseDown={(event) => startConnectorDrag(event, node, side)}
+                  title={`Drag connector from ${side}`}
+                  type="button"
+                />
+              ))}
               {node.id === selectedNodeId && (
                 <>
                   <div className="canvas-floating-tools left">
                     <button onMouseDown={(event) => event.stopPropagation()} onClick={(event) => { event.stopPropagation(); duplicateNode(node.id) }} title="Duplicate node" type="button">⧉</button>
                     <button onMouseDown={(event) => event.stopPropagation()} onClick={(event) => { event.stopPropagation(); runImageGeneration(node.id) }} title="Enhance" type="button">✧</button>
-                    <button onMouseDown={(event) => event.stopPropagation()} onClick={(event) => { event.stopPropagation(); splitGridNode(node.id) }} title="Split grid" type="button">▦</button>
+                    {node.type === 'video'
+                      ? <button onMouseDown={(event) => event.stopPropagation()} onClick={(event) => { event.stopPropagation(); extractFrameFromVideo(node.id) }} title="Extract current frame" type="button">▣</button>
+                      : <button onMouseDown={(event) => event.stopPropagation()} onClick={(event) => { event.stopPropagation(); splitGridNode(node.id) }} title="Split grid" type="button">▦</button>}
                   </div>
                   <div className="canvas-floating-tools right">
                     <button onMouseDown={(event) => event.stopPropagation()} onClick={(event) => { event.stopPropagation(); setStatusLine('Add to scene will connect to Film Storyboard in the next pass') }} title="Add to scene" type="button">☆</button>
-                    <button onMouseDown={(event) => event.stopPropagation()} onClick={(event) => { event.stopPropagation(); focusSelectedNote(node.id) }} title="Note / prompt" type="button">✎</button>
+                    <button onMouseDown={(event) => event.stopPropagation()} onClick={(event) => { event.stopPropagation(); node.type === 'video' ? setStatusLine('Use the trim handles on the video player, then extract a frame') : focusSelectedNote(node.id) }} title={node.type === 'video' ? 'Crop / trim video' : 'Prompt'} type="button">{node.type === 'video' ? '⌗' : '✎'}</button>
                     <button onMouseDown={(event) => event.stopPropagation()} onClick={(event) => { event.stopPropagation(); deleteNode(node.id) }} title="Delete" type="button" aria-label="Delete">
                       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M6 6l1 15h10l1-15M10 10v7M14 10v7" /></svg>
                     </button>
@@ -1068,7 +2337,8 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
               )}
               <div
                 className={`canvas-node-media ${!node.url ? 'is-empty-media' : ''}`}
-                onClick={(event) => {
+                draggable={false}
+                onDoubleClick={(event) => {
                   if (!node.url) {
                     event.stopPropagation()
                     openNodeUpload(node.id)
@@ -1076,10 +2346,64 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
                 }}
               >
                 {node.type === 'image' && node.url ? <img src={node.url} alt={node.title} draggable={false} /> : null}
-                {node.type === 'video' && node.url ? <video src={node.url} muted playsInline /> : null}
+                {node.type === 'video' && node.url ? (
+                  <>
+                    <video
+                      data-node-video-id={node.id}
+                      src={node.url}
+                      muted={!unmutedVideoIds.has(node.id)}
+                      playsInline
+                      onPlay={() => setVideoPlaying(node.id, true)}
+                      onPause={() => setVideoPlaying(node.id, false)}
+                      onEnded={() => setVideoPlaying(node.id, false)}
+                      onLoadedMetadata={() => updateVideoProgress(node.id)}
+                      onTimeUpdate={() => updateVideoProgress(node.id)}
+                    />
+                    <div className="canvas-video-controls" onMouseDown={(event) => event.stopPropagation()}>
+                      <button type="button" onClick={(event) => toggleNodeVideo(event, node.id)}>
+                        {playingVideoIds.has(node.id) ? 'Ⅱ' : '▶'}
+                      </button>
+                      <button type="button" onClick={(event) => toggleNodeVideoMute(event, node.id)}>
+                        {unmutedVideoIds.has(node.id)
+                          ? <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" /><path d="M16 8c1.3 1.1 1.9 2.4 1.9 4s-.6 2.9-1.9 4" /></svg>
+                          : <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" /><path d="M17 9l4 6M21 9l-4 6" /></svg>}
+                      </button>
+                      <button type="button" onClick={(event) => { event.preventDefault(); event.stopPropagation(); extractFrameFromVideo(node.id) }}>
+                        Frame
+                      </button>
+                      <div className="canvas-video-time">
+                        <span>{formatSeconds(videoProgress[node.id]?.current || 0)}</span>
+                        <span>{formatSeconds(videoProgress[node.id]?.duration || 0)}</span>
+                      </div>
+                      <div className="canvas-video-progress">
+                        <span style={{ width: `${Math.min(100, ((videoProgress[node.id]?.current || 0) / Math.max(0.01, videoProgress[node.id]?.duration || 0.01)) * 100)}%` }} />
+                      </div>
+                      <div className="canvas-video-trim">
+                        <input
+                          type="range"
+                          min="0"
+                          max={Math.max(0.1, videoProgress[node.id]?.duration || 0.1)}
+                          step="0.05"
+                          value={node.videoCrop?.start ?? 0}
+                          onChange={(event) => setVideoCrop(node.id, 'start', Number(event.target.value))}
+                          aria-label="Trim start"
+                        />
+                        <input
+                          type="range"
+                          min="0"
+                          max={Math.max(0.1, videoProgress[node.id]?.duration || 0.1)}
+                          step="0.05"
+                          value={node.videoCrop?.end ?? videoProgress[node.id]?.duration ?? 0}
+                          onChange={(event) => setVideoCrop(node.id, 'end', Number(event.target.value))}
+                          aria-label="Trim end"
+                        />
+                      </div>
+                    </div>
+                  </>
+                ) : null}
                 {node.type === 'audio' ? <div className="canvas-node-placeholder">♪<br />Audio / music</div> : null}
                 {node.type === 'document' ? <div className="canvas-node-placeholder">▤<br />PDF / DOCX context</div> : null}
-                {(node.type === 'placeholder' || (!node.url && node.type !== 'audio' && node.type !== 'document')) ? <div className="canvas-node-placeholder">＋<br />Upload or generate media</div> : null}
+                {(node.type === 'placeholder' || (!node.url && node.type !== 'audio' && node.type !== 'document')) ? <div className="canvas-node-placeholder">＋<br />Double-click to upload<br />or generate here</div> : null}
               </div>
               <div className="canvas-node-footer">
                 <span
@@ -1101,12 +2425,16 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
           })}
         </div>
 
-        {activeSpace.nodes.length === 0 && (
+        {canvasNodes.length === 0 && (
           <div className="canvas-empty-hint">
             <strong>Full Canvas Mode</strong>
             <p>Drop images, videos, music, PDFs, or DOCX files here. Use right click to add placeholders. Pinch or two-finger scroll to zoom, drag empty canvas to pan.</p>
           </div>
         )}
+
+        <div className={`canvas-status-floating ${statusLine.includes('failed') || statusLine.includes('Missing') || statusLine.includes('error') ? 'is-error' : ''}`}>
+          {activeJobs > 0 ? `${activeJobs} active generation${activeJobs === 1 ? '' : 's'} · ` : ''}{statusLine}
+        </div>
 
         {contextMenu && (
           <div className="canvas-context-menu" style={{ left: contextMenu.x, top: contextMenu.y }}>
@@ -1115,9 +2443,15 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
             <button type="button" onClick={() => { addPlaceholder('document', contextMenu.worldX, contextMenu.worldY); setContextMenu(null) }}>Add PDF/DOCX node</button>
             <button type="button" onClick={() => { addSpace(); setContextMenu(null) }}>Add new space</button>
             {selectedNode && <button type="button" onClick={() => { duplicateNode(selectedNode.id); setContextMenu(null) }}>Duplicate selected</button>}
+            {selectedNode && <button type="button" onClick={() => { createVariationNode(selectedNode.id); setContextMenu(null) }}>Create pink variation node</button>}
+            {selectedNode?.url && <button type="button" onClick={() => { setAlternativeMenuNodeId(selectedNode.id); setContextMenu(null) }}>Select existing as alternative...</button>}
+            {selectedNode?.type !== 'video' && selectedNode && <button type="button" onClick={() => { runTwoVariants(selectedNode.id); setContextMenu(null) }}>Generate two pink variations</button>}
+            {selectedNode && <button type="button" onClick={() => { makeMasterShot(selectedNode.id); setContextMenu(null) }}>Make selected master shot</button>}
             {selectedNode && <button type="button" onClick={() => { runImageGeneration(selectedNode.id); setContextMenu(null) }}>Run selected node</button>}
             {selectedNode?.type === 'image' && <button type="button" onClick={() => { splitGridNode(selectedNode.id); setContextMenu(null) }}>Split selected 2×2</button>}
-            {selectedNode && <button type="button" onClick={() => { setLinkMode({ from: selectedNode.id, type: 'reference', label: 'ref' }); setContextMenu(null) }}>Use selected as golden reference...</button>}
+            {selectedNode?.type === 'video' && <button type="button" onClick={() => { extractFrameFromVideo(selectedNode.id); setContextMenu(null) }}>Extract current frame</button>}
+            {selectedNode?.type === 'video' && selectedNode.videoCrop && <button type="button" onClick={() => { resetVideoCrop(selectedNode.id); setContextMenu(null) }}>Reset video trim</button>}
+            {selectedNode && <button type="button" onClick={() => { setLinkMode({ from: selectedNode.id, type: 'reference', label: 'ref' }); setContextMenu(null) }}>Use selected as reference...</button>}
             {selectedNode && expandedTray && <button type="button" onClick={() => { addNodeToTray(expandedTray.id, selectedNode.id); setContextMenu(null) }}>Store selected in {expandedTray.name}</button>}
             {selectedNode && <button type="button" onClick={() => { disconnectNode(selectedNode.id); setContextMenu(null) }}>Disconnect selected</button>}
           </div>
@@ -1128,7 +2462,7 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
             <button className="canvas-popover-close" onClick={() => setPendingConnection(null)} type="button" aria-label="Close">×</button>
             <strong>Connect as</strong>
             <button type="button" onClick={() => createConnection(pendingConnection.from, pendingConnection.to, 'derivative')}>Derivative image</button>
-            <button type="button" onClick={() => createConnection(pendingConnection.from, pendingConnection.to, 'reference')}>Golden reference</button>
+            <button type="button" onClick={() => createConnection(pendingConnection.from, pendingConnection.to, 'reference')}>Reference</button>
             <button type="button" onClick={() => createConnection(pendingConnection.from, pendingConnection.to, 'variation')}>Pink variant</button>
             <button type="button" onClick={() => createConnection(pendingConnection.from, pendingConnection.to, 'animation')}>Animation / image to video</button>
             <button type="button" onClick={() => createConnection(pendingConnection.from, pendingConnection.to, 'frame')}>Extracted frame / panel</button>
@@ -1143,6 +2477,10 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
             <strong>Create connected node</strong>
             <button type="button" onClick={() => createConnectedNode('image', 'derivative')}>Image container</button>
             <button type="button" onClick={() => createConnectedNode('video', 'animation')}>Video container</button>
+            <button type="button" onClick={() => {
+              const from = pendingNodeConnection.from
+              createConnectedNode(nodeById.get(from)?.type === 'video' ? 'video' : 'image', 'variation')
+            }}>Pink variation container</button>
             <button type="button" onClick={() => createConnectedNode('document', 'context')}>Text / PDF context</button>
             <button type="button" onClick={() => createConnectedNode('placeholder', 'reference')}>Reference placeholder</button>
             <button type="button" onClick={() => createConnectedNode('audio', 'context')}>Music / speech node</button>
@@ -1188,7 +2526,7 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
                 <option value="document">document</option>
                 <option value="placeholder">placeholder</option>
               </select>
-              <span>{selectedRefNodes.length}/8 refs</span>
+              <span>{displayedRefNodes.length}/8 refs</span>
               {activeJobs > 0 && <strong>{activeJobs} generating</strong>}
               {selectedNode.generation?.error && <em>{selectedNode.generation.error}</em>}
             </div>
@@ -1210,13 +2548,13 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
               <button className={noteSkillsOpen ? 'is-active' : ''} onClick={() => { setNoteSkillsOpen(!noteSkillsOpen); setNoteAttachOpen(false); setNoteSettingsOpen(false) }} title="Skills / prompt templates" type="button">▤</button>
               <button className={noteSettingsOpen ? 'is-active' : ''} onClick={() => { setNoteSettingsOpen(!noteSettingsOpen); setNoteAttachOpen(false); setNoteSkillsOpen(false) }} title="Generation settings" type="button">⚙</button>
               <div className="canvas-note-refs">
-                {selectedRefNodes.map((node, index) => (
+                {displayedRefNodes.map((node, index) => (
                   <button key={node.id} type="button" title={node.title} onClick={() => setSelectedNodeId(node.id)}>
                     {node.url && node.type === 'image' ? <img src={node.url} alt="" /> : <span>{node.type[0].toUpperCase()}</span>}
                     <small>{index + 1}</small>
                   </button>
                 ))}
-                {selectedRefNodes.length === 0 && <span>{selectedRefNodes.length}/8 · {activeJobs > 0 ? `${activeJobs} generating` : 'ready'}</span>}
+                {displayedRefNodes.length === 0 && <span>{displayedRefNodes.length}/8 · {activeJobs > 0 ? `${activeJobs} generating` : 'ready'}</span>}
               </div>
               <button className="canvas-note-ok" onClick={() => selectedNode.type === 'video' ? runVideoGeneration(selectedNode.id) : runImageGeneration(selectedNode.id)} title={selectedNode.type === 'video' ? 'Run video generation' : 'Run image generation / enhance selected'} type="button">✓</button>
             </div>
@@ -1293,7 +2631,8 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
         )}
       </div>
 
-      <aside className="canvas-agent-panel">
+      <button className="canvas-agent-toggle" type="button" onClick={() => setAgentOpen(!agentOpen)}>{agentOpen ? 'Hide Gemini' : 'Open Gemini'}</button>
+      {agentOpen && <aside className="canvas-agent-panel">
         <div className="canvas-agent-top">
           <strong>Theo Canvas Agent</strong>
           <div style={{ color: 'rgba(255,255,255,0.42)', fontSize: '0.74rem', marginTop: '0.25rem' }}>
@@ -1308,10 +2647,21 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
         <div className="canvas-agent-feed">
           {agentTab === 'agent' && (
             <>
-              <p>This chat is intentionally isolated from Director&apos;s Cut while Gemini is busy elsewhere.</p>
-              <p>Selected context: {selectedNode ? selectedNode.title : 'nothing selected'}</p>
-              <p>Graph: {activeSpace.nodes.length} nodes, {activeSpace.edges.length} links.</p>
-              <p>Tip: press ◆ on one node, then click another node to attach it as a golden reference. Drop a file onto any node to auto-create a REF node.</p>
+              {agentMessages.length === 0 && (
+                <>
+                  <p>Gemini sees a compact summary of the selected node, references, groups, and graph count.</p>
+                  <p>Selected context: {selectedNode ? selectedNode.title : 'nothing selected'}</p>
+                  <p>Visible images sent: {selectedNode ? getInputNodes(selectedNode.id, true).filter(node => node.type === 'image' && node.url).length : 0}</p>
+                  <p>Graph: {activeSpace.nodes.length} nodes, {activeSpace.edges.length} links.</p>
+                </>
+              )}
+              {agentMessages.map((message, index) => (
+                <div key={`${message.role}-${index}`} className={`canvas-agent-message ${message.role}`}>
+                  <strong>{message.role === 'user' ? 'You' : 'Theo'}</strong>
+                  <p>{message.text}</p>
+                </div>
+              ))}
+              {agentLoading && <div className="canvas-agent-message model"><strong>Theo</strong><p>Thinking...</p></div>}
             </>
           )}
           {agentTab === 'skills' && <p>Canvas-owned Skills Store copy will plug in here next.</p>}
@@ -1330,27 +2680,38 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
           )}
         </div>
         <div className="canvas-agent-compose">
-          <textarea value={agentDraft} onChange={event => setAgentDraft(event.target.value)} placeholder="Ask the canvas agent. This shell will later attach selected nodes and groups automatically." rows={5} />
+          {agentAttachments.length > 0 && (
+            <div className="canvas-agent-attachments">
+              {agentAttachments.map(file => (
+                <button key={file.id} type="button" title={file.name} onClick={() => setAgentAttachments(current => current.filter(item => item.id !== file.id))}>
+                  {file.url ? <img src={file.url} alt="" /> : <span>{file.name.split('.').pop()?.slice(0, 4) || 'file'}</span>}
+                  <small>{file.name}</small>
+                  <b>×</b>
+                </button>
+              ))}
+            </div>
+          )}
+          <textarea
+            value={agentDraft}
+            onChange={event => setAgentDraft(event.target.value)}
+            onKeyDown={(event) => {
+              if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault()
+                sendAgentMessage()
+              }
+            }}
+            placeholder="Ask Gemini about the selected canvas context..."
+            rows={5}
+          />
           <div className="canvas-agent-actions">
-            <button type="button" onClick={() => {
-              if (!agentDraft.trim()) return
-              const anchor = selectedNode || activeSpace.nodes[activeSpace.nodes.length - 1]
-              const x = anchor ? anchor.x + anchor.width + 120 : screenToWorld(window.innerWidth / 2, window.innerHeight / 2).x
-              const y = anchor ? anchor.y : screenToWorld(window.innerWidth / 2, window.innerHeight / 2).y
-              const id = addNode({ type: 'placeholder', title: 'Prompt node', prompt: agentDraft }, x, y)
-              if (anchor) addEdge(anchor.id, id, 'derivative', 'prompt')
-              setAgentDraft('')
-              setStatusLine('Prompt node created')
-            }}>Create node</button>
-            <button type="button" onClick={() => {
-              if (!selectedNode || !agentDraft.trim()) return
-              updateNode(selectedNode.id, node => { node.prompt = node.prompt ? `${node.prompt}\n\n${agentDraft}` : agentDraft })
-              setAgentDraft('')
-              setStatusLine('Prompt appended to selected node')
-            }}>Append to selected</button>
+            <button type="button" className="icon" onClick={startAgentDictation} title="Microphone dictation" aria-label="Microphone dictation">◉</button>
+            <button type="button" className="icon" onClick={() => agentFileRef.current?.click()} title="Attach files for Theo" aria-label="Attach files for Theo">⌕</button>
+            <button type="button" disabled={agentLoading || !agentDraft.trim()} onClick={sendAgentMessage}>
+              {agentLoading ? 'Sending...' : 'Send'}
+            </button>
           </div>
         </div>
-      </aside>
+      </aside>}
     </div>
   )
 }

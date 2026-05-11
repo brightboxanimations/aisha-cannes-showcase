@@ -1011,9 +1011,10 @@ function storyboardApiPlugin() {
                 .filter(Boolean)
             ))
             const isVideoRef = (p: string) => /\.(mp4|mov|webm|m4v)$/i.test(p)
-            const imageReferencePaths = referencePaths.filter((p: string) => !isVideoRef(p)).slice(0, 7)
+            const isImageRef = (p: string) => /\.(png|jpe?g|webp|gif|avif)$/i.test(p)
+            const imageReferencePaths = referencePaths.filter((p: string) => isImageRef(p)).slice(0, 7)
             const videoReferencePaths = referencePaths.filter((p: string) => isVideoRef(p)).slice(0, 3)
-            const usesMultiReferenceMode = referencePaths.length > 1 || videoReferencePaths.length > 0
+            const usesMultiReferenceMode = imageReferencePaths.length + videoReferencePaths.length > 1 || videoReferencePaths.length > 0
             const requestedVideoModel = model || 'seedance-2.0-standard'
             // PixVerse CLI has separate video modes. `create video` accepts one
             // `--image`; true multi-reference work must use `create reference`.

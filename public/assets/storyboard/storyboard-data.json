@@ -15752,7 +15752,7 @@
         {
           "id": "scene-6b2kfwt-moqb355t",
           "title": "Scene 1",
-          "mode": "images",
+          "mode": "videos",
           "imageShots": [
             {
               "id": "shot-xuhsjb0-moqbrjbi",
@@ -16111,7 +16111,7 @@
               ],
               "selectedMediaId": "media-drag-1778301558903-5qle",
               "masterAspect": 1.7916666666666667,
-              "expanded": true
+              "expanded": false
             },
             {
               "id": "shot-dup-1778300317194-la50a9",
@@ -18397,6 +18397,5 @@
         }
       ]
     }
-  ],
-  "masterAspect": 1.7765726681127982
+  ]
 }

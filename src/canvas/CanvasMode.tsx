@@ -1162,6 +1162,19 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
     })
     const payload = await response.json()
     if (!response.ok || payload.error) throw new Error(payload.error || 'Video generation failed')
+    if (payload.pending && payload.jobId) {
+      const started = Date.now()
+      while (Date.now() - started < 20 * 60 * 1000) {
+        await new Promise(resolve => window.setTimeout(resolve, 5000))
+        const jobResponse = await fetch(`/api/tasks/video-job?id=${encodeURIComponent(payload.jobId)}`)
+        const job = await jobResponse.json()
+        if (job.status === 'done' && job.url) {
+          return { ok: true, url: job.url, localPath: job.localPath, cliPrompt: job.cliPrompt || prompt }
+        }
+        if (job.status === 'error') throw new Error(job.error || 'Video generation failed')
+      }
+      throw new Error('Video generation timed out while waiting for PixVerse.')
+    }
     return payload as { ok: boolean; url: string; localPath?: string; cliPrompt?: string }
   }
 

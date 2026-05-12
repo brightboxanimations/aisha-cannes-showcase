@@ -8,6 +8,7 @@ const storyboardRoot = path.resolve(process.cwd(), 'public/assets/storyboard')
 const storyboardUploads = path.join(storyboardRoot, 'uploads')
 const storyboardDataFile = path.join(storyboardRoot, 'storyboard-data.json')
 const canvasModeDataFile = path.join(storyboardRoot, 'canvas-mode-data.json')
+const videoJobsDir = path.join(storyboardRoot, 'video-jobs')
 
 // Task system directories
 const tasksRoot = path.join(storyboardRoot, 'tasks')
@@ -16,6 +17,7 @@ const tasksArchivedDir = path.join(tasksRoot, 'archived')
 
 function ensureStoryboardFolders() {
   fs.mkdirSync(storyboardUploads, { recursive: true })
+  fs.mkdirSync(videoJobsDir, { recursive: true })
   fs.mkdirSync(tasksCurrentDir, { recursive: true })
   fs.mkdirSync(tasksArchivedDir, { recursive: true })
   if (!fs.existsSync(storyboardDataFile)) {
@@ -23,6 +25,150 @@ function ensureStoryboardFolders() {
   }
   if (!fs.existsSync(canvasModeDataFile)) {
     fs.writeFileSync(canvasModeDataFile, JSON.stringify({ version: 1, activeSpaceId: '', spaces: [] }, null, 2))
+  }
+}
+
+function videoJobFile(jobId: string) {
+  return path.join(videoJobsDir, `${jobId.replace(/[^a-z0-9_-]+/gi, '-')}.json`)
+}
+
+function writeVideoJob(job: Record<string, unknown>) {
+  fs.writeFileSync(videoJobFile(String(job.id || 'video-job')), JSON.stringify(job, null, 2))
+}
+
+function appendVideoJobToStoryboard(job: Record<string, any>, saved: { url: string; localPath: string }) {
+  const actId = String(job.actId || '')
+  const sceneId = String(job.sceneId || '')
+  const shotId = String(job.shotId || '')
+  const mode = String(job.mode || 'videos')
+  if (!actId || !sceneId || !shotId || !fs.existsSync(storyboardDataFile)) return
+  const data = JSON.parse(fs.readFileSync(storyboardDataFile, 'utf8'))
+  const act = data.acts?.find((item: any) => item.id === actId)
+  const scene = act?.scenes?.find((item: any) => item.id === sceneId)
+  const shotsKey = mode === 'videos' ? 'videoShots' : mode === 'audio' ? 'audioShots' : 'imageShots'
+  const shot = scene?.[shotsKey]?.find((item: any) => item.id === shotId)
+  if (!shot) return
+  shot.media = Array.isArray(shot.media) ? shot.media : []
+  if (shot.media.some((media: any) => media.localPath === saved.localPath || media.url === saved.url)) return
+  const media = {
+    id: `media-${String(job.model || 'video').replace(/[^a-z0-9_-]+/gi, '-')}-${Date.now()}`,
+    type: 'video',
+    url: saved.url,
+    fileName: path.basename(saved.localPath),
+    localPath: saved.localPath,
+    createdAt: new Date().toISOString(),
+  }
+  shot.media.push(media)
+  shot.selectedMediaId = media.id
+  if (typeof job.prompt === 'string' && job.prompt.trim()) shot.prompt = job.prompt
+  fs.writeFileSync(storyboardDataFile, JSON.stringify(data, null, 2))
+}
+
+const resumingVideoJobs = new Set<string>()
+const waitMs = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
+
+function isCompletedPixVerseVideoPayload(payload: any) {
+  const status = String(payload?.status || payload?.data?.status || payload?.video?.status || '').toLowerCase()
+  const statusCode = payload?.status_code ?? payload?.data?.status_code ?? payload?.video?.status_code
+  const hasPlayableUrl = Boolean(payload?.video_url || payload?.url || payload?.asset_url || payload?.output_url || payload?.video?.url || payload?.video?.asset_url || payload?.data?.video_url || payload?.data?.url || payload?.data?.video?.url || payload?.assets?.[0]?.url || payload?.outputs?.[0]?.url)
+  return hasPlayableUrl || /completed|succeeded|success|done/.test(status) || statusCode === 1 || statusCode === 20
+}
+
+function getPixVerseVideoUrl(payload: any) {
+  return [
+    payload?.video_url,
+    payload?.url,
+    payload?.asset_url,
+    payload?.output_url,
+    payload?.video?.url,
+    payload?.video?.asset_url,
+    payload?.data?.video_url,
+    payload?.data?.url,
+    payload?.data?.video?.url,
+    payload?.assets?.[0]?.url,
+    payload?.outputs?.[0]?.url,
+  ].find(Boolean)
+}
+
+function runPixVerseJson(command: string, timeout = 180000): Promise<any> {
+  const { exec } = require('node:child_process')
+  return new Promise((resolve, reject) => {
+    exec(command, { timeout, cwd: process.cwd(), maxBuffer: 12 * 1024 * 1024 }, (err: any, stdout: string, stderr: string) => {
+      if (err) return reject(new Error(stderr || err.message || String(err)))
+      try { resolve(JSON.parse(stdout)) } catch { reject(new Error('Invalid PixVerse JSON: ' + stdout.slice(0, 260))) }
+    })
+  })
+}
+
+async function downloadRemoteVideoWithRetry(videoUrl: string, outPath: string, attempts = 30) {
+  const { exec } = require('node:child_process')
+  let lastError = ''
+  for (let attempt = 1; attempt <= attempts; attempt += 1) {
+    try {
+      if (fs.existsSync(outPath)) fs.unlinkSync(outPath)
+    } catch {
+      // Best effort cleanup before retrying a possibly partial file.
+    }
+    try {
+      await new Promise((resolve, reject) => {
+        exec(
+          `curl -fL --retry 2 --retry-delay 2 --retry-all-errors ${JSON.stringify(videoUrl)} -o ${JSON.stringify(outPath)}`,
+          { timeout: 180000 },
+          (err: any, _stdout: string, stderr: string) => err ? reject(new Error(stderr || err.message || String(err))) : resolve(null),
+        )
+      })
+      const size = fs.existsSync(outPath) ? fs.statSync(outPath).size : 0
+      if (size >= 100000) return
+      lastError = `downloaded file was too small (${size} bytes)`
+    } catch (error) {
+      lastError = error instanceof Error ? error.message : String(error)
+    }
+    await waitMs(attempt < 4 ? 5000 : 10000)
+  }
+  throw new Error(`PixVerse completed the task, but the media URL was not downloadable after retries: ${lastError}`)
+}
+
+async function resumeVideoJob(job: Record<string, any>) {
+  const jobId = String(job.id || '')
+  const pixverseId = String(job.pixverseId || '')
+  if (!jobId || !pixverseId || resumingVideoJobs.has(jobId)) return
+  resumingVideoJobs.add(jobId)
+  try {
+    const completed = await runPixVerseJson(`npx pixverse-cli task wait ${JSON.stringify(pixverseId)} --type video --timeout 120 --json`, 180000)
+    if (!isCompletedPixVerseVideoPayload(completed)) throw new Error('PixVerse video is not completed yet.')
+    const videoUrl = getPixVerseVideoUrl(completed)
+    if (!videoUrl) throw new Error('Completed PixVerse video did not include a video URL.')
+    const outName = `video-${String(job.model || 'pixverse').replace(/\./g, '-')}-${Date.now()}.mp4`
+    const outPath = path.join(storyboardUploads, outName)
+    if (/^https?:\/\//i.test(String(videoUrl))) {
+      await downloadRemoteVideoWithRetry(String(videoUrl), outPath)
+    } else {
+      const resolvedVideoPath = String(videoUrl).startsWith('/') ? path.join(path.resolve(process.cwd(), 'public'), String(videoUrl).replace(/^\//, '')) : path.resolve(String(videoUrl))
+      if (fs.existsSync(resolvedVideoPath)) fs.copyFileSync(resolvedVideoPath, outPath)
+      else throw new Error('Video returned but could not be resolved: ' + String(videoUrl))
+    }
+    const saved = { url: `/assets/storyboard/uploads/${outName}`, localPath: outPath }
+    appendVideoJobToStoryboard(job, saved)
+    writeVideoJob({
+      ...job,
+      status: 'done',
+      completedAt: new Date().toISOString(),
+      url: saved.url,
+      localPath: saved.localPath,
+      cliPrompt: job.prompt || '',
+    })
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error)
+    if (!/timed out/i.test(message)) {
+      writeVideoJob({
+        ...job,
+        status: 'error',
+        completedAt: new Date().toISOString(),
+        error: message,
+      })
+    }
+  } finally {
+    resumingVideoJobs.delete(jobId)
   }
 }
 
@@ -124,6 +270,8 @@ function storyboardApiPlugin() {
     name: 'aisha-storyboard-api',
     configureServer(server: ViteDevServer) {
       ensureStoryboardFolders()
+      server.httpServer?.setTimeout(20 * 60 * 1000)
+      server.httpServer?.on('connection', (socket) => socket.setTimeout(20 * 60 * 1000))
 
       server.middlewares.use('/api/storyboard/upload', async (req, res) => {
         if (req.method !== 'POST') return sendJson(res, { error: 'Method not allowed' }, 405)
@@ -197,6 +345,24 @@ function storyboardApiPlugin() {
         }
 
         sendJson(res, { error: 'Method not allowed' }, 405)
+      })
+
+      server.middlewares.use('/api/tasks/video-job', async (req, res) => {
+        if (req.method !== 'GET') return sendJson(res, { error: 'Method not allowed' }, 405)
+        try {
+          const url = new URL(req.url || '', 'http://localhost')
+          const id = url.searchParams.get('id') || ''
+          if (!id) return sendJson(res, { error: 'Missing job id' }, 400)
+          const filePath = videoJobFile(id)
+          if (!fs.existsSync(filePath)) return sendJson(res, { error: 'Video job not found' }, 404)
+          const job = JSON.parse(fs.readFileSync(filePath, 'utf8'))
+          if (job?.status === 'running' && job?.pixverseId) {
+            resumeVideoJob(job).catch((error) => console.warn('[video-job] resume failed:', error instanceof Error ? error.message : String(error)))
+          }
+          return sendJson(res, job)
+        } catch (error) {
+          return sendJson(res, { error: error instanceof Error ? error.message : 'Video job poll failed' }, 500)
+        }
       })
 
       server.middlewares.use('/api/canvas-mode', async (req, res) => {
@@ -879,10 +1045,19 @@ function storyboardApiPlugin() {
           if (!shotId) return sendJson(res, { error: 'Missing shotId' }, 400)
 
           const publicDir = path.join(process.cwd(), 'public')
-          // Strip cache-busting query params (e.g. ?t=12345) from URLs before resolving as file paths
+          // Strip cache-busting query params (e.g. ?t=12345) from URLs before resolving as file paths.
+          // Attachments can be app URLs (/assets/...), absolute local files (/Users/...), or remote URLs.
           const cleanUrl = (u: string) => u ? u.replace(/\?.*$/, '') : ''
+          const resolveMediaPath = (u: string) => {
+            const cleaned = cleanUrl(u || '')
+            if (!cleaned) return ''
+            if (/^https?:\/\//i.test(cleaned)) return cleaned
+            if (path.isAbsolute(cleaned) && fs.existsSync(cleaned)) return cleaned
+            if (cleaned.startsWith('/')) return path.join(publicDir, cleaned.replace(/^\/+/, ''))
+            return path.resolve(cleaned)
+          }
           const cleanedImageUrl = cleanUrl(imageUrl || '')
-          const imagePath = cleanedImageUrl ? (cleanedImageUrl.startsWith('/') ? path.join(publicDir, cleanedImageUrl) : path.resolve(cleanedImageUrl)) : ''
+          const imagePath = cleanedImageUrl ? resolveMediaPath(cleanedImageUrl) : ''
           const cleanedAttachments = (attachments || []).map((u: string) => cleanUrl(u))
 
           if (type === 'split') {
@@ -903,7 +1078,7 @@ function storyboardApiPlugin() {
                 const data = JSON.parse(fs.readFileSync(storyboardDataFile, 'utf8'))
                 const act = data.acts?.find((a: any) => a.id === actId)
                 const scene = act?.scenes?.find((s: any) => s.id === sceneId)
-                const shotsKey = mode === 'video' ? 'videoShots' : 'imageShots'
+                const shotsKey = mode === 'videos' ? 'videoShots' : 'imageShots'
                 const shot = scene?.[shotsKey]?.find((s: any) => s.id === shotId)
                 if (shot) {
                   shot.media = [...(shot.media || []), ...panels]
@@ -917,7 +1092,7 @@ function storyboardApiPlugin() {
           }
 
           if (type === 'enhance') {
-            const imagePaths = [imagePath, ...cleanedAttachments.map((u: string) => u.startsWith('/') ? path.join(publicDir, u) : path.resolve(u))]
+            const imagePaths = [imagePath, ...cleanedAttachments.map((u: string) => resolveMediaPath(u))]
             const defaultPrompt = 'Use exact @img1 but improve quality of character(s) and resolution. Do not change composition, camera angle or objects. Style: 3d animated movie, cinematic AAA level 3d animation'
             const imageArgs = imagePaths.length === 1 ? ['--image', `"${imagePaths[0]}"`] : ['--images', ...imagePaths.map(p => `"${p}"`)]
             const args = ['npx', 'pixverse-cli', 'create', 'image', '--prompt', JSON.stringify(note || defaultPrompt), ...imageArgs, '--model', model || 'seedream-4.5', '--quality', quality || '2160p', '--aspect-ratio', '16:9', '--json']
@@ -944,7 +1119,7 @@ function storyboardApiPlugin() {
           }
 
           if (type === 'note') {
-            const imagePaths = cleanedImageUrl ? [imagePath, ...cleanedAttachments.map((u: string) => u.startsWith('/') ? path.join(publicDir, u) : path.resolve(u))] : cleanedAttachments.map((u: string) => u.startsWith('/') ? path.join(publicDir, u) : path.resolve(u))
+            const imagePaths = cleanedImageUrl ? [imagePath, ...cleanedAttachments.map((u: string) => resolveMediaPath(u))] : cleanedAttachments.map((u: string) => resolveMediaPath(u))
             const imageArgs = imagePaths.length === 1 ? ['--image', `"${imagePaths[0]}"`] : imagePaths.length > 1 ? ['--images', ...imagePaths.map(p => `"${p}"`)] : []
             const args = ['npx', 'pixverse-cli', 'create', 'image', '--prompt', JSON.stringify(note || ''), ...imageArgs, '--model', model || 'gemini-3.1-flash', '--quality', quality || '1440p', '--aspect-ratio', aspectRatio || '16:9', ...(detailLevel ? ['--detail-level', detailLevel] : []), '--json']
             console.log('[note] CLI cmd:', args.join(' ').substring(0, 200))
@@ -975,7 +1150,7 @@ function storyboardApiPlugin() {
 
           if (type === 'generate') {
             // Generate from scratch — no main image, just prompt + attachments
-            const attachPaths = cleanedAttachments.map((u: string) => u.startsWith('/') ? path.join(publicDir, u) : path.resolve(u))
+            const attachPaths = cleanedAttachments.map((u: string) => resolveMediaPath(u))
             const imageArgs = attachPaths.length === 1 ? ['--image', `"${attachPaths[0]}"`] : attachPaths.length > 1 ? ['--images', ...attachPaths.map(p => `"${p}"`)] : []
             const args = ['npx', 'pixverse-cli', 'create', 'image', '--prompt', JSON.stringify(note || ''), ...imageArgs, '--model', model || 'gemini-3.1-flash', '--quality', quality || '1440p', '--aspect-ratio', aspectRatio || '16:9', ...(detailLevel ? ['--detail-level', detailLevel] : []), '--json']
             console.log('[generate] CLI cmd:', args.join(' ').substring(0, 200))
@@ -1007,7 +1182,7 @@ function storyboardApiPlugin() {
           if (type === 'video') {
             const referencePaths = Array.from(new Set(
               (cleanedImageUrl ? [imagePath] : [])
-                .concat(cleanedAttachments.map((u: string) => u.startsWith('/') ? path.join(publicDir, u) : path.resolve(u)))
+                .concat(cleanedAttachments.map((u: string) => resolveMediaPath(u)))
                 .filter(Boolean)
             ))
             const isVideoRef = (p: string) => /\.(mp4|mov|webm|m4v)$/i.test(p)
@@ -1022,28 +1197,31 @@ function storyboardApiPlugin() {
             const effectiveVideoModel = videoReferencePaths.length && !requestedVideoModel.includes('seedance-2.0')
               ? 'seedance-2.0-standard'
               : requestedVideoModel
-            const referenceArgs = [
-              ...(imageReferencePaths.length ? ['--images', ...imageReferencePaths.map((p: string) => JSON.stringify(p))] : []),
-              ...(videoReferencePaths.length ? ['--videos', ...videoReferencePaths.map((p: string) => JSON.stringify(p))] : []),
+            let usedImageReferencePaths = imageReferencePaths
+            let usedVideoReferencePaths = videoReferencePaths
+            const buildReferenceArgs = (imagePaths: string[], videoPaths: string[]) => [
+              ...(imagePaths.length ? ['--images', ...imagePaths] : []),
+              ...(videoPaths.length ? ['--videos', ...videoPaths] : []),
             ]
-            const singleImageArgs = imageReferencePaths[0] ? ['--image', JSON.stringify(imageReferencePaths[0])] : []
+            const singleImageArgs = imageReferencePaths[0] ? ['--image', imageReferencePaths[0]] : []
             const videoDuration = Math.max(1, Math.min(15, Number(duration) || 5))
-            const buildVideoArgs = (mode: 'video' | 'reference', inputArgs: string[]) => [
+            const buildVideoArgs = (mode: 'video' | 'reference', inputArgs: string[], waitMode: 'wait' | 'no-wait' = 'wait') => [
               'npx', 'pixverse-cli', 'create', mode,
-              '--prompt', JSON.stringify(note || ''),
+              '--prompt', String(note || ''),
               ...inputArgs,
               '--model', effectiveVideoModel,
               '--quality', quality || '720p',
               '--aspect-ratio', aspectRatio || '16:9',
               '--duration', String(videoDuration),
+              ...(waitMode === 'wait' ? ['--timeout', '600'] : ['--no-wait']),
               '--json',
             ]
             try {
-              const { exec } = require('child_process')
+              const { exec, execFile } = require('child_process')
               const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
               const runVideoCli = (args: string[]) => new Promise((resolve, reject) => {
-                console.log('[video] CLI cmd:', args.join(' ').substring(0, 320))
-                exec(args.join(' '), { timeout: 900000, cwd: process.cwd(), maxBuffer: 12 * 1024 * 1024 }, (err: any, stdout: string, stderr: string) => {
+                console.log('[video] CLI cmd:', args.map((arg) => arg.includes(' ') ? JSON.stringify(arg) : arg).join(' ').substring(0, 520))
+                execFile(args[0], args.slice(1), { timeout: 900000, cwd: process.cwd(), maxBuffer: 12 * 1024 * 1024 }, (err: any, stdout: string, stderr: string) => {
                   if (err) return reject(err)
                   try { resolve(JSON.parse(stdout)) } catch { reject(new Error('Invalid JSON: ' + stdout.substring(0, 300) + stderr.substring(0, 160))) }
                 })
@@ -1063,8 +1241,114 @@ function storyboardApiPlugin() {
                 }
                 throw lastError
               }
+              const pickVideoId = (payload: any) => [
+                payload?.video_id,
+                payload?.id,
+                payload?.asset_id,
+                payload?.data?.video_id,
+                payload?.data?.id,
+                payload?.video?.id,
+                payload?.video?.video_id,
+              ].find(Boolean)
+              const isCompletedVideoPayload = (payload: any) => {
+                const status = String(payload?.status || payload?.data?.status || payload?.video?.status || '').toLowerCase()
+                const statusCode = payload?.status_code ?? payload?.data?.status_code ?? payload?.video?.status_code
+                const hasPlayableUrl = Boolean(payload?.video_url || payload?.url || payload?.asset_url || payload?.output_url || payload?.video?.url || payload?.video?.asset_url || payload?.data?.video_url || payload?.data?.url || payload?.data?.video?.url || payload?.assets?.[0]?.url || payload?.outputs?.[0]?.url)
+                return hasPlayableUrl || /completed|succeeded|success|done/.test(status) || statusCode === 1 || statusCode === 20
+              }
+              const getVideoUrl = (payload: any) => [
+                payload?.video_url,
+                payload?.url,
+                payload?.asset_url,
+                payload?.output_url,
+                payload?.video?.url,
+                payload?.video?.asset_url,
+                payload?.data?.video_url,
+                payload?.data?.url,
+                payload?.data?.video?.url,
+                payload?.assets?.[0]?.url,
+                payload?.outputs?.[0]?.url,
+              ].find(Boolean)
+              const downloadRemoteVideoWithRetry = async (videoUrl: string, outPath: string, attempts = 30) => {
+                let lastError = ''
+                for (let attempt = 1; attempt <= attempts; attempt += 1) {
+                  try {
+                    if (fs.existsSync(outPath)) fs.unlinkSync(outPath)
+                  } catch {
+                    // Best effort cleanup before retrying a possibly partial file.
+                  }
+                  try {
+                    await new Promise((resolve, reject) => {
+                      exec(
+                        `curl -fL --retry 2 --retry-delay 2 --retry-all-errors ${JSON.stringify(videoUrl)} -o ${JSON.stringify(outPath)}`,
+                        { timeout: 180000 },
+                        (err: any, _stdout: string, stderr: string) => err ? reject(new Error(stderr || err.message || String(err))) : resolve(null),
+                      )
+                    })
+                    const size = fs.existsSync(outPath) ? fs.statSync(outPath).size : 0
+                    if (size >= 100000) return
+                    lastError = `downloaded file was too small (${size} bytes)`
+                  } catch (error) {
+                    lastError = error instanceof Error ? error.message : String(error)
+                  }
+                  await wait(attempt < 4 ? 5000 : 10000)
+                }
+                throw new Error(`PixVerse completed the task, but the media URL was not downloadable after retries: ${lastError}`)
+              }
+              const saveCompletedVideoPayload = async (payload: any) => {
+                if (!isCompletedVideoPayload(payload)) throw new Error('PixVerse video is not completed yet.')
+                const videoUrl = getVideoUrl(payload)
+                if (!videoUrl) throw new Error('Completed PixVerse video did not include a video URL.')
+                const outName = `video-${effectiveVideoModel.replace(/\./g, '-')}-${Date.now()}.mp4`
+                const outPath = path.join(storyboardUploads, outName)
+                if (/^https?:\/\//i.test(videoUrl)) {
+                  await downloadRemoteVideoWithRetry(String(videoUrl), outPath)
+                } else {
+                  const resolvedVideoPath = String(videoUrl).startsWith('/') ? path.join(publicDir, String(videoUrl).replace(/^\//, '')) : path.resolve(String(videoUrl))
+                  if (fs.existsSync(resolvedVideoPath)) fs.copyFileSync(resolvedVideoPath, outPath)
+                  else throw new Error('Video returned but could not be resolved: ' + String(videoUrl))
+                }
+                const size = fs.existsSync(outPath) ? fs.statSync(outPath).size : 0
+                if (size < 100000) throw new Error(`Downloaded video is too small (${size} bytes), refusing placeholder/error file.`)
+                return { url: `/assets/storyboard/uploads/${outName}`, localPath: outPath }
+              }
+              const pollExistingVideoTask = async (submittedId: string) => {
+                const deadline = Date.now() + 18 * 60 * 1000
+                let lastStatus: any = null
+                while (Date.now() < deadline) {
+                  try {
+                    const waited: any = await runVideoCli([
+                      'npx', 'pixverse-cli', 'task', 'wait', String(submittedId),
+                      '--type', 'video',
+                      '--timeout', '120',
+                      '--json',
+                    ])
+                    lastStatus = waited
+                    if (isCompletedVideoPayload(waited)) {
+                      return waited
+                    }
+                  } catch (error) {
+                    console.warn('[video] PixVerse task still pending:', error instanceof Error ? error.message : String(error))
+                    try {
+                      lastStatus = await runVideoCli([
+                        'npx', 'pixverse-cli', 'task', 'status', String(submittedId),
+                        '--type', 'video',
+                        '--json',
+                      ])
+                      if (isCompletedVideoPayload(lastStatus)) {
+                        return lastStatus
+                      }
+                    } catch {
+                      // The next wait cycle is still the authoritative check.
+                    }
+                    await wait(5000)
+                  }
+                }
+                throw new Error(`PixVerse task ${submittedId} did not complete before local timeout. Last status: ${JSON.stringify(lastStatus).slice(0, 240)}`)
+              }
               let result: any
               if (usesMultiReferenceMode) {
+                let referenceArgs = buildReferenceArgs(usedImageReferencePaths, usedVideoReferencePaths)
                 if (!referenceArgs.length) {
                   return sendJson(res, { error: 'Multi-reference video requires at least one image reference or supported video reference.' }, 400)
                 }
@@ -1074,7 +1358,64 @@ function storyboardApiPlugin() {
                   requestedModel: requestedVideoModel,
                   model: effectiveVideoModel,
                 })
-                result = await runVideoCliWithRetry(buildVideoArgs('reference', referenceArgs), 3)
+                let submitted: any
+                try {
+                  submitted = await runVideoCli(buildVideoArgs('reference', referenceArgs, 'no-wait'))
+                } catch (error) {
+                  if (usedVideoReferencePaths.length && usedImageReferencePaths.length) {
+                    console.warn('[video] Video reference submit failed; retrying with image references only:', error instanceof Error ? error.message : String(error))
+                    usedVideoReferencePaths = []
+                    referenceArgs = buildReferenceArgs(usedImageReferencePaths, usedVideoReferencePaths)
+                    submitted = await runVideoCliWithRetry(buildVideoArgs('reference', referenceArgs, 'no-wait'), 2)
+                  } else {
+                    throw error
+                  }
+                }
+                const submittedId = pickVideoId(submitted)
+                if (!submittedId) return sendJson(res, { error: 'PixVerse did not return a video task id.' }, 500)
+                const jobId = `pixverse-video-${submittedId}-${Date.now()}`
+                const jobBase = {
+                  id: jobId,
+                  pixverseId: String(submittedId),
+                  status: 'running',
+                  model: effectiveVideoModel,
+                  prompt: note || '',
+                  promptLength: String(note || '').length,
+                  promptPreview: String(note || '').slice(0, 280),
+                  actId,
+                  sceneId,
+                  shotId,
+                  mode,
+                  references: {
+                    images: usedImageReferencePaths,
+                    videos: usedVideoReferencePaths,
+                  },
+                  createdAt: new Date().toISOString(),
+                }
+                writeVideoJob(jobBase)
+                ;(async () => {
+                  try {
+                    const completed = await pollExistingVideoTask(String(submittedId))
+                    const saved = await saveCompletedVideoPayload(completed)
+                    appendVideoJobToStoryboard(jobBase, saved)
+                    writeVideoJob({
+                      ...jobBase,
+                      status: 'done',
+                      completedAt: new Date().toISOString(),
+                      url: saved.url,
+                      localPath: saved.localPath,
+                      cliPrompt: note || '',
+                    })
+                  } catch (error) {
+                    writeVideoJob({
+                      ...jobBase,
+                      status: 'error',
+                      completedAt: new Date().toISOString(),
+                      error: error instanceof Error ? error.message : String(error),
+                    })
+                  }
+                })()
+                return sendJson(res, { ok: true, pending: true, jobId, pixverseId: String(submittedId), cliPrompt: note || '' })
               } else {
                 result = await runVideoCliWithRetry(buildVideoArgs('video', singleImageArgs), 3)
               }
@@ -1096,9 +1437,7 @@ function storyboardApiPlugin() {
                 const outName = `video-${effectiveVideoModel.replace(/\./g, '-')}-${Date.now()}.mp4`
                 const outPath = path.join(storyboardUploads, outName)
                 if (/^https?:\/\//i.test(videoUrl)) {
-                  await new Promise((resolve, reject) => {
-                    exec(`curl -sL "${videoUrl}" -o "${outPath}"`, { timeout: 180000 }, (err: any) => err ? reject(err) : resolve(null))
-                  })
+                  await downloadRemoteVideoWithRetry(String(videoUrl), outPath)
                 } else {
                   const resolvedVideoPath = String(videoUrl).startsWith('/') ? path.join(publicDir, String(videoUrl).replace(/^\//, '')) : path.resolve(String(videoUrl))
                   if (fs.existsSync(resolvedVideoPath)) fs.copyFileSync(resolvedVideoPath, outPath)

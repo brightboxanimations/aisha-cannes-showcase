@@ -1,0 +1,82 @@
+{
+  "createdAt": "2026-05-11T13:40:14.903Z",
+  "target": {
+    "actId": "act-1",
+    "sceneId": "scene-6b2kfwt-moqb355t",
+    "shotId": "shot-yyjr01w-moqd4fcr"
+  },
+  "results": [
+    {
+      "name": "seedance-multiref-4images-video",
+      "model": "seedance-2.0-standard",
+      "ok": false,
+      "seconds": 302,
+      "error": "fetch failed"
+    },
+    {
+      "name": "pixverse-c1-single-image",
+      "model": "pixverse-c1",
+      "ok": true,
+      "status": 200,
+      "seconds": 53,
+      "payload": {
+        "ok": true,
+        "url": "/assets/storyboard/uploads/video-pixverse-c1-1778506255664.mp4",
+        "localPath": "/Users/vaquita/Downloads/aisha/aisha-cannes-showcase/public/assets/storyboard/uploads/video-pixverse-c1-1778506255664.mp4",
+        "cliPrompt": "5 second cinematic 3D animated smoke test only. Use the attached references exactly. Aisha and Dora stand in the referenced location, subtle breathing, fabric movement, gentle camera push-in, luminous family animated movie style, 16:9, no text, no subtitles. Single image-to-video model smoke test."
+      }
+    },
+    {
+      "name": "happyhorse-single-image",
+      "model": "happyhorse-1.0",
+      "ok": true,
+      "status": 200,
+      "seconds": 138,
+      "payload": {
+        "ok": true,
+        "url": "/assets/storyboard/uploads/video-happyhorse-1-0-1778506393546.mp4",
+        "localPath": "/Users/vaquita/Downloads/aisha/aisha-cannes-showcase/public/assets/storyboard/uploads/video-happyhorse-1-0-1778506393546.mp4",
+        "cliPrompt": "5 second cinematic 3D animated smoke test only. Use the attached references exactly. Aisha and Dora stand in the referenced location, subtle breathing, fabric movement, gentle camera push-in, luminous family animated movie style, 16:9, no text, no subtitles. Single image-to-video model smoke test."
+      }
+    },
+    {
+      "name": "kling-3-single-image",
+      "model": "kling-3.0-standard",
+      "ok": true,
+      "status": 200,
+      "seconds": 211,
+      "payload": {
+        "ok": true,
+        "url": "/assets/storyboard/uploads/video-kling-3-0-standard-1778506604291.mp4",
+        "localPath": "/Users/vaquita/Downloads/aisha/aisha-cannes-showcase/public/assets/storyboard/uploads/video-kling-3-0-standard-1778506604291.mp4",
+        "cliPrompt": "5 second cinematic 3D animated smoke test only. Use the attached references exactly. Aisha and Dora stand in the referenced location, subtle breathing, fabric movement, gentle camera push-in, luminous family animated movie style, 16:9, no text, no subtitles. Single image-to-video model smoke test."
+      }
+    },
+    {
+      "name": "kling-o3-single-image",
+      "model": "kling-o3-standard",
+      "ok": true,
+      "status": 200,
+      "seconds": 139,
+      "payload": {
+        "ok": true,
+        "url": "/assets/storyboard/uploads/video-kling-o3-standard-1778506743037.mp4",
+        "localPath": "/Users/vaquita/Downloads/aisha/aisha-cannes-showcase/public/assets/storyboard/uploads/video-kling-o3-standard-1778506743037.mp4",
+        "cliPrompt": "5 second cinematic 3D animated smoke test only. Use the attached references exactly. Aisha and Dora stand in the referenced location, subtle breathing, fabric movement, gentle camera push-in, luminous family animated movie style, 16:9, no text, no subtitles. Single image-to-video model smoke test."
+      }
+    },
+    {
+      "name": "grok-single-image",
+      "model": "grok-imagine",
+      "ok": true,
+      "status": 200,
+      "seconds": 70,
+      "payload": {
+        "ok": true,
+        "url": "/assets/storyboard/uploads/video-grok-imagine-1778506813545.mp4",
+        "localPath": "/Users/vaquita/Downloads/aisha/aisha-cannes-showcase/public/assets/storyboard/uploads/video-grok-imagine-1778506813545.mp4",
+        "cliPrompt": "5 second cinematic 3D animated smoke test only. Use the attached references exactly. Aisha and Dora stand in the referenced location, subtle breathing, fabric movement, gentle camera push-in, luminous family animated movie style, 16:9, no text, no subtitles. Single image-to-video model smoke test."
+      }
+    }
+  ]
+}

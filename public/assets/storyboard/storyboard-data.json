@@ -17,11 +17,11 @@
     "Balcony Day",
     "broken hourglass ",
     "broken hourglass",
-    "",
-    "",
+    "location 4",
+    "location 5",
     "quazar",
-    "",
-    ""
+    "location 7",
+    "location 8"
   ],
   "resources": {
     "actors": [
@@ -41,8 +41,9 @@
           }
         ],
         "sheetMedia": [],
+        "selectedMediaId": "media-5rk1r5h-motjrxlz",
         "mode": "card",
-        "selectedMediaId": "media-5rk1r5h-motjrxlz"
+        "expanded": false
       },
       {
         "id": "actor-ui6xe7s-moqe9ew9",
@@ -60,8 +61,9 @@
             "createdAt": "2026-05-06T04:18:47.802Z"
           }
         ],
+        "selectedSheetMediaId": "media-paioypt-motjs2nu",
         "mode": "sheet",
-        "selectedSheetMediaId": "media-paioypt-motjs2nu"
+        "expanded": false
       },
       {
         "id": "actor-6tj3t4t-moqe9ew9",
@@ -79,8 +81,9 @@
           }
         ],
         "sheetMedia": [],
+        "selectedMediaId": "media-b8gb5i4-motjsiby",
         "mode": "card",
-        "selectedMediaId": "media-b8gb5i4-motjsiby"
+        "expanded": false
       },
       {
         "id": "actor-zp5o9rt-moqe9ew9",
@@ -107,9 +110,10 @@
             "createdAt": "2026-05-09T05:33:09.611Z"
           }
         ],
-        "mode": "sheet",
         "selectedMediaId": "media-cn2fp9e-moxwr3gn",
-        "selectedSheetMediaId": "media-nwfqo7t-moxwr9ez"
+        "selectedSheetMediaId": "media-nwfqo7t-moxwr9ez",
+        "mode": "sheet",
+        "expanded": false
       },
       {
         "id": "actor-gdm5vzq-moqe9ew9",
@@ -136,9 +140,10 @@
             "createdAt": "2026-05-06T04:19:35.720Z"
           }
         ],
-        "mode": "card",
         "selectedMediaId": "media-u3nint9-motjszj6",
-        "selectedSheetMediaId": "media-d7ca78p-motjt3mw"
+        "selectedSheetMediaId": "media-d7ca78p-motjt3mw",
+        "mode": "card",
+        "expanded": false
       },
       {
         "id": "actor-gkpom4s-moqe9ew9",
@@ -165,9 +170,10 @@
             "createdAt": "2026-05-06T04:20:04.219Z"
           }
         ],
-        "mode": "card",
         "selectedMediaId": "media-u6v2l4c-motjtkfp",
-        "selectedSheetMediaId": "media-i54hx78-motjtpmj"
+        "selectedSheetMediaId": "media-i54hx78-motjtpmj",
+        "mode": "card",
+        "expanded": false
       },
       {
         "id": "actor-e4et19c-moqe9ew9",
@@ -185,8 +191,9 @@
           }
         ],
         "sheetMedia": [],
+        "selectedMediaId": "media-f78j7yl-moxwqle7",
         "mode": "card",
-        "selectedMediaId": "media-f78j7yl-moxwqle7"
+        "expanded": false
       },
       {
         "id": "actor-vo4ewxj-moqe9ew9",
@@ -213,9 +220,10 @@
             "createdAt": "2026-05-09T05:32:47.791Z"
           }
         ],
-        "mode": "sheet",
         "selectedMediaId": "media-lpchqll-moxwqp9n",
-        "selectedSheetMediaId": "media-fnj19wl-moxwqskv"
+        "selectedSheetMediaId": "media-fnj19wl-moxwqskv",
+        "mode": "sheet",
+        "expanded": false
       },
       {
         "id": "883ad076-6a28-4688-9eab-04f750ff0d87",
@@ -234,7 +242,8 @@
         ],
         "sheetMedia": [],
         "selectedMediaId": "media-fwr026k-motjuuq0",
-        "mode": "card"
+        "mode": "card",
+        "expanded": false
       },
       {
         "id": "a62610bc-09d1-4c47-9c07-8b10a13cec54",
@@ -261,9 +270,10 @@
             "createdAt": "2026-05-06T04:21:24.355Z"
           }
         ],
-        "mode": "card",
         "selectedMediaId": "media-f5gs0qo-motjvbvn",
-        "selectedSheetMediaId": "media-chk3b41-motjvfgj"
+        "selectedSheetMediaId": "media-chk3b41-motjvfgj",
+        "mode": "card",
+        "expanded": false
       },
       {
         "id": "f9ba59ff-1cec-408f-9874-97224c78a62e",
@@ -281,7 +291,9 @@
           }
         ],
         "sheetMedia": [],
-        "selectedMediaId": "media-7onm9gp-motjvr3c"
+        "selectedMediaId": "media-7onm9gp-motjvr3c",
+        "mode": "card",
+        "expanded": false
       },
       {
         "id": "actor-0rogqj8-moxwrryg",
@@ -299,8 +311,9 @@
           }
         ],
         "sheetMedia": [],
+        "selectedMediaId": "media-yg8pzyn-moxwrvza",
         "mode": "card",
-        "selectedMediaId": "media-yg8pzyn-moxwrvza"
+        "expanded": false
       }
     ],
     "locations": [
@@ -311,7 +324,8 @@
         "description": "",
         "media": [],
         "sheetMedia": [],
-        "mode": "sheet"
+        "mode": "sheet",
+        "expanded": false
       },
       {
         "id": "d8004753-bacb-4d53-abaa-b7bdd5ed390e",
@@ -327,7 +341,8 @@
           }
         ],
         "sheetMedia": [],
-        "mode": "card"
+        "mode": "card",
+        "expanded": false
       },
       {
         "id": "876ca923-0454-4d89-aca6-aacb7744bd3a",
@@ -352,13 +367,14 @@
             "createdAt": "2026-05-04T19:22:00.514Z"
           }
         ],
+        "selectedSheetMediaId": "media-pgfknst-morl5woy",
         "mode": "sheet",
-        "selectedSheetMediaId": "media-pgfknst-morl5woy"
+        "expanded": false
       },
       {
         "id": "cf83a788-5f5f-47e1-91dd-e5f39ee7cec7",
         "type": "locations",
-        "name": "",
+        "name": "location 4",
         "description": "Assigned from Director's Cut pipeline.",
         "media": [
           {
@@ -368,12 +384,14 @@
             "fileName": ""
           }
         ],
-        "sheetMedia": []
+        "sheetMedia": [],
+        "mode": "card",
+        "expanded": false
       },
       {
         "id": "b14d9621-20b6-4114-948e-38503b52444c",
         "type": "locations",
-        "name": "",
+        "name": "location 5",
         "description": "Assigned from Director's Cut pipeline.",
         "media": [
           {
@@ -383,7 +401,9 @@
             "fileName": ""
           }
         ],
-        "sheetMedia": []
+        "sheetMedia": [],
+        "mode": "card",
+        "expanded": false
       },
       {
         "id": "location-b6mpwip-mornmt4h",
@@ -392,12 +412,13 @@
         "description": "",
         "media": [],
         "sheetMedia": [],
-        "mode": "card"
+        "mode": "card",
+        "expanded": false
       },
       {
         "id": "27de1a68-061e-4619-98b6-b5da2c334af4",
         "type": "locations",
-        "name": "",
+        "name": "location 7",
         "description": "Assigned from Director's Cut pipeline.",
         "media": [
           {
@@ -407,12 +428,14 @@
             "fileName": ""
           }
         ],
-        "sheetMedia": []
+        "sheetMedia": [],
+        "mode": "card",
+        "expanded": false
       },
       {
         "id": "93ec7847-b8d1-4dad-9cbd-37d1152605c0",
         "type": "locations",
-        "name": "",
+        "name": "location 8",
         "description": "Assigned from Director's Cut pipeline.",
         "media": [
           {
@@ -422,7 +445,9 @@
             "fileName": ""
           }
         ],
-        "sheetMedia": []
+        "sheetMedia": [],
+        "mode": "card",
+        "expanded": false
       }
     ],
     "props": [
@@ -433,7 +458,8 @@
         "description": "",
         "media": [],
         "sheetMedia": [],
-        "mode": "card"
+        "mode": "card",
+        "expanded": false
       },
       {
         "id": "prop-61t52kd-mornn37w",
@@ -442,22 +468,34 @@
         "description": "",
         "media": [],
         "sheetMedia": [],
-        "mode": "card"
+        "mode": "card",
+        "expanded": false
       },
       {
         "id": "ebe8a5bf-f265-4de6-8372-538b9b0ba7a3",
         "type": "props",
-        "name": "",
+        "name": "prop 3",
         "description": "Assigned from Director's Cut pipeline.",
         "media": [],
-        "sheetMedia": []
+        "sheetMedia": [],
+        "mode": "card",
+        "expanded": false
       },
       {
+        "id": "prop-kde62fl-mp1ea8rg",
+        "type": "props",
         "name": "Hawk flying near the gate in distress ",
-        "media": []
+        "description": "",
+        "media": [],
+        "sheetMedia": [],
+        "mode": "card",
+        "expanded": false
       },
       {
+        "id": "prop-4c9wlub-mp1ea8rg",
+        "type": "props",
         "name": "Hawk 2",
+        "description": "",
         "media": [
           {
             "id": "media-assign-1778283842935",
@@ -465,7 +503,10 @@
             "url": "/assets/storyboard/uploads/note-edit-1778259129898.png",
             "fileName": "gpt-image-2.0-1778259130576.png"
           }
-        ]
+        ],
+        "sheetMedia": [],
+        "mode": "card",
+        "expanded": false
       }
     ],
     "moodboards": []
@@ -17011,7 +17052,7 @@
             {
               "id": "shot-yyjr01w-moqd4fcr",
               "title": "Video 2",
-              "prompt": "",
+              "prompt": "SERVER RETURN TEST 5 seconds only: the royal hawk circles above Aisha on a sunlit palace balcony, smooth cinematic motion, elegant 3D animated feature look.",
               "dialogue": "",
               "actor": "",
               "tags": [],
@@ -17023,18 +17064,135 @@
                   "fileName": "PixVerse_Seedance-2.0-standard_Fusion_720P_INT (4).mp4",
                   "localPath": "/Users/vaquita/Downloads/aisha/aisha-cannes-showcase/public/assets/storyboard/uploads/PixVerse_Seedance-2-0-standard_Fusion_720P_INT-4-1777985508965.mp4",
                   "createdAt": "2026-05-05T12:51:48.976Z"
+                },
+                {
+                  "id": "media-smoke-seedance-2.0-standard-1778505901573",
+                  "type": "video",
+                  "url": "/assets/storyboard/uploads/video-seedance-2-0-standard-1778505494185.mp4",
+                  "fileName": "video-seedance-2-0-standard-1778505494185.mp4",
+                  "localPath": "/Users/vaquita/Downloads/aisha/aisha-cannes-showcase/public/assets/storyboard/uploads/video-seedance-2-0-standard-1778505494185.mp4",
+                  "createdAt": "2026-05-11T13:25:01.573Z"
+                },
+                {
+                  "id": "media-smoke-v6-1778505901582",
+                  "type": "video",
+                  "url": "/assets/storyboard/uploads/video-v6-1778505668130.mp4",
+                  "fileName": "video-v6-1778505668130.mp4",
+                  "localPath": "/Users/vaquita/Downloads/aisha/aisha-cannes-showcase/public/assets/storyboard/uploads/video-v6-1778505668130.mp4",
+                  "createdAt": "2026-05-11T13:25:01.582Z"
+                },
+                {
+                  "id": "media-smoke-pixverse-c1-1778506256652",
+                  "type": "video",
+                  "url": "/assets/storyboard/uploads/video-pixverse-c1-1778506255664.mp4",
+                  "fileName": "video-pixverse-c1-1778506255664.mp4",
+                  "localPath": "/Users/vaquita/Downloads/aisha/aisha-cannes-showcase/public/assets/storyboard/uploads/video-pixverse-c1-1778506255664.mp4",
+                  "createdAt": "2026-05-11T13:30:56.652Z"
+                },
+                {
+                  "id": "media-smoke-happyhorse-1.0-1778506394722",
+                  "type": "video",
+                  "url": "/assets/storyboard/uploads/video-happyhorse-1-0-1778506393546.mp4",
+                  "fileName": "video-happyhorse-1-0-1778506393546.mp4",
+                  "localPath": "/Users/vaquita/Downloads/aisha/aisha-cannes-showcase/public/assets/storyboard/uploads/video-happyhorse-1-0-1778506393546.mp4",
+                  "createdAt": "2026-05-11T13:33:14.722Z"
+                },
+                {
+                  "id": "media-smoke-kling-3.0-standard-1778506606134",
+                  "type": "video",
+                  "url": "/assets/storyboard/uploads/video-kling-3-0-standard-1778506604291.mp4",
+                  "fileName": "video-kling-3-0-standard-1778506604291.mp4",
+                  "localPath": "/Users/vaquita/Downloads/aisha/aisha-cannes-showcase/public/assets/storyboard/uploads/video-kling-3-0-standard-1778506604291.mp4",
+                  "createdAt": "2026-05-11T13:36:46.134Z"
+                },
+                {
+                  "id": "media-smoke-kling-o3-standard-1778506745221",
+                  "type": "video",
+                  "url": "/assets/storyboard/uploads/video-kling-o3-standard-1778506743037.mp4",
+                  "fileName": "video-kling-o3-standard-1778506743037.mp4",
+                  "localPath": "/Users/vaquita/Downloads/aisha/aisha-cannes-showcase/public/assets/storyboard/uploads/video-kling-o3-standard-1778506743037.mp4",
+                  "createdAt": "2026-05-11T13:39:05.221Z"
+                },
+                {
+                  "id": "media-smoke-grok-imagine-1778506814896",
+                  "type": "video",
+                  "url": "/assets/storyboard/uploads/video-grok-imagine-1778506813545.mp4",
+                  "fileName": "video-grok-imagine-1778506813545.mp4",
+                  "localPath": "/Users/vaquita/Downloads/aisha/aisha-cannes-showcase/public/assets/storyboard/uploads/video-grok-imagine-1778506813545.mp4",
+                  "createdAt": "2026-05-11T13:40:14.896Z"
+                },
+                {
+                  "id": "smoke-async-seedance-1778509831197",
+                  "type": "video",
+                  "url": "/assets/storyboard/uploads/video-seedance-2-0-standard-1778509822805.mp4",
+                  "localPath": "/Users/vaquita/Downloads/aisha/aisha-cannes-showcase/public/assets/storyboard/uploads/video-seedance-2-0-standard-1778509822805.mp4",
+                  "fileName": "video-seedance-2-0-standard-1778509822805.mp4",
+                  "prompt": "5 second async pending-job Seedance smoke test. Use all image references and the attached video reference for motion continuity. Premium luminous 3D animated feature film, gentle camera push-in, no text, no subtitles.",
+                  "createdAt": "2026-05-11T14:30:31.197Z"
+                },
+                {
+                  "id": "media-seedance-2-0-standard-1778533789755",
+                  "type": "video",
+                  "url": "/assets/storyboard/uploads/video-seedance-2-0-standard-1778533788629.mp4",
+                  "fileName": "video-seedance-2-0-standard-1778533788629.mp4",
+                  "localPath": "/Users/vaquita/Downloads/aisha/aisha-cannes-showcase/public/assets/storyboard/uploads/video-seedance-2-0-standard-1778533788629.mp4",
+                  "createdAt": "2026-05-11T21:09:49.755Z"
                 }
               ],
-              "selectedMediaId": "media-8clkkmz-mosmnywg"
+              "selectedMediaId": "media-8clkkmz-mosmnywg",
+              "expanded": true
             },
             {
               "id": "shot-jxpr6fl-moqb355t",
               "title": "Video 1",
-              "prompt": "",
+              "prompt": "3d cinmatic scene , epic animated movie. dynamic camera. Aisha nad her white panter dora ( white panter Dora is niormal size panther, her height is alsmo up to the hip of Aisha)  they run tougher throhgt he sand storms flowing dunes towards fibat hourglass  the hourfglas sin fornt of them , their figures small agains large panormaic deser duens landscap nad a giant hourglass in front ,  camear wide panoramic form the high abow view  tracjing then  camera glides donw  and rotates ftowards their fron tracking as Aisha falls to her knees grabbing sand wiht her hands as if alnsot defeted  looks down ashamed worreid and syas in dispair “it s. all my fault, Dora. Look wht I’ve done!” she almsot cries looking down  , camera tight close up on her and whtie panter who looks touched  supportive and tender, she  looks at her  trying to look at her eyes whiel Aisha looks away ,  th epanter tries softly convince her “ Aisha, you didn’t knwo we still have time…’  Aisha looks a her for a bit as if for. amoment a flicker of hope wthen shaeks a bit her head and lokks down her hands tightly even more as if bith in dispait and  helplessness grab the sand as if tryign to hold on .   she alwmost whispers agian in dispeai r as fi for herself “Its all my fault” camera cuts briefly on her hands grasping the sand in dispair , she si kneele dhten on tight lose up low anle form the sand towards aisha regretefull an helpless face. no text no aubtitles.  realsitic emotions and microemotios",
               "dialogue": "",
               "actor": "",
               "tags": [],
-              "media": []
+              "media": [
+                {
+                  "id": "media-seedance-2.0-standard-1778530153658-0",
+                  "type": "video",
+                  "url": "/assets/storyboard/uploads/video-seedance-2-0-standard-1778530148705.mp4?t=1778530153658",
+                  "fileName": "seedance-2.0-standard-1778530153658.mp4",
+                  "localPath": "/Users/vaquita/Downloads/aisha/aisha-cannes-showcase/public/assets/storyboard/uploads/video-seedance-2-0-standard-1778530148705.mp4",
+                  "createdAt": "2026-05-11T20:09:13.658Z"
+                },
+                {
+                  "id": "media-seedance-2-0-standard-1778552354504",
+                  "type": "video",
+                  "url": "/assets/storyboard/uploads/video-seedance-2-0-standard-1778552351399.mp4",
+                  "fileName": "video-seedance-2-0-standard-1778552351399.mp4",
+                  "localPath": "/Users/vaquita/Downloads/aisha/aisha-cannes-showcase/public/assets/storyboard/uploads/video-seedance-2-0-standard-1778552351399.mp4",
+                  "createdAt": "2026-05-12T02:19:14.504Z"
+                },
+                {
+                  "id": "media-seedance-2-0-standard-1778552641481",
+                  "type": "video",
+                  "url": "/assets/storyboard/uploads/video-seedance-2-0-standard-rescued-1778552638229.mp4",
+                  "fileName": "video-seedance-2-0-standard-rescued-1778552638229.mp4",
+                  "localPath": "/Users/vaquita/Downloads/aisha/aisha-cannes-showcase/public/assets/storyboard/uploads/video-seedance-2-0-standard-rescued-1778552638229.mp4",
+                  "createdAt": "2026-05-12T02:24:01.481Z"
+                },
+                {
+                  "id": "media-seedance-2-0-standard-1778554236479",
+                  "type": "video",
+                  "url": "/assets/storyboard/uploads/video-seedance-2-0-standard-1778554049516.mp4",
+                  "fileName": "video-seedance-2-0-standard-1778554049516.mp4",
+                  "localPath": "/Users/vaquita/Downloads/aisha/aisha-cannes-showcase/public/assets/storyboard/uploads/video-seedance-2-0-standard-1778554049516.mp4",
+                  "createdAt": "2026-05-12T02:50:36.479Z"
+                },
+                {
+                  "id": "media-seedance-2-0-standard-1778554400213",
+                  "type": "video",
+                  "url": "/assets/storyboard/uploads/video-seedance-2-0-standard-1778554036930.mp4",
+                  "fileName": "video-seedance-2-0-standard-1778554036930.mp4",
+                  "localPath": "/Users/vaquita/Downloads/aisha/aisha-cannes-showcase/public/assets/storyboard/uploads/video-seedance-2-0-standard-1778554036930.mp4",
+                  "createdAt": "2026-05-12T02:53:20.213Z"
+                }
+              ],
+              "expanded": true,
+              "selectedMediaId": "media-seedance-2-0-standard-1778554400213"
             },
             {
               "id": "shot-i56ml8v-mornc9ec",
@@ -17043,7 +17201,8 @@
               "dialogue": "",
               "actor": "",
               "tags": [],
-              "media": []
+              "media": [],
+              "expanded": true
             },
             {
               "id": "shot-kaa9n4q-mornnp3b",
@@ -17052,7 +17211,8 @@
               "dialogue": "",
               "actor": "",
               "tags": [],
-              "media": []
+              "media": [],
+              "expanded": true
             }
           ],
           "resourceRefs": {

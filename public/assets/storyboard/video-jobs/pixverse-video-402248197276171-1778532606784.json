@@ -1,0 +1,21 @@
+{
+  "id": "pixverse-video-402248197276171-1778532606784",
+  "pixverseId": "402248197276171",
+  "status": "done",
+  "model": "seedance-2.0-standard",
+  "prompt": "TEST 5 seconds only: premium cinematic 3D animated shot, Aisha watches the royal hawk glide past the palace balcony, gentle camera push, warm daylight, elegant movement.",
+  "promptLength": 169,
+  "promptPreview": "TEST 5 seconds only: premium cinematic 3D animated shot, Aisha watches the royal hawk glide past the palace balcony, gentle camera push, warm daylight, elegant movement.",
+  "references": {
+    "images": [
+      "/Users/vaquita/Downloads/aisha/aisha-cannes-showcase/public/assets/storyboard/uploads/gen-gemini-3-1-flash-1778297658922.png",
+      "/Users/vaquita/Downloads/aisha/aisha-cannes-showcase/public/assets/storyboard/uploads/altair-royal-hawk-open-wings-1778260994606.png"
+    ],
+    "videos": []
+  },
+  "createdAt": "2026-05-11T20:50:06.784Z",
+  "completedAt": "2026-05-11T20:53:19.302Z",
+  "url": "/assets/storyboard/uploads/video-seedance-2-0-standard-1778532798050.mp4",
+  "localPath": "/Users/vaquita/Downloads/aisha/aisha-cannes-showcase/public/assets/storyboard/uploads/video-seedance-2-0-standard-1778532798050.mp4",
+  "cliPrompt": "TEST 5 seconds only: premium cinematic 3D animated shot, Aisha watches the royal hawk glide past the palace balcony, gentle camera push, warm daylight, elegant movement."
+}

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import type { CSSProperties, ChangeEvent, DragEvent, MouseEvent } from 'react'
+import type { CSSProperties, ChangeEvent, DragEvent, MouseEvent, PointerEvent as ReactPointerEvent } from 'react'
 import { chatWithAgent, generatePrompt, refinePrompt, type AgentMessage } from './gemini-agent'
 import { CanvasMode } from './canvas/CanvasMode'
 import './App.css'
@@ -33,12 +33,22 @@ type ShowcaseMedia = {
 
 type CharacterCategory = 'protagonists' | 'antagonists' | 'sidekicks'
 
+type CharacterPlacement = {
+  x: number
+  y: number
+  scale: number
+}
+
 type CharacterProfile = {
   id: string
   category: CharacterCategory
   name: string
   role: string
   image: string
+  imagePlacement?: CharacterPlacement
+  videoPresentation?: string
+  videoPlacement?: CharacterPlacement
+  videoMuted?: boolean
   description: string
   traits: string[]
   backstory: string
@@ -51,6 +61,8 @@ type Track = {
   cover: string
   color: string
 }
+
+const isVideoAsset = (src?: string) => Boolean(src && /\.(mp4|webm|mov|m4v)(\?.*)?$/i.test(src))
 
 type MerchProduct = {
   title: string
@@ -74,6 +86,10 @@ type StoryboardMedia = {
   fileName: string
   localPath?: string
   createdAt: string
+  trimStart?: number
+  trimEnd?: number
+  frameSecond?: number
+  sourceVideoUrl?: string
 }
 
 type StoryboardShot = {
@@ -252,6 +268,24 @@ const createResource = (type: StoryboardResourceType, name: string): StoryboardR
   mode: 'card',
 })
 
+const normalizeResource = (resource: Partial<StoryboardResource>, type: StoryboardResourceType, fallbackName: string): StoryboardResource => ({
+  id: resource.id || makeId(type.slice(0, -1) || 'resource'),
+  type,
+  name: resource.name || fallbackName,
+  description: resource.description || '',
+  media: Array.isArray(resource.media) ? resource.media.filter(Boolean) as StoryboardMedia[] : [],
+  sheetMedia: Array.isArray(resource.sheetMedia) ? resource.sheetMedia.filter(Boolean) as StoryboardMedia[] : [],
+  selectedMediaId: resource.selectedMediaId,
+  selectedSheetMediaId: resource.selectedSheetMediaId,
+  mode: resource.mode === 'sheet' ? 'sheet' : 'card',
+  expanded: Boolean(resource.expanded),
+})
+
+const normalizeResourceList = (resources: Partial<StoryboardResource>[] | undefined, type: StoryboardResourceType, fallbackNames: string[]) => {
+  const source = resources?.length ? resources : fallbackNames.map((name) => createResource(type, name))
+  return source.map((resource, index) => normalizeResource(resource, type, fallbackNames[index] || `${getResourceTypeLabel(type)} ${index + 1}`))
+}
+
 const createShot = (index: number, type: 'image' | 'video' | 'audio' = 'image'): StoryboardShot => ({
   id: makeId('shot'),
   title: `${type === 'image' ? 'Shot' : type === 'video' ? 'Video' : 'Track'} ${index}`,
@@ -296,10 +330,10 @@ const normalizeStoryboard = (payload?: Partial<StoryboardData>): StoryboardData 
   const actorNames = payload.actors?.length ? payload.actors : defaultStoryboardActors
   const locationNames = payload.locations?.length ? payload.locations : fallback.locations
   const resources = {
-    actors: payload.resources?.actors?.length ? payload.resources.actors : actorNames.map((actor) => createResource('actors', actor)),
-    locations: payload.resources?.locations?.length ? payload.resources.locations : locationNames.map((location) => createResource('locations', location)),
-    props: payload.resources?.props || [],
-    moodboards: payload.resources?.moodboards || [],
+    actors: normalizeResourceList(payload.resources?.actors, 'actors', actorNames),
+    locations: normalizeResourceList(payload.resources?.locations, 'locations', locationNames),
+    props: normalizeResourceList(payload.resources?.props, 'props', []),
+    moodboards: normalizeResourceList(payload.resources?.moodboards, 'moodboards', []),
   }
 
   return {
@@ -443,6 +477,17 @@ const characters: CharacterProfile[] = [
     backstory: 'Altair’s chaos opens doors. One scroll, one scream, one awkward hover beside the balcony: opportunity does knock, or scream.',
   },
   {
+    id: 'plasma-character',
+    category: 'protagonists',
+    name: 'Plasma Character',
+    role: 'Luminous cursed protector',
+    image: '/assets/characters/plasma-character-idle.mp4',
+    imagePlacement: { x: 0, y: 0, scale: 1 },
+    description: 'A floating human-like figure made of golden plasma, torn between obedience, guilt, and the instinct to protect Aisha when it matters most.',
+    traits: ['Luminous', 'Wounded', 'Protective', 'Elegant', 'Self-sacrificing'],
+    backstory: 'He carries the ache of an old spell and the shame of serving the wrong master. His arc bends from frightened messenger to brave shield, choosing love and truth over command.',
+  },
+  {
     id: 'bedouin',
     category: 'antagonists',
     name: 'The Bedouin Merchant',
@@ -457,7 +502,7 @@ const characters: CharacterProfile[] = [
     category: 'antagonists',
     name: 'The Oracle',
     role: 'Guard of the Mirage City',
-    image: '/assets/pdf-characters/antagonists/antagonists-p04-01.png',
+    image: '/assets/character-cutouts/oracle.png',
     description: 'A watchful keeper of forbidden knowledge, elegant and severe, with memory hidden behind every jewel.',
     traits: ['Ancient', 'Watchful', 'Ceremonial', 'Unsettling'],
     backstory: 'The Oracle guards old consequences. She stands where prophecy stops being decorative and becomes dangerous.',
@@ -467,10 +512,20 @@ const characters: CharacterProfile[] = [
     category: 'antagonists',
     name: 'Prince Mir-Kaan',
     role: 'Ruler of Mirage City',
-    image: '/assets/pdf-characters/antagonists/antagonists-p06-02.png',
+    image: '/assets/character-cutouts/mir-kaan.png',
     description: 'Polished, charming, and manipulative, Mir-Kaan smiles like a door closing.',
     traits: ['Manipulative', 'Power hungry', 'Deceptive', 'Elegant'],
     backstory: 'Mir-Kaan belongs to the beautiful surface of the trap: everything glitters, every courtesy has teeth.',
+  },
+  {
+    id: 'mirage-vizier',
+    category: 'antagonists',
+    name: 'The Mirage Vizier',
+    role: 'Palace lure of Mirage City',
+    image: '/assets/storyboard/uploads/mirage-city-vizier-1778341811359.png',
+    description: 'A silk-voiced court manipulator who guides Aisha toward the Mirage palace with polished courtesy, false concern, and the patience of a practiced trap.',
+    traits: ['Polished', 'Calculating', 'Soft-spoken', 'Deceptive', 'Ceremonial'],
+    backstory: 'He does not drag Aisha into danger; he arranges the path so she chooses it. Every bow, smile, and gesture is designed to make the palace feel safe until the doors close.',
   },
   {
     id: 'sharak',
@@ -497,7 +552,7 @@ const characters: CharacterProfile[] = [
     category: 'antagonists',
     name: 'Maz-Khar',
     role: 'Colossal desert mount',
-    image: '/assets/pdf-characters/antagonists/antagonists-p14-01.png',
+    image: '/assets/character-cutouts/maz-khar.png',
     description: 'A massive creature built for storm scale, battlefield silhouette, and desert myth.',
     traits: ['Colossal', 'Armored', 'Fast', 'Intimidating'],
     backstory: 'Maz-Khar turns the desert itself into a chase machine: not a horse, not a monster, but a legend with hooves.',
@@ -511,6 +566,16 @@ const characters: CharacterProfile[] = [
     description: 'A luminous maternal presence whose memory becomes the emotional key to Aisha’s courage.',
     traits: ['Wise', 'High-born', 'Honest', 'Devoted', 'Kind-hearted'],
     backstory: 'Zafra is not only what was lost. She becomes the proof that love can survive as guidance, memory, and light.',
+  },
+  {
+    id: 'mirage-perfume-seller',
+    category: 'antagonists',
+    name: 'The Perfume Seller',
+    role: 'Mirage City seller of Dream Veil perfume',
+    image: '/assets/storyboard/uploads/parfume-seller-mirage-city-1778341811390.png',
+    description: 'A mesmerizing market woman surrounded by jewel-like perfume bottles, fragrant oils, and impossible scents, including the dangerous Dream Veil perfume.',
+    traits: ['Graceful', 'Persuasive', 'Mysterious', 'Market-wise', 'Dangerously charming'],
+    backstory: 'In Mirage City she sells memory as scent: rose, amber, blue smoke, and the Dream Veil perfume that makes longing feel like truth. She is not purely cruel, but her stall belongs to the city’s beautiful deception.',
   },
   {
     id: 'ancestors',
@@ -575,10 +640,13 @@ const characters: CharacterProfile[] = [
 ]
 
 const tracks: Track[] = [
-  { title: 'One Wish', mood: 'Aisha’s intimate magical awakening.', src: '/assets/music/one-wish.mp3', cover: '/assets/locations/magic-night-bedroom-balcony.png', color: '#f7d978' },
-  { title: 'Wake Again, Mayala City', mood: 'Ancient city memory returning to light.', src: '/assets/music/wake-again-mayala-city.mp3', cover: '/assets/locations/front-balcony-night.png', color: '#7edbff' },
+  { title: 'Just One Wish', mood: 'Aisha’s intimate magical awakening.', src: '/assets/music/just-one-wish.mp3', cover: '/assets/locations/magic-night-bedroom-balcony.png', color: '#f7d978' },
+  { title: 'Wake Again', mood: 'Ancient city memory returning to light.', src: '/assets/music/wake-again.mp3', cover: '/assets/locations/front-balcony-night.png', color: '#7edbff' },
   { title: 'Sharak Song', mood: 'Villain triumph, charm, and obsession.', src: '/assets/music/sharak-song.mp3', cover: '/assets/pdf-characters/antagonists/antagonists-p08-02.png', color: '#f06f8f' },
   { title: 'Thousand Wonders', mood: 'Market discovery, motion, and delight.', src: '/assets/music/thousand-wonders.wav', cover: '/assets/locations/niura-rescue-grid.jpg', color: '#a6f0b0' },
+  { title: 'Before The Shadow', mood: 'A darker promise moving under the palace story.', src: '/assets/music/before-the-shadow.mp3', cover: '/assets/locations/bedouin-wonder-tent-grid.png', color: '#c7b8ff' },
+  { title: 'Beasts Of Thunder', mood: 'Action, scale, and desert danger in motion.', src: '/assets/music/beasts-of-thunder.mp3', cover: '/assets/locations/palace-exterior.png', color: '#ffb267' },
+  { title: 'Aisha Lullaby', mood: 'Soft royal tenderness and hidden memory.', src: '/assets/music/aisha-lullaby.mp3', cover: '/assets/pdf-characters/main-protagonists/main-protagonists-p02-01.png', color: '#f8f1ca' },
   { title: 'Altair Flight', mood: 'Comic urgent messenger chase.', cover: '/assets/pdf-characters/main-protagonists/main-protagonists-p15-01.png', color: '#c7b8ff' },
   { title: 'Niura’s Moon', mood: 'Tiny hope rescued from a golden cage.', cover: '/assets/pdf-characters/main-protagonists/main-protagonists-p07-04.png', color: '#f8f1ca' },
   { title: 'Dora’s Lazy Wisdom', mood: 'Royal panther comedy and warmth.', cover: '/assets/pdf-characters/main-protagonists/main-protagonists-p04-02.png', color: '#ffd1a6' },
@@ -719,6 +787,37 @@ function buildSimpleBook(rawPages: BookPage[]) {
 }
 
 function App() {
+  const normalizeShowcaseCharacters = (saved: CharacterProfile[]): CharacterProfile[] => {
+    const seen = new Set(saved.map((profile) => profile.id))
+    const missing = characters.filter((profile) => !seen.has(profile.id))
+    const migrated = [...saved, ...missing].map((profile) => {
+      if (profile.id === 'plasma-character' && profile.image === '/assets/characters/plasma-djinn-full.png') {
+        return { ...profile, image: '/assets/characters/plasma-character-idle.mp4', imagePlacement: { x: 0, y: 0, scale: 1 } }
+      }
+      if (profile.id === 'oracle' && profile.image === '/assets/pdf-characters/antagonists/antagonists-p04-01.png') {
+        return { ...profile, image: '/assets/character-cutouts/oracle.png', imagePlacement: { x: 0, y: 0, scale: 1 } }
+      }
+      if (profile.id === 'mir-kaan' && profile.image === '/assets/pdf-characters/antagonists/antagonists-p06-02.png') {
+        return { ...profile, image: '/assets/character-cutouts/mir-kaan.png', imagePlacement: { x: 0, y: 0, scale: 1 } }
+      }
+      if (profile.id === 'maz-khar' && profile.image === '/assets/pdf-characters/antagonists/antagonists-p14-01.png') {
+        return { ...profile, image: '/assets/character-cutouts/maz-khar.png', imagePlacement: { x: 0, y: 0, scale: 1 } }
+      }
+      if (profile.id === 'mirage-perfume-seller' && profile.category !== 'antagonists') {
+        return { ...profile, category: 'antagonists' }
+      }
+      return profile
+    })
+    const perfumeIndex = migrated.findIndex((profile) => profile.id === 'mirage-perfume-seller')
+    const vizierIndex = migrated.findIndex((profile) => profile.id === 'mirage-vizier')
+    if (perfumeIndex >= 0 && vizierIndex >= 0 && perfumeIndex !== vizierIndex + 1) {
+      const [perfume] = migrated.splice(perfumeIndex, 1)
+      const insertAfter = migrated.findIndex((profile) => profile.id === 'mirage-vizier')
+      migrated.splice(insertAfter + 1, 0, { ...perfume, category: 'antagonists' })
+    }
+    return migrated
+  }
+
   const loadShowcaseState = <T,>(key: string, fallback: T): T => {
     try {
       const raw = window.localStorage.getItem(key)
@@ -730,7 +829,7 @@ function App() {
   const [route, setRoute] = useState(() => window.location.hash || '#hero')
   const [showcaseHero, setShowcaseHero] = useState<ShowcaseMedia[]>(() => loadShowcaseState('aisha-showcase-hero', defaultShowcaseHero))
   const [showcaseGallery, setShowcaseGallery] = useState<ShowcaseMedia[]>(() => loadShowcaseState('aisha-showcase-gallery', defaultShowcaseGallery))
-  const [showcaseCharacters, setShowcaseCharacters] = useState<CharacterProfile[]>(() => loadShowcaseState('aisha-showcase-characters', characters))
+  const [showcaseCharacters, setShowcaseCharacters] = useState<CharacterProfile[]>(() => normalizeShowcaseCharacters(loadShowcaseState('aisha-showcase-characters', characters)))
   const [showcaseCopy, setShowcaseCopy] = useState<ShowcaseCopy>(() => loadShowcaseState('aisha-showcase-copy', defaultShowcaseCopy))
   const [showcaseActNames, setShowcaseActNames] = useState<string[]>(() => loadShowcaseState('aisha-showcase-act-names', actNames))
   const [showcaseCategoryTitles, setShowcaseCategoryTitles] = useState<Record<CharacterCategory, string>>(() => loadShowcaseState('aisha-showcase-category-titles', categoryTitles))
@@ -825,7 +924,9 @@ function App() {
       const firstVideoIndex = showcaseHero.findIndex((slide) => slide.kind === 'video')
       if (firstVideoIndex >= 0) setActiveHero(firstVideoIndex)
     }
-    window.setTimeout(() => heroVideoRef.current?.play(), 80)
+    window.setTimeout(() => {
+      heroVideoRef.current?.play().catch(() => {})
+    }, currentHero.kind === 'video' ? 0 : 220)
   }
 
   const switchHero = (index: number) => {
@@ -857,8 +958,57 @@ function App() {
     setShowcaseGallery((current) => current.map((item, itemIndex) => itemIndex === index ? { ...item, ...patch } : item))
   }
 
+  const saveShowcaseCharacters = (updater: (current: CharacterProfile[]) => CharacterProfile[]) => {
+    setShowcaseCharacters((current) => {
+      const next = updater(current)
+      window.localStorage.setItem('aisha-showcase-characters', JSON.stringify(next))
+      return next
+    })
+  }
+
+  useEffect(() => {
+    saveShowcaseCharacters((current) => current.map((profile) => (
+      profile.id === 'plasma-character' && profile.image === '/assets/characters/plasma-djinn-full.png'
+        ? { ...profile, image: '/assets/characters/plasma-character-idle.mp4', imagePlacement: { x: 0, y: 0, scale: 1 } }
+        : profile.id === 'mirage-perfume-seller' && profile.category !== 'antagonists'
+          ? { ...profile, category: 'antagonists' }
+          : profile
+    )))
+  }, [])
+
   const updateShowcaseCharacter = (id: string, patch: Partial<CharacterProfile>) => {
-    setShowcaseCharacters((current) => current.map((profile) => profile.id === id ? { ...profile, ...patch } : profile))
+    saveShowcaseCharacters((current) => current.map((profile) => profile.id === id ? { ...profile, ...patch } : profile))
+  }
+
+  const addShowcaseCharacter = (category: CharacterCategory) => {
+    const nextId = makeId(`character-${category}`)
+    const starter: CharacterProfile = {
+      id: nextId,
+      category,
+      name: 'New Character',
+      role: 'Role',
+      image: '',
+      imagePlacement: { x: 0, y: 0, scale: 1 },
+      description: 'Description',
+      traits: ['Trait'],
+      backstory: 'Backstory',
+    }
+    saveShowcaseCharacters((current) => [...current, starter])
+    setActiveCharacters((current) => ({ ...current, [category]: nextId }))
+    setCharacterTabs((current) => ({ ...current, [category]: 'description' }))
+  }
+
+  const reorderShowcaseCharacter = (dragId: string, targetId: string) => {
+    if (dragId === targetId) return
+    saveShowcaseCharacters((current) => {
+      const from = current.findIndex((profile) => profile.id === dragId)
+      const to = current.findIndex((profile) => profile.id === targetId)
+      if (from < 0 || to < 0) return current
+      const next = [...current]
+      const [moved] = next.splice(from, 1)
+      next.splice(to, 0, moved)
+      return next
+    })
   }
 
   const updateShowcaseText = (key: string, value: string) => {
@@ -933,7 +1083,17 @@ function App() {
 
   const replaceCharacterImage = async (profileId: string, file: File) => {
     const uploaded = await uploadShowcaseFile(file)
-    setShowcaseCharacters((current) => current.map((profile) => profile.id === profileId ? { ...profile, image: uploaded.src } : profile))
+    saveShowcaseCharacters((current) => current.map((profile) => profile.id === profileId ? { ...profile, image: uploaded.src, imagePlacement: { x: 0, y: 0, scale: 1 } } : profile))
+  }
+
+  const replaceCharacterPresentationVideo = async (profileId: string, file: File) => {
+    const uploaded = await uploadShowcaseFile(file)
+    saveShowcaseCharacters((current) => current.map((profile) => profile.id === profileId ? {
+      ...profile,
+      videoPresentation: uploaded.src,
+      videoPlacement: { x: 0, y: 0, scale: 1 },
+      videoMuted: false,
+    } : profile))
   }
 
   const captureShowcaseMedia = (media: ShowcaseMedia | { src?: string; image?: string; title?: string; name?: string }) => {
@@ -971,6 +1131,40 @@ function App() {
       link.click()
     }
     image.src = src
+  }
+
+  const captureShowcaseElement = async (elementId: string, fileName: string) => {
+    const element = document.getElementById(elementId)
+    if (!element) return
+    const previousDataCapture = element.getAttribute('data-capturing')
+    element.setAttribute('data-capturing', 'true')
+    try {
+      const { default: html2canvas } = await import('html2canvas')
+      const rect = element.getBoundingClientRect()
+      const canvas = await html2canvas(element, {
+        backgroundColor: '#071523',
+        width: rect.width,
+        height: rect.height,
+        windowWidth: document.documentElement.scrollWidth,
+        windowHeight: document.documentElement.scrollHeight,
+        scrollX: 0,
+        scrollY: -window.scrollY,
+        scale: Math.min(2, window.devicePixelRatio || 1.5),
+        useCORS: true,
+        allowTaint: true,
+        imageTimeout: 15000,
+        logging: false,
+      })
+      const link = document.createElement('a')
+      link.download = `${fileName.replace(/[^a-z0-9_-]+/gi, '-').replace(/^-+|-+$/g, '').toLowerCase() || 'aisha-panel'}.png`
+      link.href = canvas.toDataURL('image/png')
+      link.click()
+    } catch (error) {
+      console.error('Panel capture failed:', error)
+    } finally {
+      if (previousDataCapture === null) element.removeAttribute('data-capturing')
+      else element.setAttribute('data-capturing', previousDataCapture)
+    }
   }
 
   const switchBook = (mode: 'script' | 'songs') => {
@@ -1073,9 +1267,8 @@ function App() {
               <strong>{slide.title || 'Title'}</strong>
             </button>
           ))}
-          <label className="hero-thumb hero-thumb-add">
-            <span>Add</span>
-            <strong>Upload media</strong>
+          <label className="hero-strip-add-dot" title="Add hero media">
+            +
             <input type="file" accept="image/*,video/*" multiple onChange={(event) => {
               addShowcaseFiles(Array.from(event.target.files || []), 'hero').catch(() => {})
               event.target.value = ''
@@ -1089,7 +1282,7 @@ function App() {
           eyebrow={showcaseCopy.artEyebrow ?? defaultShowcaseCopy.artEyebrow}
           title={showcaseCopy.artTitle ?? defaultShowcaseCopy.artTitle}
           copy={showcaseCopy.artCopy ?? defaultShowcaseCopy.artCopy}
-          onEdit={(part, value) => updateShowcaseText(`art${part}`, value)}
+          onEdit={(part, value) => updateShowcaseText(`art${part[0].toUpperCase()}${part.slice(1)}`, value)}
         />
         <div className="act-menu" aria-label="Choose act gallery">
           {showcaseActNames.map((act, index) => (
@@ -1146,8 +1339,20 @@ function App() {
         <div className="public-art-lightbox" onClick={() => setShowcaseLightbox(null)} role="presentation">
           <button className="public-art-close" type="button" aria-label="Close gallery view" onClick={() => setShowcaseLightbox(null)}>×</button>
           <button className="public-art-arrow left" type="button" aria-label="Previous artwork" onClick={(event) => { event.stopPropagation(); moveShowcaseLightbox(-1) }}>‹</button>
-          <div className="public-art-frame glass" onClick={(event) => event.stopPropagation()}>
+          <div
+            className="public-art-frame glass"
+            onClick={(event) => event.stopPropagation()}
+            onDragOver={(event) => event.preventDefault()}
+            onDrop={(event) => {
+              event.preventDefault()
+              addShowcaseFiles(Array.from(event.dataTransfer.files || []), 'gallery', showcaseLightbox || 0).catch(() => {})
+            }}
+          >
             <div className="public-art-media">
+              <div className="public-art-overlay-tools">
+                <button type="button" title="Replace media" onClick={() => openShowcasePicker('gallery', showcaseLightbox || 0)}>+</button>
+                <button type="button" title="Capture rounded frame" onClick={() => captureShowcaseMedia(activeShowcaseMedia)}>□</button>
+              </div>
               {activeShowcaseMedia.kind === 'video' ? (
                 <video src={activeShowcaseMedia.src} poster={activeShowcaseMedia.poster} controls autoPlay playsInline />
               ) : (
@@ -1155,19 +1360,16 @@ function App() {
               )}
             </div>
             <div className="public-art-copy">
-              <span>{actNames[activeAct]} / Showcase Frame {String((showcaseLightbox || 0) + 1).padStart(2, '0')}</span>
+              <span
+                className="editable-copy"
+                contentEditable
+                suppressContentEditableWarning
+                onBlur={(event) => updateShowcaseGalleryMedia(showcaseLightbox || 0, { kicker: event.currentTarget.textContent || 'Showcase Frame' })}
+              >
+                {activeShowcaseMedia.kicker || `${showcaseActNames[activeAct] || actNames[activeAct]} / Showcase Frame ${String((showcaseLightbox || 0) + 1).padStart(2, '0')}`}
+              </span>
               <h3 className="editable-copy public-art-title-clamp" contentEditable suppressContentEditableWarning onBlur={(event) => updateShowcaseGalleryMedia(showcaseLightbox || 0, { title: event.currentTarget.textContent || 'Title' })}>{activeShowcaseMedia.title || 'Title'}</h3>
               <p className="editable-copy public-art-desc-clamp" contentEditable suppressContentEditableWarning onBlur={(event) => updateShowcaseGalleryMedia(showcaseLightbox || 0, { description: event.currentTarget.textContent || 'Description' })}>{activeShowcaseMedia.description || activeShowcaseMedia.caption || 'Description'}</p>
-              <div className="public-art-actions">
-                <button type="button" onClick={() => captureShowcaseMedia(activeShowcaseMedia)}>Capture rounded frame</button>
-                <label>
-                  Replace media
-                  <input type="file" accept="image/*,video/*" multiple onChange={(event) => {
-                    addShowcaseFiles(Array.from(event.target.files || []), 'gallery', showcaseLightbox || 0).catch(() => {})
-                    event.target.value = ''
-                  }} />
-                </label>
-              </div>
             </div>
           </div>
           <button className="public-art-arrow right" type="button" aria-label="Next artwork" onClick={(event) => { event.stopPropagation(); moveShowcaseLightbox(1) }}>›</button>
@@ -1175,33 +1377,54 @@ function App() {
       )}
 
       <section className="section cast-section" id="characters">
-        <SectionTitle eyebrow="Character bible" title="Character Panels" copy="One active profile per section, with portrait selectors underneath. Text now lives in the same cinematic panel as the character." />
+        <SectionTitle
+          eyebrow={showcaseCopy.charactersEyebrow ?? defaultShowcaseCopy.charactersEyebrow}
+          title={showcaseCopy.charactersTitle ?? defaultShowcaseCopy.charactersTitle}
+          copy={showcaseCopy.charactersCopy ?? defaultShowcaseCopy.charactersCopy}
+          onEdit={(part, value) => updateShowcaseText(`characters${part[0].toUpperCase()}${part.slice(1)}`, value)}
+        />
         {(['protagonists', 'antagonists', 'sidekicks'] as CharacterCategory[]).map((category) => (
           <CharacterSection
             activeId={activeCharacters[category]}
             activeTab={characterTabs[category]}
             category={category}
             key={category}
+            onAdd={() => addShowcaseCharacter(category)}
             onPick={(id) => {
               setActiveCharacters((current) => ({ ...current, [category]: id }))
               setCharacterTabs((current) => ({ ...current, [category]: 'description' }))
             }}
+            onReorder={reorderShowcaseCharacter}
             onTab={(tab) => setCharacterTabs((current) => ({ ...current, [category]: tab }))}
-            onDeleteImage={(id) => setShowcaseCharacters((current) => current.map((profile) => profile.id === id ? { ...profile, image: '' } : profile))}
+            onDeleteImage={(id) => saveShowcaseCharacters((current) => current.map((profile) => profile.id === id ? { ...profile, image: '', imagePlacement: { x: 0, y: 0, scale: 1 } } : profile))}
+            onUpdateCategoryTitle={(value) => setShowcaseCategoryTitles((current) => ({ ...current, [category]: value || current[category] }))}
             onUpdateProfile={updateShowcaseCharacter}
             onUploadImage={(id, file) => replaceCharacterImage(id, file).catch(() => {})}
+            onUploadPresentationVideo={(id, file) => replaceCharacterPresentationVideo(id, file).catch(() => {})}
+            onCapture={captureShowcaseElement}
+            categoryTitle={showcaseCategoryTitles[category] || categoryTitles[category]}
             profiles={showcaseCharacters.filter((character) => character.category === category)}
           />
         ))}
       </section>
 
       <section className="section" id="score">
-        <SectionTitle eyebrow="Original score" title="Score Console" copy="One central music player with album-style covers, not separate oversized blocks." />
+        <SectionTitle
+          eyebrow={showcaseCopy.scoreEyebrow ?? defaultShowcaseCopy.scoreEyebrow}
+          title={showcaseCopy.scoreTitle ?? defaultShowcaseCopy.scoreTitle}
+          copy={showcaseCopy.scoreCopy ?? ''}
+          onEdit={(part, value) => updateShowcaseText(`score${part[0].toUpperCase()}${part.slice(1)}`, value)}
+        />
         <ScoreConsole activeTrack={activeTrack} onSelect={setActiveTrack} tracks={tracks} />
       </section>
 
       <section className="section" id="book">
-        <SectionTitle eyebrow="Interactive story bible" title="The Magic Book" copy="Readable pages inside the site, dark or light mode, act jumps, and direct page navigation." />
+        <SectionTitle
+          eyebrow={showcaseCopy.bookEyebrow ?? defaultShowcaseCopy.bookEyebrow}
+          title={showcaseCopy.bookTitle ?? defaultShowcaseCopy.bookTitle}
+          copy={showcaseCopy.bookCopy ?? defaultShowcaseCopy.bookCopy}
+          onEdit={(part, value) => updateShowcaseText(`book${part[0].toUpperCase()}${part.slice(1)}`, value)}
+        />
         <div className={`book-console glass ${bookTheme}`}>
           <div className="book-toolbar">
             <div className="book-tabs">
@@ -1254,9 +1477,14 @@ function App() {
       </section>
 
       <section className="section" id="merch">
-        <SectionTitle eyebrow="Consumer products" title="Merchandise Campaign" copy="First premium product concepts for dolls, plush companions, villain packs, jewelry-toys, and electronic creature sets." />
+        <SectionTitle
+          eyebrow={showcaseCopy.merchEyebrow ?? defaultShowcaseCopy.merchEyebrow}
+          title={showcaseCopy.merchTitle ?? defaultShowcaseCopy.merchTitle}
+          copy={showcaseCopy.merchCopy ?? defaultShowcaseCopy.merchCopy}
+          onEdit={(part, value) => updateShowcaseText(`merch${part[0].toUpperCase()}${part.slice(1)}`, value)}
+        />
         <div className="merch-campaigns">
-          {merchProducts.map((product, index) => {
+          {showcaseMerch.map((product, index) => {
             const variant = activeMerchVariants[product.title] || 0
             const activeImage = product.images[variant] || product.images[0]
 
@@ -1283,11 +1511,15 @@ function App() {
                   </div>
                 </div>
                 <div className="merch-campaign-copy">
-                  <span>{product.subtitle}</span>
-                  <h3>{product.title}</h3>
-                  <p>{product.copy}</p>
+                  <span className="editable-copy" contentEditable suppressContentEditableWarning onBlur={(event) => updateShowcaseMerch(index, { subtitle: event.currentTarget.textContent || product.subtitle })}>{product.subtitle}</span>
+                  <h3 className="editable-copy" contentEditable suppressContentEditableWarning onBlur={(event) => updateShowcaseMerch(index, { title: event.currentTarget.textContent || product.title })}>{product.title}</h3>
+                  <p className="editable-copy" contentEditable suppressContentEditableWarning onBlur={(event) => updateShowcaseMerch(index, { copy: event.currentTarget.textContent || product.copy })}>{product.copy}</p>
                   <ul>
-                    {product.features.map((feature) => <li key={feature}>{feature}</li>)}
+                    {product.features.map((feature, featureIndex) => <li className="editable-copy" contentEditable suppressContentEditableWarning key={`${feature}-${featureIndex}`} onBlur={(event) => {
+                      const features = [...product.features]
+                      features[featureIndex] = event.currentTarget.textContent || feature
+                      updateShowcaseMerch(index, { features })
+                    }}>{feature}</li>)}
                   </ul>
                 </div>
               </article>
@@ -1297,7 +1529,12 @@ function App() {
       </section>
 
       <section className="section contact-section" id="contact">
-        <SectionTitle eyebrow="Contact" title="BrightBox Animations" copy="Based between Spain and Los Angeles for festival conversations, co-production, music, animation, and distribution partnerships." />
+        <SectionTitle
+          eyebrow={showcaseCopy.contactEyebrow ?? defaultShowcaseCopy.contactEyebrow}
+          title={showcaseCopy.contactTitle ?? defaultShowcaseCopy.contactTitle}
+          copy={showcaseCopy.contactCopy ?? defaultShowcaseCopy.contactCopy}
+          onEdit={(part, value) => updateShowcaseText(`contact${part[0].toUpperCase()}${part.slice(1)}`, value)}
+        />
         <div className="contact-panel glass">
           <div>
             <h3 contentEditable suppressContentEditableWarning onBlur={(event) => setShowcaseContact((current) => ({ ...current, title: event.currentTarget.textContent || current.title }))}>{showcaseContact.title}</h3>
@@ -1324,6 +1561,21 @@ function App() {
       <footer className="site-footer">
         © 2025–2026 BrightBox Animation Studios. All rights reserved.
       </footer>
+      {showcasePickerTarget && (
+        <ShowcaseMediaPicker
+          storyboard={showcasePickerStoryboard}
+          onClose={() => setShowcasePickerTarget(null)}
+          onPick={(media) => {
+            placeShowcaseMedia(mediaFromPicker(media))
+            setShowcasePickerTarget(null)
+          }}
+          onUpload={(files) => {
+            if (!showcasePickerTarget) return
+            addShowcaseFiles(files, showcasePickerTarget.target, showcasePickerTarget.index).catch(() => {})
+            setShowcasePickerTarget(null)
+          }}
+        />
+      )}
     </main>
   )
 }
@@ -1583,33 +1835,120 @@ function CustomAudioPlayer({ url, fileName, autoPlay, onExpand }: { url: string;
   )
 }
 
-function SectionTitle({ eyebrow, title, copy }: { eyebrow: string; title: string; copy: string }) {
+function SectionTitle({ eyebrow, title, copy, onEdit }: { eyebrow: string; title: string; copy?: string; onEdit?: (part: 'Eyebrow' | 'Title' | 'Copy', value: string) => void }) {
   return (
     <div className="section-title">
-      <p className="eyebrow">{eyebrow}</p>
-      <h2>{title}</h2>
-      <p>{copy}</p>
+      <p className="eyebrow editable-copy" contentEditable={!!onEdit} suppressContentEditableWarning onBlur={(event) => onEdit?.('Eyebrow', event.currentTarget.textContent || eyebrow)}>{eyebrow}</p>
+      <h2 className="editable-copy" contentEditable={!!onEdit} suppressContentEditableWarning onBlur={(event) => onEdit?.('Title', event.currentTarget.textContent || title)}>{title}</h2>
+      {copy !== undefined && (
+        <p className="editable-copy" contentEditable={!!onEdit} suppressContentEditableWarning onBlur={(event) => onEdit?.('Copy', event.currentTarget.textContent || '')}>{copy}</p>
+      )}
+    </div>
+  )
+}
+
+function ShowcaseMediaPicker({ storyboard, onClose, onPick, onUpload }: { storyboard: StoryboardData | null; onClose: () => void; onPick: (media: StoryboardMedia) => void; onUpload: (files: File[]) => void }) {
+  const [tab, setTab] = useState<'images' | 'actors' | 'locations' | 'props'>('images')
+  const [openAct, setOpenAct] = useState<string | null>(null)
+  const data = storyboard || createDefaultStoryboard()
+  const resourceTabs: Array<'actors' | 'locations' | 'props'> = ['actors', 'locations', 'props']
+  const actMedia = data.acts.map((act) => ({
+    act,
+    media: act.scenes.flatMap((scene) => [
+      ...scene.imageShots.flatMap((shot) => shot.media.filter((media) => media.type === 'image' || media.type === 'video')),
+      ...scene.videoShots.flatMap((shot) => shot.media.filter((media) => media.type === 'image' || media.type === 'video')),
+    ]),
+  }))
+
+  return (
+    <div className="showcase-picker-backdrop" role="presentation" onClick={onClose}>
+      <div className="showcase-picker glass" onClick={(event) => event.stopPropagation()}>
+        <button className="showcase-picker-close" type="button" onClick={onClose}>×</button>
+        <div className="showcase-picker-head">
+          <strong>Add media</strong>
+          <label>
+            Upload
+            <input type="file" accept="image/*,video/*" multiple onChange={(event) => {
+              onUpload(Array.from(event.target.files || []))
+              event.target.value = ''
+            }} />
+          </label>
+        </div>
+        <div className="showcase-picker-tabs">
+          <button className={tab === 'images' ? 'is-active' : ''} type="button" onClick={() => setTab('images')}>Scenes</button>
+          {resourceTabs.map((resourceTab) => (
+            <button className={tab === resourceTab ? 'is-active' : ''} key={resourceTab} type="button" onClick={() => setTab(resourceTab)}>{resourceTab}</button>
+          ))}
+        </div>
+        <div className="showcase-picker-body">
+          {tab === 'images' ? (
+            actMedia.map(({ act, media }) => (
+              <details key={act.id} open={openAct === act.id || media.length > 0 && openAct === null} onToggle={(event) => {
+                if (event.currentTarget.open) setOpenAct(act.id)
+              }}>
+                <summary>{act.title}<span>{media.length}</span></summary>
+                <div className="showcase-picker-grid">
+                  {media.map((item) => (
+                    <button key={item.id} type="button" onClick={() => onPick(item)}>
+                      {item.type === 'video' ? <video src={item.url} muted playsInline /> : <img src={item.url} alt={item.fileName} />}
+                    </button>
+                  ))}
+                </div>
+              </details>
+            ))
+          ) : (
+            (data.resources[tab] || []).map((resource) => {
+              const media = [...(resource.media || []), ...(resource.sheetMedia || [])].filter((item) => item.type === 'image' || item.type === 'video')
+              return (
+                <section className="showcase-picker-resource" key={resource.id}>
+                  <strong>{resource.name}</strong>
+                  <div className="showcase-picker-grid small">
+                    {media.map((item) => (
+                      <button key={item.id} type="button" onClick={() => onPick(item)}>
+                        {item.type === 'video' ? <video src={item.url} muted playsInline /> : <img src={item.url} alt={item.fileName} />}
+                      </button>
+                    ))}
+                  </div>
+                </section>
+              )
+            })
+          )}
+        </div>
+      </div>
     </div>
   )
 }
 
 type MoodboardItem = { id: string; url: string; x: number; y: number; width: number; height: number; name: string; group?: string };
+type MoodboardGroup = { id: string; name: string; color: string; itemIds: string[] }
 
 function MoodboardCanvas() {
-  const [items, setItems] = useState<MoodboardItem[]>([]);
+  const [boardName, setBoardName] = useState(() => window.localStorage.getItem('aisha-moodboard-name') || 'Moodboard');
+  const [items, setItems] = useState<MoodboardItem[]>(() => {
+    try { return JSON.parse(window.localStorage.getItem('aisha-moodboard-items') || '[]') } catch { return [] }
+  });
+  const [groups, setGroups] = useState<MoodboardGroup[]>(() => {
+    try { return JSON.parse(window.localStorage.getItem('aisha-moodboard-groups') || '[]') } catch { return [] }
+  });
   const [pan, setPan] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [draggingItem, setDraggingItem] = useState<string | null>(null);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const [isPanning, setIsPanning] = useState(false);
   const [panStart, setPanStart] = useState({ x: 0, y: 0 });
-  const [selectedItem, setSelectedItem] = useState<string | null>(null);
+  const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const canvasRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  useEffect(() => { window.localStorage.setItem('aisha-moodboard-name', boardName) }, [boardName])
+  useEffect(() => { window.localStorage.setItem('aisha-moodboard-items', JSON.stringify(items)) }, [items])
+  useEffect(() => { window.localStorage.setItem('aisha-moodboard-groups', JSON.stringify(groups)) }, [groups])
+
+  const selectedSet = new Set(selectedItems)
+
   const handleWheel = (e: React.WheelEvent) => {
     e.preventDefault();
-    const delta = e.deltaY > 0 ? 0.9 : 1.1;
+    const delta = e.deltaY > 0 ? 0.94 : 1.06;
     setZoom(prev => Math.max(0.1, Math.min(3, prev * delta)));
   };
 
@@ -1617,7 +1956,7 @@ function MoodboardCanvas() {
     if (e.button === 1 || e.button === 2 || (e.button === 0 && e.target === canvasRef.current)) {
       setIsPanning(true);
       setPanStart({ x: e.clientX - pan.x, y: e.clientY - pan.y });
-      setSelectedItem(null);
+      if (!e.shiftKey) setSelectedItems([]);
     }
   };
 
@@ -1641,7 +1980,10 @@ function MoodboardCanvas() {
 
   const handleItemMouseDown = (e: React.MouseEvent, item: MoodboardItem) => {
     e.stopPropagation();
-    setSelectedItem(item.id);
+    setSelectedItems(prev => (e.shiftKey || e.metaKey)
+      ? (prev.includes(item.id) ? prev.filter(id => id !== item.id) : [...prev, item.id])
+      : [item.id]
+    );
     setDraggingItem(item.id);
     const rect = canvasRef.current?.getBoundingClientRect();
     if (!rect) return;
@@ -1650,8 +1992,13 @@ function MoodboardCanvas() {
     setDragOffset({ x: worldX - item.x, y: worldY - item.y });
   };
 
-  const addImage = (file: File) => {
-    const url = URL.createObjectURL(file);
+  const addImage = async (file: File) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    const response = await fetch('/api/storyboard/upload', { method: 'POST', body: formData });
+    const payload = await response.json();
+    if (!response.ok) return;
+    const url = payload.url;
     const img = new Image();
     img.onload = () => {
       const aspectRatio = img.width / img.height;
@@ -1665,28 +2012,61 @@ function MoodboardCanvas() {
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'));
-    files.forEach(addImage);
+    files.forEach((file) => { void addImage(file) });
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if ((e.key === 'Delete' || e.key === 'Backspace') && selectedItem) {
-      setItems(prev => prev.filter(item => item.id !== selectedItem));
-      setSelectedItem(null);
+    if ((e.key === 'Delete' || e.key === 'Backspace') && selectedItems.length) {
+      const ids = new Set(selectedItems)
+      setItems(prev => prev.filter(item => !ids.has(item.id)));
+      setGroups(prev => prev.map(group => ({ ...group, itemIds: group.itemIds.filter(id => !ids.has(id)) })).filter(group => group.itemIds.length > 0))
+      setSelectedItems([]);
     }
   };
 
+  const makeGroup = () => {
+    if (selectedItems.length < 2) return
+    const palette = ['#f8d978', '#63eeb1', '#5fbfff', '#ff6fc4', '#b89cff']
+    setGroups(prev => [...prev, { id: crypto.randomUUID(), name: `Group ${prev.length + 1}`, color: palette[prev.length % palette.length], itemIds: selectedItems }])
+  }
+
+  const groupBounds = (group: MoodboardGroup) => {
+    const members = items.filter(item => group.itemIds.includes(item.id))
+    if (!members.length) return null
+    const minX = Math.min(...members.map(item => item.x))
+    const minY = Math.min(...members.map(item => item.y))
+    const maxX = Math.max(...members.map(item => item.x + item.width))
+    const maxY = Math.max(...members.map(item => item.y + item.height))
+    return { x: minX - 22, y: minY - 44, width: maxX - minX + 44, height: maxY - minY + 66 }
+  }
+
   return (
     <div className="storyboard-stage moodboard-canvas-wrapper" style={{ position: 'relative', overflow: 'hidden', flex: 1, minHeight: '600px' }} onWheel={handleWheel} onMouseDown={handleMouseDown} onMouseMove={handleMouseMove} onMouseUp={handleMouseUp} onDrop={handleDrop} onDragOver={e => e.preventDefault()} onKeyDown={handleKeyDown} onContextMenu={e => e.preventDefault()} tabIndex={0} ref={canvasRef}>
-      <div style={{ position: 'absolute', top: '1.5rem', left: '1.5rem', zIndex: 20, display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-        <h2 style={{ margin: 0, color: 'var(--gold)', fontFamily: '"Outfit", sans-serif', fontWeight: 600, fontSize: '1.3rem' }}>Moodboard Canvas</h2>
+      <div style={{ position: 'absolute', top: '1.5rem', left: '1.5rem', right: '1.5rem', zIndex: 20, display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+        <input value={boardName} onChange={(event) => setBoardName(event.target.value)} style={{ width: '14rem', border: '1px solid rgba(248,217,120,0.22)', borderRadius: '999px', background: 'rgba(4,9,18,0.58)', color: 'var(--gold)', padding: '0.58rem 0.9rem', fontWeight: 900, outline: 'none', backdropFilter: 'blur(10px)' }} />
         <button onClick={() => fileInputRef.current?.click()} style={{ padding: '0.5rem 1rem', borderRadius: '2rem', border: '1px solid rgba(248, 217, 120, 0.3)', background: 'rgba(248, 217, 120, 0.08)', color: 'var(--gold)', cursor: 'pointer', fontSize: '0.8rem', backdropFilter: 'blur(10px)' }}>+ Add Image</button>
-        <input ref={fileInputRef} type="file" accept="image/*" multiple style={{ display: 'none' }} onChange={(e) => { if (e.target.files) Array.from(e.target.files).forEach(addImage); }} />
-        <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.75rem' }}>Zoom: {Math.round(zoom * 100)}% | {items.length} items</span>
+        <input ref={fileInputRef} type="file" accept="image/*" multiple style={{ display: 'none' }} onChange={(e) => { if (e.target.files) Array.from(e.target.files).forEach((file) => { void addImage(file) }); }} />
+        <button disabled={selectedItems.length < 2} onClick={makeGroup} style={{ padding: '0.5rem 1rem', borderRadius: '2rem', border: '1px solid rgba(95,189,255,0.28)', background: selectedItems.length > 1 ? 'rgba(95,189,255,0.1)' : 'rgba(255,255,255,0.035)', color: selectedItems.length > 1 ? 'rgba(159,221,255,0.95)' : 'rgba(255,255,255,0.28)', cursor: selectedItems.length > 1 ? 'pointer' : 'default', fontSize: '0.8rem', backdropFilter: 'blur(10px)' }}>Group selected</button>
+        <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '0.45rem', padding: '0.35rem', borderRadius: '999px', background: 'rgba(4,9,18,0.5)', border: '1px solid rgba(255,255,255,0.08)', backdropFilter: 'blur(10px)' }}>
+          <button onClick={() => setZoom(prev => Math.max(0.1, prev - 0.08))} style={{ width: '2rem', height: '2rem', borderRadius: '50%', border: 'none', background: 'rgba(255,255,255,0.06)', color: 'var(--cream)', cursor: 'pointer' }}>−</button>
+          <input type="range" min="0.1" max="3" step="0.01" value={zoom} onChange={(event) => setZoom(Number(event.target.value))} style={{ width: '8rem', accentColor: 'var(--gold)' }} />
+          <button onClick={() => setZoom(prev => Math.min(3, prev + 0.08))} style={{ width: '2rem', height: '2rem', borderRadius: '50%', border: 'none', background: 'rgba(255,255,255,0.06)', color: 'var(--cream)', cursor: 'pointer' }}>+</button>
+          <span style={{ minWidth: '3.2rem', color: 'rgba(255,255,255,0.58)', fontSize: '0.75rem', textAlign: 'center' }}>{Math.round(zoom * 100)}%</span>
+        </div>
       </div>
       <div style={{ position: 'absolute', inset: 0, backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px)', backgroundSize: `${20 * zoom}px ${20 * zoom}px`, backgroundPosition: `${pan.x}px ${pan.y}px` }} />
       <div style={{ transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`, transformOrigin: '0 0', position: 'absolute', top: 0, left: 0 }}>
+        {groups.map(group => {
+          const bounds = groupBounds(group)
+          if (!bounds) return null
+          return (
+            <div key={group.id} style={{ position: 'absolute', left: bounds.x, top: bounds.y, width: bounds.width, height: bounds.height, border: `1.5px solid ${group.color}`, borderRadius: '1rem', background: `${group.color}12`, pointerEvents: 'none', boxShadow: `0 0 22px ${group.color}22` }}>
+              <input value={group.name} onChange={(event) => setGroups(prev => prev.map(item => item.id === group.id ? { ...item, name: event.target.value } : item))} onMouseDown={(event) => event.stopPropagation()} style={{ position: 'absolute', top: '-2.1rem', left: '0.7rem', width: '11rem', pointerEvents: 'auto', border: `1px solid ${group.color}88`, borderRadius: '999px', background: 'rgba(4,9,18,0.82)', color: 'var(--cream)', padding: '0.38rem 0.7rem', fontSize: '0.72rem', fontWeight: 900, outline: 'none' }} />
+            </div>
+          )
+        })}
         {items.map(item => (
-          <div key={item.id} onMouseDown={(e) => handleItemMouseDown(e, item)} style={{ position: 'absolute', left: item.x, top: item.y, width: item.width, cursor: draggingItem === item.id ? 'grabbing' : 'grab', border: selectedItem === item.id ? '2px solid var(--gold)' : '2px solid rgba(255,255,255,0.1)', borderRadius: '8px', overflow: 'hidden', boxShadow: selectedItem === item.id ? '0 0 20px rgba(248, 217, 120, 0.3)' : '0 4px 15px rgba(0,0,0,0.5)', transition: draggingItem === item.id ? 'none' : 'box-shadow 0.2s, border-color 0.2s', background: 'rgba(10, 15, 25, 0.8)' }}>
+          <div key={item.id} onMouseDown={(e) => handleItemMouseDown(e, item)} style={{ position: 'absolute', left: item.x, top: item.y, width: item.width, cursor: draggingItem === item.id ? 'grabbing' : 'grab', border: selectedSet.has(item.id) ? '2px solid var(--gold)' : '2px solid rgba(255,255,255,0.1)', borderRadius: '8px', overflow: 'hidden', boxShadow: selectedSet.has(item.id) ? '0 0 20px rgba(248, 217, 120, 0.3)' : '0 4px 15px rgba(0,0,0,0.5)', transition: draggingItem === item.id ? 'none' : 'box-shadow 0.2s, border-color 0.2s', background: 'rgba(10, 15, 25, 0.8)' }}>
             <img src={item.url} alt={item.name} style={{ width: '100%', display: 'block', pointerEvents: 'none' }} draggable={false} />
             <div style={{ padding: '0.4rem 0.6rem', fontSize: '0.7rem', color: 'rgba(255,255,255,0.5)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.name}</div>
           </div>
@@ -1696,7 +2076,7 @@ function MoodboardCanvas() {
         <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', textAlign: 'center', color: 'rgba(255,255,255,0.3)', pointerEvents: 'none' }}>
           <svg width="64" height="64" viewBox="0 0 64 64" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ opacity: 0.3, marginBottom: '1rem' }}><rect x="10" y="10" width="20" height="14" rx="2" /><rect x="34" y="10" width="20" height="20" rx="2" /><rect x="10" y="28" width="20" height="26" rx="2" /><rect x="34" y="34" width="20" height="20" rx="2" /></svg>
           <p style={{ fontSize: '1.1rem', margin: '0 0 0.5rem' }}>Drop images here or click "+ Add Image"</p>
-          <p style={{ fontSize: '0.8rem' }}>Scroll to zoom • Drag canvas to pan • Drag images to position</p>
+          <p style={{ fontSize: '0.8rem' }}>Scroll or use the zoom bar • Shift-click images to multi-select • Group selected images</p>
         </div>
       )}
     </div>
@@ -1710,7 +2090,7 @@ function StoryboardWorkspace() {
   const [workspaceMode, setWorkspaceMode] = useState<'storyboard' | StoryboardResourceType | 'agent' | 'moodboard' | 'canvas'>('storyboard')
   const [newResourceName, setNewResourceName] = useState('')
   const [agentDraft, setAgentDraft] = useState({ title: '', sceneHint: '', skillHint: '', prompt: '' })
-  const [lightbox, setLightbox] = useState<{ media: StoryboardMedia; allMedia: StoryboardMedia[]; shotId: string; actId: string; sceneId: string; mode: StoryboardSequenceMode } | null>(null)
+  const [lightbox, setLightbox] = useState<{ media: StoryboardMedia; allMedia: StoryboardMedia[]; shotId: string; actId: string; sceneId: string; mode: StoryboardSequenceMode; resourceContext?: { type: StoryboardResourceType; resourceId: string; slot: StoryboardResourceSlot } } | null>(null)
   const [lightboxCompare, setLightboxCompare] = useState(false)
   const [lightboxCrop, setLightboxCrop] = useState(false)
 
@@ -1799,6 +2179,7 @@ function StoryboardWorkspace() {
   const [lbSplitSize, setLbSplitSize] = useState('2x2')
   const [lbProcessing, setLbProcessing] = useState(false)
   const lbFileRef = useRef<HTMLInputElement>(null)
+  const lbVideoRef = useRef<HTMLVideoElement | null>(null)
   const [lbAttachTab, setLbAttachTab] = useState<'all' | 'actors' | 'locations' | 'props'>('all')
   const [lbAttachShowAll, setLbAttachShowAll] = useState(false)
   const [lbSkillOpen, setLbSkillOpen] = useState(false)
@@ -1811,6 +2192,11 @@ function StoryboardWorkspace() {
   const [lbVideoModel, setLbVideoModel] = useState('seedance-2.0-standard')
   const [lbVideoQuality, setLbVideoQuality] = useState('720p')
   const [lbVideoDuration, setLbVideoDuration] = useState(15)
+  const [lbVideoTrimOpen, setLbVideoTrimOpen] = useState(false)
+  const [lbVideoTrimStart, setLbVideoTrimStart] = useState(0)
+  const [lbVideoTrimEnd, setLbVideoTrimEnd] = useState(0)
+  const [lbVideoDurationMeta, setLbVideoDurationMeta] = useState(0)
+  const [lbCompareSync, setLbCompareSync] = useState(true)
   const [lbAspectRatio, setLbAspectRatio] = useState('16:9')
   const [lbBatchSize, setLbBatchSize] = useState(1)
   const [lbEmptyMode, setLbEmptyMode] = useState(false)
@@ -1822,6 +2208,15 @@ function StoryboardWorkspace() {
   const [selectedShotId, setSelectedShotId] = useState<string | null>(null)
   const [status, setStatus] = useState('Loading storyboard archive...')
   const saveTimer = useRef<number | null>(null)
+
+  useEffect(() => {
+    if (!lightbox || lightbox.media.type !== 'video') {
+      setLbVideoTrimOpen(false)
+      return
+    }
+    setLbVideoTrimStart(Number(lightbox.media.trimStart) || 0)
+    setLbVideoTrimEnd(Number(lightbox.media.trimEnd) || lbVideoDurationMeta || 0)
+  }, [lightbox?.media.id])
 
   const saveStoryboard = (next: StoryboardData) => {
     window.localStorage.setItem('aisha-storyboard-cache', JSON.stringify(next))
@@ -1855,7 +2250,7 @@ function StoryboardWorkspace() {
         setStoryboard(next)
         setActiveActId(next.acts[0]?.id || 'act-1')
         setStatus(`Storyboard folder: ${storyboardStoragePath}`)
-        if (!payload.acts?.length || !payload.resources) saveStoryboard(next)
+        saveStoryboard(next)
       })
       .catch(() => {
         const cached = window.localStorage.getItem('aisha-storyboard-cache')
@@ -1872,11 +2267,17 @@ function StoryboardWorkspace() {
   const actorNames = storyboard.resources.actors.map((resource) => resource.name)
 
   const addResource = (type: StoryboardResourceType) => {
-    const name = newResourceName.trim()
-    if (!name) return
+    const base = type === 'actors' ? 'New actor' : type === 'locations' ? 'New location' : type === 'props' ? 'New prop' : 'New moodboard'
+    const name = newResourceName.trim() || base
     updateStoryboard((draft) => {
-      if (draft.resources[type].some((resource) => resource.name.toLowerCase() === name.toLowerCase())) return
-      draft.resources[type].push(createResource(type, name))
+      const existingNames = new Set(draft.resources[type].map((resource) => resource.name.toLowerCase()))
+      let finalName = name
+      let counter = 2
+      while (existingNames.has(finalName.toLowerCase())) {
+        finalName = `${name} ${counter}`
+        counter += 1
+      }
+      draft.resources[type].push(createResource(type, finalName))
       draft.actors = draft.resources.actors.map((resource) => resource.name)
       draft.locations = draft.resources.locations.map((resource) => resource.name)
     })
@@ -2047,6 +2448,45 @@ function StoryboardWorkspace() {
     })
   }
 
+  const pollPendingVideoJob = (
+    jobId: string,
+    context: { actId: string; sceneId: string; mode: StoryboardSequenceMode; shotId: string; model: string; batchIndex: number },
+    attempt = 0,
+  ) => {
+    fetch(`/api/tasks/video-job?id=${encodeURIComponent(jobId)}`)
+      .then(r => r.json())
+      .then(job => {
+        if (job.status === 'done' && job.url) {
+          setBgGenerating(prev => Math.max(0, prev - 1))
+          setBgShotJobs(prev => ({ ...prev, [context.shotId]: Math.max(0, (prev[context.shotId] || 0) - 1) }))
+          const cacheBust = job.url + (job.url.includes('?') ? '&' : '?') + 't=' + Date.now()
+          injectResultMedia(context.actId, context.sceneId, context.mode, context.shotId, [{
+            id: `media-${context.model}-${Date.now()}-${context.batchIndex}`,
+            type: 'video',
+            url: cacheBust,
+            fileName: `${context.model}-${Date.now()}.mp4`,
+            localPath: job.localPath,
+            createdAt: new Date().toISOString(),
+          }])
+          return
+        }
+        if (job.status === 'error' || attempt > 240) {
+          setBgGenerating(prev => Math.max(0, prev - 1))
+          setBgShotJobs(prev => ({ ...prev, [context.shotId]: Math.max(0, (prev[context.shotId] || 0) - 1) }))
+          return
+        }
+        window.setTimeout(() => pollPendingVideoJob(jobId, context, attempt + 1), 5000)
+      })
+      .catch(() => {
+        if (attempt > 240) {
+          setBgGenerating(prev => Math.max(0, prev - 1))
+          setBgShotJobs(prev => ({ ...prev, [context.shotId]: Math.max(0, (prev[context.shotId] || 0) - 1) }))
+          return
+        }
+        window.setTimeout(() => pollPendingVideoJob(jobId, context, attempt + 1), 5000)
+      })
+  }
+
   const uploadMediaFile = async (file: File, forcedType?: StoryboardMedia['type']) => {
     const formData = new FormData()
     formData.append('file', file)
@@ -2062,6 +2502,143 @@ function StoryboardWorkspace() {
       localPath: payload.localPath,
       createdAt: new Date().toISOString(),
     } as StoryboardMedia
+  }
+
+  const updateShotMedia = (actId: string, sceneId: string, mode: StoryboardSequenceMode, shotId: string, mediaId: string, mutate: (media: StoryboardMedia) => void) => {
+    updateShot(actId, sceneId, mode, shotId, (shot) => {
+      const media = shot.media.find((item) => item.id === mediaId)
+      if (media) mutate(media)
+    })
+  }
+
+  const updateResourceMediaInSlot = (context: { type: StoryboardResourceType; resourceId: string; slot: StoryboardResourceSlot }, mediaId: string, mutate: (media: StoryboardMedia) => void) => {
+    updateResource(context.type, context.resourceId, (resource) => {
+      const collection = context.slot === 'card' ? resource.media : resource.sheetMedia
+      const media = collection.find((item) => item.id === mediaId)
+      if (media) mutate(media)
+    })
+  }
+
+  const appendResourceMediaToSlot = (context: { type: StoryboardResourceType; resourceId: string; slot: StoryboardResourceSlot }, mediaItems: StoryboardMedia[]) => {
+    updateResource(context.type, context.resourceId, (resource) => {
+      const collection = context.slot === 'card' ? resource.media : resource.sheetMedia
+      collection.push(...mediaItems)
+      const selectedId = mediaItems[0]?.id
+      if (selectedId) {
+        if (context.slot === 'card') resource.selectedMediaId = selectedId
+        else resource.selectedSheetMediaId = selectedId
+      }
+    })
+  }
+
+  const getTrimmedVideoSrc = (media: StoryboardMedia) => {
+    if (media.type !== 'video') return media.url
+    const start = Math.max(0, Number(media.trimStart) || 0)
+    const end = Number(media.trimEnd) || 0
+    if (!start && !end) return media.url
+    return `${media.url}#t=${start}${end > start ? `,${end}` : ''}`
+  }
+
+  const applyLightboxVideoTrim = () => {
+    if (!lightbox || lightbox.media.type !== 'video') return
+    const start = Math.max(0, Math.min(lbVideoTrimStart, lbVideoTrimEnd || lbVideoDurationMeta || lbVideoTrimStart))
+    const end = Math.max(start, lbVideoTrimEnd || lbVideoDurationMeta || start)
+    const nextMedia: StoryboardMedia = { ...lightbox.media, trimStart: start, trimEnd: end }
+    if (lightbox.resourceContext) {
+      updateResourceMediaInSlot(lightbox.resourceContext, lightbox.media.id, (media) => {
+        media.trimStart = start
+        media.trimEnd = end
+      })
+    } else {
+      updateShotMedia(lightbox.actId, lightbox.sceneId, lightbox.mode, lightbox.shotId, lightbox.media.id, (media) => {
+        media.trimStart = start
+        media.trimEnd = end
+      })
+    }
+    setLightbox({
+      ...lightbox,
+      media: nextMedia,
+      allMedia: lightbox.allMedia.map((item) => item.id === nextMedia.id ? nextMedia : item),
+    })
+    setStatus(`Video trim saved: ${start.toFixed(1)}s to ${end.toFixed(1)}s`)
+  }
+
+  const resetLightboxVideoTrim = () => {
+    if (!lightbox || lightbox.media.type !== 'video') return
+    const nextMedia: StoryboardMedia = { ...lightbox.media, trimStart: undefined, trimEnd: undefined }
+    if (lightbox.resourceContext) {
+      updateResourceMediaInSlot(lightbox.resourceContext, lightbox.media.id, (media) => {
+        delete media.trimStart
+        delete media.trimEnd
+      })
+    } else {
+      updateShotMedia(lightbox.actId, lightbox.sceneId, lightbox.mode, lightbox.shotId, lightbox.media.id, (media) => {
+        delete media.trimStart
+        delete media.trimEnd
+      })
+    }
+    setLbVideoTrimStart(0)
+    setLbVideoTrimEnd(lbVideoDurationMeta || 0)
+    setLightbox({
+      ...lightbox,
+      media: nextMedia,
+      allMedia: lightbox.allMedia.map((item) => item.id === nextMedia.id ? nextMedia : item),
+    })
+  }
+
+  const splitLightboxVideoAtCurrentTime = () => {
+    if (!lightbox || lightbox.media.type !== 'video' || !lbVideoRef.current) return
+    const duration = lbVideoDurationMeta || lbVideoRef.current.duration || 0
+    const cut = Math.max(0.2, Math.min(lbVideoRef.current.currentTime || duration / 2, Math.max(0.2, duration - 0.2)))
+    const baseName = (lightbox.media.fileName || 'video').replace(/\.[^.]+$/, '')
+    const partA: StoryboardMedia = {
+      ...lightbox.media,
+      id: `media-video-split-a-${Date.now()}`,
+      fileName: `${baseName}-part-a-${Math.round(cut)}s.mp4`,
+      trimStart: lightbox.media.trimStart || 0,
+      trimEnd: cut,
+      createdAt: new Date().toISOString(),
+    }
+    const partB: StoryboardMedia = {
+      ...lightbox.media,
+      id: `media-video-split-b-${Date.now()}`,
+      fileName: `${baseName}-part-b-${Math.round(cut)}s.mp4`,
+      trimStart: cut,
+      trimEnd: lightbox.media.trimEnd || duration,
+      createdAt: new Date().toISOString(),
+    }
+    if (lightbox.resourceContext) appendResourceMediaToSlot(lightbox.resourceContext, [partA, partB])
+    else injectResultMedia(lightbox.actId, lightbox.sceneId, lightbox.mode, lightbox.shotId, [partA, partB])
+    setLightbox({ ...lightbox, media: partA, allMedia: [...lightbox.allMedia, partA, partB] })
+    setStatus(`Split video at ${cut.toFixed(1)}s into two non-destructive alternates.`)
+  }
+
+  const extractLightboxVideoFrame = async () => {
+    if (!lightbox || lightbox.media.type !== 'video' || !lbVideoRef.current) return
+    const video = lbVideoRef.current
+    if (!video.videoWidth || !video.videoHeight) {
+      setStatus('Video is still loading. Try the frame button again in a moment.')
+      return
+    }
+    const canvas = document.createElement('canvas')
+    canvas.width = video.videoWidth
+    canvas.height = video.videoHeight
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height)
+    const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/png'))
+    if (!blob) return
+    const second = Math.max(0, Math.round(video.currentTime || 0))
+    const safeBase = (lightbox.media.fileName || 'video').replace(/\.[^.]+$/, '')
+    const frameMedia = await uploadMediaFile(new File([blob], `${safeBase}-frame-${String(second).padStart(2, '0')}s.png`, { type: 'image/png' }), 'image')
+    frameMedia.fileName = `${safeBase}-frame-${String(second).padStart(2, '0')}s.png`
+    frameMedia.createdAt = new Date().toISOString()
+    frameMedia.frameSecond = second
+    frameMedia.sourceVideoUrl = lightbox.media.url
+    if (lightbox.resourceContext) appendResourceMediaToSlot(lightbox.resourceContext, [frameMedia])
+    else injectResultMedia(lightbox.actId, lightbox.sceneId, lightbox.mode, lightbox.shotId, [frameMedia])
+    setLightbox({ ...lightbox, media: frameMedia, allMedia: [...lightbox.allMedia, frameMedia] })
+    setStatus(`Extracted frame at ${second}s from ${lightbox.media.fileName || 'video'}`)
   }
 
   const uploadMedia = async (file: File, actId: string, sceneId: string, mode: StoryboardSequenceMode, shotId: string) => {
@@ -2106,6 +2683,19 @@ function StoryboardWorkspace() {
     })
   }
 
+  const deleteLightboxMedia = () => {
+    if (!lightbox) return
+    if (lightbox.resourceContext) {
+      const { type, resourceId, slot } = lightbox.resourceContext
+      deleteResourceMedia(type, resourceId, slot, lightbox.media.id)
+    } else if (lightbox.shotId && lightbox.actId) {
+      deleteShotMedia(lightbox.actId, lightbox.sceneId, lightbox.mode, lightbox.shotId, lightbox.media.id)
+    }
+    const remaining = lightbox.allMedia.filter((media) => media.id !== lightbox.media.id)
+    if (remaining.length > 0) setLightbox({ ...lightbox, media: remaining[0], allMedia: remaining })
+    else setLightbox(null)
+  }
+
   const reorderShot = (actId: string, sceneId: string, mode: StoryboardSequenceMode, fromId: string, toId: string) => {
     if (fromId === toId) return
     updateScene(actId, sceneId, (scene) => {
@@ -2144,6 +2734,8 @@ function StoryboardWorkspace() {
       if (draft.resources[type]) {
         draft.resources[type] = draft.resources[type].filter((r) => r.id !== resourceId)
       }
+      draft.actors = draft.resources.actors.map((item) => item.name)
+      draft.locations = draft.resources.locations.map((item) => item.name)
       // Also remove from any scene's resourceRefs
       draft.acts.forEach(act => {
         act.scenes.forEach(scene => {
@@ -2388,7 +2980,7 @@ function StoryboardWorkspace() {
             onBack={() => setWorkspaceMode('storyboard')}
             onCopyPath={revealPath}
             onDeleteMedia={deleteResourceMedia}
-            onLightbox={(m) => setLightbox({ media: m, allMedia: [m], shotId: '', actId: '', sceneId: '', mode: 'images' })}
+            onLightbox={(m, allMedia, resourceContext) => setLightbox({ media: m, allMedia: allMedia?.length ? allMedia : [m], shotId: '', actId: '', sceneId: '', mode: m.type === 'video' ? 'videos' : m.type === 'audio' ? 'audio' : 'images', resourceContext })}
             onNameChange={setNewResourceName}
             onResourceChange={updateResource}
             onUpload={uploadResourceMedia}
@@ -2475,7 +3067,13 @@ function StoryboardWorkspace() {
                 onDuplicateShot={duplicateShot}
                 onLightbox={(media, allMedia, shotId) => setLightbox({ media, allMedia, shotId, actId: activeAct.id, sceneId: activeScene.id, mode: activeScene.mode })}
                 onEmptyLightbox={(shotId) => {
-                  const emptyMedia: StoryboardMedia = { id: `empty-${Date.now()}`, type: 'image', url: '', fileName: '' }
+                  const emptyMedia: StoryboardMedia = {
+                    id: `empty-${Date.now()}`,
+                    type: activeScene.mode === 'videos' ? 'video' : activeScene.mode === 'audio' ? 'audio' : 'image',
+                    url: '',
+                    fileName: '',
+                    createdAt: new Date().toISOString(),
+                  }
                   setLightbox({ media: emptyMedia, allMedia: [], shotId, actId: activeAct.id, sceneId: activeScene.id, mode: activeScene.mode })
                   setLbEmptyMode(true); setLbNoteOpen(true)
                 }}
@@ -2506,7 +3104,7 @@ function StoryboardWorkspace() {
               <div className="scene-resources">
                 <SceneResourcePanel
                   onCopyPath={revealPath}
-                  onLightbox={(m) => setLightbox({ media: m, allMedia: [m], shotId: '', actId: '', sceneId: '', mode: 'images' })}
+                  onLightbox={(m, allMedia, resourceContext) => setLightbox({ media: m, allMedia: allMedia?.length ? allMedia : [m], shotId: '', actId: '', sceneId: '', mode: m.type === 'video' ? 'videos' : m.type === 'audio' ? 'audio' : 'images', resourceContext })}
                   onToggle={toggleSceneResource}
                   refs={activeScene.resourceRefs[activeScene.mode]}
                   resources={storyboard.resources[activeScene.mode]}
@@ -2547,6 +3145,7 @@ function StoryboardWorkspace() {
                 return (<>
               <div style={{ position: 'relative', borderRadius: '1rem', overflow: 'visible', boxShadow: '0 30px 80px rgba(0,0,0,0.7)', display: 'inline-block', maxWidth: '85vw', transform: lightboxToolMode !== 'normal' ? 'translateY(-8vh)' : 'none', transition: 'all 0.3s ease' }} onClick={() => { if (lbNoteOpen) { setLbNoteOpen(false); setLbSkillOpen(false); setLbModelConfigOpen(false) } }}>
                 
+                {lightbox.media.type === 'image' && (
                 <div style={{ position: 'absolute', top: '1rem', left: '50%', transform: 'translateX(-50%)', display: 'flex', alignItems: 'center', gap: '1rem', zIndex: 30 }}>
                   {lightboxToolMode !== 'extend' && (
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: lightboxToolMode === '3d-camera' ? 'rgba(0,0,0,0.6)' : 'transparent', backdropFilter: lightboxToolMode === '3d-camera' ? 'blur(10px)' : 'none', padding: lightboxToolMode === '3d-camera' ? '0.2rem 0.5rem' : '0', borderRadius: '2rem' }}>
@@ -2583,17 +3182,38 @@ function StoryboardWorkspace() {
                     </div>
                   )}
                 </div>
+                )}
 
                 {/* Shot number badge — top right of image */}
                 <div style={{ position: 'absolute', top: '0.6rem', right: '4.5rem', zIndex: 8, padding: '0.25rem 0.7rem', borderRadius: '999px', background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(8px)', border: '1px solid rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.65)', fontSize: '0.72rem', fontWeight: 600, letterSpacing: '0.05em', pointerEvents: 'none' }}>{lbShotLabel}</div>
                 {lbEmptyMode && !lightbox.media.url ? (
                   /* Empty shot generation canvas */
                   <div style={{ width: '85vw', maxWidth: '1200px', aspectRatio: '16/9', maxHeight: '72vh', borderRadius: '1rem', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '1.2rem', background: 'linear-gradient(135deg, rgba(10,20,38,0.85), rgba(15,25,45,0.9))', border: '1px solid rgba(248,217,120,0.08)', backdropFilter: 'blur(32px)' }}>
-                    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="rgba(248,217,120,0.2)" strokeWidth="1"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
-                    <div style={{ color: 'rgba(248,217,120,0.35)', fontSize: '1.1rem', fontWeight: 600, letterSpacing: '0.08em' }}>It all starts with an image.</div>
+                    {lightbox.mode === 'videos' ? (
+                      <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="rgba(248,217,120,0.2)" strokeWidth="1.2"><rect x="3" y="5" width="14" height="14" rx="2"/><path d="M17 9l4-2v10l-4-2z"/></svg>
+                    ) : (
+                      <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="rgba(248,217,120,0.2)" strokeWidth="1"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+                    )}
+                    <div style={{ color: 'rgba(248,217,120,0.35)', fontSize: '1.1rem', fontWeight: 600, letterSpacing: '0.08em' }}>{lightbox.mode === 'videos' ? 'Create a cinematic video.' : lightbox.mode === 'audio' ? 'Create an audio cue.' : 'It all starts with an image.'}</div>
                     <div style={{ color: 'rgba(255,255,255,0.2)', fontSize: '0.78rem', maxWidth: '400px', textAlign: 'center', lineHeight: 1.5 }}>Write your vision in the note below, attach references, choose your models and hit submit to generate.</div>
                   </div>
-                ) : lightbox.media.type === 'video' ? <video src={lightbox.media.url} controls autoPlay style={{ maxHeight: '72vh', maxWidth: '85vw', borderRadius: '1rem', display: 'block' }} /> : lightbox.media.type === 'audio' ? <div style={{ padding: '3rem' }}><CustomAudioPlayer url={lightbox.media.url} fileName={lightbox.media.fileName} autoPlay /></div> : lightboxToolMode === '3d-camera' ? (
+                ) : lightbox.media.type === 'video' ? <video
+                  ref={lbVideoRef}
+                  src={getTrimmedVideoSrc(lightbox.media)}
+                  controls
+                  autoPlay
+                  onLoadedMetadata={(event) => {
+                    const duration = event.currentTarget.duration || 0
+                    setLbVideoDurationMeta(duration)
+                    setLbVideoTrimStart(Number(lightbox.media.trimStart) || 0)
+                    setLbVideoTrimEnd(Number(lightbox.media.trimEnd) || duration)
+                  }}
+                  onTimeUpdate={(event) => {
+                    const end = Number(lightbox.media.trimEnd) || 0
+                    if (end > 0 && event.currentTarget.currentTime >= end) event.currentTarget.pause()
+                  }}
+                  style={{ maxHeight: '72vh', maxWidth: '85vw', borderRadius: '1rem', display: 'block', background: 'rgba(0,0,0,0.72)' }}
+                /> : lightbox.media.type === 'audio' ? <div style={{ padding: '3rem' }}><CustomAudioPlayer url={lightbox.media.url} fileName={lightbox.media.fileName} autoPlay /></div> : lightboxToolMode === '3d-camera' ? (
                   <div className="container-3d" 
                     onMouseDown={(e) => { setIsCamDragging(true); setExtStart({x: e.clientX, y: e.clientY}); }}
                     onMouseMove={(e) => { if(isCamDragging) { setCamRot({ x: camRot.x + (e.clientX - extStart.x)*0.5, y: camRot.y + (e.clientY - extStart.y)*0.5 }); setExtStart({x: e.clientX, y: e.clientY}); } }}
@@ -2673,9 +3293,9 @@ function StoryboardWorkspace() {
                     <span style={{ color: 'var(--gold)', fontSize: '0.9rem', fontWeight: 600 }}>Generating...</span>
                   </div>
                 )}
-                {lightbox.media.type === 'image' && (
+                {lightbox.media.type !== 'audio' && (
                   <div onClick={(e) => e.stopPropagation()}>
-                    {lightboxToolMode === 'normal' && (
+                    {lightbox.media.type === 'image' && lightboxToolMode === 'normal' && (
                       <>
                         <div className="floating-tools left vertical" style={{ position: 'absolute', top: '1rem', left: '1rem', display: 'flex', flexDirection: 'column', gap: '0.8rem', zIndex: 5 }}>
                           <button className="tool-icon action-doodle" onClick={() => { setLightboxCrop(true); setLbNoteOpen(false); setLbEnhanceOpen(false); setLbSplitOpen(false); setLbAssignOpen(false) }} title="Crop"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6.13 1L6 16a2 2 0 0 0 2 2h15"/><path d="M1 6.13L16 6a2 2 0 0 1 2 2v15"/></svg></button>
@@ -2685,7 +3305,7 @@ function StoryboardWorkspace() {
                         <div className="floating-tools right vertical" style={{ position: 'absolute', top: '1rem', right: '1rem', display: 'flex', flexDirection: 'column', gap: '0.8rem', zIndex: 5 }}>
                           <button className={`tool-icon assign-star ${lbAssignOpen ? 'is-active' : ''}`} onClick={() => { setLbAssignOpen(!lbAssignOpen); setLbEnhanceOpen(false); setLbSplitOpen(false); setLbNoteOpen(false) }} title="Add to Scene"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></button>
                           <button className={`tool-icon action-note ${lbNoteOpen ? 'is-active' : ''}`} onClick={() => { setLbNoteOpen(!lbNoteOpen); setLbEnhanceOpen(false); setLbSplitOpen(false); setLbAssignOpen(false) }} title="Note"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" /><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" /></svg></button>
-                          <button className="tool-icon discard" onClick={() => { if (lightbox.shotId && lightbox.actId) { deleteShotMedia(lightbox.actId, lightbox.sceneId, lightbox.mode, lightbox.shotId, lightbox.media.id); if (lightbox.allMedia.length > 1) { const next = lightbox.allMedia.find(m => m.id !== lightbox.media.id); if (next) setLightbox({ ...lightbox, media: next, allMedia: lightbox.allMedia.filter(m => m.id !== lightbox.media.id) }); else setLightbox(null) } else { setLightbox(null) } } }} title="Delete"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6" /><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /><line x1="10" y1="11" x2="10" y2="17" /><line x1="14" y1="11" x2="14" y2="17" /></svg></button>
+                          <button className="tool-icon discard" onClick={deleteLightboxMedia} title="Delete"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6" /><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /><line x1="10" y1="11" x2="10" y2="17" /><line x1="14" y1="11" x2="14" y2="17" /></svg></button>
                         </div>
                         <div style={{ position: 'absolute', bottom: '1rem', left: '1rem', right: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', zIndex: 5 }}>
                           <div style={{ display: 'flex', gap: '0.5rem' }}>
@@ -2701,6 +3321,72 @@ function StoryboardWorkspace() {
                             {lightbox.allMedia.length > 1 && <button className="tool-icon action-star" onClick={() => setLightboxCompare(true)} title="Compare"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></button>}
                           </div>
                         </div>
+                      </>
+                    )}
+                    {lightbox.media.type === 'video' && lightboxToolMode === 'normal' && (
+                      <>
+                        <div className="floating-tools left vertical" style={{ position: 'absolute', top: '1rem', left: '1rem', display: 'flex', flexDirection: 'column', gap: '0.8rem', zIndex: 5 }}>
+                          <button className="tool-icon action-cut" onClick={extractLightboxVideoFrame} title="Extract current frame">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M8 13l2.5-3 2 2.4 1.5-1.4L17 15H7z"/></svg>
+                          </button>
+                          <button className={`tool-icon action-doodle ${lbVideoTrimOpen ? 'is-active' : ''}`} onClick={() => { setLbVideoTrimOpen(!lbVideoTrimOpen); setLbNoteOpen(false) }} title="Trim video">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6.13 1L6 16a2 2 0 0 0 2 2h15"/><path d="M1 6.13L16 6a2 2 0 0 1 2 2v15"/></svg>
+                          </button>
+                          <button className="tool-icon action-doodle" onClick={splitLightboxVideoAtCurrentTime} title="Split at current frame">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M20 4 8.12 15.88"/><path d="M14.47 14.48 20 20"/><path d="M8.12 8.12 12 12"/></svg>
+                          </button>
+                        </div>
+                        <div className="floating-tools right vertical" style={{ position: 'absolute', top: '1rem', right: '1rem', display: 'flex', flexDirection: 'column', gap: '0.8rem', zIndex: 5 }}>
+                          <button className={`tool-icon assign-star ${lbAssignOpen ? 'is-active' : ''}`} onClick={() => { setLbAssignOpen(!lbAssignOpen); setLbEnhanceOpen(false); setLbSplitOpen(false); setLbNoteOpen(false) }} title="Add to Scene"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></button>
+                          <button className={`tool-icon action-note ${lbNoteOpen ? 'is-active' : ''}`} onClick={() => { setLbNoteOpen(!lbNoteOpen); setLbEnhanceOpen(false); setLbSplitOpen(false); setLbAssignOpen(false) }} title="Prompt / note"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" /><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" /></svg></button>
+                          <button className="tool-icon action-star" onClick={() => { setLbAttachments(prev => prev.includes(lightbox.media.url) ? prev : [...prev, lightbox.media.url]); setLbNoteOpen(true) }} title="Use this video as reference"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></button>
+                          <button className="tool-icon discard" onClick={deleteLightboxMedia} title="Delete"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6" /><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /></svg></button>
+                        </div>
+                        <div style={{ position: 'absolute', bottom: '1rem', left: '1rem', right: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', zIndex: 5, pointerEvents: 'none' }}>
+                          <div style={{ display: 'flex', gap: '0.5rem', pointerEvents: 'auto' }}>
+                            <button className="tool-icon" onClick={() => { const a = document.createElement('a'); a.href = lightbox.media.url; a.download = lightbox.media.fileName || 'video.mp4'; document.body.appendChild(a); a.click(); document.body.removeChild(a) }} title="Download video"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></button>
+                          </div>
+                          <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', pointerEvents: 'auto' }}>
+                            {(bgShotJobs[lightbox.shotId] || 0) > 0 && (
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', padding: '0.3rem 0.7rem', borderRadius: '999px', background: 'rgba(248,217,120,0.1)', border: '1px solid rgba(248,217,120,0.2)' }}>
+                                <div style={{ width: '10px', height: '10px', border: '2px solid rgba(248,217,120,0.2)', borderTop: '2px solid var(--gold)', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
+                                <span style={{ color: 'var(--gold)', fontSize: '0.7rem', fontWeight: 700 }}>{bgShotJobs[lightbox.shotId]} generating</span>
+                              </div>
+                            )}
+                            {lightbox.allMedia.length > 1 && <button className="tool-icon action-star" onClick={() => setLightboxCompare(true)} title="Compare"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></button>}
+                          </div>
+                        </div>
+                        {lbVideoTrimOpen && (
+                          <div className="video-trim-panel glass" onClick={(event) => event.stopPropagation()}>
+                            <div className="video-trim-row">
+                              <span>{lbVideoTrimStart.toFixed(1)}s</span>
+                              <input
+                                aria-label="Trim start"
+                                max={Math.max(lbVideoDurationMeta, 1)}
+                                min={0}
+                                onChange={(event) => setLbVideoTrimStart(Math.min(Number(event.target.value), lbVideoTrimEnd || lbVideoDurationMeta || Number(event.target.value)))}
+                                step={0.1}
+                                type="range"
+                                value={lbVideoTrimStart}
+                              />
+                              <span>{(lbVideoTrimEnd || lbVideoDurationMeta || 0).toFixed(1)}s</span>
+                              <input
+                                aria-label="Trim end"
+                                max={Math.max(lbVideoDurationMeta, 1)}
+                                min={0}
+                                onChange={(event) => setLbVideoTrimEnd(Math.max(Number(event.target.value), lbVideoTrimStart))}
+                                step={0.1}
+                                type="range"
+                                value={lbVideoTrimEnd || lbVideoDurationMeta || 0}
+                              />
+                            </div>
+                            <div className="video-trim-actions">
+                              <button type="button" onClick={applyLightboxVideoTrim}>Apply trim</button>
+                              <button type="button" onClick={splitLightboxVideoAtCurrentTime}>Split here</button>
+                              <button type="button" onClick={resetLightboxVideoTrim}>Reset</button>
+                            </div>
+                          </div>
+                        )}
                       </>
                     )}
                     {/* Note area */}
@@ -2728,7 +3414,7 @@ function StoryboardWorkspace() {
                           </div>
                         {/* Single toolbar row: [icons LEFT] [attachments CENTERED] [OK RIGHT] */}
                         <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-                          <button className="tool-icon" onClick={() => setLbAttachOpen(true)} title="Attach reference images" style={{ width: '2.4rem', height: '2.4rem' }}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg></button>
+	                          <button className="tool-icon" onClick={() => setLbAttachOpen(true)} title="Attach reference media" style={{ width: '2.4rem', height: '2.4rem' }}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg></button>
                           <button className={`tool-icon ${lbAiEnhancing ? 'is-active' : ''}`} disabled={lbAiEnhancing || !lbNote.trim()} onClick={async () => {
                             setLbAiEnhancing(true)
                             try {
@@ -2741,13 +3427,14 @@ function StoryboardWorkspace() {
                                   if (d.content) skillInstructions += `\n--- Skill: ${sk.name} ---\n${d.content.substring(0, 2000)}\n`
                                 } catch {}
                               }
-                              const feedback = skillInstructions
-                                ? `You MUST follow these skill instructions precisely and apply them to transform/restructure the prompt accordingly:\n${skillInstructions}\n\nApply the skill rules to the user's prompt. If the skill says to create a grid, make a grid prompt. If it says to use specific formatting, use that formatting. Do NOT just improve the prompt generically — APPLY the skill's specific rules and structure.`
-                                : 'Enhance this for cinematic AI image generation. Make it more detailed, vivid and precise. Add lighting, camera angle, mood, composition details if missing. Keep the original intent.'
-                              // Build image context for Gemini to understand the scene
-                              const imageCtx = lightbox.media.url ? `\n\nYou are looking at an image: ${lightbox.media.url}` : ''
-                              const attachCtx = lbAttachments.length > 0 ? `\nAttached reference images: ${lbAttachments.map((u, i) => `@img${i + 1} = ${u}`).join(', ')}` : ''
-                              const result = await refinePrompt(lbNote, feedback + imageCtx + attachCtx + '\n\nIMPORTANT: Output ONLY the final prompt text. Do NOT include any thinking, reasoning, commentary, or preamble. Just the raw prompt ready for image generation.')
+	                              const mediaKind = lightbox.media.type === 'video' || lightbox.mode === 'videos' ? 'video generation' : 'image generation'
+	                              const feedback = skillInstructions
+	                                ? `You MUST follow these skill instructions precisely and apply them to transform/restructure the prompt accordingly:\n${skillInstructions}\n\nApply the skill rules to the user's prompt. If the skill says to create a grid, make a grid prompt. If it says to use specific formatting, use that formatting. Do NOT just improve the prompt generically — APPLY the skill's specific rules and structure.`
+	                                : `Enhance this for cinematic AI ${mediaKind}. Make it more detailed, vivid and precise. Add lighting, camera movement, mood, composition, subject motion and timing details if missing. Keep the original intent.`
+	                              // Build media context for Gemini to understand the scene
+	                              const mediaCtx = lightbox.media.url ? `\n\nYou are looking at a ${lightbox.media.type || 'media'} reference: ${lightbox.media.url}` : ''
+	                              const attachCtx = lbAttachments.length > 0 ? `\nAttached reference media: ${lbAttachments.map((u, i) => `@ref${i + 1} = ${u}`).join(', ')}` : ''
+	                              const result = await refinePrompt(lbNote, feedback + mediaCtx + attachCtx + '\n\nIMPORTANT: Output ONLY the final prompt text. Do NOT include any thinking, reasoning, commentary, or preamble. Just the raw prompt ready for generation.')
                               if (result.text) {
                                 // Strip any agent thinking/preamble
                                 let cleaned = result.text.replace(/^(Here'?s?|OK|Sure|I'?ll|Let me|Now I|The refined|The enhanced|Here is|Certainly|Of course)[^\n]*\n+/i, '').trim()
@@ -2870,6 +3557,17 @@ function StoryboardWorkspace() {
                                   method: 'POST', headers: { 'Content-Type': 'application/json' },
                                   body: JSON.stringify(payload)
                                 }).then(r => r.json()).then(data => {
+                                  if (data.pending && data.jobId) {
+                                    pollPendingVideoJob(data.jobId, {
+                                      actId: capturedLightbox.actId,
+                                      sceneId: capturedLightbox.sceneId,
+                                      mode: capturedLightbox.mode,
+                                      shotId: capturedLightbox.shotId,
+                                      model: mdl,
+                                      batchIndex: bi,
+                                    })
+                                    return
+                                  }
                                   setBgGenerating(prev => Math.max(0, prev - 1))
                                   setBgShotJobs(prev => ({ ...prev, [capturedLightbox.shotId]: Math.max(0, (prev[capturedLightbox.shotId] || 0) - 1) }))
                                   if (data.url) {
@@ -2911,12 +3609,12 @@ function StoryboardWorkspace() {
                                   Model
                                   <select value={lbVideoModel} onChange={(event) => setLbVideoModel(event.target.value)} style={{ padding: '0.55rem 0.7rem', borderRadius: '0.55rem', border: '1px solid rgba(248,217,120,0.22)', background: 'rgba(255,255,255,0.06)', color: 'var(--cream)' }}>
                                     <option value="seedance-2.0-standard">Seedance 2.0 Standard</option>
-                                    <option value="pixverse-v6">PixVerse 6</option>
+                                    <option value="v6">PixVerse 6</option>
                                     <option value="pixverse-c1">PixVerse C1</option>
-                                    <option value="happy-horse">Happy Horse</option>
-                                    <option value="kling-3.0">Kling 3.0</option>
-                                    <option value="kling-01">Kling 01</option>
-                                    <option value="grok">Grok</option>
+                                    <option value="happyhorse-1.0">Happy Horse</option>
+                                    <option value="kling-3.0-standard">Kling 3.0</option>
+                                    <option value="kling-o3-standard">Kling O3</option>
+                                    <option value="grok-imagine">Grok</option>
                                   </select>
                                 </label>
                                 <div style={{ display: 'flex', gap: '0.7rem', alignItems: 'center' }}>
@@ -2978,11 +3676,11 @@ function StoryboardWorkspace() {
                   )}
                   {/* Empty "+" slot — only on first page */}
                   {page === 0 && (
-                    <button type="button" onClick={() => { setLbEmptyMode(true); setLbNoteOpen(true); setLightbox({ ...lightbox, media: { id: 'empty-new', type: 'image', url: '', fileName: '' } }) }} title="Create new from scratch" className="lb-plus-btn" style={{ width: '52px', height: '52px', borderRadius: '8px', border: '1px dashed rgba(248,217,120,0.35)', background: 'rgba(248,217,120,0.04)', cursor: 'pointer', display: 'grid', placeItems: 'center', color: 'rgba(248,217,120,0.5)', fontSize: '1.5rem', fontWeight: 300, transition: 'all 0.2s', padding: 0, flexShrink: 0 }} onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(248,217,120,0.12)'; e.currentTarget.style.borderColor = 'rgba(248,217,120,0.6)'; e.currentTarget.style.color = '#f8d978' }} onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(248,217,120,0.04)'; e.currentTarget.style.borderColor = 'rgba(248,217,120,0.35)'; e.currentTarget.style.color = 'rgba(248,217,120,0.5)' }}>+</button>
+                    <button type="button" onClick={() => { setLbEmptyMode(true); setLbNoteOpen(true); setLightbox({ ...lightbox, media: { id: 'empty-new', type: lightbox.mode === 'videos' ? 'video' : lightbox.mode === 'audio' ? 'audio' : 'image', url: '', fileName: '', createdAt: new Date().toISOString() } }) }} title="Create new from scratch" className="lb-plus-btn" style={{ width: '52px', height: '52px', borderRadius: '8px', border: '1px dashed rgba(248,217,120,0.35)', background: 'rgba(248,217,120,0.04)', cursor: 'pointer', display: 'grid', placeItems: 'center', color: 'rgba(248,217,120,0.5)', fontSize: '1.5rem', fontWeight: 300, transition: 'all 0.2s', padding: 0, flexShrink: 0 }} onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(248,217,120,0.12)'; e.currentTarget.style.borderColor = 'rgba(248,217,120,0.6)'; e.currentTarget.style.color = '#f8d978' }} onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(248,217,120,0.04)'; e.currentTarget.style.borderColor = 'rgba(248,217,120,0.35)'; e.currentTarget.style.color = 'rgba(248,217,120,0.5)' }}>+</button>
                   )}
                   {visibleAlts.map((m, idx) => (
                     <button key={m.id} type="button" onClick={() => { setLightbox({ ...lightbox, media: m }); setLbEmptyMode(false); setLocalToolImage(null) }} style={{ width: m.id === lightbox.media.id ? '64px' : '52px', height: m.id === lightbox.media.id ? '64px' : '52px', borderRadius: '8px', overflow: 'hidden', border: m.id === lightbox.media.id ? '2px solid var(--gold)' : '1px solid rgba(255,255,255,0.15)', cursor: 'pointer', padding: 0, background: 'transparent', transition: 'all 0.25s cubic-bezier(0.4,0,0.2,1)', opacity: m.id === lightbox.media.id ? 1 : 0.6, transform: m.id === lightbox.media.id ? 'translateY(-4px)' : 'none', boxShadow: m.id === lightbox.media.id ? '0 8px 20px rgba(248,217,120,0.15)' : 'none', flexShrink: 0 }}>
-                      {m.type === 'image' && m.url ? <img src={m.url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt={`Alt ${page * perPage + idx + 1}`} /> : <div style={{ width: '100%', height: '100%', background: 'rgba(255,255,255,0.05)', display: 'grid', placeItems: 'center', color: 'rgba(255,255,255,0.4)', fontSize: '0.7rem' }}>{!m.url ? '∅' : page * perPage + idx + 1}</div>}
+                      {m.type === 'image' && m.url ? <img src={m.url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt={`Alt ${page * perPage + idx + 1}`} /> : m.type === 'video' && m.url ? <video src={m.url} muted playsInline style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <div style={{ width: '100%', height: '100%', background: 'rgba(255,255,255,0.05)', display: 'grid', placeItems: 'center', color: 'rgba(255,255,255,0.4)', fontSize: '0.7rem' }}>{!m.url ? '∅' : page * perPage + idx + 1}</div>}
                     </button>
                   ))}
                   {/* Right arrow */}
@@ -3007,9 +3705,10 @@ function StoryboardWorkspace() {
             return (
             <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center', maxWidth: '95vw', maxHeight: '90vh', animation: 'fadeIn 0.3s ease' }}>
               <div style={{ flex: mainFlex, position: 'relative' }}>
-                {lightbox.media.type === 'image' ? <img src={lightbox.media.url} alt="Main" style={{ width: '100%', maxHeight: '80vh', objectFit: 'contain', borderRadius: '1rem', display: 'block' }} /> : <video src={lightbox.media.url} controls style={{ width: '100%', maxHeight: '80vh', borderRadius: '1rem' }} />}
+                {lightbox.media.type === 'image' ? <img src={lightbox.media.url} alt="Main" style={{ width: '100%', maxHeight: '80vh', objectFit: 'contain', borderRadius: '1rem', display: 'block' }} /> : <video src={getTrimmedVideoSrc(lightbox.media)} controls autoPlay={lbCompareSync} style={{ width: '100%', maxHeight: '80vh', borderRadius: '1rem' }} />}
                 <div style={{ position: 'absolute', bottom: '0.8rem', left: '0.8rem', background: 'rgba(0,0,0,0.6)', padding: '0.3rem 0.8rem', borderRadius: '1rem', color: 'var(--gold)', fontSize: '0.7rem', fontWeight: 700 }}>MAIN</div>
                 <button type="button" onClick={() => setLightboxCompare(false)} style={{ position: 'absolute', bottom: '0.8rem', right: '0.8rem', padding: '0.4rem 1rem', background: 'rgba(0,0,0,0.6)', border: '1px solid rgba(248,217,120,0.25)', borderRadius: '2rem', color: 'var(--gold)', cursor: 'pointer', fontSize: '0.7rem', fontWeight: 600 }}>← Normal</button>
+                {lightbox.mode === 'videos' && <button type="button" onClick={() => setLbCompareSync(!lbCompareSync)} style={{ position: 'absolute', top: '0.8rem', right: '0.8rem', padding: '0.35rem 0.8rem', background: 'rgba(0,0,0,0.58)', border: '1px solid rgba(248,217,120,0.25)', borderRadius: '2rem', color: lbCompareSync ? 'var(--gold)' : 'rgba(255,255,255,0.62)', cursor: 'pointer', fontSize: '0.68rem', fontWeight: 800 }}>{lbCompareSync ? 'SYNC' : 'MANUAL'}</button>}
               </div>
               <div style={{ flex: hasMany ? '0 0 52%' : '0 0 45%', display: 'flex', gap: hasMany ? '1rem' : '0.5rem', flexDirection: hasMany ? 'row' : 'column', position: 'relative' }}>
                 {/* Compare page arrows */}
@@ -3026,7 +3725,7 @@ function StoryboardWorkspace() {
                       <div key={m.id} style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', animation: `fadeIn 0.3s ease ${idx * 0.05}s both` }}>
                         <div style={{ width: '28px', height: '2px', background: 'linear-gradient(90deg, rgba(248,217,120,0.5), rgba(248,217,120,0.1))', flexShrink: 0 }} />
                         <button type="button" onClick={() => setLightbox({ ...lightbox, media: m })} style={{ borderRadius: '0.5rem', overflow: 'hidden', border: 'none', cursor: 'pointer', padding: 0, background: 'none', width: '100%', height: altH }}>
-                          <img src={m.url} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '0.5rem' }} alt={`Alt ${compPage * compPerPage + idx + 1}`} />
+                          {m.type === 'video' ? <video src={getTrimmedVideoSrc(m)} muted autoPlay={lbCompareSync} loop={lbCompareSync} playsInline style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '0.5rem' }} /> : <img src={m.url} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '0.5rem' }} alt={`Alt ${compPage * compPerPage + idx + 1}`} />}
                         </button>
                       </div>
                     ))}
@@ -3036,7 +3735,7 @@ function StoryboardWorkspace() {
                       <div key={m.id} style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', animation: `fadeIn 0.3s ease ${(idx + 4) * 0.05}s both` }}>
                         <div style={{ width: '28px', height: '2px', background: 'linear-gradient(90deg, rgba(248,217,120,0.5), rgba(248,217,120,0.1))', flexShrink: 0 }} />
                         <button type="button" onClick={() => setLightbox({ ...lightbox, media: m })} style={{ borderRadius: '0.5rem', overflow: 'hidden', border: 'none', cursor: 'pointer', padding: 0, background: 'none', width: '100%', height: altH }}>
-                          <img src={m.url} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '0.5rem' }} alt={`Alt ${compPage * compPerPage + idx + 5}`} />
+                          {m.type === 'video' ? <video src={getTrimmedVideoSrc(m)} muted autoPlay={lbCompareSync} loop={lbCompareSync} playsInline style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '0.5rem' }} /> : <img src={m.url} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '0.5rem' }} alt={`Alt ${compPage * compPerPage + idx + 5}`} />}
                         </button>
                       </div>
                     ))}
@@ -3046,7 +3745,7 @@ function StoryboardWorkspace() {
                     <div key={m.id} style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', animation: `fadeIn 0.3s ease ${idx * 0.08}s both` }}>
                       <div style={{ width: '36px', height: '2px', background: 'linear-gradient(90deg, rgba(248,217,120,0.5), rgba(248,217,120,0.1))', flexShrink: 0 }} />
                       <button type="button" onClick={() => setLightbox({ ...lightbox, media: m })} style={{ borderRadius: '0.6rem', overflow: 'hidden', border: 'none', cursor: 'pointer', padding: 0, background: 'none', width: '100%', height: altH }}>
-                        <img src={m.url} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '0.6rem' }} alt={`Alt ${compPage * compPerPage + idx + 1}`} />
+                        {m.type === 'video' ? <video src={getTrimmedVideoSrc(m)} muted autoPlay={lbCompareSync} loop={lbCompareSync} playsInline style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '0.6rem' }} /> : <img src={m.url} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '0.6rem' }} alt={`Alt ${compPage * compPerPage + idx + 1}`} />}
                       </button>
                     </div>
                   ))
@@ -6306,7 +7005,7 @@ function ResourceLibrary({
   onBack: () => void
   onCopyPath: (media?: StoryboardMedia) => void
   onDeleteMedia: (type: StoryboardResourceType, resourceId: string, slot: StoryboardResourceSlot, mediaId: string) => void
-  onLightbox: (media: StoryboardMedia) => void
+  onLightbox: (media: StoryboardMedia, allMedia?: StoryboardMedia[], resourceContext?: { type: StoryboardResourceType; resourceId: string; slot: StoryboardResourceSlot }) => void
   onNameChange: (name: string) => void
   onResourceChange: (type: StoryboardResourceType, resourceId: string, mutate: (resource: StoryboardResource) => void) => void
   onUpload: (file: File, type: StoryboardResourceType, resourceId: string, slot: StoryboardResourceSlot) => void
@@ -6372,7 +7071,7 @@ function ResourceCard({
   compact?: boolean
   onCopyPath?: (media?: StoryboardMedia) => void
   onDeleteMedia?: (type: StoryboardResourceType, resourceId: string, slot: StoryboardResourceSlot, mediaId: string) => void
-  onLightbox?: (media: StoryboardMedia) => void
+  onLightbox?: (media: StoryboardMedia, allMedia?: StoryboardMedia[], resourceContext?: { type: StoryboardResourceType; resourceId: string; slot: StoryboardResourceSlot }) => void
   onResourceChange?: (type: StoryboardResourceType, resourceId: string, mutate: (resource: StoryboardResource) => void) => void
   onToggle?: (resourceId: string) => void
   onUpload?: (file: File, type: StoryboardResourceType, resourceId: string, slot: StoryboardResourceSlot) => void
@@ -6387,17 +7086,25 @@ function ResourceCard({
   const selectedMedia = media.find((item) => item.id === (slot === 'card' ? resource.selectedMediaId : resource.selectedSheetMediaId)) || media[0]
   const fileInputId = `${type}-${resource.id}-${slot}`
   const showAlternatives = !compact && Boolean(resource.expanded && media.length > 0)
+  const mainLabel = type === 'locations' ? 'Front / Main' : 'Main'
+  const sheetLabel = type === 'locations' ? 'Back / Left / Right / 4 projections' : 'Sheet'
+  const activeSlotLabel = slot === 'card' ? mainLabel : sheetLabel
+  const mainPreview = resource.media.find((item) => item.id === resource.selectedMediaId) || resource.media[0]
+  const sheetPreview = resource.sheetMedia.find((item) => item.id === resource.selectedSheetMediaId) || resource.sheetMedia[0]
+
+  const uploadFiles = (files: FileList | File[]) => {
+    if (!onUpload) return
+    Array.from(files).forEach((file) => onUpload(file, type, resource.id, slot))
+  }
 
   const handleFile = (event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0]
-    if (file && onUpload) onUpload(file, type, resource.id, slot)
+    if (event.target.files?.length) uploadFiles(event.target.files)
     event.target.value = ''
   }
 
   const handleDrop = (event: DragEvent<HTMLElement>) => {
     event.preventDefault()
-    const file = event.dataTransfer.files?.[0]
-    if (file && onUpload) onUpload(file, type, resource.id, slot)
+    if (event.dataTransfer.files?.length) uploadFiles(event.dataTransfer.files)
   }
 
   const handleCardDragStart = (e: React.DragEvent) => {
@@ -6426,19 +7133,21 @@ function ResourceCard({
       className={`resource-card glass ${type} ${compact ? 'is-compact' : ''} ${selected ? 'is-selected' : ''}`}
     >
       <div className="resource-media" onDragOver={(event) => event.preventDefault()} onDrop={handleDrop}>
-        {selectedMedia ? (
-          selectedMedia.type === 'video'
-            ? <video src={selectedMedia.url} muted playsInline />
-            : selectedMedia.type === 'audio'
-              ? <CustomAudioPlayer url={selectedMedia.url} fileName={selectedMedia.fileName} />
-              : <img src={selectedMedia.url} alt={resource.name} />
-        ) : (
-          <label htmlFor={fileInputId}>＋</label>
-        )}
-        {onUpload && <input id={fileInputId} type="file" accept="image/*,video/*" onChange={handleFile} />}
+        {!compact && <span className="resource-slot-badge">{activeSlotLabel}</span>}
+	        {selectedMedia ? (
+	          selectedMedia.type === 'video'
+	            ? <video src={selectedMedia.url} muted playsInline />
+	            : selectedMedia.type === 'audio'
+	              ? <CustomAudioPlayer url={selectedMedia.url} fileName={selectedMedia.fileName} />
+	              : <img src={selectedMedia.url} alt={resource.name} />
+	        ) : (
+	          <label htmlFor={fileInputId}>＋</label>
+	        )}
+	        {selectedMedia?.frameSecond !== undefined && <span className="frame-second-badge">{String(selectedMedia.frameSecond).padStart(2, '0')}s frame</span>}
+        {onUpload && <input id={fileInputId} type="file" accept="image/*,video/*" multiple onChange={handleFile} />}
         <div className="shot-tools">
           {onUpload && <label htmlFor={fileInputId} title="Upload reference">＋</label>}
-          {onLightbox && <button disabled={!selectedMedia} onClick={() => selectedMedia && onLightbox(selectedMedia)} title="Open large" type="button">⤢</button>}
+          {onLightbox && <button disabled={!selectedMedia} onClick={() => selectedMedia && onLightbox(selectedMedia, media, { type, resourceId: resource.id, slot })} title="Open large" type="button">⤢</button>}
           {selectedMedia && <a href={selectedMedia.url} download={selectedMedia.fileName} title="Download original">↓</a>}
           {onCopyPath && <button disabled={!selectedMedia?.localPath} onClick={() => onCopyPath(selectedMedia)} title="Reveal in Finder and copy path" type="button">⌁</button>}
           {onResourceChange && <button disabled={media.length < 1} onClick={() => onResourceChange(type, resource.id, (draft) => { draft.expanded = !draft.expanded })} title="Show options" type="button">⋯</button>}
@@ -6476,8 +7185,20 @@ function ResourceCard({
         {!compact && (
           <>
             <div className="resource-mode-toggle">
-              <button className={slot === 'card' ? 'is-active' : ''} onClick={() => onResourceChange?.(type, resource.id, (draft) => { draft.mode = 'card' })} type="button">{type === 'actors' ? 'Actor card' : 'Card'}</button>
-              <button className={slot === 'sheet' ? 'is-active' : ''} onClick={() => onResourceChange?.(type, resource.id, (draft) => { draft.mode = 'sheet' })} type="button">{type === 'locations' ? 'Options' : 'Sheet'}</button>
+              <button className={slot === 'card' ? 'is-active' : ''} onClick={() => onResourceChange?.(type, resource.id, (draft) => { draft.mode = 'card' })} type="button">{mainLabel}</button>
+              <button className={slot === 'sheet' ? 'is-active' : ''} onClick={() => onResourceChange?.(type, resource.id, (draft) => { draft.mode = 'sheet' })} type="button">{sheetLabel}</button>
+            </div>
+            <div className="resource-slot-summary">
+              <button className={slot === 'card' ? 'is-active' : ''} onClick={() => onResourceChange?.(type, resource.id, (draft) => { draft.mode = 'card' })} type="button">
+                {mainPreview ? (mainPreview.type === 'video' ? <video src={mainPreview.url} muted playsInline /> : <img src={mainPreview.url} alt="" />) : <span>+</span>}
+                <small>{mainLabel}</small>
+                <b>{resource.media.length}</b>
+              </button>
+              <button className={slot === 'sheet' ? 'is-active' : ''} onClick={() => onResourceChange?.(type, resource.id, (draft) => { draft.mode = 'sheet' })} type="button">
+                {sheetPreview ? (sheetPreview.type === 'video' ? <video src={sheetPreview.url} muted playsInline /> : <img src={sheetPreview.url} alt="" />) : <span>+</span>}
+                <small>{type === 'locations' ? 'Views' : 'Sheet'}</small>
+                <b>{resource.sheetMedia.length}</b>
+              </button>
             </div>
             {onResourceChange ? (
               <textarea
@@ -6504,7 +7225,7 @@ function SceneResourcePanel({
   onReorderResource,
 }: {
   onCopyPath: (media?: StoryboardMedia) => void
-  onLightbox: (media: StoryboardMedia) => void
+  onLightbox: (media: StoryboardMedia, allMedia?: StoryboardMedia[], resourceContext?: { type: StoryboardResourceType; resourceId: string; slot: StoryboardResourceSlot }) => void
   onToggle: (type: StoryboardResourceType, resourceId: string) => void
   refs: string[]
   resources: StoryboardResource[]
@@ -6796,9 +7517,9 @@ function ShotGrid({
               <span className="shot-number-plus">+</span>
             </div>
             <div className="shot-media" style={{ position: 'relative', ...(masterAspect ? { aspectRatio: String(masterAspect) } : {}) }}>
-              {selected ? (
-                selected.type === 'video'
-                  ? <video src={selected.url} muted playsInline onDoubleClick={(e) => { e.stopPropagation(); onLightbox(selected, shot.media, shot.id) }} style={{ cursor: 'pointer' }} />
+	              {selected ? (
+	                selected.type === 'video'
+	                  ? <video src={selected.url} muted playsInline onDoubleClick={(e) => { e.stopPropagation(); onLightbox(selected, shot.media, shot.id) }} style={{ cursor: 'pointer' }} />
                   : selected.type === 'audio'
                     ? <CustomAudioPlayer url={selected.url} fileName={selected.fileName} />
                     : <img src={selected.url} alt={shot.title} onDoubleClick={(e) => {
@@ -6810,11 +7531,16 @@ function ShotGrid({
                         onLightbox(selected, shot.media, shot.id)
                       }} style={{ cursor: 'pointer' }} />
               ) : (
-                <div className="empty-shot-canvas" onDoubleClick={(e) => { e.stopPropagation(); onEmptyLightbox(shot.id) }} style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', background: 'linear-gradient(135deg, rgba(248,217,120,0.02), rgba(255,255,255,0.01))', borderRadius: '0.5rem', gap: '0.5rem', minHeight: '140px', border: '1px dashed rgba(248,217,120,0.1)' }}>
-                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="rgba(248,217,120,0.3)" strokeWidth="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
-                  <span style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.25)' }}>Double-click to create</span>
-                </div>
-              )}
+                <div className={`empty-shot-canvas ${mode === 'videos' ? 'is-video-slot' : mode === 'audio' ? 'is-audio-slot' : ''}`} onDoubleClick={(e) => { e.stopPropagation(); onEmptyLightbox(shot.id) }} style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', background: 'linear-gradient(135deg, rgba(248,217,120,0.02), rgba(255,255,255,0.01))', borderRadius: '0.5rem', gap: '0.5rem', minHeight: '140px', border: '1px dashed rgba(248,217,120,0.1)' }}>
+                  {mode === 'videos' ? (
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="rgba(248,217,120,0.3)" strokeWidth="1.5"><rect x="3" y="5" width="14" height="14" rx="2"/><path d="M17 9l4-2v10l-4-2z"/></svg>
+                  ) : (
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="rgba(248,217,120,0.3)" strokeWidth="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+                  )}
+	                  <span style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.25)' }}>Double-click to create {mode === 'videos' ? 'video' : mode === 'audio' ? 'audio' : ''}</span>
+	                </div>
+	              )}
+	              {selected?.frameSecond !== undefined && <span className="frame-second-badge">{String(selected.frameSecond).padStart(2, '0')}s frame</span>}
               <input id={fileInputId} type="file" accept={mode === 'images' ? 'image/*' : mode === 'videos' ? 'video/*' : 'audio/*'} onChange={(event) => handleFile(event, shot.id)} />
               <div className="shot-tools">
                 <label htmlFor={fileInputId} title="Upload alternative">+</label>
@@ -6925,47 +7651,163 @@ function CharacterSection({
   activeId,
   activeTab,
   category,
+  categoryTitle,
+  onCapture,
+  onAdd,
   onDeleteImage,
   onPick,
+  onReorder,
   onTab,
+  onUpdateCategoryTitle,
   onUpdateProfile,
   onUploadImage,
+  onUploadPresentationVideo,
   profiles,
 }: {
   activeId: string
   activeTab: 'description' | 'traits' | 'video'
   category: CharacterCategory
+  categoryTitle: string
+  onCapture: (elementId: string, fileName: string) => void
+  onAdd: () => void
   onDeleteImage: (id: string) => void
   onPick: (id: string) => void
+  onReorder: (dragId: string, targetId: string) => void
   onTab: (tab: 'description' | 'traits' | 'video') => void
+  onUpdateCategoryTitle: (value: string) => void
   onUpdateProfile: (id: string, patch: Partial<CharacterProfile>) => void
   onUploadImage: (id: string, file: File) => void
+  onUploadPresentationVideo: (id: string, file: File) => void
   profiles: CharacterProfile[]
 }) {
+  const pickerRef = useRef<HTMLDivElement | null>(null)
   const active = profiles.find((profile) => profile.id === activeId) || profiles[0]
   if (!active) return null
+  const placement = active.imagePlacement || { x: 0, y: 0, scale: 1 }
+  const videoPlacement = active.videoPlacement || { x: 0, y: 0, scale: 1 }
+  const activeIsVideo = isVideoAsset(active.image)
+  const clampPlacement = (next: CharacterPlacement): CharacterPlacement => ({
+    x: Math.max(-360, Math.min(360, next.x)),
+    y: Math.max(-360, Math.min(360, next.y)),
+    scale: Math.max(0.45, Math.min(3.8, next.scale)),
+  })
+  const startPlacementDrag = (event: ReactPointerEvent<HTMLDivElement>, mode: 'move' | 'scale') => {
+    if (!active.image) return
+    event.preventDefault()
+    event.stopPropagation()
+    const startX = event.clientX
+    const startY = event.clientY
+    const initial = placement
+    event.currentTarget.setPointerCapture(event.pointerId)
+    const handleMove = (moveEvent: PointerEvent) => {
+      const dx = moveEvent.clientX - startX
+      const dy = moveEvent.clientY - startY
+      const next = mode === 'move'
+        ? { ...initial, x: initial.x + dx, y: initial.y + dy }
+        : { ...initial, scale: initial.scale + Math.max(dx, -dy) / 180 }
+      onUpdateProfile(active.id, { imagePlacement: clampPlacement(next) })
+    }
+    const handleUp = () => {
+      window.removeEventListener('pointermove', handleMove)
+      window.removeEventListener('pointerup', handleUp)
+    }
+    window.addEventListener('pointermove', handleMove)
+    window.addEventListener('pointerup', handleUp, { once: true })
+  }
+  const startVideoPlacementDrag = (event: ReactPointerEvent<HTMLDivElement>, mode: 'move' | 'scale') => {
+    if (!active.videoPresentation) return
+    event.preventDefault()
+    event.stopPropagation()
+    const startX = event.clientX
+    const startY = event.clientY
+    const initial = videoPlacement
+    event.currentTarget.setPointerCapture(event.pointerId)
+    const handleMove = (moveEvent: PointerEvent) => {
+      const dx = moveEvent.clientX - startX
+      const dy = moveEvent.clientY - startY
+      const next = mode === 'move'
+        ? { ...initial, x: initial.x + dx, y: initial.y + dy }
+        : { ...initial, scale: initial.scale + Math.max(dx, -dy) / 180 }
+      onUpdateProfile(active.id, { videoPlacement: clampPlacement(next) })
+    }
+    const handleUp = () => {
+      window.removeEventListener('pointermove', handleMove)
+      window.removeEventListener('pointerup', handleUp)
+    }
+    window.addEventListener('pointermove', handleMove)
+    window.addEventListener('pointerup', handleUp, { once: true })
+  }
 
   return (
     <div className={`character-block ${category}`}>
       <div className="character-block-heading">
-        <span>{categoryTitles[category]}</span>
+        <span className="editable-copy" contentEditable suppressContentEditableWarning onBlur={(event) => onUpdateCategoryTitle(event.currentTarget.textContent || categoryTitle)}>{categoryTitle}</span>
         <strong>{profiles.length} playable dossiers</strong>
       </div>
-      <div className="character-stage glass">
+      <div
+        className="character-stage glass"
+        id={`character-panel-${category}`}
+        onDragOver={(event) => {
+          if (activeTab === 'video') event.preventDefault()
+        }}
+        onDrop={(event) => {
+          if (activeTab !== 'video') return
+          event.preventDefault()
+          const file = Array.from(event.dataTransfer.files || []).find((item) => item.type.startsWith('video'))
+          if (file) onUploadPresentationVideo(active.id, file)
+        }}
+      >
+        <div className="character-capture-tools">
+          <button
+            aria-label="Capture full character panel"
+            onClick={() => onCapture(`character-panel-${category}`, `${active.name}-full-character-panel`)}
+            title="Capture full character panel"
+            type="button"
+          >
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14.5 4l1.7 2H20a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h3.8l1.7-2z"/><circle cx="12" cy="13" r="3.5"/></svg>
+          </button>
+        </div>
         <div
           className="character-portrait editable-media-card"
+          id={`character-portrait-${category}`}
           onDragOver={(event) => event.preventDefault()}
           onDrop={(event) => {
             event.preventDefault()
-            const file = Array.from(event.dataTransfer.files || []).find((item) => item.type.startsWith('image'))
+            const file = Array.from(event.dataTransfer.files || []).find((item) => item.type.startsWith('image') || item.type.startsWith('video'))
             if (file) onUploadImage(active.id, file)
           }}
         >
-          {active.image ? <img src={active.image} alt={active.name} /> : <div className="empty-character-media">Drop character art</div>}
+          {active.image ? (
+            <div
+              className="character-image-layer"
+              onPointerDown={(event) => startPlacementDrag(event, 'move')}
+              style={{
+                '--char-x': `${placement.x}px`,
+                '--char-y': `${placement.y}px`,
+                '--char-scale': placement.scale,
+              } as CSSProperties}
+              title="Drag to reposition"
+            >
+              {activeIsVideo ? (
+                <video src={active.image} aria-label={active.name} autoPlay loop muted playsInline preload="auto" draggable={false} />
+              ) : (
+                <img src={active.image} alt={active.name} draggable={false} />
+              )}
+            </div>
+          ) : <div className="empty-character-media">Drop character art</div>}
+          <button
+            aria-label="Capture character portrait"
+            className="character-portrait-capture"
+            onClick={() => onCapture(`character-portrait-${category}`, `${active.name}-portrait-panel`)}
+            title="Capture portrait panel"
+            type="button"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14.5 4l1.7 2H20a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h3.8l1.7-2z"/><circle cx="12" cy="13" r="3.5"/></svg>
+          </button>
           <div className="showcase-edit-tools character-edit-tools">
             <label title="Replace character art">
               +
-              <input type="file" accept="image/*" onChange={(event) => {
+              <input type="file" accept="image/*,video/*" onChange={(event) => {
                 const file = event.target.files?.[0]
                 if (file) onUploadImage(active.id, file)
                 event.target.value = ''
@@ -6973,9 +7815,29 @@ function CharacterSection({
             </label>
             <button title="Remove character art" type="button" onClick={() => onDeleteImage(active.id)}>×</button>
           </div>
+          {active.image && (
+            <div className="character-placement-tools">
+              <button
+                title="Reset image placement"
+                type="button"
+                onClick={() => onUpdateProfile(active.id, { imagePlacement: { x: 0, y: 0, scale: 1 } })}
+              >
+                Fit
+              </button>
+              <span>Drag image · pull corner</span>
+            </div>
+          )}
+          {active.image && (
+            <div
+              aria-label="Resize character art"
+              className="character-resize-handle"
+              onPointerDown={(event) => startPlacementDrag(event, 'scale')}
+              title="Drag to resize"
+            />
+          )}
         </div>
-        <div className="character-info">
-          <p className="eyebrow">{categoryTitles[category]}</p>
+        <div className={`character-info ${activeTab === 'video' ? 'is-video-tab' : ''} ${activeTab === 'video' && active.videoPresentation ? 'has-presentation-video' : ''}`}>
+          <p className="eyebrow editable-copy" contentEditable suppressContentEditableWarning onBlur={(event) => onUpdateCategoryTitle(event.currentTarget.textContent || categoryTitle)}>{categoryTitle}</p>
           <h3 className="editable-copy character-name-clamp" contentEditable suppressContentEditableWarning onBlur={(event) => onUpdateProfile(active.id, { name: event.currentTarget.textContent || active.name })}>{active.name}</h3>
           <span className="editable-copy character-role-clamp" contentEditable suppressContentEditableWarning onBlur={(event) => onUpdateProfile(active.id, { role: event.currentTarget.textContent || active.role })}>{active.role}</span>
           <div className="profile-tabs">
@@ -6999,37 +7861,126 @@ function CharacterSection({
                 }}>{trait}</span>)}
               </div>
             )}
-            {activeTab === 'video' && (
-              <div className="video-placeholder">
-                <strong>Self-presentation clip slot</strong>
-                <p>When the character video is ready, it will replace this image inside the same panel.</p>
-              </div>
-            )}
           </div>
         </div>
+        {activeTab === 'video' && active.videoPresentation && (
+          <div className="character-presentation-overlay">
+            <div
+              className="character-presentation-layer"
+              onPointerDown={(event) => startVideoPlacementDrag(event, 'move')}
+              style={{
+                '--video-x': `${videoPlacement.x}px`,
+                '--video-y': `${videoPlacement.y}px`,
+                '--video-scale': videoPlacement.scale,
+              } as CSSProperties}
+              title="Drag to reposition video"
+            >
+              <video src={active.videoPresentation} autoPlay loop muted={active.videoMuted ?? false} playsInline preload="auto" />
+            </div>
+            <div className="character-presentation-tools">
+              <button type="button" onClick={() => onUpdateProfile(active.id, { videoMuted: !(active.videoMuted ?? false) })}>{active.videoMuted ? 'Sound' : 'Mute'}</button>
+              <button type="button" onClick={() => onUpdateProfile(active.id, { videoPlacement: { x: 0, y: 0, scale: 1 } })}>Fit</button>
+              <button type="button" onClick={() => onUpdateProfile(active.id, { videoPresentation: '', videoPlacement: { x: 0, y: 0, scale: 1 } })}>×</button>
+            </div>
+            <div
+              aria-label="Resize presentation video"
+              className="character-presentation-resize"
+              onPointerDown={(event) => startVideoPlacementDrag(event, 'scale')}
+              title="Drag to resize video"
+            />
+          </div>
+        )}
       </div>
-      <div className="portrait-picker">
+      <div className="portrait-picker-wrap">
+        {profiles.length > 6 && (
+          <button className="portrait-picker-arrow is-left" onClick={() => pickerRef.current?.scrollBy({ left: -520, behavior: 'smooth' })} type="button" aria-label="Scroll characters left">‹</button>
+        )}
+      <div className="portrait-picker" ref={pickerRef}>
         {profiles.map((profile) => (
-          <button className={active.id === profile.id ? 'is-active' : ''} key={profile.id} onClick={() => onPick(profile.id)} type="button">
-            {profile.image ? <img src={profile.image} alt={profile.name} /> : <span className="portrait-empty">+</span>}
+          <button
+            className={active.id === profile.id ? 'is-active' : ''}
+            draggable
+            key={profile.id}
+            onClick={() => onPick(profile.id)}
+            onDragStart={(event) => event.dataTransfer.setData('text/character-id', profile.id)}
+            onDragOver={(event) => event.preventDefault()}
+            onDrop={(event) => {
+              event.preventDefault()
+              const dragId = event.dataTransfer.getData('text/character-id')
+              if (dragId) onReorder(dragId, profile.id)
+            }}
+            type="button"
+          >
+            {profile.image ? (
+              <span className="portrait-picker-image">
+                <span
+                  className="portrait-picker-image-layer"
+                  style={{
+                    '--thumb-x': `${(profile.imagePlacement?.x || 0) * 0.46}px`,
+                    '--thumb-y': `${(profile.imagePlacement?.y || 0) * 0.46}px`,
+                    '--thumb-scale': profile.imagePlacement?.scale || 1,
+                  } as CSSProperties}
+                >
+                  {isVideoAsset(profile.image) ? (
+                    <video src={profile.image} aria-label={profile.name} autoPlay loop muted playsInline preload="auto" draggable={false} />
+                  ) : (
+                    <img src={profile.image} alt={profile.name} draggable={false} />
+                  )}
+                </span>
+              </span>
+            ) : <span className="portrait-empty">+</span>}
             <span>{profile.name}</span>
           </button>
         ))}
+        <button className="portrait-picker-add" onClick={onAdd} type="button">
+          <span className="portrait-empty">+</span>
+          <span>Add</span>
+        </button>
+      </div>
+        {profiles.length > 6 && (
+          <button className="portrait-picker-arrow is-right" onClick={() => pickerRef.current?.scrollBy({ left: 520, behavior: 'smooth' })} type="button" aria-label="Scroll characters right">›</button>
+        )}
       </div>
     </div>
   )
 }
 
 function ScoreConsole({ activeTrack, onSelect, tracks }: { activeTrack: number; onSelect: (index: number) => void; tracks: Track[] }) {
-  const track = tracks[activeTrack]
   const audioRef = useRef<HTMLAudioElement | null>(null)
+  const [editableTracks, setEditableTracks] = useState<Track[]>(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem('aisha-showcase-score-tracks') || '[]') as Track[]
+      if (!Array.isArray(saved) || !saved.length) return tracks
+      return tracks.map((base) => ({ ...base, ...(saved.find((item) => item.src === base.src || item.title === base.title) || {}) }))
+    } catch {
+      return tracks
+    }
+  })
   const [duration, setDuration] = useState(0)
   const [current, setCurrent] = useState(0)
   const [playing, setPlaying] = useState(false)
   const [albumPage, setAlbumPage] = useState(0)
+  const track = editableTracks[activeTrack] || editableTracks[0]
   const progress = duration ? current / duration : 0
-  const albumPages = Math.ceil(tracks.length / 6)
-  const visibleTracks = tracks.slice(albumPage * 6, albumPage * 6 + 6)
+  const albumPages = Math.max(1, Math.ceil(editableTracks.length / 6))
+  const visibleTracks = editableTracks.slice(albumPage * 6, albumPage * 6 + 6)
+
+  const updateTrack = (index: number, patch: Partial<Track>) => {
+    setEditableTracks((current) => {
+      const next = current.map((item, itemIndex) => itemIndex === index ? { ...item, ...patch } : item)
+      localStorage.setItem('aisha-showcase-score-tracks', JSON.stringify(next))
+      return next
+    })
+  }
+
+  const uploadTrackCover = async (index: number, file: File) => {
+    const formData = new FormData()
+    formData.append('file', file)
+    const response = await fetch('/api/storyboard/upload', { method: 'POST', body: formData })
+    const payload = await response.json()
+    if (!response.ok) throw new Error(payload.error || 'Upload failed')
+    if (payload.url) updateTrack(index, { cover: payload.url })
+  }
 
   useEffect(() => {
     setCurrent(0)
@@ -7040,7 +7991,7 @@ function ScoreConsole({ activeTrack, onSelect, tracks }: { activeTrack: number; 
   useEffect(() => {
     const timer = window.setInterval(() => {
       setAlbumPage((page) => (page + 1) % albumPages)
-    }, 10000)
+    }, 15000)
     return () => window.clearInterval(timer)
   }, [albumPages])
 
@@ -7081,11 +8032,19 @@ function ScoreConsole({ activeTrack, onSelect, tracks }: { activeTrack: number; 
       <div className="now-playing">
         <div className="score-visual">
           <img src={track.cover} alt={track.title} />
+          <label className="score-cover-upload" title="Replace cover">
+            +
+            <input type="file" accept="image/*" onChange={(event) => {
+              const file = event.target.files?.[0]
+              if (file) uploadTrackCover(activeTrack, file).catch(() => {})
+              event.target.value = ''
+            }} />
+          </label>
         </div>
         <div className="score-player">
           <p className="eyebrow">Now playing</p>
-          <h3>{track.title}</h3>
-          <p>{track.mood}</p>
+          <h3 className="editable-copy" contentEditable suppressContentEditableWarning onBlur={(event) => updateTrack(activeTrack, { title: event.currentTarget.textContent || track.title })}>{track.title}</h3>
+          <p className="editable-copy" contentEditable suppressContentEditableWarning onBlur={(event) => updateTrack(activeTrack, { mood: event.currentTarget.textContent || track.mood })}>{track.mood}</p>
           <div className={`score-wave ${playing ? 'is-playing' : ''}`}>
             {Array.from({ length: 48 }).map((_, bar) => (
               <i key={bar} style={{ height: `${18 + ((bar * 17) % 68)}%`, '--bar': bar } as CSSProperties} />

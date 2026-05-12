@@ -1,0 +1,25 @@
+{
+  "id": "pixverse-video-402249743646196-1778533361812",
+  "pixverseId": "402249743646196",
+  "status": "done",
+  "model": "seedance-2.0-standard",
+  "prompt": "SERVER RETURN TEST 5 seconds only: the royal hawk circles above Aisha on a sunlit palace balcony, smooth cinematic motion, elegant 3D animated feature look.",
+  "promptLength": 156,
+  "promptPreview": "SERVER RETURN TEST 5 seconds only: the royal hawk circles above Aisha on a sunlit palace balcony, smooth cinematic motion, elegant 3D animated feature look.",
+  "actId": "act-1",
+  "sceneId": "scene-6b2kfwt-moqb355t",
+  "shotId": "shot-yyjr01w-moqd4fcr",
+  "mode": "videos",
+  "references": {
+    "images": [
+      "/Users/vaquita/Downloads/aisha/aisha-cannes-showcase/public/assets/storyboard/uploads/gen-gemini-3-1-flash-1778297658922.png",
+      "/Users/vaquita/Downloads/aisha/aisha-cannes-showcase/public/assets/storyboard/uploads/altair-royal-hawk-open-wings-1778260994606.png"
+    ],
+    "videos": []
+  },
+  "createdAt": "2026-05-11T21:02:41.812Z",
+  "completedAt": "2026-05-11T21:14:18.802Z",
+  "url": "/assets/storyboard/uploads/video-seedance-2-0-standard-1778534057873.mp4",
+  "localPath": "/Users/vaquita/Downloads/aisha/aisha-cannes-showcase/public/assets/storyboard/uploads/video-seedance-2-0-standard-1778534057873.mp4",
+  "cliPrompt": "SERVER RETURN TEST 5 seconds only: the royal hawk circles above Aisha on a sunlit palace balcony, smooth cinematic motion, elegant 3D animated feature look."
+}

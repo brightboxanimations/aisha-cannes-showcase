@@ -8,6 +8,13 @@ const tasksCurrentDir = process.argv[4];
 const sceneHint = process.argv[5] || '';
 const skillHint = process.argv[6] || '';
 
+if (!taskId || !tasksCurrentDir) {
+  console.error('Missing taskId or tasksCurrentDir');
+  process.exit(1);
+}
+
+const taskPath = path.join(tasksCurrentDir, `${taskId}.json`);
+
 // 1. Truncate and parse JSON if needed
 try {
   const jsonMatch = prompt.match(/```json\s*(\{[\s\S]*?\})\s*```/);
@@ -135,7 +142,7 @@ for (const modelCfg of modelsToRun) {
       console.log(`Success for ${modelCfg.model}`);
     } else {
       console.log(`Failed with status ${res.status}. Stderr: ${res.stderr}`);
-      if (res.stderr && res.stderr.includes('concurrent generations') || res.status === 4) {
+      if ((res.stderr && res.stderr.includes('concurrent generations')) || res.status === 4) {
         console.log('Hit concurrency limit, waiting 20s...');
         spawnSync('sleep', ['20']);
         retries--;
@@ -236,4 +243,3 @@ if (fs.existsSync(taskPath)) {
   taskData.updatedAt = new Date().toISOString();
   fs.writeFileSync(taskPath, JSON.stringify(taskData, null, 2));
 }
-

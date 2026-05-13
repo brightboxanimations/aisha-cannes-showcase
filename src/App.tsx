@@ -29,6 +29,7 @@ type ShowcaseMedia = {
   kind: 'video' | 'image'
   src: string
   poster?: string
+  actIndex?: number
 }
 
 type CharacterCategory = 'protagonists' | 'antagonists' | 'sidekicks'
@@ -73,6 +74,24 @@ type MerchProduct = {
 }
 
 type ShowcaseCopy = Record<string, string>
+
+type ShowcasePersistedState = {
+  version: string
+  updatedAt?: string
+  hero: ShowcaseMedia[]
+  gallery: ShowcaseMedia[]
+  characters: CharacterProfile[]
+  copy: ShowcaseCopy
+  actNames: string[]
+  categoryTitles: Record<CharacterCategory, string>
+  merch: MerchProduct[]
+  contact: {
+    title: string
+    intro: string
+    lines: string[]
+    email: string
+  }
+}
 
 type ShowcasePickerTarget = {
   target: 'hero' | 'gallery'
@@ -358,6 +377,15 @@ const normalizeStoryboard = (payload?: Partial<StoryboardData>): StoryboardData 
   }
 }
 
+const getStoryboardMediaCount = (data: Partial<StoryboardData>) => {
+  const resources = data.resources || {}
+  return (['actors', 'locations', 'props'] as StoryboardResourceType[]).reduce((total, type) => (
+    total + (resources[type] || []).reduce((count, resource) => (
+      count + (resource.media?.length || 0) + (resource.sheetMedia?.length || 0)
+    ), 0)
+  ), 0)
+}
+
 const getSceneShots = (scene: StoryboardScene, mode: StoryboardSequenceMode) => {
   if (mode === 'images') return scene.imageShots
   if (mode === 'videos') return scene.videoShots
@@ -370,29 +398,307 @@ const getMediaTypeForMode = (mode: StoryboardSequenceMode): StoryboardMedia['typ
   return 'image'
 }
 
-const galleryPool = [
-  ['The Kingdom Ignites', '/assets/locations/palace-exterior.png'],
-  ['Aisha’s Balcony', '/assets/locations/aisha-room-balcony-interior.png'],
-  ['Balcony Exterior', '/assets/locations/aisha-balcony-exterior.jpg'],
-  ['Palace Plaza View', '/assets/locations/aisha-balcony-plaza-view.jpg'],
-  ['Front Balcony Lock', '/assets/locations/aisha-balcony-front.png'],
-  ['The Wonder Market', '/assets/locations/niura-rescue-grid.jpg'],
-  ['The Bedouin Tent', '/assets/locations/bedouin-wonder-tent-grid.png'],
-  ['Moonlit Room', '/assets/locations/magic-night-bedroom-balcony.png'],
-  ['Night Balcony', '/assets/locations/front-balcony-night.png'],
-  ['Gilded Cage Mood', '/assets/locations/aisha-chapter-1.png'],
-  ['Alternate Key Art', '/assets/locations/aisha-chapter-1-alt.png'],
-  ['Location Bible', '/assets/locations/aisha-locations.png'],
+const showcaseGalleryVersion = '2026-05-12-curated-intro-gallery'
+const publicShowcaseVersion = '2026-05-12-current-cannes-share'
+
+const defaultShowcaseGallery: ShowcaseMedia[] = [
+  {
+    id: 'gallery-hawk-warning',
+    title: 'Hawk Warning',
+    kicker: 'Intro',
+    caption: 'Altair warning',
+    description: 'Altair tears across the dunes toward the palace gates with the urgent scroll that breaks the ordinary morning. The kingdom still looks prosperous, but the first alarm is already cutting through the sky.',
+    src: '/assets/showcase/intro-gallery/hawk-warning.png',
+    kind: 'image',
+    actIndex: 0,
+  },
+  {
+    id: 'gallery-merchant-caravan',
+    title: 'Merchant Caravan',
+    kicker: 'Intro',
+    caption: 'Gate procession',
+    description: 'Colorful traders approach Qazar al-Zaman with camels, fabrics, spices, oils, and strange little treasures. This is the lively world Aisha has been forbidden to touch, full of comedy, trade, and movement.',
+    src: '/assets/showcase/intro-gallery/merchant-caravan.png',
+    kind: 'image',
+    actIndex: 0,
+  },
+  {
+    id: 'gallery-royal-scroll',
+    title: 'Royal Scroll',
+    kicker: 'Act I',
+    caption: 'Forbidden message',
+    description: 'Aisha reaches for Altair’s scroll, turning a small delivery into the first act of rebellion. The message opens the map of danger outside the palace and makes her protected life feel suddenly too small.',
+    src: '/assets/showcase/intro-gallery/royal-scroll.png',
+    kind: 'image',
+    actIndex: 1,
+  },
+  {
+    id: 'gallery-forbidden-discovery',
+    title: 'Forbidden Map',
+    kicker: 'Act I',
+    caption: 'Truth appears',
+    description: 'The scroll reveals that the world beyond the palace is not a fairytale backdrop but a kingdom in distress. Aisha begins to understand that waiting politely may be another form of danger.',
+    src: '/assets/showcase/intro-gallery/forbidden-discovery.png',
+    kind: 'image',
+    actIndex: 1,
+  },
+  {
+    id: 'gallery-royal-library',
+    title: 'Royal Library',
+    kicker: 'Act I',
+    caption: 'Restless princess',
+    description: 'Aisha’s library is beautiful, protected, and overflowing with books, but it cannot answer the question that matters most: what is really happening outside the palace walls?',
+    src: '/assets/showcase/intro-gallery/royal-library.png',
+    kind: 'image',
+    actIndex: 1,
+  },
+  {
+    id: 'gallery-thousand-wonders',
+    title: 'Thousand Wonders',
+    kicker: 'Act II',
+    caption: 'Market freedom',
+    description: 'The market becomes Aisha’s first taste of real freedom: dazzling, chaotic, fragrant, and alive. Wonder is everywhere, but so are traps hidden inside beautiful things.',
+    src: '/assets/showcase/intro-gallery/thousand-wonders.png',
+    kind: 'image',
+    actIndex: 2,
+  },
+  {
+    id: 'gallery-snake-rescue',
+    title: 'Snake Rescue',
+    kicker: 'Act II',
+    caption: 'Niura saved',
+    description: 'Aisha rescues tiny Niura, the white snake who first seems like a small market curiosity and later becomes one of the story’s cleverest protectors.',
+    src: '/assets/showcase/intro-gallery/snake-rescue.png',
+    kind: 'image',
+    actIndex: 2,
+  },
+  {
+    id: 'gallery-desert-ride',
+    title: 'Desert Ride',
+    kicker: 'Act III',
+    caption: 'Tamlun carries her',
+    description: 'Aisha rides Tamlun into the desert, leaving palace safety for a landscape that is vast, sun-struck, and full of consequences. This is freedom becoming responsibility.',
+    src: '/assets/showcase/intro-gallery/desert-ride.png',
+    kind: 'image',
+    actIndex: 3,
+  },
+  {
+    id: 'gallery-morning-fountain',
+    title: 'Morning Fountain',
+    kicker: 'Act IV',
+    caption: 'Kindness in Mayala',
+    description: 'In the morning plaza, Bedouin warmth and fountain light give Aisha a human pause between danger and destiny. The scene shows the kind of ordinary life she is fighting to protect.',
+    src: '/assets/showcase/intro-gallery/morning-fountain.png',
+    kind: 'image',
+    actIndex: 4,
+  },
+  {
+    id: 'gallery-ruined-shelter',
+    title: 'Ruined Shelter',
+    kicker: 'Act V',
+    caption: 'Broken city',
+    description: 'Aisha reaches the ruined city and sees what the crisis has done to real homes. The adventure becomes heavier here: not only magic, but families, hunger, fear, and survival.',
+    src: '/assets/showcase/intro-gallery/ruined-shelter.png',
+    kind: 'image',
+    actIndex: 5,
+  },
+  {
+    id: 'gallery-dream-veil',
+    title: 'Dream Veil',
+    kicker: 'Act VII',
+    caption: 'Mirage temptation',
+    description: 'The perfume seller offers beauty as a trap. In Mirage City, scent, memory, and desire become weapons, and Aisha must learn that not every kindness is safe.',
+    src: '/assets/showcase/intro-gallery/dream-veil.png',
+    kind: 'image',
+    actIndex: 7,
+  },
+  {
+    id: 'gallery-mirage-mount',
+    title: 'Mirage Mount',
+    kicker: 'Act VII',
+    caption: 'Mir-Kaan’s spectacle',
+    description: 'Aisha and Prince Mir-Kaan ride Maz-Khar through the seductive grandeur of Mirage City. It is beautiful, thrilling, and deeply staged to make danger feel like destiny.',
+    src: '/assets/showcase/intro-gallery/mirage-mount.png',
+    kind: 'image',
+    actIndex: 7,
+  },
+  {
+    id: 'gallery-time-chamber',
+    title: 'Time Chamber',
+    kicker: 'Act VIII',
+    caption: 'Hourglass secret',
+    description: 'Inside the hourglass chamber, Aisha begins to face the machinery of time itself. The image marks the shift from escape story into mythic responsibility.',
+    src: '/assets/showcase/intro-gallery/time-chamber.png',
+    kind: 'image',
+    actIndex: 8,
+  },
+  {
+    id: 'gallery-hourglass-panorama',
+    title: 'Hourglass Chamber',
+    kicker: 'Act VIII',
+    caption: 'Dora beside her',
+    description: 'Aisha and Dora stand inside the impossible chamber, small against the scale of the hourglass. Their friendship becomes the emotional anchor inside the vastness of the myth.',
+    src: '/assets/showcase/intro-gallery/hourglass-panorama.png',
+    kind: 'image',
+    actIndex: 8,
+  },
+  {
+    id: 'gallery-talisman-won',
+    title: 'Talisman Won',
+    kicker: 'Act IX',
+    caption: 'Sharak’s triumph',
+    description: 'Sharak finally holds the talisman, convinced it will return what he lost. The victory is frightening because it is powered by grief, obsession, and a love that has become possession.',
+    src: '/assets/showcase/intro-gallery/talisman-won.png',
+    kind: 'image',
+    actIndex: 9,
+  },
+  {
+    id: 'gallery-moonlit-lake',
+    title: 'Moonlit Lake',
+    kicker: 'Act IX',
+    caption: 'Plasma Djinn',
+    description: 'Aisha meets the Plasma character by the lake in a quiet, luminous beat of trust. The magic is not only spectacle here; it becomes tenderness, regret, and protection.',
+    src: '/assets/showcase/intro-gallery/moonlit-lake.png',
+    kind: 'image',
+    actIndex: 9,
+  },
 ]
 
-const defaultShowcaseGallery: ShowcaseMedia[] = galleryPool.map(([title, src], index) => ({
-  id: `gallery-${index}`,
-  title,
-  src,
-  kind: 'image',
-}))
+const recoveredShowcaseVideoGallery: ShowcaseMedia[] = [
+  {
+    id: 'recovered-video-act1-seedance-hero',
+    title: 'Act I Video Pass',
+    kicker: 'Recovered Video',
+    caption: 'Seedance presentation cut',
+    description: 'Recovered from the storyboard video uploads so the public showcase opens with motion instead of the older still-image gallery.',
+    src: '/assets/storyboard/uploads/video-seedance-2-0-standard-1778552351399.mp4',
+    kind: 'video',
+    actIndex: 0,
+  },
+  {
+    id: 'recovered-video-act1-rescued',
+    title: 'Act I Rescued Video',
+    kicker: 'Recovered Video',
+    caption: 'Restored local MP4',
+    description: 'A restored storyboard video pass from the uploaded local media folder.',
+    src: '/assets/storyboard/uploads/video-seedance-2-0-standard-rescued-1778552638229.mp4',
+    kind: 'video',
+    actIndex: 0,
+  },
+  {
+    id: 'recovered-video-act1-v6',
+    title: 'Act I V6 Motion Test',
+    kicker: 'Recovered Video',
+    caption: 'PixVerse V6',
+    description: 'One of the completed motion tests recovered from the storyboard media library.',
+    src: '/assets/storyboard/uploads/video-v6-1778505668130.mp4',
+    kind: 'video',
+    actIndex: 1,
+  },
+  {
+    id: 'recovered-video-act1-pixverse-c1',
+    title: 'Act I PixVerse C1',
+    kicker: 'Recovered Video',
+    caption: 'PixVerse C1',
+    description: 'Recovered PixVerse C1 video generation attached to the storyboard data.',
+    src: '/assets/storyboard/uploads/video-pixverse-c1-1778506255664.mp4',
+    kind: 'video',
+    actIndex: 1,
+  },
+  {
+    id: 'recovered-video-happyhorse',
+    title: 'HappyHorse Motion Pass',
+    kicker: 'Recovered Video',
+    caption: 'Animation test',
+    description: 'Recovered video generation from the local storyboard uploads.',
+    src: '/assets/storyboard/uploads/video-happyhorse-1-0-1778506393546.mp4',
+    kind: 'video',
+    actIndex: 2,
+  },
+  {
+    id: 'recovered-video-kling',
+    title: 'Kling Motion Pass',
+    kicker: 'Recovered Video',
+    caption: 'Kling 3.0',
+    description: 'Recovered Kling video pass from the storyboard uploads.',
+    src: '/assets/storyboard/uploads/video-kling-3-0-standard-1778506604291.mp4',
+    kind: 'video',
+    actIndex: 2,
+  },
+  {
+    id: 'recovered-video-kling-o3',
+    title: 'Kling O3 Motion Pass',
+    kicker: 'Recovered Video',
+    caption: 'Kling O3',
+    description: 'Recovered Kling O3 video pass from the local media library.',
+    src: '/assets/storyboard/uploads/video-kling-o3-standard-1778506743037.mp4',
+    kind: 'video',
+    actIndex: 3,
+  },
+  {
+    id: 'recovered-video-grok',
+    title: 'Grok Imagine Motion Pass',
+    kicker: 'Recovered Video',
+    caption: 'Grok Imagine',
+    description: 'Recovered Grok Imagine video pass from the storyboard uploads.',
+    src: '/assets/storyboard/uploads/video-grok-imagine-1778506813545.mp4',
+    kind: 'video',
+    actIndex: 3,
+  },
+  {
+    id: 'recovered-video-seedance-latest-a',
+    title: 'Seedance Final Pass A',
+    kicker: 'Recovered Video',
+    caption: 'Latest local video',
+    description: 'One of the latest completed Seedance MP4s found in the local uploads.',
+    src: '/assets/storyboard/uploads/video-seedance-2-0-standard-1778554036930.mp4',
+    kind: 'video',
+    actIndex: 4,
+  },
+  {
+    id: 'recovered-video-seedance-latest-b',
+    title: 'Seedance Final Pass B',
+    kicker: 'Recovered Video',
+    caption: 'Latest local video',
+    description: 'One of the latest completed Seedance MP4s found in the local uploads.',
+    src: '/assets/storyboard/uploads/video-seedance-2-0-standard-1778554049516.mp4',
+    kind: 'video',
+    actIndex: 4,
+  },
+  {
+    id: 'recovered-video-aisha-trailer',
+    title: 'Aisha Extended Trailer',
+    kicker: 'Recovered Trailer',
+    caption: 'Festival trailer',
+    description: 'The extended trailer is still present locally and restored into the gallery as a motion slot.',
+    src: '/assets/storyboard/uploads/Aisha-Final-extended-trailer-1778426506063.mp4',
+    kind: 'video',
+    actIndex: 5,
+  },
+]
 
 const defaultShowcaseHero: ShowcaseMedia[] = heroSlides.map((slide) => ({ ...slide }))
+
+const recoveredCharacterVideos: Partial<Record<string, string>> = {
+  aisha: '/assets/storyboard/uploads/video-seedance-2-0-standard-1778552351399.mp4',
+  dora: '/assets/storyboard/uploads/video-seedance-2-0-standard-rescued-1778552638229.mp4',
+  niura: '/assets/storyboard/uploads/video-v6-1778505668130.mp4',
+  sultan: '/assets/storyboard/uploads/video-pixverse-c1-1778506255664.mp4',
+  'prince-thamir': '/assets/storyboard/uploads/video-happyhorse-1-0-1778506393546.mp4',
+  altair: '/assets/storyboard/uploads/video-kling-3-0-standard-1778506604291.mp4',
+  'plasma-character': '/assets/characters/plasma-character-idle.mp4',
+  bedouin: '/assets/storyboard/uploads/video-kling-o3-standard-1778506743037.mp4',
+  oracle: '/assets/storyboard/uploads/video-grok-imagine-1778506813545.mp4',
+  'mir-kaan': '/assets/storyboard/uploads/PixVerse_V6_Transition_1080P_its_a_fictioanl_g-1-1778556504026.mp4',
+  sharak: '/assets/storyboard/uploads/PixVerse_V6_Transition_1080P_its_a_fictioanl_g-17-1778558098156.mp4',
+  nibzu: '/assets/storyboard/uploads/PixVerse_V6_Transition_1080P_3d_animated_idle_-30-1778554242291.mp4',
+  'maz-khar': '/assets/storyboard/uploads/PixVerse_V6_Transition_1080P_3d_animated_idle_-37-1778555673311.mp4',
+  zafra: '/assets/storyboard/uploads/PixVerse_Seedance-2-0-standard_Transition_1080-8-1778573677771.mp4',
+  ancestors: '/assets/storyboard/uploads/PixVerse_Seedance-2-0-standard_Fusion_1080P_NO-1778578181367.mp4',
+  maestra: '/assets/storyboard/uploads/video-seedance-2-0-standard-1778534057873.mp4',
+  hala: '/assets/storyboard/uploads/video-seedance-2-0-standard-1778532798050.mp4',
+  layan: '/assets/storyboard/uploads/video-seedance-2-0-standard-1778524299562.mp4',
+}
 
 const defaultShowcaseCopy: ShowcaseCopy = {
   artEyebrow: 'Art bible',
@@ -790,7 +1096,7 @@ function App() {
   const normalizeShowcaseCharacters = (saved: CharacterProfile[]): CharacterProfile[] => {
     const seen = new Set(saved.map((profile) => profile.id))
     const missing = characters.filter((profile) => !seen.has(profile.id))
-    const migrated = [...saved, ...missing].map((profile) => {
+    const migrated: CharacterProfile[] = [...saved, ...missing].map((profile) => {
       if (profile.id === 'plasma-character' && profile.image === '/assets/characters/plasma-djinn-full.png') {
         return { ...profile, image: '/assets/characters/plasma-character-idle.mp4', imagePlacement: { x: 0, y: 0, scale: 1 } }
       }
@@ -804,7 +1110,13 @@ function App() {
         return { ...profile, image: '/assets/character-cutouts/maz-khar.png', imagePlacement: { x: 0, y: 0, scale: 1 } }
       }
       if (profile.id === 'mirage-perfume-seller' && profile.category !== 'antagonists') {
-        return { ...profile, category: 'antagonists' }
+        return { ...profile, category: 'antagonists' as CharacterCategory }
+      }
+      if (!profile.videoPresentation && recoveredCharacterVideos[profile.id]) {
+        return { ...profile, videoPresentation: recoveredCharacterVideos[profile.id], videoPlacement: { x: 0, y: 0, scale: 1 }, videoMuted: true }
+      }
+      if (profile.videoPresentation && profile.videoMuted !== true) {
+        return { ...profile, videoMuted: true }
       }
       return profile
     })
@@ -813,22 +1125,52 @@ function App() {
     if (perfumeIndex >= 0 && vizierIndex >= 0 && perfumeIndex !== vizierIndex + 1) {
       const [perfume] = migrated.splice(perfumeIndex, 1)
       const insertAfter = migrated.findIndex((profile) => profile.id === 'mirage-vizier')
-      migrated.splice(insertAfter + 1, 0, { ...perfume, category: 'antagonists' })
+      migrated.splice(insertAfter + 1, 0, { ...perfume, category: 'antagonists' as CharacterCategory })
     }
     return migrated
   }
 
   const loadShowcaseState = <T,>(key: string, fallback: T): T => {
     try {
+      const isLocalHost = ['localhost', '127.0.0.1', '100.103.94.10'].includes(window.location.hostname)
+      const isPublicShowcaseState = key.startsWith('aisha-showcase-')
+      if (!isLocalHost && isPublicShowcaseState && window.localStorage.getItem('aisha-showcase-public-version') !== publicShowcaseVersion) {
+        return fallback
+      }
       const raw = window.localStorage.getItem(key)
       return raw ? JSON.parse(raw) as T : fallback
     } catch {
       return fallback
     }
   }
+
+  const loadShowcaseGallery = () => {
+    try {
+      const isLocalHost = ['localhost', '127.0.0.1', '100.103.94.10'].includes(window.location.hostname)
+      if (!isLocalHost) return defaultShowcaseGallery
+      const raw = window.localStorage.getItem('aisha-showcase-gallery')
+      if (raw) {
+        const saved = JSON.parse(raw) as ShowcaseMedia[]
+        if (!Array.isArray(saved) || saved.length === 0) return defaultShowcaseGallery
+        const isRecoveredVideoGallery = saved.length === recoveredShowcaseVideoGallery.length && saved.every((item) => item.id?.startsWith('recovered-video-'))
+        if (isRecoveredVideoGallery) return defaultShowcaseGallery
+        const hasSavedVideo = saved.some((item) => item.kind === 'video' || isVideoAsset(item.src))
+        const wasForcedToCuratedImages = saved.length === defaultShowcaseGallery.length && saved.every((item, index) => item.id === defaultShowcaseGallery[index]?.id)
+        window.localStorage.setItem('aisha-showcase-gallery-version', showcaseGalleryVersion)
+        if (hasSavedVideo) return saved
+        if (wasForcedToCuratedImages) return defaultShowcaseGallery
+        return saved
+      }
+      window.localStorage.setItem('aisha-showcase-gallery-version', showcaseGalleryVersion)
+    } catch {
+      return defaultShowcaseGallery
+    }
+    return defaultShowcaseGallery
+  }
+
   const [route, setRoute] = useState(() => window.location.hash || '#hero')
   const [showcaseHero, setShowcaseHero] = useState<ShowcaseMedia[]>(() => loadShowcaseState('aisha-showcase-hero', defaultShowcaseHero))
-  const [showcaseGallery, setShowcaseGallery] = useState<ShowcaseMedia[]>(() => loadShowcaseState('aisha-showcase-gallery', defaultShowcaseGallery))
+  const [showcaseGallery, setShowcaseGallery] = useState<ShowcaseMedia[]>(loadShowcaseGallery)
   const [showcaseCharacters, setShowcaseCharacters] = useState<CharacterProfile[]>(() => normalizeShowcaseCharacters(loadShowcaseState('aisha-showcase-characters', characters)))
   const [showcaseCopy, setShowcaseCopy] = useState<ShowcaseCopy>(() => loadShowcaseState('aisha-showcase-copy', defaultShowcaseCopy))
   const [showcaseActNames, setShowcaseActNames] = useState<string[]>(() => loadShowcaseState('aisha-showcase-act-names', actNames))
@@ -863,23 +1205,83 @@ function App() {
     antagonists: 'description',
     sidekicks: 'description',
   })
-  const [activeAct, setActiveAct] = useState(0)
+  const [activeAct, setActiveAct] = useState(-1)
   const [showcaseLightbox, setShowcaseLightbox] = useState<number | null>(null)
   const [activeTrack, setActiveTrack] = useState(0)
   const [activeMerchVariants, setActiveMerchVariants] = useState<Record<string, number>>({})
   const [mapFocus, setMapFocus] = useState<'spain' | 'la'>('spain')
   const [showcasePickerTarget, setShowcasePickerTarget] = useState<ShowcasePickerTarget | null>(null)
   const [showcasePickerStoryboard, setShowcasePickerStoryboard] = useState<StoryboardData | null>(null)
+  const [showcasePersistenceReady, setShowcasePersistenceReady] = useState(false)
   const heroVideoRef = useRef<HTMLVideoElement | null>(null)
+  const showcaseSaveTimerRef = useRef<number | null>(null)
 
   useEffect(() => { window.localStorage.setItem('aisha-showcase-hero', JSON.stringify(showcaseHero)) }, [showcaseHero])
-  useEffect(() => { window.localStorage.setItem('aisha-showcase-gallery', JSON.stringify(showcaseGallery)) }, [showcaseGallery])
+  useEffect(() => { window.localStorage.setItem('aisha-showcase-public-version', publicShowcaseVersion) }, [])
+  useEffect(() => {
+    window.localStorage.setItem('aisha-showcase-gallery', JSON.stringify(showcaseGallery))
+    window.localStorage.setItem('aisha-showcase-gallery-version', showcaseGalleryVersion)
+  }, [showcaseGallery])
+  useEffect(() => {
+    setShowcaseCharacters((current) => normalizeShowcaseCharacters(current))
+  }, [])
   useEffect(() => { window.localStorage.setItem('aisha-showcase-characters', JSON.stringify(showcaseCharacters)) }, [showcaseCharacters])
   useEffect(() => { window.localStorage.setItem('aisha-showcase-copy', JSON.stringify(showcaseCopy)) }, [showcaseCopy])
   useEffect(() => { window.localStorage.setItem('aisha-showcase-act-names', JSON.stringify(showcaseActNames)) }, [showcaseActNames])
   useEffect(() => { window.localStorage.setItem('aisha-showcase-category-titles', JSON.stringify(showcaseCategoryTitles)) }, [showcaseCategoryTitles])
   useEffect(() => { window.localStorage.setItem('aisha-showcase-merch', JSON.stringify(showcaseMerch)) }, [showcaseMerch])
   useEffect(() => { window.localStorage.setItem('aisha-showcase-contact', JSON.stringify(showcaseContact)) }, [showcaseContact])
+
+  useEffect(() => {
+    let cancelled = false
+    fetch('/api/showcase/state')
+      .then((response) => response.ok ? response.json() : null)
+      .then((payload) => payload?.state ? payload : fetch('/assets/showcase/showcase-state.json').then((response) => response.ok ? response.json() : null).then((state) => state ? { state } : null))
+      .then((payload) => {
+        if (cancelled || !payload?.state) return
+        const state = payload.state as Partial<ShowcasePersistedState>
+        const remoteGallery = Array.isArray(state.gallery) ? state.gallery.filter((item) => item?.src) : []
+        if (state.hero?.length) setShowcaseHero(state.hero)
+        if (remoteGallery.length) setShowcaseGallery(remoteGallery)
+        if (state.characters?.length) setShowcaseCharacters(normalizeShowcaseCharacters(state.characters))
+        if (state.copy) setShowcaseCopy(state.copy)
+        if (state.actNames?.length) setShowcaseActNames(state.actNames)
+        if (state.categoryTitles) setShowcaseCategoryTitles(state.categoryTitles)
+        if (state.merch?.length) setShowcaseMerch(state.merch)
+        if (state.contact) setShowcaseContact(state.contact)
+      })
+      .catch(() => {})
+      .finally(() => {
+        if (!cancelled) setShowcasePersistenceReady(true)
+      })
+    return () => { cancelled = true }
+  }, [])
+
+  useEffect(() => {
+    if (!showcasePersistenceReady) return
+    if (showcaseSaveTimerRef.current) window.clearTimeout(showcaseSaveTimerRef.current)
+    showcaseSaveTimerRef.current = window.setTimeout(() => {
+      const state: ShowcasePersistedState = {
+        version: publicShowcaseVersion,
+        hero: showcaseHero,
+        gallery: showcaseGallery,
+        characters: showcaseCharacters.map((profile) => profile.videoPresentation ? { ...profile, videoMuted: true } : profile),
+        copy: showcaseCopy,
+        actNames: showcaseActNames,
+        categoryTitles: showcaseCategoryTitles,
+        merch: showcaseMerch,
+        contact: showcaseContact,
+      }
+      fetch('/api/showcase/state', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(state),
+      }).catch(() => {})
+    }, 600)
+    return () => {
+      if (showcaseSaveTimerRef.current) window.clearTimeout(showcaseSaveTimerRef.current)
+    }
+  }, [showcasePersistenceReady, showcaseHero, showcaseGallery, showcaseCharacters, showcaseCopy, showcaseActNames, showcaseCategoryTitles, showcaseMerch, showcaseContact])
 
   useEffect(() => {
     const syncRoute = () => setRoute(window.location.hash || '#hero')
@@ -910,12 +1312,21 @@ function App() {
   const pages = bookMode === 'script' ? scriptPages : songPages
   const openPages = [pages[bookPage], pages[bookPage + 1]].filter(Boolean)
   const currentHero = showcaseHero[activeHero] || showcaseHero[0] || defaultShowcaseHero[0]
+  const activeGalleryEntries = showcaseGallery
+    .map((item, index) => ({ item, index }))
+    .filter(({ item }) => activeAct < 0 || (item.actIndex ?? 0) === activeAct)
+  const activeGalleryIndexes = activeGalleryEntries.map(({ index }) => index)
   const activeShowcaseMedia = showcaseLightbox === null ? null : showcaseGallery[showcaseLightbox]
+  const activeShowcasePosition = showcaseLightbox === null ? -1 : activeGalleryIndexes.indexOf(showcaseLightbox)
 
   const moveShowcaseLightbox = (direction: -1 | 1) => {
     setShowcaseLightbox((current) => {
-      if (current === null || showcaseGallery.length === 0) return current
-      return (current + direction + showcaseGallery.length) % showcaseGallery.length
+      if (current === null) return current
+      const scopedIndexes = activeGalleryIndexes.length ? activeGalleryIndexes : showcaseGallery.map((_, index) => index)
+      if (scopedIndexes.length === 0) return current
+      const currentPosition = scopedIndexes.indexOf(current)
+      const safePosition = currentPosition >= 0 ? currentPosition : 0
+      return scopedIndexes[(safePosition + direction + scopedIndexes.length) % scopedIndexes.length]
     })
   }
 
@@ -1030,6 +1441,7 @@ function App() {
     description: 'Description',
     src: media.url,
     kind: media.type === 'video' ? 'video' : 'image',
+    actIndex: activeAct,
   })
 
   const placeShowcaseMedia = (media: ShowcaseMedia, targetInfo = showcasePickerTarget) => {
@@ -1045,8 +1457,9 @@ function App() {
     }
     setShowcaseGallery((current) => {
       const next = [...current]
-      if (typeof targetInfo.index === 'number') next.splice(targetInfo.index, 1, media)
-      else next.push(media)
+      const galleryMedia = { ...media, actIndex: media.actIndex ?? Math.max(activeAct, 0) }
+      if (typeof targetInfo.index === 'number') next.splice(targetInfo.index, 1, galleryMedia)
+      else next.push(galleryMedia)
       return next
     })
   }
@@ -1075,8 +1488,9 @@ function App() {
     }
     setShowcaseGallery((current) => {
       const next = [...current]
-      if (typeof replaceIndex === 'number') next.splice(replaceIndex, 1, ...uploaded)
-      else next.push(...uploaded)
+        const galleryUploads = uploaded.map((item) => ({ ...item, actIndex: item.actIndex ?? Math.max(activeAct, 0) }))
+      if (typeof replaceIndex === 'number') next.splice(replaceIndex, 1, ...galleryUploads)
+      else next.push(...galleryUploads)
       return next.length ? next : defaultShowcaseGallery
     })
   }
@@ -1092,7 +1506,7 @@ function App() {
       ...profile,
       videoPresentation: uploaded.src,
       videoPlacement: { x: 0, y: 0, scale: 1 },
-      videoMuted: false,
+      videoMuted: true,
     } : profile))
   }
 
@@ -1285,6 +1699,9 @@ function App() {
           onEdit={(part, value) => updateShowcaseText(`art${part[0].toUpperCase()}${part.slice(1)}`, value)}
         />
         <div className="act-menu" aria-label="Choose act gallery">
+          <button className={activeAct < 0 ? 'is-active' : ''} onClick={() => setActiveAct(-1)} type="button">
+            <span>All</span>
+          </button>
           {showcaseActNames.map((act, index) => (
             <button className={activeAct === index ? 'is-active' : ''} key={`${act}-${index}`} onClick={() => setActiveAct(index)} type="button">
               <span
@@ -1307,7 +1724,7 @@ function App() {
             addShowcaseFiles(Array.from(event.dataTransfer.files || []), 'gallery').catch(() => {})
           }}
         >
-          {showcaseGallery.map((item, index) => (
+          {activeGalleryEntries.map(({ item, index }, visibleIndex) => (
             <article
               className="act-card glass editable-media-card"
               key={`${showcaseActNames[activeAct] || actNames[activeAct]}-${item.id}-${index}`}
@@ -1326,7 +1743,7 @@ function App() {
                 <button title="Delete" type="button" onClick={() => setShowcaseGallery((current) => current.filter((_, itemIndex) => itemIndex !== index))}>×</button>
               </div>
               <div>
-                <span>{showcaseActNames[activeAct] || actNames[activeAct]} / Frame {String(index + 1).padStart(2, '0')}</span>
+                <span>{item.kicker || showcaseActNames[item.actIndex ?? 0] || actNames[item.actIndex ?? 0] || 'Story'} / Frame {String(visibleIndex + 1).padStart(2, '0')}</span>
                 <h3 className="editable-copy card-title-clamp" contentEditable suppressContentEditableWarning onClick={(event) => event.stopPropagation()} onBlur={(event) => updateShowcaseGalleryMedia(index, { title: event.currentTarget.textContent || 'Title' })}>{item.title || 'Title'}</h3>
               </div>
             </article>
@@ -1353,8 +1770,8 @@ function App() {
                 <button type="button" title="Replace media" onClick={() => openShowcasePicker('gallery', showcaseLightbox || 0)}>+</button>
                 <button type="button" title="Capture rounded frame" onClick={() => captureShowcaseMedia(activeShowcaseMedia)}>□</button>
               </div>
-              {activeShowcaseMedia.kind === 'video' ? (
-                <video src={activeShowcaseMedia.src} poster={activeShowcaseMedia.poster} controls autoPlay playsInline />
+          {activeShowcaseMedia.kind === 'video' ? (
+            <video src={activeShowcaseMedia.src} poster={activeShowcaseMedia.poster} controls playsInline preload="metadata" />
               ) : (
                 <img src={activeShowcaseMedia.src} alt={activeShowcaseMedia.title} />
               )}
@@ -1366,7 +1783,7 @@ function App() {
                 suppressContentEditableWarning
                 onBlur={(event) => updateShowcaseGalleryMedia(showcaseLightbox || 0, { kicker: event.currentTarget.textContent || 'Showcase Frame' })}
               >
-                {activeShowcaseMedia.kicker || `${showcaseActNames[activeAct] || actNames[activeAct]} / Showcase Frame ${String((showcaseLightbox || 0) + 1).padStart(2, '0')}`}
+                {activeShowcaseMedia.kicker || `${showcaseActNames[activeAct] || actNames[activeAct]} / Showcase Frame ${String((activeShowcasePosition >= 0 ? activeShowcasePosition : (showcaseLightbox || 0)) + 1).padStart(2, '0')}`}
               </span>
               <h3 className="editable-copy public-art-title-clamp" contentEditable suppressContentEditableWarning onBlur={(event) => updateShowcaseGalleryMedia(showcaseLightbox || 0, { title: event.currentTarget.textContent || 'Title' })}>{activeShowcaseMedia.title || 'Title'}</h3>
               <p className="editable-copy public-art-desc-clamp" contentEditable suppressContentEditableWarning onBlur={(event) => updateShowcaseGalleryMedia(showcaseLightbox || 0, { description: event.currentTarget.textContent || 'Description' })}>{activeShowcaseMedia.description || activeShowcaseMedia.caption || 'Description'}</p>
@@ -2209,6 +2626,81 @@ function StoryboardWorkspace() {
   const [status, setStatus] = useState('Loading storyboard archive...')
   const saveTimer = useRef<number | null>(null)
 
+  const addLightboxAttachmentUrl = (url?: string) => {
+    const cleaned = (url || '').trim()
+    if (!cleaned) return
+    setLbAttachments(prev => {
+      if (prev.includes(cleaned) || prev.length >= 8) return prev
+      return [...prev, cleaned]
+    })
+  }
+
+  const getDroppedStoryboardMediaUrl = (mediaData: string) => {
+    if (!mediaData) return ''
+    try {
+      const payload = JSON.parse(mediaData) as {
+        actId?: string
+        sceneId?: string
+        mode?: StoryboardSequenceMode
+        shotId?: string
+        mediaId?: string
+        url?: string
+      }
+      if (payload.url) return payload.url
+      if (!payload.shotId || !payload.mediaId) return ''
+      const modes: StoryboardSequenceMode[] = payload.mode && ['images', 'videos', 'audio'].includes(payload.mode)
+        ? [payload.mode]
+        : ['images', 'videos', 'audio']
+      for (const act of storyboard.acts) {
+        if (payload.actId && act.id !== payload.actId) continue
+        for (const scene of act.scenes) {
+          if (payload.sceneId && scene.id !== payload.sceneId) continue
+          for (const mode of modes) {
+            const media = getSceneShots(scene, mode)
+              .find(shot => shot.id === payload.shotId)
+              ?.media.find(item => item.id === payload.mediaId)
+            if (media?.url) return media.url
+          }
+        }
+      }
+    } catch {
+      return ''
+    }
+    return ''
+  }
+
+  const handleLightboxReferenceDrop = (event: DragEvent<HTMLElement>) => {
+    event.preventDefault()
+    event.stopPropagation()
+    if (event.dataTransfer.files?.length) {
+      uploadLightboxAttachments(event.dataTransfer.files)
+      setLbNoteOpen(true)
+      return
+    }
+    const storyboardUrl = getDroppedStoryboardMediaUrl(event.dataTransfer.getData('text/storyboard-media'))
+    const uriList = event.dataTransfer.getData('text/uri-list')
+      .split('\n')
+      .find(line => line.trim() && !line.startsWith('#'))
+    const plainUrl = event.dataTransfer.getData('text/plain')
+    addLightboxAttachmentUrl(storyboardUrl || uriList || plainUrl)
+    setLbNoteOpen(true)
+  }
+
+  const uploadLightboxAttachments = (files: FileList | File[]) => {
+    const remaining = Math.max(0, 8 - lbAttachments.length)
+    Array.from(files).slice(0, remaining).forEach(file => {
+      const formData = new FormData()
+      formData.append('file', file)
+      fetch('/api/storyboard/upload', { method: 'POST', body: formData })
+        .then(async response => {
+          const payload = await response.json()
+          if (!response.ok || payload.error || !payload.url) throw new Error(payload.error || 'Upload failed')
+          addLightboxAttachmentUrl(payload.url)
+        })
+        .catch(error => setStatus(error instanceof Error ? `Reference upload failed: ${error.message}` : 'Reference upload failed'))
+    })
+  }
+
   useEffect(() => {
     if (!lightbox || lightbox.media.type !== 'video') {
       setLbVideoTrimOpen(false)
@@ -2250,14 +2742,17 @@ function StoryboardWorkspace() {
         setStoryboard(next)
         setActiveActId(next.acts[0]?.id || 'act-1')
         setStatus(`Storyboard folder: ${storyboardStoragePath}`)
-        saveStoryboard(next)
+        window.localStorage.setItem('aisha-storyboard-cache', JSON.stringify(next))
       })
       .catch(() => {
+        const isLocalHost = ['localhost', '127.0.0.1', '100.103.94.10'].includes(window.location.hostname)
         const cached = window.localStorage.getItem('aisha-storyboard-cache')
-        const next = cached ? normalizeStoryboard(JSON.parse(cached) as Partial<StoryboardData>) : createDefaultStoryboard()
+        const parsedCache = cached ? JSON.parse(cached) as Partial<StoryboardData> : null
+        const canUseCache = isLocalHost || Boolean(parsedCache && getStoryboardMediaCount(parsedCache) > 0)
+        const next = canUseCache && parsedCache ? normalizeStoryboard(parsedCache) : createDefaultStoryboard()
         setStoryboard(next)
         setActiveActId(next.acts[0]?.id || 'act-1')
-        setStatus('Using browser cache. Folder sync API is not reachable.')
+        setStatus(canUseCache ? 'Using browser cache. Folder sync API is not reachable.' : 'Storyboard API is not reachable. Refresh when the tunnel is back.')
       })
   }, [])
 
@@ -3188,7 +3683,7 @@ function StoryboardWorkspace() {
                 <div style={{ position: 'absolute', top: '0.6rem', right: '4.5rem', zIndex: 8, padding: '0.25rem 0.7rem', borderRadius: '999px', background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(8px)', border: '1px solid rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.65)', fontSize: '0.72rem', fontWeight: 600, letterSpacing: '0.05em', pointerEvents: 'none' }}>{lbShotLabel}</div>
                 {lbEmptyMode && !lightbox.media.url ? (
                   /* Empty shot generation canvas */
-                  <div style={{ width: '85vw', maxWidth: '1200px', aspectRatio: '16/9', maxHeight: '72vh', borderRadius: '1rem', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '1.2rem', background: 'linear-gradient(135deg, rgba(10,20,38,0.85), rgba(15,25,45,0.9))', border: '1px solid rgba(248,217,120,0.08)', backdropFilter: 'blur(32px)' }}>
+                  <div style={{ width: '85vw', maxWidth: '1200px', aspectRatio: '16/9', maxHeight: '72vh', borderRadius: '1rem', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '1.2rem', background: 'linear-gradient(135deg, rgba(10,20,38,0.85), rgba(15,25,45,0.9))', border: '1px solid rgba(248,217,120,0.08)', backdropFilter: 'blur(32px)' }} onDragOver={(e) => { e.preventDefault(); e.stopPropagation() }} onDrop={handleLightboxReferenceDrop}>
                     {lightbox.mode === 'videos' ? (
                       <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="rgba(248,217,120,0.2)" strokeWidth="1.2"><rect x="3" y="5" width="14" height="14" rx="2"/><path d="M17 9l4-2v10l-4-2z"/></svg>
                     ) : (
@@ -3402,7 +3897,12 @@ function StoryboardWorkspace() {
                         
                         {/* Mode specific top-right buttons removed — now in top bar as icons */}
 
-                        <div className="floating-note-area glass" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', maxHeight: '60vh', ...(lightboxToolMode === 'extend' ? { borderBottom: 'none', borderBottomLeftRadius: 0, borderBottomRightRadius: 0 } : {}) }}>
+                        <div
+                          className="floating-note-area glass"
+                          style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', maxHeight: '60vh', ...(lightboxToolMode === 'extend' ? { borderBottom: 'none', borderBottomLeftRadius: 0, borderBottomRightRadius: 0 } : {}) }}
+                          onDragOver={(e) => { e.preventDefault(); e.stopPropagation() }}
+                          onDrop={handleLightboxReferenceDrop}
+                        >
                           <div style={{ position: 'relative' }}>
                             <textarea placeholder={lightboxToolMode === 'extend' ? "Add details what you want to see on the expanded sides of the image, be specific and detailed." : "Leave an iteration note..."} value={lbNote} onChange={(e) => setLbNote(e.target.value)} rows={4} style={{ background: 'transparent', border: 'none', color: 'var(--cream)', outline: 'none', width: '100%', fontSize: '0.95rem', resize: 'vertical', lineHeight: 1.5, minHeight: '4.5em', maxHeight: '18rem', overflowY: 'auto', paddingRight: '2.5rem' }} />
                             {/* Inject last prompt button — top right of textarea */}
@@ -3538,6 +4038,7 @@ function StoryboardWorkspace() {
                                 const q = isVideoTarget ? lbVideoQuality : (modelQuality[mdl] || '1440p')
                                 const payload: Record<string, any> = {
                                   imageUrl: capturedLightbox.media?.url || '',
+                                  imagePath: capturedLightbox.media?.localPath || '',
                                   note: capturedNote,
                                   attachments: capturedAttachments,
                                   shotId: capturedLightbox.shotId,
@@ -3837,7 +4338,7 @@ function StoryboardWorkspace() {
                   // Fire and forget
                   ;(async () => {
                     try {
-                      const res = await fetch('/api/tasks/edit-from-lightbox', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ imageUrl: capturedLightbox.media.url, attachments: [], shotId: capturedLightbox.shotId, actId: capturedLightbox.actId, sceneId: capturedLightbox.sceneId, mode: capturedLightbox.mode, type: 'enhance', model: capturedModel, quality: capturedQuality, prompt: capturedPrompt }) })
+                      const res = await fetch('/api/tasks/edit-from-lightbox', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ imageUrl: capturedLightbox.media.url, imagePath: capturedLightbox.media.localPath || '', attachments: [], shotId: capturedLightbox.shotId, actId: capturedLightbox.actId, sceneId: capturedLightbox.sceneId, mode: capturedLightbox.mode, type: 'enhance', model: capturedModel, quality: capturedQuality, note: capturedPrompt, prompt: capturedPrompt }) })
                       const data = await res.json()
                       if (data.url) {
                         const cacheBust = data.url + (data.url.includes('?') ? '&' : '?') + 't=' + Date.now()
@@ -4050,18 +4551,20 @@ function StoryboardWorkspace() {
             ]
 
             return (
-            <div className="assign-menu-glass glass" style={{ maxWidth: '800px', maxHeight: '85vh', width: '94vw' }} onClick={(e) => e.stopPropagation()}>
+            <div
+              className="assign-menu-glass glass"
+              style={{ maxWidth: '800px', maxHeight: '85vh', width: '94vw' }}
+              onClick={(e) => e.stopPropagation()}
+              onDragOver={(e) => { e.preventDefault(); e.stopPropagation() }}
+              onDrop={handleLightboxReferenceDrop}
+            >
               <div className="assign-menu-title" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '1.3rem' }}>
                 <span>Attach References ({lbAttachments.length}/8)</span>
                 <button type="button" onClick={() => lbFileRef.current?.click()} style={{ padding: '0.5rem 1.2rem', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '2rem', color: 'rgba(255,255,255,0.6)', cursor: 'pointer', fontSize: '0.95rem' }}>↑ Upload</button>
               </div>
               <button type="button" onClick={() => { setLbAttachOpen(false); setLbAttachShowAll(false) }} style={{ position: 'absolute', top: '0.8rem', right: '0.8rem', background: 'none', border: 'none', color: 'rgba(255,255,255,0.4)', cursor: 'pointer', fontSize: '1.6rem' }}>✕</button>
               <input ref={lbFileRef} type="file" accept="image/*,video/*,audio/*" multiple style={{ display: 'none' }} onChange={(e) => {
-                const files = Array.from(e.target.files || []).slice(0, 8 - lbAttachments.length)
-                files.forEach(file => {
-                  const formData = new FormData(); formData.append('file', file)
-                  fetch('/api/storyboard/upload', { method: 'POST', body: formData }).then(r => r.json()).then(d => { if (d.url && lbAttachments.length < 8) { setLbAttachments(prev => prev.length < 8 ? [...prev, d.url] : prev) } }).catch(() => {})
-                })
+                uploadLightboxAttachments(e.target.files || [])
                 e.target.value = ''
               }} />
 
@@ -7462,9 +7965,10 @@ function ShotGrid({
     event.target.value = ''
   }
 
-  const handleDrop = (event: DragEvent<HTMLElement>, shotId: string) => {
-    event.preventDefault()
-    const file = event.dataTransfer.files?.[0]
+	  const handleDrop = (event: DragEvent<HTMLElement>, shotId: string) => {
+	    event.preventDefault()
+	    event.stopPropagation()
+	    const file = event.dataTransfer.files?.[0]
     if (file) {
       onUpload(file, actId, scene.id, mode, shotId)
       return
@@ -7564,7 +8068,7 @@ function ShotGrid({
             </div>
 
             {shot.expanded && (
-              <div className="alternative-branch">
+              <div className="alternative-branch" onDragOver={(event) => { event.preventDefault(); event.stopPropagation() }} onDrop={(event) => handleDrop(event, shot.id)}>
                 {Array.from({ length: Math.max(4, visibleAlts.length) }).map((_, slotIdx) => {
                   const media = visibleAlts[slotIdx]
                   if (media) {
@@ -7572,10 +8076,10 @@ function ShotGrid({
                       <button 
                         className={media.id === selected?.id ? 'is-active' : ''} 
                         key={media.id} 
-                        draggable={true}
-                        onDragStart={(e) => {
-                          e.dataTransfer.setData('text/storyboard-media', JSON.stringify({ shotId: shot.id, mediaId: media.id }))
-                        }}
+	                        draggable={true}
+	                        onDragStart={(e) => {
+	                          e.dataTransfer.setData('text/storyboard-media', JSON.stringify({ actId, sceneId: scene.id, mode, shotId: shot.id, mediaId: media.id, url: media.url, localPath: media.localPath || '' }))
+	                        }}
                         onClick={(e) => { e.stopPropagation(); onShotChange(actId, scene.id, mode, shot.id, (draft) => { draft.selectedMediaId = media.id }) }} 
                         type="button"
                       >
@@ -7585,7 +8089,7 @@ function ShotGrid({
                     )
                   }
                   return (
-                    <label key={`empty-${slotIdx}`} htmlFor={fileInputId} style={{ aspectRatio: '1', display: 'grid', placeItems: 'center', border: '1px dashed rgba(248,217,120,0.2)', borderRadius: '0.7rem', background: 'rgba(248,217,120,0.02)', cursor: 'pointer', color: 'rgba(248,217,120,0.3)', fontSize: '1.2rem', fontWeight: 300, transition: 'border-color 0.2s, background 0.2s' }} onClick={(e) => e.stopPropagation()}>+</label>
+	                    <label key={`empty-${slotIdx}`} htmlFor={fileInputId} style={{ aspectRatio: '1', display: 'grid', placeItems: 'center', border: '1px dashed rgba(248,217,120,0.2)', borderRadius: '0.7rem', background: 'rgba(248,217,120,0.02)', cursor: 'pointer', color: 'rgba(248,217,120,0.3)', fontSize: '1.2rem', fontWeight: 300, transition: 'border-color 0.2s, background 0.2s' }} onClick={(e) => e.stopPropagation()} onDragOver={(e) => { e.preventDefault(); e.stopPropagation() }} onDrop={(e) => handleDrop(e, shot.id)}>+</label>
                   )
                 })}
               </div>
@@ -7875,10 +8379,10 @@ function CharacterSection({
               } as CSSProperties}
               title="Drag to reposition video"
             >
-              <video src={active.videoPresentation} autoPlay loop muted={active.videoMuted ?? false} playsInline preload="auto" />
+              <video src={active.videoPresentation} autoPlay loop muted={active.videoMuted ?? true} playsInline preload="metadata" />
             </div>
             <div className="character-presentation-tools">
-              <button type="button" onClick={() => onUpdateProfile(active.id, { videoMuted: !(active.videoMuted ?? false) })}>{active.videoMuted ? 'Sound' : 'Mute'}</button>
+              <button type="button" onClick={() => onUpdateProfile(active.id, { videoMuted: !(active.videoMuted ?? true) })}>{active.videoMuted ?? true ? 'Sound' : 'Mute'}</button>
               <button type="button" onClick={() => onUpdateProfile(active.id, { videoPlacement: { x: 0, y: 0, scale: 1 } })}>Fit</button>
               <button type="button" onClick={() => onUpdateProfile(active.id, { videoPresentation: '', videoPlacement: { x: 0, y: 0, scale: 1 } })}>×</button>
             </div>

@@ -606,16 +606,23 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
     }))
   }
 
-  const uploadFile = async (file: File, worldX: number, worldY: number) => {
+  const uploadStoryboardFile = async (file: File) => {
+    const fallback = { url: URL.createObjectURL(file), fileName: file.name, mimeType: file.type }
     const formData = new FormData()
     formData.append('file', file)
-    let uploaded: { url?: string; localPath?: string; mimeType?: string; fileName?: string } = {}
     try {
       const response = await fetch('/api/storyboard/upload', { method: 'POST', body: formData })
-      uploaded = await response.json()
+      const uploaded = await response.json()
+      if (!response.ok || uploaded.error || !uploaded.url) throw new Error(uploaded.error || 'Upload failed')
+      return uploaded as { url: string; localPath?: string; mimeType?: string; fileName?: string }
     } catch {
-      uploaded = { url: URL.createObjectURL(file), fileName: file.name, mimeType: file.type }
+      setStatusLine('Upload API unavailable; using temporary preview only. Restart the Vite dev server before sending this reference to PixVerse.')
+      return fallback
     }
+  }
+
+  const uploadFile = async (file: File, worldX: number, worldY: number) => {
+    const uploaded = await uploadStoryboardFile(file)
     const nodeId = addNode({
       type: mediaTypeFromFile(file),
       title: file.name,
@@ -628,15 +635,7 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
   }
 
   const uploadFileToTray = async (file: File, trayId: string) => {
-    const formData = new FormData()
-    formData.append('file', file)
-    let uploaded: { url?: string; localPath?: string; mimeType?: string; fileName?: string } = {}
-    try {
-      const response = await fetch('/api/storyboard/upload', { method: 'POST', body: formData })
-      uploaded = await response.json()
-    } catch {
-      uploaded = { url: URL.createObjectURL(file), fileName: file.name, mimeType: file.type }
-    }
+    const uploaded = await uploadStoryboardFile(file)
     const type = mediaTypeFromFile(file)
     const size = nodeSize(type)
     const nodeId = makeId('pinned')
@@ -670,15 +669,7 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
   }
 
   const uploadFileIntoNode = async (file: File, targetId: string) => {
-    const formData = new FormData()
-    formData.append('file', file)
-    let uploaded: { url?: string; localPath?: string; mimeType?: string; fileName?: string } = {}
-    try {
-      const response = await fetch('/api/storyboard/upload', { method: 'POST', body: formData })
-      uploaded = await response.json()
-    } catch {
-      uploaded = { url: URL.createObjectURL(file), fileName: file.name, mimeType: file.type }
-    }
+    const uploaded = await uploadStoryboardFile(file)
     const nextType = mediaTypeFromFile(file)
     updateNode(targetId, node => {
       node.type = nextType
@@ -1103,7 +1094,8 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
     const generation = node.generation || defaultGeneration()
     const modelPreset = imageModels.find(item => item.id === generation.model)
     const prompt = node.prompt || node.note || (forceSourceAsReference ? 'Use exact @img1 as the source image. Improve quality, clarity, resolution, cinematic lighting, and details while preserving the same composition, camera angle, character identity, object positions, and overall design. Do not invent new characters or change the scene.' : '')
-    const attachments = type === 'generate' ? getReferenceUrls(node.id, forceSourceAsReference || node.type === 'image') : getReferenceUrls(node.id)
+    const attachmentNodes = getInputNodes(node.id, type === 'generate' && (forceSourceAsReference || node.type === 'image')).slice(0, 8)
+    const attachments = attachmentNodes.map(ref => ref.url).filter(Boolean)
     const response = await fetch('/api/tasks/edit-from-lightbox', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -1114,7 +1106,9 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
         sceneId: activeSpace.id,
         mode: 'image',
         imageUrl: type === 'enhance' ? node.url : '',
+        imagePath: type === 'enhance' ? node.localPath || '' : '',
         attachments,
+        attachmentItems: attachmentNodes.map(ref => ({ url: ref.url, localPath: ref.localPath, title: ref.title })),
         note: prompt,
         model: generation.model || modelPreset?.id || imageModels[0].id,
         quality: generation.quality || modelPreset?.quality || imageModels[0].quality,
@@ -1151,7 +1145,9 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
         sceneId: activeSpace.id,
         mode: 'video',
         imageUrl: referenceUrl,
+        imagePath: node.localPath || referenceDebug.find(ref => ref.url === referenceUrl)?.localPath || '',
         attachments,
+        attachmentItems: referenceDebug.map(ref => ({ url: ref.url, localPath: ref.localPath, title: ref.title })),
         referenceDebug,
         note: prompt,
         model: generation.model || videoModels[0].id,

@@ -1248,8 +1248,8 @@
           "id": "node-d82svoz-moycav82",
           "type": "image",
           "title": "Aisha and Sands of Destiny (70).png",
-          "x": 8231.716605370215,
-          "y": -4011.7620464018637,
+          "x": 7881.982832852543,
+          "y": -4213.326167204035,
           "width": 280,
           "height": 158,
           "prompt": "",
@@ -1273,8 +1273,8 @@
           "id": "node-94qrwzg-moychn13",
           "type": "image",
           "title": "Plasma character .png",
-          "x": 8327.603654378794,
-          "y": -4525.213667171748,
+          "x": 7977.869881861122,
+          "y": -4726.77778797392,
           "width": 280,
           "height": 158,
           "prompt": "",
@@ -2099,8 +2099,8 @@
           "id": "node-kkef1f8-moyisvlp",
           "type": "image",
           "title": "panther.png",
-          "x": 8301.070482615762,
-          "y": -4242.0842780750345,
+          "x": 7951.3367100980895,
+          "y": -4443.648398877206,
           "width": 280,
           "height": 158,
           "prompt": "",
@@ -2624,6 +2624,72 @@
             "error": "",
             "lastRunAt": "2026-05-10T12:17:26.791Z"
           }
+        },
+        {
+          "id": "node-o65f4nw-mp2losa4",
+          "type": "image",
+          "title": "New image",
+          "x": 8764.980636262135,
+          "y": -3988.678178409906,
+          "width": 320,
+          "height": 180,
+          "prompt": "rr",
+          "sourcePrompt": "",
+          "note": "",
+          "generation": {
+            "operation": "generate",
+            "model": "gemini-3.1-flash",
+            "quality": "2160p",
+            "aspectRatio": "16:9",
+            "detailLevel": "",
+            "status": "idle"
+          }
+        },
+        {
+          "id": "node-i56girh-mp2loyca",
+          "type": "video",
+          "title": "New video",
+          "x": 8772.989806625137,
+          "y": -4708.168649352747,
+          "width": 320,
+          "height": 180,
+          "prompt": "",
+          "sourcePrompt": "",
+          "note": "",
+          "generation": {
+            "operation": "video",
+            "model": "seedance-2.0-standard",
+            "quality": "720p",
+            "aspectRatio": "16:9",
+            "detailLevel": "",
+            "duration": 5,
+            "status": "idle"
+          }
+        },
+        {
+          "id": "node-ym5l4r1-mp2lq1b7",
+          "type": "image",
+          "title": "8.png",
+          "x": 12222.939940487422,
+          "y": -4542.645795184078,
+          "width": 280,
+          "height": 158,
+          "prompt": "",
+          "sourcePrompt": "",
+          "note": "",
+          "url": "/assets/storyboard/uploads/8-1778317537845.png?t=1778317537851",
+          "localPath": "/Users/vaquita/Downloads/aisha/aisha-cannes-showcase/public/assets/storyboard/uploads/8-1778317537845.png",
+          "mimeType": "image/png",
+          "fileName": "8.png",
+          "pinnedOnly": false,
+          "generation": {
+            "operation": "generate",
+            "model": "gemini-3.1-flash",
+            "quality": "2160p",
+            "aspectRatio": "16:9",
+            "detailLevel": "",
+            "status": "idle"
+          }
         }
       ],
       "edges": [
@@ -3018,6 +3084,13 @@
           "to": "node-ccyy758-mozq5qly",
           "type": "animation",
           "label": "image to video"
+        },
+        {
+          "id": "edge-f3atfyz-mp2loycb",
+          "from": "node-o65f4nw-mp2losa4",
+          "to": "node-i56girh-mp2loyca",
+          "type": "animation",
+          "label": "image to video"
         }
       ],
       "groups": [
@@ -3058,12 +3131,12 @@
             "node-kkef1f8-moyisvlp",
             "node-d82svoz-moycav82"
           ],
-          "x": 8187.73571940717,
-          "y": -4569.830384885459,
+          "x": 7838.0019468895,
+          "y": -4771.394505687628,
           "width": 541.1834374669693,
           "height": 782.3223375555771,
-          "strokeColor": "#f8d978",
-          "fillColor": "rgba(248, 217, 120, 0.12)"
+          "strokeColor": "#e879f9",
+          "fillColor": "#e879f926"
         }
       ],
       "trays": [
@@ -3145,9 +3218,9 @@
         }
       ],
       "viewport": {
-        "panX": -30290.612393213152,
-        "panY": 11497.159887048634,
-        "zoom": 3
+        "panX": -3758.362446982228,
+        "panY": 2320.1838848310385,
+        "zoom": 0.4509867088881234
       }
     },
     {

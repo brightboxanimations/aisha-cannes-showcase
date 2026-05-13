@@ -5,6 +5,8 @@ import { defineConfig, type ViteDevServer } from 'vite'
 import react from '@vitejs/plugin-react'
 
 const storyboardRoot = path.resolve(process.cwd(), 'public/assets/storyboard')
+const showcaseRoot = path.resolve(process.cwd(), 'public/assets/showcase')
+const showcaseStateFile = path.join(showcaseRoot, 'showcase-state.json')
 const storyboardUploads = path.join(storyboardRoot, 'uploads')
 const storyboardDataFile = path.join(storyboardRoot, 'storyboard-data.json')
 const canvasModeDataFile = path.join(storyboardRoot, 'canvas-mode-data.json')
@@ -16,6 +18,7 @@ const tasksCurrentDir = path.join(tasksRoot, 'current')
 const tasksArchivedDir = path.join(tasksRoot, 'archived')
 
 function ensureStoryboardFolders() {
+  fs.mkdirSync(showcaseRoot, { recursive: true })
   fs.mkdirSync(storyboardUploads, { recursive: true })
   fs.mkdirSync(videoJobsDir, { recursive: true })
   fs.mkdirSync(tasksCurrentDir, { recursive: true })
@@ -321,6 +324,39 @@ function storyboardApiPlugin() {
         } catch (error) {
           sendJson(res, { error: error instanceof Error ? error.message : 'Scene packet failed' }, 500)
         }
+      })
+
+      server.middlewares.use('/api/showcase/state', async (req, res) => {
+        ensureStoryboardFolders()
+        if (req.method === 'GET') {
+          if (!fs.existsSync(showcaseStateFile)) return sendJson(res, { exists: false, state: null })
+          try {
+            const state = JSON.parse(fs.readFileSync(showcaseStateFile, 'utf8'))
+            return sendJson(res, { exists: true, state })
+          } catch (error) {
+            return sendJson(res, { error: error instanceof Error ? error.message : 'Showcase state read failed' }, 500)
+          }
+        }
+
+        if (req.method === 'POST') {
+          try {
+            const body = await collectBody(req)
+            const state = JSON.parse(body.toString() || '{}')
+            const quietState = {
+              ...state,
+              characters: Array.isArray(state.characters)
+                ? state.characters.map((character: any) => character?.videoPresentation ? { ...character, videoMuted: true } : character)
+                : state.characters,
+              updatedAt: new Date().toISOString(),
+            }
+            fs.writeFileSync(showcaseStateFile, JSON.stringify(quietState, null, 2))
+            return sendJson(res, { ok: true, localPath: showcaseStateFile })
+          } catch (error) {
+            return sendJson(res, { error: error instanceof Error ? error.message : 'Showcase state save failed' }, 500)
+          }
+        }
+
+        return sendJson(res, { error: 'Method not allowed' }, 405)
       })
 
       server.middlewares.use('/api/storyboard', async (req, res) => {
@@ -1040,7 +1076,7 @@ function storyboardApiPlugin() {
         if (req.method !== 'POST') return sendJson(res, { error: 'Method not allowed' }, 405)
         try {
           const body = await collectBody(req)
-          const { imageUrl, note, attachments, referenceDebug, shotId, actId, sceneId, mode, type, splitSize, model, quality, aspectRatio, detailLevel, duration } = JSON.parse(body.toString() || '{}')
+          const { imageUrl, imagePath: requestedImagePath, note, attachments, attachmentItems, referenceDebug, shotId, actId, sceneId, mode, type, splitSize, model, quality, aspectRatio, detailLevel, duration } = JSON.parse(body.toString() || '{}')
           console.log('[edit-from-lightbox]', { type, model, shotId, imageUrl: imageUrl?.substring(0, 60), attachmentCount: (attachments || []).length, referenceCount: (referenceDebug || []).length, noteLen: (note || '').length, aspectRatio })
           if (!shotId) return sendJson(res, { error: 'Missing shotId' }, 400)
 
@@ -1048,16 +1084,25 @@ function storyboardApiPlugin() {
           // Strip cache-busting query params (e.g. ?t=12345) from URLs before resolving as file paths.
           // Attachments can be app URLs (/assets/...), absolute local files (/Users/...), or remote URLs.
           const cleanUrl = (u: string) => u ? u.replace(/\?.*$/, '') : ''
-          const resolveMediaPath = (u: string) => {
+          const resolveMediaPath = (u: string, localPath = '') => {
+            if (localPath && fs.existsSync(localPath)) return localPath
             const cleaned = cleanUrl(u || '')
             if (!cleaned) return ''
+            if (/^blob:/i.test(cleaned)) return ''
             if (/^https?:\/\//i.test(cleaned)) return cleaned
             if (path.isAbsolute(cleaned) && fs.existsSync(cleaned)) return cleaned
             if (cleaned.startsWith('/')) return path.join(publicDir, cleaned.replace(/^\/+/, ''))
             return path.resolve(cleaned)
           }
+          const isUsableMediaPath = (mediaPath: string) => Boolean(mediaPath && (/^https?:\/\//i.test(mediaPath) || fs.existsSync(mediaPath)))
+          const attachmentLocalPathByUrl = new Map<string, string>()
+          ;[...(attachmentItems || []), ...(referenceDebug || [])].forEach((item: any) => {
+            const url = cleanUrl(String(item?.url || ''))
+            const localPath = String(item?.localPath || '')
+            if (url && localPath) attachmentLocalPathByUrl.set(url, localPath)
+          })
           const cleanedImageUrl = cleanUrl(imageUrl || '')
-          const imagePath = cleanedImageUrl ? resolveMediaPath(cleanedImageUrl) : ''
+          const imagePath = cleanedImageUrl || requestedImagePath ? resolveMediaPath(cleanedImageUrl, String(requestedImagePath || '')) : ''
           const cleanedAttachments = (attachments || []).map((u: string) => cleanUrl(u))
 
           if (type === 'split') {
@@ -1092,7 +1137,7 @@ function storyboardApiPlugin() {
           }
 
           if (type === 'enhance') {
-            const imagePaths = [imagePath, ...cleanedAttachments.map((u: string) => resolveMediaPath(u))]
+            const imagePaths = [imagePath, ...cleanedAttachments.map((u: string) => resolveMediaPath(u, attachmentLocalPathByUrl.get(u) || ''))].filter(isUsableMediaPath)
             const defaultPrompt = 'Use exact @img1 but improve quality of character(s) and resolution. Do not change composition, camera angle or objects. Style: 3d animated movie, cinematic AAA level 3d animation'
             const imageArgs = imagePaths.length === 1 ? ['--image', `"${imagePaths[0]}"`] : ['--images', ...imagePaths.map(p => `"${p}"`)]
             const args = ['npx', 'pixverse-cli', 'create', 'image', '--prompt', JSON.stringify(note || defaultPrompt), ...imageArgs, '--model', model || 'seedream-4.5', '--quality', quality || '2160p', '--aspect-ratio', '16:9', '--json']
@@ -1119,7 +1164,7 @@ function storyboardApiPlugin() {
           }
 
           if (type === 'note') {
-            const imagePaths = cleanedImageUrl ? [imagePath, ...cleanedAttachments.map((u: string) => resolveMediaPath(u))] : cleanedAttachments.map((u: string) => resolveMediaPath(u))
+            const imagePaths = (cleanedImageUrl ? [imagePath, ...cleanedAttachments.map((u: string) => resolveMediaPath(u, attachmentLocalPathByUrl.get(u) || ''))] : cleanedAttachments.map((u: string) => resolveMediaPath(u, attachmentLocalPathByUrl.get(u) || ''))).filter(isUsableMediaPath)
             const imageArgs = imagePaths.length === 1 ? ['--image', `"${imagePaths[0]}"`] : imagePaths.length > 1 ? ['--images', ...imagePaths.map(p => `"${p}"`)] : []
             const args = ['npx', 'pixverse-cli', 'create', 'image', '--prompt', JSON.stringify(note || ''), ...imageArgs, '--model', model || 'gemini-3.1-flash', '--quality', quality || '1440p', '--aspect-ratio', aspectRatio || '16:9', ...(detailLevel ? ['--detail-level', detailLevel] : []), '--json']
             console.log('[note] CLI cmd:', args.join(' ').substring(0, 200))
@@ -1150,7 +1195,7 @@ function storyboardApiPlugin() {
 
           if (type === 'generate') {
             // Generate from scratch — no main image, just prompt + attachments
-            const attachPaths = cleanedAttachments.map((u: string) => resolveMediaPath(u))
+            const attachPaths = cleanedAttachments.map((u: string) => resolveMediaPath(u, attachmentLocalPathByUrl.get(u) || '')).filter(isUsableMediaPath)
             const imageArgs = attachPaths.length === 1 ? ['--image', `"${attachPaths[0]}"`] : attachPaths.length > 1 ? ['--images', ...attachPaths.map(p => `"${p}"`)] : []
             const args = ['npx', 'pixverse-cli', 'create', 'image', '--prompt', JSON.stringify(note || ''), ...imageArgs, '--model', model || 'gemini-3.1-flash', '--quality', quality || '1440p', '--aspect-ratio', aspectRatio || '16:9', ...(detailLevel ? ['--detail-level', detailLevel] : []), '--json']
             console.log('[generate] CLI cmd:', args.join(' ').substring(0, 200))
@@ -1182,8 +1227,8 @@ function storyboardApiPlugin() {
           if (type === 'video') {
             const referencePaths = Array.from(new Set(
               (cleanedImageUrl ? [imagePath] : [])
-                .concat(cleanedAttachments.map((u: string) => resolveMediaPath(u)))
-                .filter(Boolean)
+                .concat(cleanedAttachments.map((u: string) => resolveMediaPath(u, attachmentLocalPathByUrl.get(u) || '')))
+                .filter(isUsableMediaPath)
             ))
             const isVideoRef = (p: string) => /\.(mp4|mov|webm|m4v)$/i.test(p)
             const isImageRef = (p: string) => /\.(png|jpe?g|webp|gif|avif)$/i.test(p)
@@ -1533,4 +1578,8 @@ function storyboardApiPlugin() {
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), storyboardApiPlugin()],
+  server: {
+    host: '0.0.0.0',
+    allowedHosts: true,
+  },
 })

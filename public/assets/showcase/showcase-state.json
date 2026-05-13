@@ -1,0 +1,950 @@
+{
+  "version": "2026-05-12-current-cannes-share",
+  "hero": [
+    {
+      "id": "main-trailer",
+      "title": "Aisha and the Sands of Destiny",
+      "kicker": "Main Trailer",
+      "caption": "A luminous animated feature pitch: palace walls, forbidden markets, ancient magic, comic companions, and a princess learning to cross the line.",
+      "kind": "video",
+      "src": "/assets/trailers/aisha-final-extended-trailer.mp4",
+      "poster": "/assets/locations/palace-exterior.png"
+    },
+    {
+      "id": "showcase-refqx0n-mp2itrzj",
+      "title": "Title",
+      "caption": "Description",
+      "description": "Description",
+      "src": "/assets/storyboard/uploads/Aisha-na-d-Prince-Mir-Kaaan-riding-Maz-Kaar-1778583723243.png",
+      "kind": "image"
+    },
+    {
+      "id": "showcase-mxm755w-mp2iu6jk",
+      "title": "Title",
+      "caption": "Description",
+      "description": "Description",
+      "src": "/assets/storyboard/uploads/Aisah-an-beduine-in-the-mornign-fountain-sparkles-on-the-plaza-1778583742106.png",
+      "kind": "image"
+    },
+    {
+      "id": "showcase-tg93m68-mp2iupdi",
+      "title": "Title",
+      "caption": "Description",
+      "description": "Description",
+      "src": "/assets/storyboard/uploads/Aisha-and-panther-inside-hte-hourglass-chamberpanormaa-1778583766514.png",
+      "kind": "image"
+    },
+    {
+      "id": "showcase-u94ey5s-mp2ivqrp",
+      "title": "Title",
+      "caption": "Description",
+      "description": "Description",
+      "src": "/assets/storyboard/uploads/Asha-in-the-Ruined-city-beduin-home-1778583814976.png",
+      "kind": "image"
+    },
+    {
+      "id": "showcase-7th14cc-mp2iwcn8",
+      "title": "Title",
+      "caption": "Description",
+      "description": "Description",
+      "src": "/assets/storyboard/uploads/Aisha-and-the-entrance-ot-the-Mirage-city-1778583843328.png",
+      "kind": "image"
+    }
+  ],
+  "gallery": [
+    {
+      "id": "gallery-hawk-warning",
+      "title": "Hawk Warning",
+      "kicker": "Intro",
+      "caption": "Altair warning",
+      "description": "Altair tears across the dunes toward the palace gates with the urgent scroll that breaks the ordinary morning. The kingdom still looks prosperous, but the first alarm is already cutting through the sky.",
+      "src": "/assets/showcase/intro-gallery/hawk-warning.png",
+      "kind": "image",
+      "actIndex": 0
+    },
+    {
+      "id": "gallery-merchant-caravan",
+      "title": "Merchant Caravan",
+      "kicker": "Intro",
+      "caption": "Gate procession",
+      "description": "Colorful traders approach Qazar al-Zaman with camels, fabrics, spices, oils, and strange little treasures. This is the lively world Aisha has been forbidden to touch, full of comedy, trade, and movement.",
+      "src": "/assets/showcase/intro-gallery/merchant-caravan.png",
+      "kind": "image",
+      "actIndex": 0
+    },
+    {
+      "id": "gallery-royal-scroll",
+      "title": "Royal Scroll",
+      "kicker": "Act I",
+      "caption": "Forbidden message",
+      "description": "Aisha reaches for Altair’s scroll, turning a small delivery into the first act of rebellion. The message opens the map of danger outside the palace and makes her protected life feel suddenly too small.",
+      "src": "/assets/showcase/intro-gallery/royal-scroll.png",
+      "kind": "image",
+      "actIndex": 1
+    },
+    {
+      "id": "gallery-forbidden-discovery",
+      "title": "Forbidden Map",
+      "kicker": "Act I",
+      "caption": "Truth appears",
+      "description": "The scroll reveals that the world beyond the palace is not a fairytale backdrop but a kingdom in distress. Aisha begins to understand that waiting politely may be another form of danger.",
+      "src": "/assets/showcase/intro-gallery/forbidden-discovery.png",
+      "kind": "image",
+      "actIndex": 1
+    },
+    {
+      "id": "gallery-royal-library",
+      "title": "Royal Library",
+      "kicker": "Act I",
+      "caption": "Restless princess",
+      "description": "Aisha’s library is beautiful, protected, and overflowing with books, but it cannot answer the question that matters most: what is really happening outside the palace walls?",
+      "src": "/assets/showcase/intro-gallery/royal-library.png",
+      "kind": "image",
+      "actIndex": 1
+    },
+    {
+      "id": "gallery-thousand-wonders",
+      "title": "Thousand Wonders",
+      "kicker": "Act II",
+      "caption": "Market freedom",
+      "description": "The market becomes Aisha’s first taste of real freedom: dazzling, chaotic, fragrant, and alive. Wonder is everywhere, but so are traps hidden inside beautiful things.",
+      "src": "/assets/showcase/intro-gallery/thousand-wonders.png",
+      "kind": "image",
+      "actIndex": 2
+    },
+    {
+      "id": "gallery-snake-rescue",
+      "title": "Snake Rescue",
+      "kicker": "Act II",
+      "caption": "Niura saved",
+      "description": "Aisha rescues tiny Niura, the white snake who first seems like a small market curiosity and later becomes one of the story’s cleverest protectors.",
+      "src": "/assets/showcase/intro-gallery/snake-rescue.png",
+      "kind": "image",
+      "actIndex": 2
+    },
+    {
+      "id": "gallery-desert-ride",
+      "title": "Desert Ride",
+      "kicker": "Act III",
+      "caption": "Tamlun carries her",
+      "description": "Aisha rides Tamlun into the desert, leaving palace safety for a landscape that is vast, sun-struck, and full of consequences. This is freedom becoming responsibility.",
+      "src": "/assets/showcase/intro-gallery/desert-ride.png",
+      "kind": "image",
+      "actIndex": 3
+    },
+    {
+      "id": "gallery-morning-fountain",
+      "title": "Morning Fountain",
+      "kicker": "Act IV",
+      "caption": "Kindness in Mayala",
+      "description": "In the morning plaza, Bedouin warmth and fountain light give Aisha a human pause between danger and destiny. The scene shows the kind of ordinary life she is fighting to protect.",
+      "src": "/assets/showcase/intro-gallery/morning-fountain.png",
+      "kind": "image",
+      "actIndex": 4
+    },
+    {
+      "id": "gallery-ruined-shelter",
+      "title": "Ruined Shelter",
+      "kicker": "Act V",
+      "caption": "Broken city",
+      "description": "Aisha reaches the ruined city and sees what the crisis has done to real homes. The adventure becomes heavier here: not only magic, but families, hunger, fear, and survival.",
+      "src": "/assets/showcase/intro-gallery/ruined-shelter.png",
+      "kind": "image",
+      "actIndex": 5
+    },
+    {
+      "id": "gallery-dream-veil",
+      "title": "Dream Veil",
+      "kicker": "Act VII",
+      "caption": "Mirage temptation",
+      "description": "The perfume seller offers beauty as a trap. In Mirage City, scent, memory, and desire become weapons, and Aisha must learn that not every kindness is safe.",
+      "src": "/assets/showcase/intro-gallery/dream-veil.png",
+      "kind": "image",
+      "actIndex": 7
+    },
+    {
+      "id": "gallery-mirage-mount",
+      "title": "Mirage Mount",
+      "kicker": "Act VII",
+      "caption": "Mir-Kaan’s spectacle",
+      "description": "Aisha and Prince Mir-Kaan ride Maz-Khar through the seductive grandeur of Mirage City. It is beautiful, thrilling, and deeply staged to make danger feel like destiny.",
+      "src": "/assets/showcase/intro-gallery/mirage-mount.png",
+      "kind": "image",
+      "actIndex": 7
+    },
+    {
+      "id": "gallery-time-chamber",
+      "title": "Time Chamber",
+      "kicker": "Act VIII",
+      "caption": "Hourglass secret",
+      "description": "Inside the hourglass chamber, Aisha begins to face the machinery of time itself. The image marks the shift from escape story into mythic responsibility.",
+      "src": "/assets/showcase/intro-gallery/time-chamber.png",
+      "kind": "image",
+      "actIndex": 8
+    },
+    {
+      "id": "gallery-hourglass-panorama",
+      "title": "Hourglass Chamber",
+      "kicker": "Act VIII",
+      "caption": "Dora beside her",
+      "description": "Aisha and Dora stand inside the impossible chamber, small against the scale of the hourglass. Their friendship becomes the emotional anchor inside the vastness of the myth.",
+      "src": "/assets/showcase/intro-gallery/hourglass-panorama.png",
+      "kind": "image",
+      "actIndex": 8
+    },
+    {
+      "id": "gallery-talisman-won",
+      "title": "Talisman Won",
+      "kicker": "Act IX",
+      "caption": "Sharak’s triumph",
+      "description": "Sharak finally holds the talisman, convinced it will return what he lost. The victory is frightening because it is powered by grief, obsession, and a love that has become possession.",
+      "src": "/assets/showcase/intro-gallery/talisman-won.png",
+      "kind": "image",
+      "actIndex": 9
+    },
+    {
+      "id": "gallery-moonlit-lake",
+      "title": "Moonlit Lake",
+      "kicker": "Act IX",
+      "caption": "Plasma Djinn",
+      "description": "Aisha meets the Plasma character by the lake in a quiet, luminous beat of trust. The magic is not only spectacle here; it becomes tenderness, regret, and protection.",
+      "src": "/assets/showcase/intro-gallery/moonlit-lake.png",
+      "kind": "image",
+      "actIndex": 9
+    }
+  ],
+  "characters": [
+    {
+      "id": "aisha",
+      "category": "protagonists",
+      "name": "Aisha",
+      "role": "Princess of Qazar al-Zaman",
+      "image": "/assets/storyboard/uploads/PixVerse_Seedance-2-0-standard_Fusion_1080P_th-1778551365597.mp4",
+      "description": "A curious sixteen-year-old princess whose longing for the outside world becomes the spark that changes two kingdoms.",
+      "traits": [
+        "Sincere",
+        "Empathetic",
+        "Intelligent",
+        "Brave",
+        "Forgiving"
+      ],
+      "backstory": "Raised behind palace walls for her own protection, Aisha has been taught safety before truth. Her story begins when wonder becomes stronger than fear.",
+      "imagePlacement": {
+        "x": -16.75390625,
+        "y": -34.74609375,
+        "scale": 1.2235460069444444
+      },
+      "videoPresentation": "/assets/storyboard/uploads/video-seedance-2-0-standard-1778552351399.mp4",
+      "videoPlacement": {
+        "x": 0,
+        "y": 0,
+        "scale": 1
+      },
+      "videoMuted": true
+    },
+    {
+      "id": "dora",
+      "category": "protagonists",
+      "name": "Dora",
+      "role": "Royal white panther",
+      "image": "/assets/storyboard/uploads/PixVerse_V6_Transition_1080P_3d_animated_idle_-11-1778551431326.mp4",
+      "description": "A pampered royal guardian with a lazy smile, sharp comic timing, and far more loyalty than she admits.",
+      "traits": [
+        "Loyal",
+        "Clever",
+        "Protective",
+        "Sharp sense of humor",
+        "Observant"
+      ],
+      "backstory": "Dora would prefer sunbeams, grapes, and politics delayed forever, but she follows Aisha into danger because love is stronger than comfort.",
+      "imagePlacement": {
+        "x": 0,
+        "y": 0,
+        "scale": 1.1333984375
+      },
+      "videoPresentation": "/assets/storyboard/uploads/video-seedance-2-0-standard-rescued-1778552638229.mp4",
+      "videoPlacement": {
+        "x": 0,
+        "y": 0,
+        "scale": 1
+      },
+      "videoMuted": true
+    },
+    {
+      "id": "niura",
+      "category": "protagonists",
+      "name": "Niura",
+      "role": "Tiny white desert snake",
+      "image": "/assets/storyboard/uploads/PixVerse_V6_Transition_1080P_3d_animated_idle_-12-1778551455329.mp4",
+      "description": "Small, fragile, funny, and brave: Niura enters as a rescued creature and becomes a loyal signal of danger and hidden truth.",
+      "traits": [
+        "Anxious",
+        "Practical",
+        "Brave",
+        "Loyal",
+        "Playful humor"
+      ],
+      "backstory": "Niura’s first wish is simply not to disappear in a pot. Aisha sees her fear, opens the cage, and gains a companion with a moonlit destiny.",
+      "imagePlacement": {
+        "x": -4.0859375,
+        "y": 25.40625,
+        "scale": 1.2544053819444445
+      },
+      "videoPresentation": "/assets/storyboard/uploads/video-v6-1778505668130.mp4",
+      "videoPlacement": {
+        "x": 0,
+        "y": 0,
+        "scale": 1
+      },
+      "videoMuted": true
+    },
+    {
+      "id": "plasma-character",
+      "category": "protagonists",
+      "name": "Plasma Djinn",
+      "role": "Luminous cursed protector",
+      "image": "/assets/storyboard/uploads/PixVerse_V6_Transition_1080P_3d_animated_idle_-1-1778545595382.mp4",
+      "description": "A floating human-like figure made of golden plasma, torn between obedience, guilt, and the instinct to protect Aisha when it matters most.",
+      "traits": [
+        "Luminous",
+        "Wounded",
+        "Protective",
+        "Elegant",
+        "Self-sacrificing"
+      ],
+      "backstory": "He carries the ache of an old spell and the shame of serving the wrong master. His arc bends from frightened messenger to brave shield, choosing love and truth over command.",
+      "imagePlacement": {
+        "x": 0,
+        "y": 0,
+        "scale": 1.1623046875
+      },
+      "videoPresentation": "/assets/characters/plasma-character-idle.mp4",
+      "videoPlacement": {
+        "x": 0,
+        "y": 0,
+        "scale": 1
+      },
+      "videoMuted": true
+    },
+    {
+      "id": "altair",
+      "category": "protagonists",
+      "name": "Altair",
+      "role": "Royal messenger hawk",
+      "image": "/assets/storyboard/uploads/PixVerse_V6_Transition_1080P_3d_animated_idle_-18-1778552843840.mp4",
+      "description": "A frantic royal hawk whose urgent delivery style is half military protocol, half comedy missile.",
+      "traits": [
+        "Loyal",
+        "Royal",
+        "Dramatic",
+        "Fast",
+        "Easily offended"
+      ],
+      "backstory": "Altair’s chaos opens doors. One scroll, one scream, one awkward hover beside the balcony: opportunity does knock, or scream.",
+      "imagePlacement": {
+        "x": 0,
+        "y": 0,
+        "scale": 1.1124565972222222
+      },
+      "videoPresentation": "/assets/storyboard/uploads/video-kling-3-0-standard-1778506604291.mp4",
+      "videoPlacement": {
+        "x": 0,
+        "y": 0,
+        "scale": 1
+      },
+      "videoMuted": true
+    },
+    {
+      "id": "sultan",
+      "category": "protagonists",
+      "name": "Sultan Amarkhan al-Hadith",
+      "role": "Aisha’s father",
+      "image": "/assets/storyboard/uploads/PixVerse_Seedance-2-0-standard_Transition_1080-7-1778552825755.mp4",
+      "description": "A grieving ruler who confuses protection with silence until Aisha’s courage forces him to face what he buried.",
+      "traits": [
+        "Authoritative",
+        "Kind-hearted",
+        "Just",
+        "Protective",
+        "Wise"
+      ],
+      "backstory": "He built walls around the kingdom and around his daughter. His arc is learning that love cannot survive by hiding truth forever.",
+      "imagePlacement": {
+        "x": 0,
+        "y": 0,
+        "scale": 1.083376736111111
+      },
+      "videoPresentation": "/assets/storyboard/uploads/video-pixverse-c1-1778506255664.mp4",
+      "videoPlacement": {
+        "x": 0,
+        "y": 0,
+        "scale": 1
+      },
+      "videoMuted": true
+    },
+    {
+      "id": "prince-thamir",
+      "category": "protagonists",
+      "name": "Prince Thamir",
+      "role": "Lost prince of the restored kingdom",
+      "image": "/assets/storyboard/uploads/Aisha-and-Sands-of-Destiny---2026-05-11T231426-753-1778536802698.png",
+      "description": "A gentle prince bound to the mystery of the sands, carrying warmth, secrecy, and a luminous connection to Aisha.",
+      "traits": [
+        "Kind-hearted",
+        "Intelligent",
+        "Brave",
+        "Protective",
+        "Romantic"
+      ],
+      "backstory": "Thamir’s path is hidden inside the spell history of the kingdoms. When balance returns, so does the future he and Aisha almost lost.",
+      "imagePlacement": {
+        "x": -5.12109375,
+        "y": 42.60546875,
+        "scale": 2.512565104166667
+      },
+      "videoPresentation": "/assets/storyboard/uploads/video-happyhorse-1-0-1778506393546.mp4",
+      "videoPlacement": {
+        "x": 0,
+        "y": 0,
+        "scale": 1
+      },
+      "videoMuted": true
+    },
+    {
+      "id": "sharak",
+      "category": "antagonists",
+      "name": "Sharak",
+      "role": "The Shadow King",
+      "image": "/assets/storyboard/uploads/PixVerse_Seedance-2-0-standard_Transition_1080-5-1778548919938.mp4",
+      "description": "A theatrical villain of velvet, plasma, grief, and obsession, dangerous because he believes his wound is destiny.",
+      "traits": [
+        "Dark-magic wielder",
+        "Vengeful",
+        "Maniacal",
+        "Aggressive",
+        "Jealous"
+      ],
+      "backstory": "Sharak’s love curdled into possession. He is not darkness because he suffers; he becomes darkness because he makes the world pay for it.",
+      "imagePlacement": {
+        "x": 0,
+        "y": 0,
+        "scale": 1.1446831597222222
+      },
+      "videoPresentation": "/assets/storyboard/uploads/PixVerse_V6_Transition_1080P_its_a_fictioanl_g-17-1778558098156.mp4",
+      "videoPlacement": {
+        "x": 0,
+        "y": 0,
+        "scale": 1
+      },
+      "videoMuted": true
+    },
+    {
+      "id": "nibzu",
+      "category": "antagonists",
+      "name": "Nibzu",
+      "role": "Spider sidekick",
+      "image": "/assets/storyboard/uploads/PixVerse_V6_Transition_1080P_3d_animated_idle_-28-1778554260439.mp4",
+      "description": "Goofy, loyal, shiny-eyed, and just dangerous enough to make every villain scene bounce.",
+      "traits": [
+        "Dumb-funny",
+        "Loyal",
+        "Chaotic",
+        "Bouncy",
+        "Unsettling-cute"
+      ],
+      "backstory": "Nibzu is comic relief with too many legs and terrible timing. Somehow, that makes Sharak scarier and funnier at once.",
+      "imagePlacement": {
+        "x": 0,
+        "y": 0,
+        "scale": 1.1285807291666667
+      },
+      "videoPresentation": "/assets/storyboard/uploads/PixVerse_V6_Transition_1080P_3d_animated_idle_-30-1778554242291.mp4",
+      "videoPlacement": {
+        "x": 0,
+        "y": 0,
+        "scale": 1
+      },
+      "videoMuted": true
+    },
+    {
+      "id": "oracle",
+      "category": "antagonists",
+      "name": "The Oracle",
+      "role": "Guard of the Mirage City",
+      "image": "/assets/storyboard/uploads/PixVerse_V6_Transition_1080P_3d_animated_idle_-30-1778554242291.mp4",
+      "description": "A watchful keeper of forbidden knowledge, elegant and severe, with memory hidden behind every jewel.",
+      "traits": [
+        "Ancient",
+        "Watchful",
+        "Ceremonial",
+        "Unsettling"
+      ],
+      "backstory": "The Oracle guards old consequences. She stands where prophecy stops being decorative and becomes dangerous.",
+      "imagePlacement": {
+        "x": 0,
+        "y": 0,
+        "scale": 1.1120225694444446
+      },
+      "videoPresentation": "/assets/storyboard/uploads/video-grok-imagine-1778506813545.mp4",
+      "videoPlacement": {
+        "x": 0,
+        "y": 0,
+        "scale": 1
+      },
+      "videoMuted": true
+    },
+    {
+      "id": "maz-khar",
+      "category": "antagonists",
+      "name": "Maz-Khar",
+      "role": "Colossal desert mount",
+      "image": "/assets/storyboard/uploads/PixVerse_V6_Transition_1080P_its_a_fictioanl_g-3-1778556708024.mp4",
+      "description": "A massive creature built for storm scale, battlefield silhouette, and desert myth.",
+      "traits": [
+        "Colossal",
+        "Armored",
+        "Fast",
+        "Intimidating"
+      ],
+      "backstory": "Maz-Khar turns the desert itself into a chase machine: not a horse, not a monster, but a legend with hooves.",
+      "imagePlacement": {
+        "x": 0,
+        "y": 0,
+        "scale": 1.1437717013888888
+      },
+      "videoPresentation": "/assets/storyboard/uploads/PixVerse_V6_Transition_1080P_3d_animated_idle_-37-1778555673311.mp4",
+      "videoPlacement": {
+        "x": 0,
+        "y": 0,
+        "scale": 1
+      },
+      "videoMuted": true
+    },
+    {
+      "id": "mir-kaan",
+      "category": "antagonists",
+      "name": "Prince Mir-Kaan",
+      "role": "Ruler of Mirage City",
+      "image": "/assets/storyboard/uploads/PixVerse_Seedance-2-0-standard_Fusion_1080P_NO-1778578181367.mp4",
+      "description": "Polished, charming, and manipulative, Mir-Kaan smiles like a door closing.",
+      "traits": [
+        "Manipulative",
+        "Power hungry",
+        "Deceptive",
+        "Elegant"
+      ],
+      "backstory": "Mir-Kaan belongs to the beautiful surface of the trap: everything glitters, every courtesy has teeth.",
+      "imagePlacement": {
+        "x": 0,
+        "y": 0,
+        "scale": 2.466666666666667
+      },
+      "videoPresentation": "/assets/storyboard/uploads/PixVerse_V6_Transition_1080P_its_a_fictioanl_g-1-1778556504026.mp4",
+      "videoPlacement": {
+        "x": 0,
+        "y": 0,
+        "scale": 1
+      },
+      "videoMuted": true
+    },
+    {
+      "id": "mirage-vizier",
+      "category": "antagonists",
+      "name": "The Mirage Vizier",
+      "role": "Palace lure of Mirage City",
+      "image": "/assets/storyboard/uploads/PixVerse_V6_Transition_1080P_its_a_fictioanl_g-17-1778558098156.mp4",
+      "description": "A silk-voiced court manipulator who guides Aisha toward the Mirage palace with polished courtesy, false concern, and the patience of a practiced trap.",
+      "traits": [
+        "Polished",
+        "Calculating",
+        "Soft-spoken",
+        "Deceptive",
+        "Ceremonial"
+      ],
+      "backstory": "He does not drag Aisha into danger; he arranges the path so she chooses it. Every bow, smile, and gesture is designed to make the palace feel safe until the doors close.",
+      "imagePlacement": {
+        "x": -11.64453125,
+        "y": 11.64453125,
+        "scale": 1.1827473958333332
+      }
+    },
+    {
+      "id": "mirage-perfume-seller",
+      "category": "antagonists",
+      "name": "The Perfume Seller",
+      "role": "Mirage City seller of Dream Veil perfume",
+      "image": "/assets/storyboard/uploads/Aisha-and-Sands-of-Destiny---2026-05-12T010615-485-1778551557394.png",
+      "description": "A mesmerizing market woman surrounded by jewel-like perfume bottles, fragrant oils, and impossible scents, including the dangerous Dream Veil perfume.",
+      "traits": [
+        "Graceful",
+        "Persuasive",
+        "Mysterious",
+        "Market-wise",
+        "Dangerously charming"
+      ],
+      "backstory": "In Mirage City she sells memory as scent: rose, amber, blue smoke, and the Dream Veil perfume that makes longing feel like truth. She is not purely cruel, but her stall belongs to the city’s beautiful deception.",
+      "imagePlacement": {
+        "x": -16.9921875,
+        "y": 155.5546875,
+        "scale": 3.5766276041666667
+      }
+    },
+    {
+      "id": "bedouin",
+      "category": "antagonists",
+      "name": "The Bedouin Merchant",
+      "role": "Purveyor of dark objects",
+      "image": "/assets/storyboard/uploads/Aisha-and-Sands-of-Destiny---2026-05-11T234154-508-1778535769875.png",
+      "description": "A mysterious seller at the far edge of the market, surrounded by objects that feel older than the roads.",
+      "traits": [
+        "Charismatic",
+        "Deceptive",
+        "Mischievous",
+        "Ancient presence"
+      ],
+      "backstory": "He does not attack. He offers. His stall is a doorway disguised as a bargain, and the moonstone ring begins the next fracture of destiny.",
+      "imagePlacement": {
+        "x": -8.859375,
+        "y": 29.02734375,
+        "scale": 2.281380208333333
+      },
+      "videoPresentation": "/assets/storyboard/uploads/video-kling-o3-standard-1778506743037.mp4",
+      "videoPlacement": {
+        "x": 0,
+        "y": 0,
+        "scale": 1
+      },
+      "videoMuted": true
+    },
+    {
+      "id": "zafra",
+      "category": "sidekicks",
+      "name": "Zahra al Nour",
+      "role": "Aisha’s mother",
+      "image": "/assets/storyboard/uploads/PixVerse_V6_Transition_1080P_3d_animated_idle_-37-1778555673311.mp4",
+      "description": "A luminous maternal presence whose memory becomes the emotional key to Aisha’s courage.",
+      "traits": [
+        "Wise",
+        "High-born",
+        "Honest",
+        "Devoted",
+        "Kind-hearted"
+      ],
+      "backstory": "Zafra is not only what was lost. She becomes the proof that love can survive as guidance, memory, and light.",
+      "imagePlacement": {
+        "x": 0,
+        "y": 0,
+        "scale": 1.1133246527777778
+      },
+      "videoPresentation": "/assets/storyboard/uploads/PixVerse_Seedance-2-0-standard_Transition_1080-8-1778573677771.mp4",
+      "videoPlacement": {
+        "x": 0,
+        "y": 0,
+        "scale": 1
+      },
+      "videoMuted": true
+    },
+    {
+      "id": "ancestors",
+      "category": "sidekicks",
+      "name": "The Sand Ancestors",
+      "role": "Protective spirits",
+      "image": "/assets/storyboard/uploads/PixVerse_V6_Transition_1080P_3d_animated_idle_-33-1778555019552.mp4",
+      "description": "Ancient guardians shaped from sand, memory, and sacred duty.",
+      "traits": [
+        "Protective",
+        "Silent",
+        "Majestic",
+        "Ancient"
+      ],
+      "backstory": "They are awakened by Aisha’s courage and the kingdom’s buried memory, moving like sand that remembers its own name.",
+      "imagePlacement": {
+        "x": 0,
+        "y": 0,
+        "scale": 1.1371310763888889
+      },
+      "videoPresentation": "/assets/storyboard/uploads/PixVerse_Seedance-2-0-standard_Fusion_1080P_NO-1778578181367.mp4",
+      "videoPlacement": {
+        "x": 0,
+        "y": 0,
+        "scale": 1
+      },
+      "videoMuted": true
+    },
+    {
+      "id": "tamlun",
+      "category": "sidekicks",
+      "name": "Tamlun",
+      "role": "Royal beast of burden",
+      "image": "/assets/storyboard/uploads/PixVerse_V6_Transition_1080P_its_a_fictioanl_g-1-1778556504026.mp4",
+      "description": "A gentle, massive creature with palace scale and travel-story charm.",
+      "traits": [
+        "Strong",
+        "Gentle",
+        "Loyal",
+        "Patient"
+      ],
+      "backstory": "Tamlun carries the warmth of the road: ceremonial, useful, and quietly heroic in the way only loyal animals can be.",
+      "imagePlacement": {
+        "x": 0,
+        "y": 0,
+        "scale": 1.1284071180555555
+      }
+    },
+    {
+      "id": "hala",
+      "category": "sidekicks",
+      "name": "Hala",
+      "role": "Market child",
+      "image": "/assets/storyboard/uploads/PixVerse_V6_Transition_1080P_its_a_fictioanl_g-13-1778557975203.mp4",
+      "description": "A gentle, curious child whose presence makes the market feel alive and personal.",
+      "traits": [
+        "Gentle",
+        "Innocent",
+        "Curious"
+      ],
+      "backstory": "Hala is one of the small faces that turns the kingdom from a map into a living place worth protecting.",
+      "imagePlacement": {
+        "x": 0,
+        "y": 0,
+        "scale": 1.16640625
+      },
+      "videoPresentation": "/assets/storyboard/uploads/video-seedance-2-0-standard-1778532798050.mp4",
+      "videoPlacement": {
+        "x": 0,
+        "y": 0,
+        "scale": 1
+      },
+      "videoMuted": true
+    },
+    {
+      "id": "nadir",
+      "category": "sidekicks",
+      "name": "Nadir",
+      "role": "Market artisan",
+      "image": "/assets/storyboard/uploads/PixVerse_V6_Transition_1080P_its_a_fictioanl_g-16-1778557990954.mp4",
+      "description": "A textured city character with warmth, humor, and market-life detail.",
+      "traits": [
+        "Hard-working",
+        "Honest",
+        "Practical",
+        "Warm"
+      ],
+      "backstory": "Nadir helps make the market feel like a civilization, not a backdrop: every face has a rhythm, a job, and a private story.",
+      "imagePlacement": {
+        "x": 0,
+        "y": 0,
+        "scale": 1.1661241319444444
+      }
+    },
+    {
+      "id": "maestra",
+      "category": "sidekicks",
+      "name": "Maestra Safira",
+      "role": "Palace teacher",
+      "image": "/assets/storyboard/uploads/PixVerse_V6_Transition_1080P_its_a_fictioanl_g-9-1778556946283.mp4",
+      "description": "A warm but strict elder who carries lessons, ceremony, and palace order.",
+      "traits": [
+        "Kind-hearted",
+        "Mentor",
+        "Organized",
+        "Traditional"
+      ],
+      "backstory": "Safira represents the safe version of wisdom: useful, loving, and still not enough to hold Aisha back from the world.",
+      "imagePlacement": {
+        "x": 0,
+        "y": 0,
+        "scale": 1.1220486111111112
+      },
+      "videoPresentation": "/assets/storyboard/uploads/video-seedance-2-0-standard-1778534057873.mp4",
+      "videoPlacement": {
+        "x": 0,
+        "y": 0,
+        "scale": 1
+      },
+      "videoMuted": true
+    },
+    {
+      "id": "layan",
+      "category": "sidekicks",
+      "name": "Layan",
+      "role": "Market woman",
+      "image": "/assets/storyboard/uploads/Aisha-and-Sands-of-Destiny---2026-05-12T001049-652-1778539193692.png",
+      "description": "A kind, heartfelt presence in the city streets, grounded in fabric, trade, and human warmth.",
+      "traits": [
+        "Kind-hearted",
+        "Honest",
+        "Hard-working",
+        "Gentle"
+      ],
+      "backstory": "Layan’s world is ordinary beauty: cloth, survival, tenderness, and the dignity of people Aisha was never allowed to know.",
+      "imagePlacement": {
+        "x": 24.10546875,
+        "y": 92.15234375,
+        "scale": 3.2263237847222226
+      },
+      "videoPresentation": "/assets/storyboard/uploads/video-seedance-2-0-standard-1778524299562.mp4",
+      "videoPlacement": {
+        "x": 0,
+        "y": 0,
+        "scale": 1
+      },
+      "videoMuted": true
+    },
+    {
+      "id": "character-sidekicks-5ou4rnw-mp1u8l9r",
+      "category": "sidekicks",
+      "name": "New Character",
+      "role": "Role",
+      "image": "",
+      "imagePlacement": {
+        "x": 0,
+        "y": 0,
+        "scale": 1
+      },
+      "description": "Description",
+      "traits": [
+        "Trait"
+      ],
+      "backstory": "Backstory"
+    }
+  ],
+  "copy": {
+    "artEyebrow": "Art bible",
+    "artTitle": "Art Gallery",
+    "artCopy": "Choose an act, then browse twelve cinematic art slots for that chapter. As we add more final art, each act can receive its own dedicated set.",
+    "charactersEyebrow": "Character bible",
+    "charactersTitle": "Character Panels",
+    "charactersCopy": "One active profile per section, with portrait selectors underneath. Text now lives in the same cinematic panel as the character.",
+    "scoreEyebrow": "Original score",
+    "scoreTitle": "Score Console",
+    "scoreCopy": "",
+    "bookEyebrow": "Interactive story bible",
+    "bookTitle": "The Magic Book",
+    "bookCopy": "Readable pages inside the site, dark or light mode, act jumps, and direct page navigation.",
+    "merchEyebrow": "Consumer products",
+    "merchTitle": "Merchandise Campaign",
+    "merchCopy": "First premium product concepts for dolls, plush companions, villain packs, jewelry-toys, and electronic creature sets.",
+    "contactEyebrow": "Contact",
+    "contactTitle": "BrightBox Animations",
+    "contactCopy": "Based between Spain and Los Angeles for festival conversations, co-production, music, animation, and distribution partnerships."
+  },
+  "actNames": [
+    "Intro",
+    "Act I",
+    "Act II",
+    "Act III",
+    "Act IV",
+    "Act V",
+    "Act VI",
+    "Act VII",
+    "Act VIII",
+    "Act IX",
+    "Act X",
+    "Act XI"
+  ],
+  "categoryTitles": {
+    "protagonists": "Light Side: Main Protagonists",
+    "antagonists": "Dark Side: Antagonists",
+    "sidekicks": "Allies, Creatures & Side Characters"
+  },
+  "merch": [
+    {
+      "title": "Aisha Deluxe Fashion Doll",
+      "subtitle": "Royal wardrobe / festival edition",
+      "images": [
+        "/assets/merch/aisha/aisha-lavender-box.png",
+        "/assets/merch/aisha/aisha-royal-blue-box.png"
+      ],
+      "copy": "Premium doll line with palace, market, and gala looks, plus a darker Cannes-style collector package with gold filigree shelf presence.",
+      "features": [
+        "Two luxury package variants",
+        "Interchangeable royal looks",
+        "Tiny moonstone talisman",
+        "Collector window box"
+      ]
+    },
+    {
+      "title": "Dora Royal Panther Plush",
+      "subtitle": "Lazy guardian / luxury companion box",
+      "images": [
+        "/assets/merch/dora/dora-gold-plush.png",
+        "/assets/merch/dora/dora-boxed-plush.png"
+      ],
+      "copy": "Soft white panther plush with a golden amulet collar, royal cushion, gift-box direction, and enough lazy attitude to sell the character in one glance.",
+      "features": [
+        "Two plush campaign variants",
+        "Sun amulet collar",
+        "Royal cushion insert",
+        "Comic voice-chip option"
+      ]
+    },
+    {
+      "title": "Niura Moon Bracelet Companion",
+      "subtitle": "Wearable creature toy",
+      "images": [
+        "/assets/pdf-characters/main-protagonists/main-protagonists-p07-04.png"
+      ],
+      "copy": "Elastic coil companion concept: Niura wraps like a bracelet, with changeable forehead markings and moon-glitter stickers.",
+      "features": [
+        "Coil bracelet body",
+        "Glitter head decals",
+        "Moonstone charm",
+        "Arabesque gem-art puzzle"
+      ]
+    },
+    {
+      "title": "Sharak + Nibzu Villain Pack",
+      "subtitle": "Shadow king theatre set",
+      "images": [
+        "/assets/pdf-characters/antagonists/antagonists-p08-02.png"
+      ],
+      "copy": "A dramatic villain shelf piece: Sharak with plasma accessories, Nibzu sidekick, and a mini alchemy table.",
+      "features": [
+        "Plasma effect hands",
+        "Nibzu spider figure",
+        "Talisman accessory",
+        "Alchemy throne-room base"
+      ]
+    },
+    {
+      "title": "Tamlun Desert Crossing Plush",
+      "subtitle": "Giant travel companion",
+      "images": [
+        "/assets/pdf-characters/side-characters/side-characters-p14-02.png"
+      ],
+      "copy": "A big tactile creature plush with saddle details, caravan accessories, and soft fantasy-beast proportions.",
+      "features": [
+        "Oversized plush body",
+        "Removable saddle",
+        "Travel blanket",
+        "Desert-crossing sound tag"
+      ]
+    },
+    {
+      "title": "Maz-Khar Wing Builder",
+      "subtitle": "Animatronic creature concept",
+      "images": [
+        "/assets/pdf-characters/antagonists/antagonists-p14-01.png"
+      ],
+      "copy": "A modular electronic creature toy: attach wings, saddle, and light patterns, then trigger wing flaps and hover-display mode.",
+      "features": [
+        "Attachable wings",
+        "LED pattern plates",
+        "Wing-flap motion",
+        "Display hover stand"
+      ]
+    }
+  ],
+  "contact": {
+    "title": "Spain / Los Angeles",
+    "intro": "Interactive production route for BrightBox Animations, based in Spain and Los Angeles.",
+    "lines": [
+      "Spain: Madrid / Barcelona creative base",
+      "Los Angeles: 1111 Sunset Blvd, Los Angeles, CA",
+      "Fantastic film animation, music, cinematic AI production"
+    ],
+    "email": "brightbox.animations@gmail.com"
+  },
+  "updatedAt": "2026-05-12T23:41:31.656Z"
+}

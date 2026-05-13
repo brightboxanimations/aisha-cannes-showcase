@@ -1,14 +1,16 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import type { DragEvent, MouseEvent, WheelEvent } from 'react'
-import { refinePrompt, sendToGeminiWithImages } from '../gemini-agent'
+import type { CSSProperties, DragEvent, MouseEvent, WheelEvent } from 'react'
+import { buildAgentSystemInstruction, refinePrompt, rememberAgentExchange, sendToGeminiWithImages } from '../gemini-agent'
 import type { CanvasData, CanvasEdgeType, CanvasMediaType, CanvasNode, CanvasSpace } from './canvasTypes'
 import './CanvasMode.css'
 
 const STORAGE_KEY = 'aisha-canvas-mode-v1'
 const CANVAS_API = '/api/canvas-mode'
 
+/** Creates stable-enough client ids for canvas nodes, edges, groups, spaces, and pinned copies. */
 const makeId = (prefix: string) => `${prefix}-${Math.random().toString(36).slice(2, 9)}-${Date.now().toString(36)}`
 
+/** Default pinned trays that behave like reusable actor/location/prop/style bins. */
 const defaultTrays = [
   { id: 'tray-actors', name: 'Actors', color: '#60a5fa', nodeIds: [] },
   { id: 'tray-locations', name: 'Locations', color: '#34d399', nodeIds: [] },
@@ -17,6 +19,7 @@ const defaultTrays = [
   { id: 'tray-master-shots', name: 'Master Shots', color: '#a78bfa', nodeIds: [] },
 ]
 
+/** Preset colors for group boxes and their translucent fills. */
 const groupSwatches = [
   '#f8d978',
   '#60a5fa',
@@ -30,6 +33,7 @@ const groupSwatches = [
   '#f1f5f9',
 ]
 
+/** Image models exposed in Canvas generation controls and forwarded to the PixVerse backend route. */
 const imageModels = [
   { id: 'gemini-3.1-flash', name: 'Nano Banana 2', quality: '2160p', detailLevel: '' },
   { id: 'gemini-3.0', name: 'Nano Banana Pro', quality: '1440p', detailLevel: '' },
@@ -38,6 +42,7 @@ const imageModels = [
   { id: 'seedream-5.0-lite', name: 'SeedReam 5 Lite', quality: '1440p', detailLevel: '' },
 ]
 
+/** Video models exposed in Canvas generation controls and forwarded to the PixVerse backend route. */
 const videoModels = [
   { id: 'seedance-2.0-standard', name: 'Seedance 2.0 Standard', qualities: ['720p', '1080p'], durations: [5, 10, 15] },
   { id: 'happyhorse-1.0', name: 'Happy Horse', qualities: ['720p', '1080p'], durations: [5, 10, 15] },
@@ -48,8 +53,10 @@ const videoModels = [
   { id: 'kling-o3-standard', name: 'Kling O3 Standard', qualities: ['720p', '1080p'], durations: [5, 10] },
 ]
 
+/** Edge types whose upstream media should be collected as generation references. */
 const generationInputEdgeTypes: CanvasEdgeType[] = ['reference', 'derivative', 'animation', 'context', 'frame', 'variation']
 
+/** Files attached only to Theo's Canvas chat rather than placed as graph nodes. */
 type AgentAttachment = {
   id: string
   name: string
@@ -58,11 +65,31 @@ type AgentAttachment = {
   text?: string
 }
 
+/** Store tabs available in the Canvas Theo panel. */
+type CanvasStoreKind = 'skills' | 'prompts'
+
+/** Skill/prompt card format imported from the existing skills store. */
+type CanvasStoreItem = {
+  id: string
+  name: string
+  description?: string
+  fullText?: string
+  text?: string
+  promptBase?: string
+  iconIdx?: number
+}
+
+/** Click-to-connect mode used by older connector interactions and context menus. */
 type LinkMode = { from: string; type: CanvasEdgeType; label: string } | null
+/** Pending connector menu shown after dragging a connector onto another node. */
 type PendingConnection = { from: string; to: string; x: number; y: number; fromGroup?: boolean } | null
-type PendingNodeConnection = { from: string; x: number; y: number; worldX: number; worldY: number } | null
+/** Pending creation menu shown after dragging a connector into empty canvas space. */
+type PendingNodeConnection = { from: string; x: number; y: number; worldX: number; worldY: number; fromGroup?: boolean } | null
+/** Live connector preview while dragging from a node or group. */
 type ConnectorDrag = { from: string; x: number; y: number; fromGroup?: boolean } | null
+/** Shift/group-tool selection rectangle in world coordinates. */
 type Marquee = { startX: number; startY: number; x: number; y: number } | null
+/** Resize handles shown on selected group boxes. */
 type GroupResizeHandle = 'nw' | 'ne' | 'sw' | 'se' | 'n' | 's' | 'e' | 'w'
 type GroupResize = {
   id: string
@@ -74,10 +101,53 @@ type GroupResize = {
   groupWidth: number
   groupHeight: number
 } | null
+/** Multi-node selection made from the marquee before grouping, deleting, or downloading. */
 type MultiSelection = { x: number; y: number; width: number; height: number; nodeIds: string[] } | null
+/** Cursor tools armed from the context menu. */
 type CanvasTool = 'group' | 'scissors' | 'master' | 'node' | null
+/** Active drag state for an editable bend point on an edge. */
 type EdgePointDrag = { edgeId: string; index: number } | null
 
+/** SVG icon pool used by compact Skills/Prompts cards in Theo's Canvas panel. */
+const canvasStoreIcons = [
+  { color: '#d4af37', d: 'M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5' },
+  { color: '#409cff', d: 'M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83' },
+  { color: '#9c40ff', d: 'M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z' },
+  { color: '#40ff9c', d: 'M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z' },
+  { color: '#ff9c40', d: 'M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14l-5-4.87 6.91-1.01L12 2z' },
+  { color: '#ff4090', d: 'M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z' },
+  { color: '#40ffff', d: 'M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1zM4 22V15' },
+  { color: '#ffc840', d: 'M12 3v18M3 12h18M7.5 7.5l9 9M16.5 7.5l-9 9' },
+  { color: '#a0ff40', d: 'M22 11.08V12a10 10 0 1 1-5.93-9.14M22 4L12 14.01l-3-3' },
+  { color: '#ff6040', d: 'M13 2L3 14h9l-1 8 10-12h-9l1-8' },
+]
+
+/** Built-in prompt templates available even before user-created prompt files exist. */
+const canvasBuiltinPrompts: CanvasStoreItem[] = [
+  {
+    id: 'bp-cinematic-grid',
+    name: '2x2 Cinematic Grid',
+    description: '4-panel premium 3D animated grid',
+    text: 'premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric morning light, little tiny dust motes, in soft sunrays soft depth of field, expressive animated 3D eyes of all characters, realistic textures, true depth of field, focus on the foreground characters and objects with shallow cinematic 3d depth of field, detailed clear emotional staging, high-quality 4K animated movie look\n\nCreate 2x2 cinematic grid with 4 panels with 3d animated scenes in each one:\n\nPanel 1: [character action, emotions, interaction. Camera/shot type. Light, background details]\nPanel 2: [describe]\nPanel 3: [describe]\nPanel 4: [describe]\n\nEnvironment: [describe main features]\n\nStyle: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric morning light, soft depth of field, expressive animated 3D eyes, realistic textures, detailed clear emotional staging, high-quality 4K animated movie look',
+    iconIdx: 0,
+  },
+  {
+    id: 'bp-room-projections',
+    name: '4 Room Projections',
+    description: 'Same room from 4 camera angles',
+    text: 'Show exact same room in four projections - 2x2 grid:\n\nPanel 1: Camera facing front. [describe wall, furniture, door, window]\nPanel 2: Camera close up facing left wall. [describe details]\nPanel 3: Top down view of the entire room. [describe layout]\nPanel 4: Camera angle from one side towards opposite wall. [describe perspective]\n\nAll panels must show SAME room, only camera angles change.\n\nStyle: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric light, expressive animated 3D eyes, realistic textures, high-quality 4K animated movie look',
+    iconIdx: 1,
+  },
+  {
+    id: 'bp-quality-improve',
+    name: 'Quality Improve',
+    description: 'Enhance quality preserving composition',
+    text: 'Use exact @img1 but improve quality of characters and resolution. Do not change camera angle, composition, architecture or objects. Characters remain in same poses, all objects in same places. Camera same angle as @img1 only improve quality.\n\nStyle: premium luminous 3D animated feature-film, true 3D depth, cinematic camera angles, volumetric morning light, soft depth of field, expressive animated 3D eyes, realistic textures, detailed clear emotional staging, high-quality 4K animated movie look',
+    iconIdx: 2,
+  },
+]
+
+/** Creates one independent canvas workspace with default trays and viewport. */
 function createSpace(index = 1): CanvasSpace {
   return {
     id: makeId('space'),
@@ -91,12 +161,14 @@ function createSpace(index = 1): CanvasSpace {
   }
 }
 
+/** Builds the first persisted Canvas payload when local and server storage are empty. */
 function createInitialData(): CanvasData {
   const first = createSpace(1)
   first.name = 'Act 1 Canvas'
   return { version: 1, activeSpaceId: first.id, spaces: [first] }
 }
 
+/** Migrates older saved data so tray references become pinned-only copies and media nodes stay 16:9. */
 function normalizePinnedTrayCopies(data: CanvasData): CanvasData {
   const next = structuredClone(data)
   next.spaces.forEach(space => {
@@ -124,6 +196,7 @@ function normalizePinnedTrayCopies(data: CanvasData): CanvasData {
   return next
 }
 
+/** Maps uploaded files to Canvas node types used by preview and generation logic. */
 function mediaTypeFromFile(file: File): CanvasMediaType {
   if (file.type.startsWith('image/')) return 'image'
   if (file.type.startsWith('video/')) return 'video'
@@ -132,6 +205,7 @@ function mediaTypeFromFile(file: File): CanvasMediaType {
   return 'placeholder'
 }
 
+/** Returns the default visual size for new nodes of a given media type. */
 function nodeSize(type: CanvasMediaType) {
   if (type === 'image' || type === 'video' || type === 'placeholder') return { width: 320, height: 180 }
   if (type === 'audio') return { width: 280, height: 150 }
@@ -139,6 +213,7 @@ function nodeSize(type: CanvasMediaType) {
   return { width: 320, height: 180 }
 }
 
+/** Returns the base color for each semantic edge type. */
 function edgeColor(type: string) {
   if (type === 'reference') return '#f8d978'
   if (type === 'variation') return '#fb7185'
@@ -148,15 +223,18 @@ function edgeColor(type: string) {
   return 'rgba(226, 232, 240, 0.58)'
 }
 
+/** Applies display overrides such as green continuation-video links. */
 function edgeDisplayColor(type: CanvasEdgeType, label?: string) {
   if (type === 'animation' && label === 'CONT VIDEO') return '#34d399'
   return edgeColor(type)
 }
 
+/** Calculates a node center in canvas world coordinates. */
 function centerOf(node: CanvasNode) {
   return { x: node.x + node.width / 2, y: node.y + node.height / 2 }
 }
 
+/** Builds the SVG path for either a smooth edge or a hand-shaped multi-point edge. */
 function edgePath(a: { x: number; y: number }, b: { x: number; y: number }, points: { x: number; y: number }[] = []) {
   if (points.length) {
     return `M ${a.x} ${a.y} ${points.map(point => `L ${point.x} ${point.y}`).join(' ')} L ${b.x} ${b.y}`
@@ -165,12 +243,14 @@ function edgePath(a: { x: number; y: number }, b: { x: number; y: number }, poin
   return `M ${a.x} ${a.y} C ${midX} ${a.y}, ${midX} ${b.y}, ${b.x} ${b.y}`
 }
 
+/** Checks whether a node belongs inside a group based on its center point. */
 function nodeCenterInsideGroup(node: CanvasNode, group: { x: number; y: number; width: number; height: number }) {
   const centerX = node.x + node.width / 2
   const centerY = node.y + node.height / 2
   return centerX >= group.x && centerX <= group.x + group.width && centerY >= group.y && centerY <= group.y + group.height
 }
 
+/** Summarizes the media mix inside a group for compact group labels. */
 function groupMediaSummary(nodes: CanvasNode[]) {
   const counts = nodes.reduce<Record<string, number>>((acc, node) => {
     const label = node.type === 'placeholder' ? 'empty' : node.type
@@ -182,24 +262,29 @@ function groupMediaSummary(nodes: CanvasNode[]) {
     .join(' · ')
 }
 
+/** True when a node has image/video media that can be sent as a PixVerse or Theo reference. */
 function isMediaReferenceNode(node?: CanvasNode) {
   return !!node?.url && (node.type === 'image' || node.type === 'video')
 }
 
+/** De-duplicates media reference nodes while preserving first-seen order. */
 function uniqueMediaNodes(nodes: CanvasNode[]) {
   return Array.from(new Map(nodes.filter(isMediaReferenceNode).map(node => [node.id, node])).values())
 }
 
+/** Reads the snapshot of references saved on a generated node at run time. */
 function savedInputRefNodes(node?: CanvasNode) {
   return ((node?.inputRefs || []) as CanvasNode[]).filter(isMediaReferenceNode)
 }
 
+/** Collects all media-bearing nodes from a group so a group can feed a generation edge. */
 function groupMediaNodes(space: CanvasSpace, groupId: string) {
   const group = space.groups.find(item => item.id === groupId)
   if (!group) return []
   return uniqueMediaNodes(group.nodeIds.map(nodeId => space.nodes.find(node => node.id === nodeId)).filter(Boolean) as CanvasNode[])
 }
 
+/** Recursively resolves all upstream media references that should travel into PixVerse or Theo. */
 function collectInputNodes(space: CanvasSpace, nodeId: string, includeSource = false, seen = new Set<string>()) {
   if (seen.has(nodeId)) return []
   seen.add(nodeId)
@@ -235,6 +320,7 @@ function collectInputNodes(space: CanvasSpace, nodeId: string, includeSource = f
   return uniqueMediaNodes(nodes)
 }
 
+/** Returns the exact connector anchor on a node side. */
 function portPoint(node: CanvasNode, side: string) {
   if (side === 'left') return { x: node.x, y: node.y + node.height / 2 }
   if (side === 'top') return { x: node.x + node.width / 2, y: node.y }
@@ -242,6 +328,7 @@ function portPoint(node: CanvasNode, side: string) {
   return { x: node.x + node.width, y: node.y + node.height / 2 }
 }
 
+/** Default image generation settings for new image-like nodes. */
 function defaultGeneration() {
   return {
     operation: 'generate' as const,
@@ -253,6 +340,7 @@ function defaultGeneration() {
   }
 }
 
+/** Chooses image or video generation defaults based on node type. */
 function defaultGenerationForType(type: CanvasMediaType) {
   if (type === 'video') {
     return {
@@ -268,10 +356,12 @@ function defaultGenerationForType(type: CanvasMediaType) {
   return defaultGeneration()
 }
 
+/** Converts model ids into human-readable labels for status messages and controls. */
 function shortModelName(model?: string) {
   return imageModels.find(item => item.id === model)?.name || videoModels.find(item => item.id === model)?.name || model || 'Model'
 }
 
+/** Formats video frame times for small node badges. */
 function formatSeconds(value = 0) {
   if (!Number.isFinite(value)) return '0:00'
   const minutes = Math.floor(value / 60)
@@ -279,6 +369,22 @@ function formatSeconds(value = 0) {
   return `${minutes}:${seconds}`
 }
 
+/** Distinguishes prompt blueprint cards from skill cards in the shared store payload. */
+function isPromptStoreItem(item: CanvasStoreItem) {
+  return item.id.startsWith('prompt-') || item.id.startsWith('bp-') || Boolean(item.text && !item.promptBase)
+}
+
+/** Returns the best available text body for a skill or prompt card. */
+function storeItemText(item: CanvasStoreItem) {
+  return item.fullText || item.text || item.promptBase || item.description || ''
+}
+
+/** Selects a deterministic card icon and accent color. */
+function iconForStoreItem(item: CanvasStoreItem, index = 0) {
+  return canvasStoreIcons[(item.iconIdx ?? index) % canvasStoreIcons.length]
+}
+
+/** Main PixVerse Canvas workspace: graph editor, generation control surface, pinned trays, and Theo side panel. */
 export function CanvasMode({ onBack }: { onBack: () => void }) {
   const stageRef = useRef<HTMLDivElement>(null)
   const fileRef = useRef<HTMLInputElement>(null)
@@ -332,6 +438,16 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
   const [edgeSnapCandidate, setEdgeSnapCandidate] = useState<string | null>(null)
   const [canvasTool, setCanvasTool] = useState<CanvasTool>(null)
   const [draggingEdgePoint, setDraggingEdgePoint] = useState<EdgePointDrag>(null)
+  const [toolCursor, setToolCursor] = useState<{ x: number; y: number } | null>(null)
+  const [canvasStoreItems, setCanvasStoreItems] = useState<CanvasStoreItem[]>([])
+  const [selectedCanvasSkillIds, setSelectedCanvasSkillIds] = useState<string[]>([])
+  const [selectedCanvasPromptIds, setSelectedCanvasPromptIds] = useState<string[]>([])
+  const [canvasStoreOpen, setCanvasStoreOpen] = useState<CanvasStoreKind | null>(null)
+  const [canvasStorePage, setCanvasStorePage] = useState(0)
+  const [canvasStoreEditingId, setCanvasStoreEditingId] = useState<string | null>(null)
+  const [canvasStoreDraftTitle, setCanvasStoreDraftTitle] = useState('')
+  const [canvasStoreDraftText, setCanvasStoreDraftText] = useState('')
+  const [canvasStoreHelperMessages, setCanvasStoreHelperMessages] = useState<Record<CanvasStoreKind, { role: 'user' | 'model'; text: string }[]>>({ skills: [], prompts: [] })
 
   const activeSpace = data.spaces.find(space => space.id === data.activeSpaceId) || data.spaces[0]
   const selectedNode = activeSpace.nodes.find(node => node.id === selectedNodeId) || null
@@ -340,9 +456,24 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
   const selectedRefNodes = selectedNode ? collectInputNodes(activeSpace, selectedNode.id, false) : []
   const displayedRefNodes = selectedNode ? collectInputNodes(activeSpace, selectedNode.id, true) : []
   const groupToolArmed = canvasTool === 'group'
+  const canvasSkillItems = useMemo(() => canvasStoreItems.filter(item => !isPromptStoreItem(item)), [canvasStoreItems])
+  const canvasPromptItems = useMemo(() => {
+    const savedPrompts = canvasStoreItems.filter(isPromptStoreItem)
+    const savedIds = new Set(savedPrompts.map(item => item.id))
+    return [...canvasBuiltinPrompts.filter(item => !savedIds.has(item.id)), ...savedPrompts]
+  }, [canvasStoreItems])
+  const selectedCanvasSkills = canvasSkillItems.filter(item => selectedCanvasSkillIds.includes(item.id))
+  const selectedCanvasPrompts = canvasPromptItems.filter(item => selectedCanvasPromptIds.includes(item.id))
 
   useEffect(() => {
     setData(current => normalizePinnedTrayCopies(current))
+  }, [])
+
+  useEffect(() => {
+    fetch('/api/skills/list')
+      .then(response => response.json())
+      .then(payload => setCanvasStoreItems(Array.isArray(payload.skills) ? payload.skills : []))
+      .catch(() => {})
   }, [])
 
   useEffect(() => {
@@ -415,6 +546,7 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
     return () => window.removeEventListener('keydown', onKeyDown)
   }, [selectedNodeId, selectedGroupId, activeSpace.id])
 
+  /** Applies immutable updates to the active space so React and persistence both see a fresh object graph. */
   const updateActiveSpace = (mutate: (space: CanvasSpace) => void) => {
     setData(current => {
       const next = structuredClone(current)
@@ -424,6 +556,7 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
     })
   }
 
+  /** Toggles context-menu tools such as scissors, master marker, node-point placement, and grouping. */
   const activateCanvasTool = (tool: CanvasTool) => {
     const next = canvasTool === tool ? null : tool
     setCanvasTool(next)
@@ -431,11 +564,13 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
     setStatusLine(next ? `${next === 'node' ? 'Doodle point' : next} tool active` : 'Canvas tool reset')
   }
 
+  /** Clears any armed cursor tool and returns the canvas to normal select/pan behavior. */
   const resetCanvasTool = () => {
     setCanvasTool(null)
     setStatusLine('Canvas tool reset')
   }
 
+  /** Converts browser screen coordinates into pan/zoom-adjusted canvas world coordinates. */
   const screenToWorld = (clientX: number, clientY: number) => {
     const rect = stageRef.current?.getBoundingClientRect()
     if (!rect) return { x: 0, y: 0 }
@@ -445,6 +580,7 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
     }
   }
 
+  /** Zooms around a screen anchor so the point under the cursor stays visually stable. */
   const setZoomAt = (nextZoom: number, clientX?: number, clientY?: number) => {
     const rect = stageRef.current?.getBoundingClientRect()
     const oldZoom = activeSpace.viewport.zoom
@@ -460,11 +596,13 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
     })
   }
 
+  /** Convenience wrapper for toolbar zoom controls centered on the viewport. */
   const zoomBy = (factor: number) => {
     const rect = stageRef.current?.getBoundingClientRect()
     setZoomAt(activeSpace.viewport.zoom * factor, rect ? rect.left + rect.width / 2 : undefined, rect ? rect.top + rect.height / 2 : undefined)
   }
 
+  /** Creates a canvas node, fills missing defaults, inserts it into the active space, and selects it. */
   const addNode = (partial: Partial<CanvasNode> & { type: CanvasMediaType; title: string }, x: number, y: number) => {
     const size = nodeSize(partial.type)
     const node: CanvasNode = {
@@ -494,6 +632,7 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
     return node.id
   }
 
+  /** Mutates a single node through updateActiveSpace so all graph side effects stay centralized. */
   const updateNode = (nodeId: string, mutate: (node: CanvasNode) => void) => {
     updateActiveSpace(space => {
       const node = space.nodes.find(item => item.id === nodeId)
@@ -501,6 +640,7 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
     })
   }
 
+  /** Adds a semantic connection and upgrades empty placeholders when the edge implies image/video output. */
   const addEdge = (from: string, to: string, type: CanvasEdgeType, label?: string) => {
     if (from === to) return
     updateActiveSpace(space => {
@@ -530,6 +670,7 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
     })
   }
 
+  /** Finalizes a connector-drag menu choice for node-to-node or group-to-node links. */
   const createConnection = (from: string, to: string, type: CanvasEdgeType) => {
     const labels: Record<CanvasEdgeType, string> = {
       derivative: 'derive',
@@ -572,15 +713,18 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
     setConnectorDrag(null)
   }
 
+  /** Adds a timestamp query to local asset URLs so regenerated media refreshes immediately. */
   const cacheBustUrl = (url?: string) => {
     if (!url || url.startsWith('blob:') || url.startsWith('data:')) return url
     return `${url}${url.includes('?') ? '&' : '?'}t=${Date.now()}`
   }
 
+  /** Returns unique upstream media URLs for a node's PixVerse reference attachments. */
   const getReferenceUrls = (nodeId: string, includeSource = false) => {
     return Array.from(new Set(collectInputNodes(activeSpace, nodeId, includeSource).map(node => node.url).filter(Boolean) as string[]))
   }
 
+  /** Returns debug metadata for upstream references, useful when checking why PixVerse saw certain images. */
   const getReferenceDebug = (nodeId: string, includeSource = false) => {
     return collectInputNodes(activeSpace, nodeId, includeSource).map(node => ({
       id: node.id,
@@ -591,10 +735,12 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
     }))
   }
 
+  /** Canvas-local alias for recursive input collection used by generation and Theo. */
   const getInputNodes = (nodeId: string, includeSource = false) => {
     return collectInputNodes(activeSpace, nodeId, includeSource)
   }
 
+  /** Freezes current input references onto a generated node so later graph edits do not erase provenance. */
   const snapshotInputRefs = (nodeId: string, includeSource = false) => {
     return getInputNodes(nodeId, includeSource).slice(0, 8).map(node => ({
       id: node.id,
@@ -606,6 +752,7 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
     }))
   }
 
+  /** Uploads media into the storyboard asset folder, falling back to a temporary preview if the API is down. */
   const uploadStoryboardFile = async (file: File) => {
     const fallback = { url: URL.createObjectURL(file), fileName: file.name, mimeType: file.type }
     const formData = new FormData()
@@ -621,6 +768,7 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
     }
   }
 
+  /** Uploads a dropped file and creates a positioned canvas node for it. */
   const uploadFile = async (file: File, worldX: number, worldY: number) => {
     const uploaded = await uploadStoryboardFile(file)
     const nodeId = addNode({
@@ -634,6 +782,7 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
     return nodeId
   }
 
+  /** Uploads a file directly into a pinned tray as a reusable reference instead of a canvas node. */
   const uploadFileToTray = async (file: File, trayId: string) => {
     const uploaded = await uploadStoryboardFile(file)
     const type = mediaTypeFromFile(file)
@@ -668,6 +817,7 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
     return nodeId
   }
 
+  /** Replaces an empty/existing node's media while preserving its graph position and links. */
   const uploadFileIntoNode = async (file: File, targetId: string) => {
     const uploaded = await uploadStoryboardFile(file)
     const nextType = mediaTypeFromFile(file)
@@ -684,6 +834,7 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
     setStatusLine(`${file.name} loaded into node`)
   }
 
+  /** Drops one or more files beside a target and connects them as numbered reference edges. */
   const attachReferenceFilesToNode = async (files: File[], targetId: string) => {
     const target = activeSpace.nodes.find(node => node.id === targetId)
     const baseX = target ? target.x - 340 : screenToWorld(window.innerWidth / 2, window.innerHeight / 2).x
@@ -695,6 +846,7 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
     setStatusLine(`${files.length} reference${files.length === 1 ? '' : 's'} attached`)
   }
 
+  /** Handles canvas-level drops from files or pinned tray references. */
   const handleDrop = (event: DragEvent<HTMLDivElement>) => {
     event.preventDefault()
     const trayNodeId = event.dataTransfer.getData('application/x-canvas-tray-node')
@@ -719,6 +871,7 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
     })
   }
 
+  /** Handles trackpad/mouse wheel zooming with a gentler curve than browser default zoom. */
   const handleWheel = (event: WheelEvent<HTMLDivElement>) => {
     event.preventDefault()
     const normalizedDelta = Math.max(-80, Math.min(80, event.deltaY))
@@ -726,6 +879,7 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
     setZoomAt(activeSpace.viewport.zoom * Math.exp(-normalizedDelta * sensitivity), event.clientX, event.clientY)
   }
 
+  /** Starts panning, marquee selection, or tool-specific stage behavior from empty canvas space. */
   const handleStageMouseDown = (event: MouseEvent<HTMLDivElement>) => {
     if (event.button !== 0 || (event.target as HTMLElement).closest('.canvas-node, .canvas-topbar, .canvas-space-tabs, .canvas-pinned-trays, .canvas-tray-panel, .canvas-context-menu, .canvas-connection-menu, .canvas-prompt-dock, .canvas-note-composer, .canvas-link-banner')) return
     setContextMenu(null)
@@ -742,11 +896,17 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
       setMarquee({ startX: world.x, startY: world.y, x: world.x, y: world.y })
       return
     }
+    if (canvasTool === 'scissors' || canvasTool === 'master' || canvasTool === 'node') return
     setPanning(true)
     setDragStart({ x: event.clientX, y: event.clientY, panX: activeSpace.viewport.panX, panY: activeSpace.viewport.panY })
   }
 
+  /** Drives all live pointer interactions: panning, dragging, group resize, edge shaping, and custom cursors. */
   const handleMouseMove = (event: MouseEvent<HTMLDivElement>) => {
+    if (canvasTool) {
+      const rect = stageRef.current?.getBoundingClientRect()
+      setToolCursor(rect ? { x: event.clientX - rect.left, y: event.clientY - rect.top } : null)
+    }
     if (draggingEdgePoint) {
       const world = screenToWorld(event.clientX, event.clientY)
       updateActiveSpace(space => {
@@ -842,6 +1002,7 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
     }
   }
 
+  /** Commits the current pointer gesture and resolves drops onto nodes, edges, groups, or empty space. */
   const stopDragging = (event?: MouseEvent<HTMLDivElement>) => {
     if (marquee) {
       const x = Math.min(marquee.startX, marquee.x)
@@ -873,15 +1034,14 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
           fromGroup: connectorDrag.fromGroup,
         })
       } else {
-        if (!connectorDrag.fromGroup) {
-          setPendingNodeConnection({
-            from: connectorDrag.from,
-            x: event.clientX - (stageRef.current?.getBoundingClientRect().left || 0),
-            y: event.clientY - (stageRef.current?.getBoundingClientRect().top || 0),
-            worldX: world.x,
-            worldY: world.y,
-          })
-        }
+        setPendingNodeConnection({
+          from: connectorDrag.from,
+          x: event.clientX - (stageRef.current?.getBoundingClientRect().left || 0),
+          y: event.clientY - (stageRef.current?.getBoundingClientRect().top || 0),
+          worldX: world.x,
+          worldY: world.y,
+          fromGroup: connectorDrag.fromGroup,
+        })
       }
       setConnectorDrag(null)
     }
@@ -918,8 +1078,10 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
     })
     setPanning(false)
     setDragStart(null)
+    if (!canvasTool) setToolCursor(null)
   }
 
+  /** Starts node selection/dragging or applies active tools such as master marking and marquee grouping. */
   const startNodeDrag = (event: MouseEvent<HTMLDivElement>, node: CanvasNode) => {
     event.stopPropagation()
     setContextMenu(null)
@@ -950,6 +1112,7 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
     setDragStart({ x: event.clientX, y: event.clientY, nodeX: node.x, nodeY: node.y })
   }
 
+  /** Begins a live connector drag from a node output port. */
   const startConnectorDrag = (event: MouseEvent<HTMLButtonElement>, node: CanvasNode, side = 'right') => {
     event.preventDefault()
     event.stopPropagation()
@@ -961,6 +1124,7 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
     setStatusLine('Drag the connector to another node')
   }
 
+  /** Begins a live connector drag from a group box so all group media can act as references. */
   const startGroupConnectorDrag = (event: MouseEvent<HTMLButtonElement>, groupId: string) => {
     event.preventDefault()
     event.stopPropagation()
@@ -974,6 +1138,7 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
     setStatusLine('Drag the group connector to a target node')
   }
 
+  /** Starts dragging a group and moves its member nodes as a unit. */
   const startGroupDrag = (event: MouseEvent<HTMLElement>, groupId: string) => {
     event.preventDefault()
     event.stopPropagation()
@@ -993,6 +1158,7 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
     setDragStart({ x: event.clientX, y: event.clientY, nodeX: group.x, nodeY: group.y })
   }
 
+  /** Starts resizing a group and recomputes membership based on node centers. */
   const startGroupResize = (event: MouseEvent<HTMLElement>, groupId: string, handle: GroupResizeHandle) => {
     event.preventDefault()
     event.stopPropagation()
@@ -1014,7 +1180,8 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
     })
   }
 
-  const addPlaceholder = (type: CanvasMediaType, x: number, y: number, sourceId?: string, edgeType?: CanvasEdgeType, edgeLabel?: string) => {
+  /** Creates an empty output/reference node, optionally already connected to a source node or group. */
+  const addPlaceholder = (type: CanvasMediaType, x: number, y: number, sourceId?: string, edgeType?: CanvasEdgeType, edgeLabel?: string, fromGroup = false) => {
     const id = addNode({ type, title: type === 'placeholder' ? 'Empty media' : `New ${type}` }, x, y)
     if (sourceId) {
       const label = edgeLabel || (edgeType === 'reference' ? 'ref' : type === 'video' ? 'image to video' : edgeType || 'derivative')
@@ -1029,18 +1196,21 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
           to: id,
           type: finalType,
           label: finalLabel,
+          fromGroup,
         })
       })
     }
     return id
   }
 
+  /** Converts a pending empty-space connector drop into a newly connected placeholder node. */
   const createConnectedNode = (type: CanvasMediaType, edgeType?: CanvasEdgeType) => {
     if (!pendingNodeConnection) return
-    addPlaceholder(type, pendingNodeConnection.worldX, pendingNodeConnection.worldY, pendingNodeConnection.from, edgeType)
+    addPlaceholder(type, pendingNodeConnection.worldX, pendingNodeConnection.worldY, pendingNodeConnection.from, edgeType, undefined, !!pendingNodeConnection.fromGroup)
     setPendingNodeConnection(null)
   }
 
+  /** Removes a node plus every edge, group membership, and tray membership that points at it. */
   const deleteNode = (nodeId: string) => {
     updateActiveSpace(space => {
       space.nodes = space.nodes.filter(node => node.id !== nodeId)
@@ -1055,12 +1225,14 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
     if (selectedNodeId === nodeId) setSelectedNodeId(null)
   }
 
+  /** Removes all incoming and outgoing links while leaving the node itself intact. */
   const disconnectNode = (nodeId: string) => {
     updateActiveSpace(space => {
       space.edges = space.edges.filter(edge => edge.from !== nodeId && edge.to !== nodeId)
     })
   }
 
+  /** Duplicates a node as either an unlinked copy or a linked pink variation. */
   const duplicateNode = (nodeId: string, asVariation = false) => {
     const source = activeSpace.nodes.find(node => node.id === nodeId)
     if (!source) return
@@ -1073,6 +1245,7 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
     return id
   }
 
+  /** Writes a completed image generation result back into an existing node. */
   const fillNodeWithImage = (nodeId: string, payload: { url: string; localPath?: string; fileName?: string }, title?: string) => {
     updateNode(nodeId, node => {
       node.type = 'image'
@@ -1090,6 +1263,7 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
     })
   }
 
+  /** Calls the storyboard/PixVerse image route with prompt, model settings, and resolved reference images. */
   const callCanvasImageApi = async (node: CanvasNode, type: 'generate' | 'enhance', forceSourceAsReference = false) => {
     const generation = node.generation || defaultGeneration()
     const modelPreset = imageModels.find(item => item.id === generation.model)
@@ -1121,6 +1295,7 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
     return payload as { ok: boolean; url: string; localPath?: string }
   }
 
+  /** Calls the storyboard/PixVerse video route and polls pending PixVerse jobs until local media is saved. */
   const callCanvasVideoApi = async (node: CanvasNode) => {
     const generation = (node.generation || defaultGenerationForType('video')) as NonNullable<CanvasNode['generation']>
     const prompt = node.prompt || node.note || ''
@@ -1174,6 +1349,7 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
     return payload as { ok: boolean; url: string; localPath?: string; cliPrompt?: string }
   }
 
+  /** Orchestrates image-to-video generation: chooses/creates target node, snapshots refs, and saves result. */
   const runVideoGeneration = async (nodeId: string) => {
     const source = activeSpace.nodes.find(node => node.id === nodeId)
     if (!source) return
@@ -1225,6 +1401,7 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
     }
   }
 
+  /** Orchestrates image generation/enhancement and keeps variation/master edges in the graph. */
   const runImageGeneration = async (nodeId: string, asVariation = false, forceEnhance = false) => {
     const source = activeSpace.nodes.find(node => node.id === nodeId)
     if (!source) return
@@ -1280,11 +1457,13 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
     }
   }
 
+  /** Runs two sequential image variations from the same source node. */
   const runTwoVariants = async (nodeId: string) => {
     await runImageGeneration(nodeId, true)
     await runImageGeneration(nodeId, true)
   }
 
+  /** Creates an empty pink variation node with inherited prompt/settings but without running generation yet. */
   const createVariationNode = (nodeId: string) => {
     const source = activeSpace.nodes.find(node => node.id === nodeId)
     if (!source) return
@@ -1306,6 +1485,7 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
     return newId
   }
 
+  /** Converts an existing node into a variation sibling of another node. */
   const addExistingAlternative = (sourceId: string, alternativeId: string) => {
     if (sourceId === alternativeId) return
     const source = activeSpace.nodes.find(node => node.id === sourceId)
@@ -1339,6 +1519,7 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
     setStatusLine(`${alternative.title} is now a pink variation of ${source.title}`)
   }
 
+  /** Promotes one variation to the master flow and demotes the former master to a variation. */
   const makeMasterShot = (nodeId: string) => {
     const node = activeSpace.nodes.find(item => item.id === nodeId)
     const incomingVariation = activeSpace.edges.find(edge => edge.to === nodeId && edge.type === 'variation')
@@ -1363,6 +1544,7 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
     setStatusLine(`${node.title} is now the master flow`)
   }
 
+  /** Adds/removes visual master or alternative marker badges without changing graph semantics. */
   const setNodeMarker = (nodeId: string, marker: CanvasNode['marker']) => {
     updateNode(nodeId, node => {
       node.marker = node.marker === marker ? undefined : marker
@@ -1370,6 +1552,7 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
     setStatusLine(marker === 'master' ? 'Master frame marker toggled' : 'Alternative frame marker toggled')
   }
 
+  /** Adds a hand-placed bend point to an edge for doodle-style routing. */
   const addEdgePoint = (edgeId: string, x: number, y: number) => {
     updateActiveSpace(space => {
       const edge = space.edges.find(item => item.id === edgeId)
@@ -1379,6 +1562,7 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
     setStatusLine('Doodle shaping point added')
   }
 
+  /** Swaps media/prompt payloads between two nodes while leaving graph connections untouched. */
   const swapNodeMedia = (sourceId: string, targetId: string) => {
     if (sourceId === targetId) return
     updateActiveSpace(space => {
@@ -1422,6 +1606,7 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
     setStatusLine('Node media swapped; connections stayed in place')
   }
 
+  /** Removes a single connection, used by scissors tool and edge controls. */
   const deleteEdge = (edgeId: string) => {
     updateActiveSpace(space => {
       space.edges = space.edges.filter(edge => edge.id !== edgeId)
@@ -1429,6 +1614,7 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
     setStatusLine('Connection removed')
   }
 
+  /** Splits an existing edge by inserting a new empty node between its source and target. */
   const insertPlaceholderOnEdge = (edgeId: string, type: CanvasMediaType = 'placeholder') => {
     const edge = activeSpace.edges.find(item => item.id === edgeId)
     if (!edge) return
@@ -1449,6 +1635,7 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
     })
   }
 
+  /** Splits an edge by uploading a dropped file and placing the new media node between endpoints. */
   const insertFileOnEdge = async (edgeId: string, file: File) => {
     const edge = activeSpace.edges.find(item => item.id === edgeId)
     if (!edge) return
@@ -1468,6 +1655,7 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
     })
   }
 
+  /** Rehomes an existing node into the middle of an edge and rewires the original connection. */
   const insertExistingNodeOnEdge = (edgeId: string, nodeId: string) => {
     const edge = activeSpace.edges.find(item => item.id === edgeId)
     if (!edge || edge.from === nodeId || edge.to === nodeId) return
@@ -1492,6 +1680,7 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
     setStatusLine('Node inserted between connection')
   }
 
+  /** Sends a 2x2 grid image to the split API and creates four linked panel nodes. */
   const splitGridNode = async (nodeId: string) => {
     const source = activeSpace.nodes.find(node => node.id === nodeId)
     if (!source?.url) return
@@ -1538,6 +1727,7 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
     }
   }
 
+  /** Uses Theo/Gemini prompt refinement on the selected node while preserving connected reference context. */
   const improveSelectedPrompt = async () => {
     if (!selectedNode || !(selectedNode.prompt || '').trim()) return
     setNoteAiEnhancing(true)
@@ -1562,6 +1752,7 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
     }
   }
 
+  /** Selects a node and focuses the prompt/note composer for immediate editing. */
   const focusSelectedNote = (nodeId: string) => {
     setSelectedNodeId(nodeId)
     window.setTimeout(() => {
@@ -1569,6 +1760,7 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
     }, 0)
   }
 
+  /** Restores a generated node's saved source prompt from itself or its parent edge. */
   const injectSourcePrompt = (nodeId: string) => {
     const node = activeSpace.nodes.find(item => item.id === nodeId)
     const parentEdge = activeSpace.edges.find(edge => edge.to === nodeId && (edge.type === 'derivative' || edge.type === 'variation' || edge.type === 'animation'))
@@ -1582,6 +1774,7 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
     setStatusLine('Source prompt injected')
   }
 
+  /** Adds a new independent canvas space and switches the UI to it. */
   const addSpace = () => {
     setData(current => {
       const next = structuredClone(current)
@@ -1592,6 +1785,7 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
     })
   }
 
+  /** Creates a group box around every node fully enclosed by the marquee rectangle. */
   const createGroupFromMarquee = (selection: { x: number; y: number; width: number; height: number }) => {
     const nodeIds = canvasNodes
       .filter(node => node.x >= selection.x && node.y >= selection.y && node.x + node.width <= selection.x + selection.width && node.y + node.height <= selection.y + selection.height)
@@ -1618,11 +1812,13 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
     setStatusLine(`${nodeIds.length} nodes grouped`)
   }
 
+  /** Converts the current multi-selection overlay into a persistent group. */
   const createGroupFromSelection = () => {
     if (!multiSelection) return
     createGroupFromMarquee(multiSelection)
   }
 
+  /** Deletes all nodes in the current multi-selection and cleans related graph references. */
   const deleteSelectedNodes = () => {
     if (!multiSelection) return
     updateActiveSpace(space => {
@@ -1636,6 +1832,7 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
     setStatusLine('Selected nodes deleted')
   }
 
+  /** Cuts every edge touching any node in the current multi-selection. */
   const disconnectSelectedNodes = () => {
     if (!multiSelection) return
     updateActiveSpace(space => {
@@ -1645,6 +1842,7 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
     setStatusLine('Selected nodes disconnected')
   }
 
+  /** Cuts only the edges that run between two selected nodes. */
   const cutInternalSelectedEdges = () => {
     if (!multiSelection) return
     updateActiveSpace(space => {
@@ -1654,6 +1852,7 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
     setStatusLine('Internal selected links cut')
   }
 
+  /** Starts browser downloads for every selected node that has media. */
   const downloadSelectedNodes = () => {
     if (!multiSelection) return
     multiSelection.nodeIds
@@ -1669,6 +1868,7 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
     setStatusLine('Selected downloads started')
   }
 
+  /** Removes a group shell and any group-originating edges without deleting its member nodes. */
   const deleteGroup = (groupId: string) => {
     updateActiveSpace(space => {
       space.groups = space.groups.filter(group => group.id !== groupId)
@@ -1677,6 +1877,7 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
     if (selectedGroupId === groupId) setSelectedGroupId(null)
   }
 
+  /** Updates a group's stroke and translucent fill from the color swatch menu. */
   const setGroupColor = (groupId: string, color: string) => {
     updateActiveSpace(space => {
       const group = space.groups.find(item => item.id === groupId)
@@ -1686,6 +1887,7 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
     })
   }
 
+  /** Returns media URLs from all nodes inside a group for group-based reference actions. */
   const groupReferenceUrls = (groupId: string) => {
     const group = activeSpace.groups.find(item => item.id === groupId)
     if (!group) return []
@@ -1700,6 +1902,7 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
   const selectedIsVideo = selectedGeneration.operation === 'video' || (selectedNode?.type === 'video' && selectedGeneration.operation !== 'generate')
   const selectedOutputType: CanvasMediaType = selectedIsVideo ? 'video' : selectedNode?.type || 'placeholder'
   const selectedVideoModel = videoModels.find(model => model.id === selectedGeneration.model) || videoModels[0]
+  /** Computes user-facing edge labels, including numbered refs based on each target node. */
   const edgeLabelForDisplay = (edgeId: string) => {
     const edge = activeSpace.edges.find(item => item.id === edgeId)
     if (!edge) return ''
@@ -1710,12 +1913,14 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
     return edge.label || ''
   }
 
+  /** Closes composer popovers so attachment/settings/skills menus do not overlap. */
   const closeNotePopovers = () => {
     setNoteAttachOpen(false)
     setNoteSettingsOpen(false)
     setNoteSkillsOpen(false)
   }
 
+  /** Pins a node into a tray, duplicating it as pinned-only when it came from the canvas. */
   const addNodeToTray = (trayId: string, nodeId: string) => {
     let pinnedId = nodeId
     const source = activeSpace.nodes.find(node => node.id === nodeId)
@@ -1745,6 +1950,7 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
     setStatusLine('Reference stored in tray')
   }
 
+  /** Places a pinned tray reference back onto the canvas as an editable normal node. */
   const duplicateTrayNodeToCanvas = (nodeId: string, x?: number, y?: number) => {
     const source = activeSpace.nodes.find(node => node.id === nodeId)
     if (!source) return
@@ -1757,16 +1963,19 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
     }, x ?? screenToWorld(window.innerWidth / 2, window.innerHeight / 2).x, y ?? screenToWorld(window.innerWidth / 2, window.innerHeight / 2).y)
   }
 
+  /** Opens the hidden file input that replaces media inside a specific node. */
   const openNodeUpload = (nodeId: string) => {
     setNodeUploadTargetId(nodeId)
     nodeFileRef.current?.click()
   }
 
+  /** Opens the hidden file input that adds media directly into a pinned tray. */
   const openTrayUpload = (trayId: string) => {
     setTrayUploadTargetId(trayId)
     trayFileRef.current?.click()
   }
 
+  /** Tracks which video nodes are currently playing for button state and progress updates. */
   const setVideoPlaying = (nodeId: string, isPlaying: boolean) => {
     setPlayingVideoIds(current => {
       const next = new Set(current)
@@ -1776,6 +1985,7 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
     })
   }
 
+  /** Plays or pauses a video node without selecting/dragging the node underneath. */
   const toggleNodeVideo = async (event: MouseEvent<HTMLButtonElement>, nodeId: string) => {
     event.preventDefault()
     event.stopPropagation()
@@ -1797,6 +2007,7 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
     }
   }
 
+  /** Toggles mute state for one video node and stores the result in UI state. */
   const toggleNodeVideoMute = (event: MouseEvent<HTMLButtonElement>, nodeId: string) => {
     event.preventDefault()
     event.stopPropagation()
@@ -1812,6 +2023,7 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
     })
   }
 
+  /** Samples current video playback time and duration for trim controls and badges. */
   const updateVideoProgress = (nodeId: string) => {
     const video = stageRef.current?.querySelector<HTMLVideoElement>(`video[data-node-video-id="${nodeId}"]`)
     if (!video) return
@@ -1821,6 +2033,7 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
     }))
   }
 
+  /** Updates start/end trim points while keeping them inside the loaded video duration. */
   const setVideoCrop = (nodeId: string, key: 'start' | 'end', value: number) => {
     const duration = videoProgress[nodeId]?.duration || 0
     updateNode(nodeId, node => {
@@ -1834,6 +2047,7 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
     })
   }
 
+  /** Clears video trim metadata and returns extraction to the full clip. */
   const resetVideoCrop = (nodeId: string) => {
     updateNode(nodeId, node => {
       delete node.videoCrop
@@ -1841,6 +2055,7 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
     setStatusLine('Video trim reset')
   }
 
+  /** Captures the current/trimmed video frame, uploads it, and links it as a frame image node. */
   const extractFrameFromVideo = async (nodeId: string) => {
     const source = activeSpace.nodes.find(node => node.id === nodeId)
     const video = stageRef.current?.querySelector<HTMLVideoElement>(`video[data-node-video-id="${nodeId}"]`)
@@ -1917,6 +2132,125 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
     }
   }
 
+  /** Loads available skills/prompts from the shared Skills Store API for the Canvas Theo panel. */
+  const loadCanvasStoreItems = async () => {
+    try {
+      const response = await fetch('/api/skills/list')
+      const payload = await response.json()
+      setCanvasStoreItems(Array.isArray(payload.skills) ? payload.skills : [])
+    } catch {
+      setStatusLine('Skills store unavailable')
+    }
+  }
+
+  /** Opens the full Skills or Prompts picker/editor modal and refreshes its backing store. */
+  const openCanvasStore = async (kind: CanvasStoreKind) => {
+    setCanvasStoreOpen(kind)
+    setCanvasStorePage(0)
+    setCanvasStoreEditingId(null)
+    setCanvasStoreDraftTitle('')
+    setCanvasStoreDraftText('')
+    await loadCanvasStoreItems()
+  }
+
+  /** Pins or unpins one skill/prompt so Theo receives it in future Canvas branch messages. */
+  const toggleCanvasStoreItem = (kind: CanvasStoreKind, item: CanvasStoreItem) => {
+    const setter = kind === 'skills' ? setSelectedCanvasSkillIds : setSelectedCanvasPromptIds
+    setter(current => current.includes(item.id) ? current.filter(id => id !== item.id) : [...current, item.id])
+  }
+
+  /** Starts a blank custom skill/prompt draft in the store modal. */
+  const startCanvasStoreCreate = () => {
+    setCanvasStoreEditingId('__new__')
+    setCanvasStoreDraftTitle('')
+    setCanvasStoreDraftText('')
+  }
+
+  /** Loads a skill/prompt body into the store modal editor, including markdown-backed skills. */
+  const startCanvasStoreEdit = async (item: CanvasStoreItem) => {
+    setCanvasStoreEditingId(item.id)
+    setCanvasStoreDraftTitle(item.name)
+    if (item.id.startsWith('bp-')) {
+      setCanvasStoreDraftText(storeItemText(item))
+      return
+    }
+    try {
+      const response = await fetch('/api/skills/read-md', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: item.id }),
+      })
+      const payload = await response.json()
+      setCanvasStoreDraftText(payload.content || storeItemText(item))
+    } catch {
+      setCanvasStoreDraftText(storeItemText(item))
+    }
+  }
+
+  /** Saves a custom skill/prompt via the shared Skills Store API and pins it to Canvas Theo. */
+  const saveCanvasStoreDraft = async () => {
+    const kind = canvasStoreOpen || 'skills'
+    const title = canvasStoreDraftTitle.trim()
+    const text = canvasStoreDraftText.trim()
+    if (!title || !text) return
+    const source = [...canvasStoreItems, ...canvasBuiltinPrompts].find(item => item.id === canvasStoreEditingId)
+    const canOverwrite = source && !source.id.startsWith('bp-')
+    const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').substring(0, 40)
+    const saved: CanvasStoreItem = {
+      ...(canOverwrite ? source : {}),
+      id: canOverwrite ? source.id : `${kind === 'prompts' ? 'prompt' : 'skill'}-${slug || 'custom'}-${Date.now()}`,
+      name: title,
+      description: text.substring(0, 200),
+      fullText: text,
+      text: kind === 'prompts' ? text : undefined,
+      iconIdx: source?.iconIdx ?? Math.floor(Math.random() * canvasStoreIcons.length),
+    }
+    const response = await fetch('/api/skills/save', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(saved),
+    })
+    if (!response.ok) {
+      setStatusLine('Save failed')
+      return
+    }
+    setCanvasStoreItems(current => {
+      const without = current.filter(item => item.id !== saved.id)
+      return [...without, saved]
+    })
+    if (kind === 'skills') setSelectedCanvasSkillIds(current => Array.from(new Set([...current.filter(id => id !== canvasStoreEditingId), saved.id])))
+    if (kind === 'prompts') setSelectedCanvasPromptIds(current => Array.from(new Set([...current.filter(id => id !== canvasStoreEditingId), saved.id])))
+    setCanvasStoreEditingId(null)
+    setCanvasStoreDraftTitle('')
+    setCanvasStoreDraftText('')
+    setStatusLine(`${kind === 'skills' ? 'Skill' : 'Prompt'} saved`)
+  }
+
+  /** Reads full text for a selected skill/prompt before adding it to Theo's message context. */
+  const readCanvasStoreItem = async (item: CanvasStoreItem) => {
+    if (item.id.startsWith('bp-')) return storeItemText(item)
+    try {
+      const response = await fetch('/api/skills/read-md', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: item.id }),
+      })
+      const payload = await response.json()
+      return payload.content || storeItemText(item)
+    } catch {
+      return storeItemText(item)
+    }
+  }
+
+  /** Turns a Theo branch answer into a new editable skill/prompt draft. */
+  const useTheoHelperAsStoreDraft = (kind: CanvasStoreKind, text: string) => {
+    setCanvasStoreOpen(kind)
+    setCanvasStoreEditingId('__new__')
+    setCanvasStoreDraftTitle(kind === 'skills' ? 'Theo Skill Draft' : 'Theo Prompt Draft')
+    setCanvasStoreDraftText(text)
+  }
+
+  /** Starts browser speech recognition and appends the transcript into Theo's compose box. */
   const startAgentDictation = () => {
     const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition
     if (!SpeechRecognition) {
@@ -1936,9 +2270,12 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
     setStatusLine('Listening...')
   }
 
+  /** Sends a Canvas-aware Theo message, preserving branch history while including images, memory, skills, and prompts. */
   const sendAgentMessage = async () => {
     const text = agentDraft.trim()
     if (!text || agentLoading) return
+    const branchKind: CanvasStoreKind | null = agentTab === 'skills' || agentTab === 'prompts' ? agentTab : null
+    const branchMessages = branchKind ? canvasStoreHelperMessages[branchKind] : agentMessages
     const agentContextNodes = selectedGroup
       ? selectedGroup.nodeIds.map(nodeId => activeSpace.nodes.find(node => node.id === nodeId)).filter(Boolean) as CanvasNode[]
       : selectedNode
@@ -1948,36 +2285,204 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
       ...agentContextNodes.filter(node => node.type === 'image' && node.url).map(node => node.url as string),
       ...agentAttachments.filter(file => file.url && file.type.startsWith('image/')).map(file => file.url as string),
     ]
+    const selectedStoreContext = await Promise.all([
+      ...selectedCanvasSkills.map(async item => `Selected skill "${item.name}":\n${(await readCanvasStoreItem(item)).slice(0, 6000)}`),
+      ...selectedCanvasPrompts.map(async item => `Selected prompt blueprint "${item.name}":\n${(await readCanvasStoreItem(item)).slice(0, 6000)}`),
+    ])
+    const branchInstruction = branchKind === 'skills'
+      ? 'This is the Skills conversation branch. Help the user build or improve reusable skills. If a skill is selected, treat it as active context and ask/answer as if building on that skill.'
+      : branchKind === 'prompts'
+        ? 'This is the Prompts conversation branch. Help the user build or improve reusable prompt blueprints. If a prompt is selected, treat it as active context and ask/answer as if building on that prompt.'
+        : ''
     const context = [
+      branchInstruction,
       `Active canvas space: ${activeSpace.name}`,
       `Nodes: ${activeSpace.nodes.length}; connections: ${activeSpace.edges.length}; groups: ${activeSpace.groups.length}`,
       selectedNode ? `Selected node: ${selectedNode.title} (${selectedNode.type}); prompt: ${selectedNode.prompt || selectedNode.note || 'empty'}; connected inputs: ${agentContextNodes.map(node => `${node.title} (${node.type})`).join(', ') || 'none'}` : 'Selected node: none',
       selectedGroup ? `Selected group: ${selectedGroup.name}; nodes: ${selectedGroup.nodeIds.length}` : '',
+      selectedStoreContext.length ? `Theo must reference and follow these selected Skills/Prompts:\n${selectedStoreContext.join('\n\n')}` : '',
       agentAttachments.length ? `Theo-only attachments:\n${agentAttachments.map(file => `- ${file.name} (${file.type})${file.text ? `:\n${file.text.slice(0, 5000)}` : ''}`).join('\n')}` : '',
     ].filter(Boolean).join('\n')
     const nextUser = { role: 'user' as const, text }
-    setAgentMessages(messages => [...messages, nextUser])
+    if (branchKind) {
+      setCanvasStoreHelperMessages(messages => ({ ...messages, [branchKind]: [...messages[branchKind], nextUser] }))
+    } else {
+      setAgentMessages(messages => [...messages, nextUser])
+    }
     setAgentDraft('')
     setAgentLoading(true)
     try {
-      const history = agentMessages.map(message => ({ role: message.role, parts: [{ text: message.text }] }))
-      const result = await sendToGeminiWithImages(`${text}\n\nCanvas context:\n${context}`, agentImageUrls, history)
-      setAgentMessages(messages => [...messages, { role: 'model', text: result.text || result.error || 'No response.' }])
+      const history = branchMessages.map(message => ({ role: message.role, parts: [{ text: message.text }] }))
+      const systemInstruction = await buildAgentSystemInstruction(text)
+      const userMessage = `${text}\n\nCanvas context:\n${context}`
+      const result = await sendToGeminiWithImages(userMessage, agentImageUrls, history, systemInstruction)
+      const nextModel = { role: 'model' as const, text: result.text || result.error || 'No response.' }
+      if (branchKind) {
+        setCanvasStoreHelperMessages(messages => ({ ...messages, [branchKind]: [...messages[branchKind], nextModel] }))
+      } else {
+        setAgentMessages(messages => [...messages, nextModel])
+      }
+      if (!result.error && result.text) rememberAgentExchange(userMessage, result.text)
       setStatusLine(result.error ? result.error : 'Gemini replied')
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Gemini failed'
-      setAgentMessages(messages => [...messages, { role: 'model', text: message }])
+      const nextModel = { role: 'model' as const, text: message }
+      if (branchKind) {
+        setCanvasStoreHelperMessages(messages => ({ ...messages, [branchKind]: [...messages[branchKind], nextModel] }))
+      } else {
+        setAgentMessages(messages => [...messages, nextModel])
+      }
       setStatusLine(message)
     } finally {
       setAgentLoading(false)
     }
   }
 
+  /** Renders a selectable skill/prompt card for compact side panel rows and full modal grids. */
+  const renderCanvasStoreCard = (kind: CanvasStoreKind, item: CanvasStoreItem, index: number, compact = false) => {
+    const selectedIds = kind === 'skills' ? selectedCanvasSkillIds : selectedCanvasPromptIds
+    const isSelected = selectedIds.includes(item.id)
+    const icon = iconForStoreItem(item, index)
+    return (
+      <button
+        key={item.id}
+        className={`canvas-store-card ${compact ? 'compact' : ''} ${isSelected ? 'is-selected' : ''}`}
+        type="button"
+        onClick={() => toggleCanvasStoreItem(kind, item)}
+        style={{ '--store-accent': icon.color } as CSSProperties}
+        title={item.name}
+      >
+        <span className="canvas-store-check">✓</span>
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d={icon.d} />
+        </svg>
+        <strong>{item.name}</strong>
+        {!compact && <small>{item.description || storeItemText(item).slice(0, 120)}</small>}
+      </button>
+    )
+  }
+
+  /** Renders the Skills/Prompts branch inside Theo's panel with pinned cards and isolated messages. */
+  const renderCanvasAgentStorePanel = (kind: CanvasStoreKind) => {
+    const items = kind === 'skills' ? canvasSkillItems : canvasPromptItems
+    const selectedItems = kind === 'skills' ? selectedCanvasSkills : selectedCanvasPrompts
+    const selectedIds = new Set(selectedItems.map(item => item.id))
+    const previewItems = [...selectedItems, ...items.filter(item => !selectedIds.has(item.id))].slice(0, 3)
+    const branchMessages = canvasStoreHelperMessages[kind]
+    return (
+      <div className="canvas-agent-store-panel">
+        <div className="canvas-agent-store-heading">
+          <strong>{kind === 'skills' ? 'Pinned Skills' : 'Pinned Prompts'}</strong>
+          <span>{selectedItems.length ? `${selectedItems.length} selected` : 'Theo will use selected cards'}</span>
+        </div>
+        <div className="canvas-agent-store-grid">
+          {previewItems.map((item, index) => renderCanvasStoreCard(kind, item, index, true))}
+          <button className="canvas-store-add-card" type="button" onClick={() => openCanvasStore(kind)}>
+            <span>＋</span>
+          </button>
+        </div>
+        <div className="canvas-store-helper">
+          <div className="canvas-store-helper-head">
+            <strong>{kind === 'skills' ? 'Skills Branch' : 'Prompts Branch'}</strong>
+            <span>{selectedItems.length ? 'selected context active' : 'separate from main chat'}</span>
+          </div>
+          {branchMessages.length > 0 && (
+            <div className="canvas-store-helper-feed canvas-branch-feed">
+              {branchMessages.map((message, index) => (
+                <div key={`${message.role}-${index}`} className={`canvas-store-helper-message ${message.role}`}>
+                  <strong>{message.role === 'user' ? 'You' : 'Theo'}</strong>
+                  <p>{message.text}</p>
+                  {message.role === 'model' && (
+                    <button type="button" onClick={() => useTheoHelperAsStoreDraft(kind, message.text)}>Use as draft</button>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+          {agentLoading && agentTab === kind && <div className="canvas-store-helper-message model"><strong>Theo</strong><p>Thinking...</p></div>}
+        </div>
+      </div>
+    )
+  }
+
+  /** Renders the full store picker/editor modal shared by Skills and Prompt Blueprints. */
+  const renderCanvasStoreModal = () => {
+    if (!canvasStoreOpen) return null
+    const kind = canvasStoreOpen
+    const items = kind === 'skills' ? canvasSkillItems : canvasPromptItems
+    const pageSize = 6
+    const totalPages = Math.max(1, Math.ceil(items.length / pageSize))
+    const page = Math.min(canvasStorePage, totalPages - 1)
+    const pageItems = items.slice(page * pageSize, page * pageSize + pageSize)
+    return (
+      <div className="canvas-store-modal-backdrop" onClick={() => setCanvasStoreOpen(null)}>
+        <div className="canvas-store-modal" onClick={(event) => event.stopPropagation()}>
+          <div className="canvas-store-modal-header">
+            <div>
+              <h2>{kind === 'skills' ? 'Skills Store' : 'Prompt Blueprints'}</h2>
+              <p>{items.length} available · Canvas Theo panel</p>
+            </div>
+            <button type="button" onClick={() => setCanvasStoreOpen(null)} aria-label="Close">×</button>
+          </div>
+          <div className="canvas-store-modal-body">
+            <div className="canvas-store-modal-toolbar">
+              <span>{kind === 'skills' ? 'Select skills for Theo to follow' : 'Select prompt blueprints for Theo to reference'}</span>
+              {totalPages > 1 && (
+                <div className="canvas-store-page-dots" aria-label={`${kind === 'skills' ? 'Skills' : 'Prompts'} page`}>
+                  {Array.from({ length: totalPages }).map((_, index) => (
+                    <button
+                      key={index}
+                      type="button"
+                      className={index === page ? 'is-active' : ''}
+                      onClick={() => setCanvasStorePage(index)}
+                      aria-label={`Go to page ${index + 1}`}
+                    />
+                  ))}
+                </div>
+              )}
+              <button type="button" onClick={startCanvasStoreCreate}>＋ New {kind === 'skills' ? 'Skill' : 'Prompt'}</button>
+            </div>
+            <div className="canvas-store-modal-grid">
+              {pageItems.map((item, index) => (
+                <div className="canvas-store-card-wrap" key={item.id}>
+                  {renderCanvasStoreCard(kind, item, page * pageSize + index)}
+                  <button className="canvas-store-edit" type="button" onClick={() => startCanvasStoreEdit(item)} title="Edit">✎</button>
+                </div>
+              ))}
+              <button className="canvas-store-add-card full" type="button" onClick={startCanvasStoreCreate}>
+                <span>＋</span>
+                <small>Create Custom</small>
+              </button>
+            </div>
+            {totalPages > 1 && (
+              <div className="canvas-store-pages">
+                <button type="button" disabled={page === 0} onClick={() => setCanvasStorePage(Math.max(0, page - 1))}>‹</button>
+                <span>{page + 1} / {totalPages}</span>
+                <button type="button" disabled={page >= totalPages - 1} onClick={() => setCanvasStorePage(Math.min(totalPages - 1, page + 1))}>›</button>
+              </div>
+            )}
+            {canvasStoreEditingId && (
+              <div className="canvas-store-editor">
+                <div className="canvas-store-editor-title">
+                  <strong>{canvasStoreEditingId === '__new__' ? `Create ${kind === 'skills' ? 'Skill' : 'Prompt'}` : `Edit ${kind === 'skills' ? 'Skill' : 'Prompt'}`}</strong>
+                  <button type="button" onClick={() => { setCanvasStoreEditingId(null); setCanvasStoreDraftTitle(''); setCanvasStoreDraftText('') }}>Cancel</button>
+                </div>
+                <input value={canvasStoreDraftTitle} onChange={event => setCanvasStoreDraftTitle(event.target.value)} placeholder={`${kind === 'skills' ? 'Skill' : 'Prompt'} title`} />
+                <textarea value={canvasStoreDraftText} onChange={event => setCanvasStoreDraftText(event.target.value)} placeholder={kind === 'skills' ? 'Step-by-step instructions for Theo...' : 'Prompt blueprint text...'} />
+                <button type="button" disabled={!canvasStoreDraftTitle.trim() || !canvasStoreDraftText.trim()} onClick={saveCanvasStoreDraft}>Save and Pin</button>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className={`canvas-mode ${agentOpen ? '' : 'agent-collapsed'}`}>
       <div
         ref={stageRef}
-        className={`canvas-stage ${panning ? 'is-dragging' : ''}`}
+        className={`canvas-stage ${panning ? 'is-dragging' : ''} ${canvasTool ? `is-tool-${canvasTool}` : ''}`}
         onContextMenu={(event) => {
           event.preventDefault()
           const world = screenToWorld(event.clientX, event.clientY)
@@ -1988,7 +2493,10 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
         onMouseDown={handleStageMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={stopDragging}
-        onMouseLeave={stopDragging}
+        onMouseLeave={(event) => {
+          stopDragging(event)
+          setToolCursor(null)
+        }}
         onDoubleClick={(event) => {
           if ((event.target as HTMLElement).closest('.canvas-node, .canvas-group-box, .canvas-edge-controls, .canvas-edge-point, .canvas-topbar, .canvas-space-tabs, .canvas-pinned-trays, .canvas-tray-panel, .canvas-context-menu, .canvas-connection-menu, .canvas-prompt-dock, .canvas-note-composer')) return
           resetCanvasTool()
@@ -2286,6 +2794,22 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
               return (
                 <g key={edge.id}>
                   <path className="canvas-edge-hit" data-edge-id={edge.id} d={d} />
+                  <path
+                    className="canvas-edge-tool-hit"
+                    data-edge-id={edge.id}
+                    d={d}
+                    onClick={(event) => {
+                      if (canvasTool !== 'scissors' && canvasTool !== 'node') return
+                      event.preventDefault()
+                      event.stopPropagation()
+                      if (canvasTool === 'scissors') {
+                        deleteEdge(edge.id)
+                        return
+                      }
+                      const world = screenToWorld(event.clientX, event.clientY)
+                      addEdgePoint(edge.id, world.x, world.y)
+                    }}
+                  />
                   <path className={`canvas-edge-path ${edge.type} ${edge.id === edgeSnapCandidate ? 'is-snap-target' : ''} ${edge.fromGroup ? 'group-edge' : ''} ${edge.label === 'CONT VIDEO' ? 'continuation' : ''} ${edge.type === 'variation' && ((from?.type === 'video') || to.type === 'video') ? 'video-variation' : ''}`} d={d} stroke={edgeDisplayColor(edge.type, edge.label)} />
                   {edgeLabelForDisplay(edge.id) && (
                     <text className="canvas-edge-label" x={(a.x + b.x) / 2} y={(a.y + b.y) / 2 - 8} fill={edgeDisplayColor(edge.type, edge.label)}>
@@ -2612,6 +3136,14 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
           })}
         </div>
 
+        {canvasTool && toolCursor && (
+          <div
+            className={`canvas-tool-cursor ${canvasTool}`}
+            style={{ left: toolCursor.x, top: toolCursor.y }}
+            aria-hidden="true"
+          />
+        )}
+
         {canvasNodes.length === 0 && (
           <div className="canvas-empty-hint">
             <strong>Full Canvas Mode</strong>
@@ -2684,7 +3216,7 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
             <button type="button" onClick={() => createConnectedNode('video', 'animation')}>Video container</button>
             <button type="button" onClick={() => {
               const from = pendingNodeConnection.from
-              createConnectedNode(nodeById.get(from)?.type === 'video' ? 'video' : 'image', 'variation')
+              createConnectedNode(!pendingNodeConnection.fromGroup && nodeById.get(from)?.type === 'video' ? 'video' : 'image', 'variation')
             }}>Pink variation container</button>
             <button type="button" onClick={() => createConnectedNode('document', 'context')}>Text / PDF context</button>
             <button type="button" onClick={() => createConnectedNode('placeholder', 'reference')}>Reference placeholder</button>
@@ -2871,8 +3403,8 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
               {agentLoading && <div className="canvas-agent-message model"><strong>Theo</strong><p>Thinking...</p></div>}
             </>
           )}
-          {agentTab === 'skills' && <p>Canvas-owned Skills Store copy will plug in here next.</p>}
-          {agentTab === 'prompts' && <p>Canvas-owned Prompt Store copy will plug in here next.</p>}
+          {agentTab === 'skills' && renderCanvasAgentStorePanel('skills')}
+          {agentTab === 'prompts' && renderCanvasAgentStorePanel('prompts')}
           {agentTab === 'tasks' && (
             <div className="canvas-task-list">
               {activeSpace.nodes.filter(node => node.generation?.status && node.generation.status !== 'idle').length === 0 && <p>No canvas generation tasks yet.</p>}
@@ -2907,7 +3439,17 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
                 sendAgentMessage()
               }
             }}
-            placeholder="Ask Gemini about the selected canvas context..."
+            placeholder={
+              agentTab === 'skills'
+                ? selectedCanvasSkills.length
+                  ? 'Ask Theo to build on the selected skill...'
+                  : 'Ask Theo to build a new skill...'
+                : agentTab === 'prompts'
+                  ? selectedCanvasPrompts.length
+                    ? 'Ask Theo to build on the selected prompt...'
+                    : 'Ask Theo to build a new prompt...'
+                  : 'Ask Theo about the selected canvas context...'
+            }
             rows={5}
           />
           <div className="canvas-agent-actions">
@@ -2919,6 +3461,7 @@ export function CanvasMode({ onBack }: { onBack: () => void }) {
           </div>
         </div>
       </aside>}
+      {renderCanvasStoreModal()}
     </div>
   )
 }

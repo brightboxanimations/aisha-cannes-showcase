@@ -5,6 +5,7 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(300px, 25vw);
   width: 100vw;
+  height: 100svh;
   min-height: 100svh;
   overflow: hidden;
   border: 0;
@@ -47,6 +48,24 @@
 
 .canvas-stage.is-dragging {
   cursor: grabbing;
+}
+
+.canvas-stage.is-tool-scissors,
+.canvas-stage.is-tool-master,
+.canvas-stage.is-tool-node,
+.canvas-stage.is-tool-group {
+  cursor: none;
+}
+
+.canvas-stage.is-tool-scissors .canvas-world,
+.canvas-stage.is-tool-scissors .canvas-world *,
+.canvas-stage.is-tool-master .canvas-world,
+.canvas-stage.is-tool-master .canvas-world *,
+.canvas-stage.is-tool-node .canvas-world,
+.canvas-stage.is-tool-node .canvas-world *,
+.canvas-stage.is-tool-group .canvas-world,
+.canvas-stage.is-tool-group .canvas-world * {
+  cursor: none !important;
 }
 
 .canvas-grid {
@@ -448,6 +467,11 @@
   pointer-events: none;
 }
 
+.canvas-stage.is-tool-scissors .canvas-edge-layer,
+.canvas-stage.is-tool-node .canvas-edge-layer {
+  pointer-events: auto;
+}
+
 .canvas-edge-path {
   fill: none;
   stroke-width: 2.5;
@@ -481,6 +505,28 @@
   stroke: transparent;
   stroke-width: 28;
   pointer-events: stroke;
+}
+
+.canvas-edge-tool-hit {
+  fill: none;
+  stroke: transparent;
+  stroke-width: 34;
+  pointer-events: none;
+}
+
+.canvas-stage.is-tool-scissors .canvas-edge-tool-hit,
+.canvas-stage.is-tool-node .canvas-edge-tool-hit {
+  pointer-events: stroke;
+}
+
+.canvas-stage.is-tool-scissors .canvas-edge-tool-hit,
+.canvas-stage.is-tool-node .canvas-edge-tool-hit {
+  cursor: none;
+}
+
+.canvas-stage.is-tool-scissors .canvas-edge-controls,
+.canvas-stage.is-tool-node .canvas-edge-controls {
+  opacity: 0.9;
 }
 
 .canvas-edge-path.is-snap-target {
@@ -1186,6 +1232,63 @@
   cursor: grabbing;
 }
 
+.canvas-tool-cursor {
+  position: absolute;
+  z-index: 80;
+  width: 1.8rem;
+  height: 1.8rem;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.canvas-tool-cursor.scissors::before {
+  content: "✂";
+  position: absolute;
+  left: 0.12rem;
+  top: -0.18rem;
+  color: rgba(255, 247, 224, 0.95);
+  font-size: 1.25rem;
+  line-height: 1;
+  text-shadow: 0 0 10px rgba(248, 217, 120, 0.62), 0 2px 8px rgba(0, 0, 0, 0.6);
+}
+
+.canvas-tool-cursor.master::after {
+  content: "";
+  position: absolute;
+  left: 0.72rem;
+  top: 1.06rem;
+  width: 0.48rem;
+  height: 0.48rem;
+  border: 1px solid rgba(255, 222, 222, 0.72);
+  background: rgba(214, 35, 52, 0.86);
+  box-shadow: 0 0 12px rgba(214, 35, 52, 0.62);
+}
+
+.canvas-tool-cursor.node::after {
+  content: "";
+  position: absolute;
+  left: 0.76rem;
+  top: 1.02rem;
+  width: 0.46rem;
+  height: 0.46rem;
+  border-radius: 999px;
+  background: #f8d978;
+  border: 1px solid rgba(255, 247, 224, 0.86);
+  box-shadow: 0 0 12px rgba(248, 217, 120, 0.78);
+}
+
+.canvas-tool-cursor.group::after {
+  content: "";
+  position: absolute;
+  left: 0.54rem;
+  top: 0.9rem;
+  width: 0.9rem;
+  height: 0.64rem;
+  border: 2px solid rgba(248, 217, 120, 0.92);
+  border-radius: 0.16rem;
+  box-shadow: 0 0 13px rgba(248, 217, 120, 0.58), inset 0 0 10px rgba(248, 217, 120, 0.12);
+}
+
 .canvas-frame-time-tag {
   position: absolute;
   top: 0.5rem;
@@ -1476,12 +1579,16 @@
   display: flex;
   flex-direction: column;
   min-width: 0;
+  min-height: 0;
+  max-height: 100svh;
+  overflow: hidden;
   border-left: 1px solid rgba(255, 255, 255, 0.08);
   background: rgba(5, 10, 20, 0.82);
   backdrop-filter: blur(24px);
 }
 
 .canvas-agent-top {
+  flex: 0 0 auto;
   padding: 1rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
@@ -1500,7 +1607,8 @@
 }
 
 .canvas-agent-feed {
-  flex: 1;
+  flex: 1 1 auto;
+  min-height: 0;
   padding: 1rem;
   overflow: auto;
   color: rgba(255, 255, 255, 0.72);
@@ -1537,6 +1645,7 @@
 .canvas-agent-message p {
   margin: 0;
   white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }
 
 .canvas-task-list {
@@ -1572,7 +1681,482 @@
   color: rgba(255, 255, 255, 0.44);
 }
 
+.canvas-agent-store-panel {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.canvas-agent-store-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 0.8rem;
+}
+
+.canvas-agent-store-heading strong {
+  color: rgba(255, 247, 224, 0.9);
+  font-size: 0.78rem;
+  text-transform: uppercase;
+}
+
+.canvas-agent-store-heading span {
+  color: rgba(255, 255, 255, 0.38);
+  font-size: 0.68rem;
+}
+
+.canvas-agent-store-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) 3.4rem;
+  gap: 0.46rem;
+  align-items: stretch;
+}
+
+.canvas-store-modal-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.62rem;
+}
+
+.canvas-store-card {
+  position: relative;
+  width: 100%;
+  min-height: 7.8rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.48rem;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 0.82rem;
+  background: rgba(255, 255, 255, 0.025);
+  color: rgba(255, 255, 255, 0.72);
+  padding: 0.72rem;
+  text-align: center;
+  cursor: pointer;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.28);
+  transition: border-color 160ms ease, background 160ms ease, transform 160ms ease, box-shadow 160ms ease;
+}
+
+.canvas-store-card.compact {
+  min-height: 4.85rem;
+  padding: 0.46rem 0.34rem;
+}
+
+.canvas-store-card:hover,
+.canvas-store-card.is-selected {
+  border-color: color-mix(in srgb, var(--store-accent) 72%, transparent);
+  background: color-mix(in srgb, var(--store-accent) 9%, rgba(255, 255, 255, 0.025));
+  box-shadow: 0 0 22px color-mix(in srgb, var(--store-accent) 24%, transparent), 0 8px 24px rgba(0, 0, 0, 0.32);
+  transform: translateY(-1px);
+}
+
+.canvas-store-card svg {
+  width: 1.85rem;
+  height: 1.85rem;
+  stroke: var(--store-accent);
+  fill: none;
+  stroke-width: 1.55;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 0 8px color-mix(in srgb, var(--store-accent) 45%, transparent));
+}
+
+.canvas-store-card.compact svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.canvas-store-card.compact strong {
+  font-size: 0.64rem;
+  line-height: 1.18;
+}
+
+.canvas-store-card strong {
+  width: 100%;
+  display: -webkit-box;
+  overflow: hidden;
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 0.72rem;
+  line-height: 1.25;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.canvas-store-card small {
+  display: -webkit-box;
+  overflow: hidden;
+  color: rgba(255, 255, 255, 0.34);
+  font-size: 0.64rem;
+  line-height: 1.3;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.canvas-store-check {
+  position: absolute;
+  left: 0.48rem;
+  top: 0.42rem;
+  opacity: 0;
+  color: var(--store-accent);
+  font-size: 0.72rem;
+  font-weight: 900;
+}
+
+.canvas-store-card.is-selected .canvas-store-check {
+  opacity: 1;
+}
+
+.canvas-store-add-card {
+  min-height: 4.85rem;
+  display: grid;
+  place-items: center;
+  border: 1px dashed rgba(248, 217, 120, 0.36);
+  border-radius: 0.82rem;
+  background: rgba(248, 217, 120, 0.035);
+  color: rgba(248, 217, 120, 0.8);
+  cursor: pointer;
+}
+
+.canvas-store-add-card span {
+  width: 1.7rem;
+  height: 1.7rem;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(248, 217, 120, 0.34);
+  border-radius: 999px;
+  font-size: 1.1rem;
+}
+
+.canvas-store-helper {
+  display: grid;
+  gap: 0.52rem;
+  padding: 0.68rem;
+  border: 1px solid rgba(255, 255, 255, 0.075);
+  border-radius: 0.82rem;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.canvas-store-helper-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+}
+
+.canvas-store-helper-head strong {
+  color: rgba(255, 247, 224, 0.88);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+}
+
+.canvas-store-helper-head span {
+  color: rgba(255, 255, 255, 0.34);
+  font-size: 0.62rem;
+}
+
+.canvas-store-helper-feed {
+  display: grid;
+  gap: 0.45rem;
+  max-height: 13rem;
+  overflow: auto;
+}
+
+.canvas-store-helper-message {
+  display: grid;
+  gap: 0.42rem;
+  border: 1px solid rgba(255, 255, 255, 0.075);
+  border-radius: 0.64rem;
+  background: rgba(0, 0, 0, 0.18);
+  padding: 0.56rem;
+}
+
+.canvas-store-helper-message strong {
+  color: rgba(248, 217, 120, 0.9);
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.canvas-store-helper-message.model {
+  border-color: rgba(248, 217, 120, 0.16);
+  background: rgba(248, 217, 120, 0.045);
+}
+
+.canvas-branch-tip {
+  border: 1px solid rgba(96, 165, 250, 0.14);
+  border-radius: 0.64rem;
+  background: rgba(96, 165, 250, 0.055);
+  color: rgba(210, 225, 255, 0.72);
+  font-size: 0.74rem;
+  line-height: 1.45;
+  padding: 0.62rem;
+}
+
+.canvas-branch-feed {
+  max-height: none;
+}
+
+.canvas-store-helper-message p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 0.72rem;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+.canvas-store-helper-message button,
+.canvas-store-helper > button {
+  justify-self: end;
+  border: 1px solid rgba(96, 165, 250, 0.36);
+  border-radius: 0.52rem;
+  background: rgba(96, 165, 250, 0.075);
+  color: rgba(147, 197, 253, 0.92);
+  cursor: pointer;
+  font-size: 0.68rem;
+  font-weight: 800;
+  padding: 0.36rem 0.58rem;
+}
+
+.canvas-store-helper > button:disabled {
+  opacity: 0.42;
+  cursor: not-allowed;
+}
+
+.canvas-store-helper textarea {
+  width: 100%;
+  max-height: 8rem;
+  resize: vertical;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.64rem;
+  background: rgba(0, 0, 0, 0.2);
+  color: rgba(255, 255, 255, 0.84);
+  font: inherit;
+  font-size: 0.74rem;
+  line-height: 1.4;
+  outline: none;
+  padding: 0.56rem;
+}
+
+.canvas-store-add-card.full {
+  min-height: 7.8rem;
+  gap: 0.45rem;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.canvas-store-add-card.full small {
+  color: rgba(255, 255, 255, 0.35);
+  font-size: 0.7rem;
+}
+
+.canvas-store-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 2600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(12px);
+}
+
+.canvas-store-modal {
+  width: min(90vw, 900px);
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid rgba(212, 175, 55, 0.15);
+  border-radius: 1.5rem;
+  background: linear-gradient(145deg, rgba(20, 20, 30, 0.95), rgba(10, 10, 20, 0.98));
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6), 0 0 40px rgba(212, 175, 55, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.canvas-store-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.2rem 2rem 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.canvas-store-modal-header h2 {
+  margin: 0;
+  color: white;
+  font-size: 1.2rem;
+}
+
+.canvas-store-modal-header p {
+  margin: 0.18rem 0 0;
+  color: rgba(255, 255, 255, 0.42);
+  font-size: 0.74rem;
+}
+
+.canvas-store-modal-header button,
+.canvas-store-editor-title button {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.62);
+  cursor: pointer;
+}
+
+.canvas-store-modal-header button {
+  width: 2rem;
+  height: 2rem;
+  font-size: 1.15rem;
+}
+
+.canvas-store-modal-body {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 1.4rem 2rem 1.7rem;
+}
+
+.canvas-store-modal-toolbar,
+.canvas-store-editor-title,
+.canvas-store-pages {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.canvas-store-modal-toolbar {
+  margin-bottom: 1rem;
+}
+
+.canvas-store-page-dots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.42rem;
+  margin-inline: auto;
+}
+
+.canvas-store-modal-toolbar .canvas-store-page-dots button {
+  width: 0.58rem;
+  height: 0.58rem;
+  min-height: 0;
+  border: 1px solid rgba(248, 217, 120, 0.34);
+  border-radius: 999px;
+  background: rgba(248, 217, 120, 0.12);
+  box-shadow: 0 0 10px rgba(248, 217, 120, 0.1);
+  cursor: pointer;
+  padding: 0;
+}
+
+.canvas-store-modal-toolbar .canvas-store-page-dots button.is-active {
+  background: rgba(248, 217, 120, 0.95);
+  box-shadow: 0 0 10px rgba(248, 217, 120, 0.9), 0 0 26px rgba(56, 189, 248, 0.35);
+}
+
+.canvas-store-modal-toolbar span {
+  color: rgba(255, 255, 255, 0.42);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.canvas-store-modal-toolbar button,
+.canvas-store-editor > button {
+  border: 1px solid rgba(64, 255, 156, 0.28);
+  border-radius: 0.58rem;
+  background: rgba(64, 255, 156, 0.06);
+  color: rgba(120, 255, 190, 0.86);
+  cursor: pointer;
+  font-size: 0.76rem;
+  font-weight: 800;
+  padding: 0.48rem 0.74rem;
+}
+
+.canvas-store-card-wrap {
+  position: relative;
+}
+
+.canvas-store-edit {
+  position: absolute;
+  top: 0.42rem;
+  right: 0.42rem;
+  width: 1.55rem;
+  height: 1.55rem;
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.52);
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+}
+
+.canvas-store-pages {
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.canvas-store-pages button {
+  width: 2rem;
+  height: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.045);
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+}
+
+.canvas-store-pages button:disabled {
+  opacity: 0.32;
+  cursor: default;
+}
+
+.canvas-store-pages span {
+  color: rgba(255, 255, 255, 0.42);
+  font-size: 0.76rem;
+}
+
+.canvas-store-editor {
+  display: grid;
+  gap: 0.7rem;
+  margin-top: 1.35rem;
+  padding-top: 1.2rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.canvas-store-editor-title strong {
+  color: rgba(255, 247, 224, 0.9);
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.canvas-store-editor input,
+.canvas-store-editor textarea {
+  width: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 0.68rem;
+  background: rgba(0, 0, 0, 0.3);
+  color: rgba(255, 255, 255, 0.9);
+  font: inherit;
+  outline: none;
+  padding: 0.72rem 0.86rem;
+}
+
+.canvas-store-editor textarea {
+  min-height: 8.5rem;
+  resize: vertical;
+}
+
+.canvas-store-editor > button:disabled {
+  opacity: 0.42;
+  cursor: not-allowed;
+}
+
 .canvas-agent-compose {
+  flex: 0 0 auto;
+  max-height: 42svh;
+  overflow: auto;
   padding: 1rem;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
@@ -1627,6 +2211,7 @@
 .canvas-agent-compose textarea,
 .canvas-prompt-dock textarea {
   width: 100%;
+  max-height: 10rem;
   resize: vertical;
   border-radius: 0.8rem;
   border: 1px solid rgba(255, 255, 255, 0.12);

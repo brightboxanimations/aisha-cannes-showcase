@@ -3,6 +3,9 @@ dist/
 tmp/
 .DS_Store
 *.log
+.env
+.env.*
+!.env.example
 
 # Large files that exceed GitHub limits
 public/assets/trailers/*.mp4

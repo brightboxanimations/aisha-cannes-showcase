@@ -4,9 +4,8 @@
  * script analysis, and creative direction assistance.
  */
 
-const GEMINI_API_KEY = 'AIzaSyByGTS8kcuNGPK9sKNPcU-9iEaAP93uW78';
 const GEMINI_MODEL = 'gemini-2.5-flash';
-const GEMINI_BASE_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}`;
+const GEMINI_PROXY_URL = '/api/gemini/generate';
 
 export type AgentMessage = {
   role: 'user' | 'model';
@@ -62,6 +61,102 @@ When analyzing images or scenes:
 - Reference established shot compositions from cinema history
 - Consider which of the 3 PixVerse models would work best for the shot type`;
 
+async function postGeminiBody(body: any): Promise<Response> {
+  const controller = new AbortController();
+  const timeout = window.setTimeout(() => controller.abort(), 90000);
+  try {
+    return await fetch(GEMINI_PROXY_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ model: GEMINI_MODEL, ...body }),
+      signal: controller.signal,
+    });
+  } finally {
+    window.clearTimeout(timeout);
+  }
+}
+
+async function fetchJsonWithTimeout(url: string, init?: RequestInit, timeoutMs = 1200): Promise<any> {
+  const controller = new AbortController();
+  const timeout = window.setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const response = await fetch(url, { ...init, signal: controller.signal });
+    if (!response.ok) return null;
+    return response.json();
+  } catch {
+    return null;
+  } finally {
+    window.clearTimeout(timeout);
+  }
+}
+
+async function buildMemoryContext(message: string) {
+  let memoryContext = '';
+  const memData = await fetchJsonWithTimeout('/api/memory/list');
+  if (memData?.memories?.length > 0) {
+    const summaries = memData.memories.slice(0, 20).map(
+      (m: any) => `[${new Date(m.createdAt).toLocaleDateString()}] ${m.summary || m.topic || ''}`
+    ).join('\n');
+    memoryContext = `\n\n--- RECENT PROJECT MEMORIES (last 3 days) ---\n${summaries}\n--- END MEMORIES ---`;
+  }
+
+  const pastRefs = /remember|earlier|before|last week|ago|previous|we did|we made|we used|that time|back when/i;
+  if (pastRefs.test(message)) {
+    const keywords = message.split(/\s+/).filter(w => w.length > 4).slice(0, 3);
+    for (const kw of keywords) {
+      const searchData = await fetchJsonWithTimeout('/api/memory/search', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query: kw }),
+      });
+      const older = (searchData?.memories || [])
+        .filter((m: any) => !memoryContext.includes(m.summary || ''))
+        .slice(0, 5);
+      if (older.length > 0) {
+        memoryContext += `\n\n--- OLDER MEMORIES matching "${kw}" ---\n` +
+          older.map((m: any) => `[${new Date(m.createdAt).toLocaleDateString()}] ${m.summary || m.topic || ''}`).join('\n') +
+          `\n--- END OLDER MEMORIES ---`;
+      }
+    }
+  }
+
+  return memoryContext;
+}
+
+export async function buildAgentSystemInstruction(message: string, attachmentContext?: string) {
+  const memoryContext = await buildMemoryContext(message);
+  const memoryInstruction = `\n\nIMPORTANT MEMORY RULES:
+- You have access to project memories below. Use them to maintain continuity.
+- If the user references something you don't find in your recent memories, tell them you'll check and search for it.
+- When you recognize context from memories, use it naturally without announcing it.
+- Always maintain awareness of the project timeline and previous decisions.`;
+  const attachmentSection = attachmentContext ? `\n\n--- CURRENT ATTACHMENTS ---\n${attachmentContext}\n--- END ATTACHMENTS ---\nYou can see the above attachments. Reference them naturally when relevant. The user has explicitly shared these with you.` : '';
+  return SYSTEM_INSTRUCTION + memoryInstruction + memoryContext + attachmentSection;
+}
+
+export function rememberAgentExchange(message: string, responseText: string) {
+  if (!responseText?.trim()) return;
+  const exchangeLength = message.length + responseText.length;
+  const sentenceGuide = exchangeLength > 2000 ? '5-8' : exchangeLength > 800 ? '3-5' : '2-3';
+  sendToGemini(
+    `Summarize this conversation exchange for future project memory. Write ${sentenceGuide} sentences capturing ALL important information: decisions made, technical details, names, file paths, models used, creative choices, and any action items. Be thorough — this is the only record.\n\nUser: ${message}\nAssistant: ${responseText.substring(0, 1500)}`,
+    [],
+    'You are a memory archivist. Write a clear, factual summary preserving all key details. No fluff.'
+  ).then(summaryResult => {
+    if (!summaryResult.text) return;
+    return fetch('/api/memory/save', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        id: `mem-${Date.now()}`,
+        topic: message.substring(0, 150),
+        summary: summaryResult.text,
+        createdAt: new Date().toISOString(),
+      }),
+    });
+  }).catch(() => {});
+}
+
 /**
  * Send a message to Gemini and get a response
  */
@@ -91,14 +186,7 @@ export async function sendToGemini(
       maxOutputTokens: 8192,
     };
 
-    const response = await fetch(
-      `${GEMINI_BASE_URL}:generateContent?key=${GEMINI_API_KEY}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-      }
-    );
+    const response = await postGeminiBody(body);
 
     if (!response.ok) {
       const errText = await response.text();
@@ -170,14 +258,7 @@ export async function sendToGeminiWithImages(
       maxOutputTokens: 8192,
     };
 
-    const response = await fetch(
-      `${GEMINI_BASE_URL}:generateContent?key=${GEMINI_API_KEY}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-      }
-    );
+    const response = await postGeminiBody(body);
 
     if (!response.ok) {
       const errText = await response.text();
@@ -261,56 +342,7 @@ export async function chatWithAgent(
   history: AgentMessage[] = [],
   attachmentContext?: string
 ): Promise<{ text: string; updatedHistory: AgentMessage[]; error?: string }> {
-  // Load recent memories (last 3 days)
-  let memoryContext = '';
-  try {
-    const memResp = await fetch('/api/memory/list');
-    const memData = await memResp.json();
-    if (memData.memories && memData.memories.length > 0) {
-      const summaries = memData.memories.slice(0, 20).map(
-        (m: any) => `[${new Date(m.createdAt).toLocaleDateString()}] ${m.summary || m.topic || ''}`
-      ).join('\n');
-      memoryContext = `\n\n--- RECENT PROJECT MEMORIES (last 3 days) ---\n${summaries}\n--- END MEMORIES ---`;
-    }
-
-    // Auto-search older memories if user seems to reference past events
-    const pastRefs = /remember|earlier|before|last week|ago|previous|we did|we made|we used|that time|back when/i;
-    if (pastRefs.test(message)) {
-      // Extract key terms from the message for searching
-      const keywords = message.split(/\s+/).filter(w => w.length > 4).slice(0, 3);
-      for (const kw of keywords) {
-        try {
-          const searchResp = await fetch('/api/memory/search', {
-            method: 'POST', headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ query: kw })
-          });
-          const searchData = await searchResp.json();
-          if (searchData.memories && searchData.memories.length > 0) {
-            const older = searchData.memories.filter(
-              (m: any) => !memoryContext.includes(m.summary || '')
-            ).slice(0, 5);
-            if (older.length > 0) {
-              memoryContext += `\n\n--- OLDER MEMORIES matching "${kw}" ---\n` +
-                older.map((m: any) => `[${new Date(m.createdAt).toLocaleDateString()}] ${m.summary || m.topic || ''}`).join('\n') +
-                `\n--- END OLDER MEMORIES ---`;
-            }
-          }
-        } catch { /* search failed, non-critical */ }
-      }
-    }
-  } catch { /* memory not available */ }
-
-  // Instruction telling Gemini to use memories and search when unsure
-  const memoryInstruction = `\n\nIMPORTANT MEMORY RULES:
-- You have access to project memories below. Use them to maintain continuity.
-- If the user references something you don't find in your recent memories, tell them you'll check and search for it.
-- When you recognize context from memories, use it naturally without announcing it.
-- Always maintain awareness of the project timeline and previous decisions.`;
-
-  // Attachment context goes into system instruction, NOT into user message
-  const attachmentSection = attachmentContext ? `\n\n--- CURRENT ATTACHMENTS ---\n${attachmentContext}\n--- END ATTACHMENTS ---\nYou can see the above attachments. Reference them naturally when relevant. The user has explicitly shared these with you.` : '';
-
-  const enrichedInstruction = SYSTEM_INSTRUCTION + memoryInstruction + memoryContext + attachmentSection;
+  const enrichedInstruction = await buildAgentSystemInstruction(message, attachmentContext);
   const result = await sendToGemini(message, history, enrichedInstruction);
 
   const updatedHistory: AgentMessage[] = [
@@ -320,29 +352,7 @@ export async function chatWithAgent(
 
   if (!result.error) {
     updatedHistory.push({ role: 'model', parts: [{ text: result.text }] });
-
-    // Auto-save memory — flexible length, proportional to exchange
-    const exchangeLength = message.length + result.text.length;
-    const sentenceGuide = exchangeLength > 2000 ? '5-8' : exchangeLength > 800 ? '3-5' : '2-3';
-    try {
-      const summaryResult = await sendToGemini(
-        `Summarize this conversation exchange for future project memory. Write ${sentenceGuide} sentences capturing ALL important information: decisions made, technical details, names, file paths, models used, creative choices, and any action items. Be thorough — this is the only record.\n\nUser: ${message}\nAssistant: ${result.text.substring(0, 1500)}`,
-        [],
-        'You are a memory archivist. Write a clear, factual summary preserving all key details. No fluff.'
-      );
-      if (summaryResult.text) {
-        fetch('/api/memory/save', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            id: `mem-${Date.now()}`,
-            topic: message.substring(0, 150),
-            summary: summaryResult.text,
-            createdAt: new Date().toISOString(),
-          }),
-        }).catch(() => {});
-      }
-    } catch { /* summary save failed, non-critical */ }
+    rememberAgentExchange(message, result.text);
   }
 
   return { text: result.text, updatedHistory, error: result.error };

@@ -190,6 +190,26 @@ function sendJson(res: import('node:http').ServerResponse, payload: unknown, sta
   res.end(JSON.stringify(payload))
 }
 
+function readLocalEnvValue(key: string) {
+  for (const fileName of ['.env.local', '.env']) {
+    const filePath = path.resolve(process.cwd(), fileName)
+    if (!fs.existsSync(filePath)) continue
+    const lines = fs.readFileSync(filePath, 'utf8').split(/\r?\n/)
+    for (const line of lines) {
+      const trimmed = line.trim()
+      if (!trimmed || trimmed.startsWith('#')) continue
+      const match = trimmed.match(/^([A-Za-z_][A-Za-z0-9_]*)=(.*)$/)
+      if (!match || match[1] !== key) continue
+      return match[2].replace(/^['"]|['"]$/g, '')
+    }
+  }
+  return ''
+}
+
+function getPrivateEnvValue(key: string) {
+  return process.env[key] || readLocalEnvValue(key)
+}
+
 function isInsideStoryboard(filePath: string) {
   const relative = path.relative(storyboardRoot, filePath)
   return relative && !relative.startsWith('..') && !path.isAbsolute(relative)
@@ -275,6 +295,34 @@ function storyboardApiPlugin() {
       ensureStoryboardFolders()
       server.httpServer?.setTimeout(20 * 60 * 1000)
       server.httpServer?.on('connection', (socket) => socket.setTimeout(20 * 60 * 1000))
+
+      server.middlewares.use('/api/gemini/generate', async (req, res) => {
+        if (req.method !== 'POST') return sendJson(res, { error: 'Method not allowed' }, 405)
+        try {
+          const apiKey = getPrivateEnvValue('GEMINI_API_KEY') || getPrivateEnvValue('GOOGLE_API_KEY')
+          if (!apiKey) return sendJson(res, { error: 'Missing GEMINI_API_KEY in .env.local' }, 500)
+          const bodyBuffer = await collectBody(req)
+          const requestBody = JSON.parse(bodyBuffer.toString() || '{}')
+          const { model, ...geminiBody } = requestBody
+          const geminiModel = String(model || getPrivateEnvValue('GEMINI_MODEL') || 'gemini-2.5-flash')
+          const controller = new AbortController()
+          const timeout = setTimeout(() => controller.abort(), 90000)
+          const upstream = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(geminiModel)}:generateContent?key=${encodeURIComponent(apiKey)}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(geminiBody),
+            signal: controller.signal,
+          })
+          clearTimeout(timeout)
+          const text = await upstream.text()
+          res.statusCode = upstream.status
+          res.setHeader('Content-Type', upstream.headers.get('Content-Type') || 'application/json')
+          res.end(text)
+        } catch (error) {
+          const message = error instanceof Error ? error.message : 'Gemini proxy failed'
+          sendJson(res, { error: message }, /abort/i.test(message) ? 504 : 500)
+        }
+      })
 
       server.middlewares.use('/api/storyboard/upload', async (req, res) => {
         if (req.method !== 'POST') return sendJson(res, { error: 'Method not allowed' }, 405)

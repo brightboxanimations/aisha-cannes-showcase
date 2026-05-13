@@ -399,7 +399,7 @@ const getMediaTypeForMode = (mode: StoryboardSequenceMode): StoryboardMedia['typ
 }
 
 const showcaseGalleryVersion = '2026-05-12-curated-intro-gallery'
-const publicShowcaseVersion = '2026-05-12-current-cannes-share'
+const publicShowcaseVersion = '2026-05-13-live-cannes-showcase'
 
 const defaultShowcaseGallery: ShowcaseMedia[] = [
   {
@@ -6266,18 +6266,13 @@ function TaskNode({ task, onTaskChange, data, onAssignAsset, onEditTask, onSaveB
                   <button type="button" title="AI Enhance Note" disabled={batchNoteEnhancing || !batchNoteText.trim()} onClick={async () => {
                     setBatchNoteEnhancing(true)
                     try {
-                      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=AIzaSyByGTS8kcuNGPK9sKNPcU-9iEaAP93uW78`, {
-                        method: 'POST', headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                          contents: [{ role: 'user', parts: [{ text: `Improve this image editing note into a clear, detailed prompt for an image generation AI. Keep the exact intent but make it more precise and descriptive. Output ONLY the improved text:\n\n"${batchNoteText}"` }] }],
-                          systemInstruction: { parts: [{ text: "You are a visual director writing precise image generation prompts. Be concise but specific." }] }
-                        })
-                      })
-                      if (res.ok) {
-                        const d = await res.json()
-                        const improved = d.candidates?.[0]?.content?.parts?.[0]?.text?.trim()
-                        if (improved) setBatchNoteText(improved)
-                      }
+                      const { sendToGemini } = await import('./gemini-agent')
+                      const result = await sendToGemini(
+                        `Improve this image editing note into a clear, detailed prompt for an image generation AI. Keep the exact intent but make it more precise and descriptive. Output ONLY the improved text:\n\n"${batchNoteText}"`,
+                        [],
+                        'You are a visual director writing precise image generation prompts. Be concise but specific.'
+                      )
+                      if (result.text) setBatchNoteText(result.text.trim())
                     } catch {}
                     setBatchNoteEnhancing(false)
                   }} style={{ position: 'absolute', bottom: '12px', right: '12px', width: '32px', height: '32px', borderRadius: '50%', background: batchNoteEnhancing ? 'rgba(248,217,120,0.2)' : 'rgba(248,217,120,0.1)', border: '1px solid rgba(248,217,120,0.3)', color: batchNoteEnhancing ? 'rgba(248,217,120,0.5)' : 'var(--gold)', display: 'grid', placeItems: 'center', cursor: batchNoteEnhancing ? 'wait' : 'pointer', transition: 'all 0.2s' }}>
